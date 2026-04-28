@@ -1,0 +1,41 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/minigames/exercise/ExerciseLauncher.gd" id="1_launch"]
+[ext_resource type="Script" path="res://scripts/world/Interactable.gd" id="2_inter"]
+[ext_resource type="PackedScene" path="res://scenes/minigames/Exercise.tscn" id="3_match"]
+
+[sub_resource type="RectangleShape2D" id="InteractShape"]
+size = Vector2(48, 48)
+
+[node name="ExerciseStation" type="Node2D"]
+script = ExtResource("1_launch")
+interactable = NodePath("Interactable")
+match_scene = ExtResource("3_match")
+
+[node name="Rack" type="ColorRect" parent="."]
+offset_left = -18.0
+offset_top = -14.0
+offset_right = 18.0
+offset_bottom = 14.0
+color = Color(0.22, 0.22, 0.26, 1)
+
+[node name="Weight1" type="ColorRect" parent="."]
+offset_left = -22.0
+offset_top = -18.0
+offset_right = -10.0
+offset_bottom = 18.0
+color = Color(0.15, 0.15, 0.18, 1)
+
+[node name="Weight2" type="ColorRect" parent="."]
+offset_left = 10.0
+offset_top = -18.0
+offset_right = 22.0
+offset_bottom = 18.0
+color = Color(0.15, 0.15, 0.18, 1)
+
+[node name="Interactable" type="Area2D" parent="."]
+script = ExtResource("2_inter")
+prompt = "S'entraîner"
+
+[node name="InteractShape" type="CollisionShape2D" parent="Interactable"]
+shape = SubResource("InteractShape")

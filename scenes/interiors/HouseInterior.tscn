@@ -1,0 +1,157 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/props/BuildingDoor.tscn" id="1_door"]
+[ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="2_wander"]
+
+[sub_resource type="RectangleShape2D" id="WallH"]
+size = Vector2(360, 12)
+
+[sub_resource type="RectangleShape2D" id="WallV"]
+size = Vector2(12, 220)
+
+[sub_resource type="RectangleShape2D" id="FurnShape"]
+size = Vector2(60, 32)
+
+[node name="HouseInterior" type="Node2D"]
+
+[node name="Floor" type="ColorRect" parent="."]
+offset_left = -180.0
+offset_top = -110.0
+offset_right = 180.0
+offset_bottom = 110.0
+color = Color(0.78, 0.68, 0.5, 1)
+
+[node name="Rug" type="ColorRect" parent="."]
+offset_left = -80.0
+offset_top = -20.0
+offset_right = 80.0
+offset_bottom = 40.0
+color = Color(0.55, 0.25, 0.25, 0.8)
+
+[node name="KitchenCounter" type="StaticBody2D" parent="."]
+position = Vector2(-130, -85)
+
+[node name="Shape" type="CollisionShape2D" parent="KitchenCounter"]
+shape = SubResource("FurnShape")
+
+[node name="Rect" type="ColorRect" parent="KitchenCounter"]
+offset_left = -30.0
+offset_top = -16.0
+offset_right = 30.0
+offset_bottom = 16.0
+color = Color(0.75, 0.75, 0.78, 1)
+
+[node name="Stove" type="ColorRect" parent="KitchenCounter"]
+offset_left = -10.0
+offset_top = -10.0
+offset_right = 18.0
+offset_bottom = 8.0
+color = Color(0.2, 0.2, 0.22, 1)
+
+[node name="Bed" type="StaticBody2D" parent="."]
+position = Vector2(120, -70)
+
+[node name="Shape" type="CollisionShape2D" parent="Bed"]
+shape = SubResource("FurnShape")
+
+[node name="Frame" type="ColorRect" parent="Bed"]
+offset_left = -30.0
+offset_top = -16.0
+offset_right = 30.0
+offset_bottom = 16.0
+color = Color(0.35, 0.22, 0.15, 1)
+
+[node name="Pillow" type="ColorRect" parent="Bed"]
+offset_left = -28.0
+offset_top = -14.0
+offset_right = -8.0
+offset_bottom = 0.0
+color = Color(0.95, 0.9, 0.85, 1)
+
+[node name="Blanket" type="ColorRect" parent="Bed"]
+offset_left = -8.0
+offset_top = -14.0
+offset_right = 28.0
+offset_bottom = 14.0
+color = Color(0.4, 0.55, 0.7, 1)
+
+[node name="Table" type="StaticBody2D" parent="."]
+position = Vector2(0, 50)
+
+[node name="Shape" type="CollisionShape2D" parent="Table"]
+shape = SubResource("FurnShape")
+
+[node name="Rect" type="ColorRect" parent="Table"]
+offset_left = -30.0
+offset_top = -16.0
+offset_right = 30.0
+offset_bottom = 16.0
+color = Color(0.45, 0.28, 0.18, 1)
+
+[node name="Walls" type="Node2D" parent="."]
+
+[node name="Top" type="StaticBody2D" parent="Walls"]
+position = Vector2(0, -110)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Top"]
+shape = SubResource("WallH")
+
+[node name="Bottom" type="StaticBody2D" parent="Walls"]
+position = Vector2(0, 110)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Bottom"]
+shape = SubResource("WallH")
+
+[node name="Left" type="StaticBody2D" parent="Walls"]
+position = Vector2(-180, 0)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Left"]
+shape = SubResource("WallV")
+
+[node name="Right" type="StaticBody2D" parent="Walls"]
+position = Vector2(180, 0)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Right"]
+shape = SubResource("WallV")
+
+[node name="ExitDoor" parent="." instance=ExtResource("1_door")]
+position = Vector2(0, 105)
+prompt_text = "Sortir"
+is_exit = true
+
+[node name="SpawnPoint" type="Marker2D" parent="."]
+position = Vector2(0, 75)
+
+[node name="GrandmaInRocker" parent="." instance=ExtResource("2_wander")]
+position = Vector2(-130, -30)
+color = Color(0.62, 0.55, 0.5, 1)
+size = Vector2(10, 17)
+path = Array[Vector2]([Vector2(-130, -30), Vector2(-128, -28), Vector2(-132, -32)])
+speed = 2.0
+pause_at_waypoints = 12.0
+bob_strength = 1.0
+
+[node name="HousewifeCooking" parent="." instance=ExtResource("2_wander")]
+position = Vector2(120, -50)
+color = Color(0.85, 0.4, 0.55, 1)
+size = Vector2(10, 17)
+path = Array[Vector2]([Vector2(120, -50), Vector2(140, -50), Vector2(100, -50)])
+speed = 8.0
+pause_at_waypoints = 4.0
+
+[node name="ChildPlayingTV" parent="." instance=ExtResource("2_wander")]
+position = Vector2(-30, 50)
+color = Color(0.4, 0.85, 0.55, 1)
+size = Vector2(8, 14)
+path = Array[Vector2]([Vector2(-30, 50), Vector2(20, 60), Vector2(-50, 40)])
+speed = 18.0
+pause_at_waypoints = 3.0
+
+[node name="MotherKnitting" parent="." instance=ExtResource("2_wander")]
+position = Vector2(60, 30)
+color = Color(0.4, 0.65, 0.95, 1)
+size = Vector2(10, 17)
+path = Array[Vector2]([Vector2(60, 30), Vector2(62, 28), Vector2(58, 32)])
+speed = 2.0
+pause_at_waypoints = 10.0
+bob_strength = 0.6

@@ -1,0 +1,402 @@
+[gd_scene load_steps=55 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/npcs/DonaIrene.tscn" id="37_irene"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/BarPatrao.tscn" id="38_patrao"]
+[ext_resource type="PackedScene" path="res://scenes/props/LostDog.tscn" id="39_dog"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/Padeiro.tscn" id="40_padeiro"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/Otavio.tscn" id="41_otavio"]
+[ext_resource type="PackedScene" path="res://scenes/props/ValetStation.tscn" id="42_valet"]
+[ext_resource type="PackedScene" path="res://scenes/props/PadariaStation.tscn" id="43_padaria_station"]
+[ext_resource type="PackedScene" path="res://scenes/props/MissionBoard.tscn" id="44_mission_board"]
+[ext_resource type="PackedScene" path="res://scenes/props/TaxiStand.tscn" id="45_taxi_stand"]
+[ext_resource type="PackedScene" path="res://scenes/districts/Corcovado.tscn" id="46_corcovado"]
+[ext_resource type="PackedScene" path="res://scenes/districts/PaoAcucar.tscn" id="47_paoacucar"]
+[ext_resource type="PackedScene" path="res://scenes/districts/Lagoa.tscn" id="48_lagoa"]
+[ext_resource type="PackedScene" path="res://scenes/districts/Maracana.tscn" id="49_maracana"]
+[ext_resource type="PackedScene" path="res://scenes/districts/SantosDumont.tscn" id="50_santos"]
+[ext_resource type="PackedScene" path="res://scenes/districts/AterroFlamengo.tscn" id="51_aterro"]
+[ext_resource type="PackedScene" path="res://scenes/districts/Cagarras.tscn" id="52_cagarras"]
+[ext_resource type="PackedScene" path="res://scenes/districts/Sambodromo.tscn" id="53_sambodromo"]
+[ext_resource type="PackedScene" path="res://scenes/vehicles/Bike.tscn" id="54_bike"]
+[ext_resource type="PackedScene" path="res://scenes/vehicles/Car.tscn" id="55_car"]
+[ext_resource type="PackedScene" path="res://scenes/vehicles/Sup.tscn" id="56_sup"]
+[ext_resource type="PackedScene" path="res://scenes/districts/ZonaSul.tscn" id="57_zonasul"]
+[ext_resource type="PackedScene" path="res://scenes/props/DistrictExit.tscn" id="58_exit"]
+[ext_resource type="PackedScene" path="res://scenes/districts/BotafogoFlamengo.tscn" id="59_botafogo"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/Consortium.tscn" id="28_consortium"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/Ramos.tscn" id="29_ramos"]
+[ext_resource type="PackedScene" path="res://scenes/props/SurfStation.tscn" id="30_surf"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/Carlos.tscn" id="31_carlos"]
+[ext_resource type="PackedScene" path="res://scenes/props/BikeStation.tscn" id="32_bike"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/Padre.tscn" id="33_padre"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/Farmaceutico.tscn" id="34_farma"]
+[ext_resource type="PackedScene" path="res://scenes/props/Statue.tscn" id="35_statue"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/Contessa.tscn" id="36_contessa"]
+[ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="1_player"]
+[ext_resource type="PackedScene" path="res://scenes/interiors/AcademiaInterior.tscn" id="27_academia_int"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/SeuJoao.tscn" id="2_seu_joao"]
+[ext_resource type="PackedScene" path="res://scenes/props/CornCart.tscn" id="3_cart"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/Customer.tscn" id="4_customer"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/PMPatrol.tscn" id="5_pm"]
+[ext_resource type="PackedScene" path="res://scenes/props/VolleyNet.tscn" id="6_net"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/Miguel.tscn" id="7_miguel"]
+[ext_resource type="PackedScene" path="res://scenes/props/DeliveryPoint.tscn" id="8_drop"]
+[ext_resource type="Script" path="res://scripts/world/CopacabanaGenerator.gd" id="9_gen"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/Concierge.tscn" id="10_concierge"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/Musicien.tscn" id="11_musicien"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/Pecheur.tscn" id="12_pecheur"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/TouristVIP.tscn" id="13_tourist_vip"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/CoconutVendor.tscn" id="14_coconut"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/MilitaryPM.tscn" id="15_mil_pm"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/Joggeur.tscn" id="16_joggeur"]
+[ext_resource type="PackedScene" path="res://scenes/props/Bracelet.tscn" id="17_bracelet"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/ZeBar.tscn" id="18_ze"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/ChefRestaurant.tscn" id="19_chef"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/VendeuseBoutique.tscn" id="20_vendeuse"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/Policier.tscn" id="21_policier"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/Tito.tscn" id="22_tito"]
+[ext_resource type="PackedScene" path="res://scenes/props/FishingSpot.tscn" id="23_fishing"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/Jorge.tscn" id="24_jorge"]
+[ext_resource type="Script" path="res://scripts/world/TrafficSpawner.gd" id="25_traffic"]
+
+[sub_resource type="RectangleShape2D" id="WallH"]
+size = Vector2(2440, 16)
+
+[sub_resource type="RectangleShape2D" id="WallV"]
+size = Vector2(16, 992)
+
+[node name="Copacabana" type="Node2D"]
+script = ExtResource("9_gen")
+map_start_x = 160.0
+map_end_x = 2200.0
+building_count = 14
+
+[node name="Background" type="ColorRect" parent="."]
+offset_left = -40.0
+offset_top = -400.0
+offset_right = 2440.0
+offset_bottom = 600.0
+color = Color(0.55, 0.78, 0.9, 1)
+z_index = -10
+
+[node name="FortStone" type="ColorRect" parent="."]
+offset_left = 0.0
+offset_top = -360.0
+offset_right = 160.0
+offset_bottom = 0.0
+color = Color(0.5, 0.5, 0.55, 1)
+
+[node name="LemeHill" type="ColorRect" parent="."]
+offset_left = 2240.0
+offset_top = -360.0
+offset_right = 2400.0
+offset_bottom = 0.0
+color = Color(0.35, 0.55, 0.35, 1)
+
+[node name="NossaSenhoraLine" type="ColorRect" parent="."]
+offset_left = 0.0
+offset_top = -98.0
+offset_right = 2400.0
+offset_bottom = -94.0
+color = Color(0.85, 0.8, 0.3, 1)
+z_index = -3
+
+[node name="AvAtlanticaLine" type="ColorRect" parent="."]
+offset_left = 0.0
+offset_top = 30.0
+offset_right = 2400.0
+offset_bottom = 34.0
+color = Color(0.85, 0.8, 0.3, 1)
+z_index = -3
+
+[node name="EdgeWalls" type="Node2D" parent="."]
+
+[node name="Top" type="StaticBody2D" parent="EdgeWalls"]
+position = Vector2(1200, -368)
+
+[node name="Shape" type="CollisionShape2D" parent="EdgeWalls/Top"]
+shape = SubResource("WallH")
+
+[node name="Bottom" type="StaticBody2D" parent="EdgeWalls"]
+position = Vector2(1200, 416)
+
+[node name="Shape" type="CollisionShape2D" parent="EdgeWalls/Bottom"]
+shape = SubResource("WallH")
+
+[node name="Left" type="StaticBody2D" parent="EdgeWalls"]
+position = Vector2(-8, 120)
+
+[node name="Shape" type="CollisionShape2D" parent="EdgeWalls/Left"]
+shape = SubResource("WallV")
+
+[node name="Right" type="StaticBody2D" parent="EdgeWalls"]
+position = Vector2(2408, 120)
+
+[node name="Shape" type="CollisionShape2D" parent="EdgeWalls/Right"]
+shape = SubResource("WallV")
+
+[node name="SeuJoao" parent="." instance=ExtResource("2_seu_joao")]
+position = Vector2(1260, 100)
+
+[node name="CornCart" parent="." instance=ExtResource("3_cart")]
+position = Vector2(1300, 96)
+
+[node name="CustomerTourist" parent="." instance=ExtResource("4_customer")]
+position = Vector2(1100, 208)
+archetype = 0
+
+[node name="CustomerLocal" parent="." instance=ExtResource("4_customer")]
+position = Vector2(1380, 248)
+archetype = 1
+
+[node name="CustomerKid" parent="." instance=ExtResource("4_customer")]
+position = Vector2(1200, 328)
+archetype = 2
+
+[node name="PMPatrol" parent="." instance=ExtResource("5_pm")]
+position = Vector2(1200, 288)
+
+[node name="VolleyNet" parent="." instance=ExtResource("6_net")]
+position = Vector2(1600, 320)
+
+[node name="Miguel" parent="." instance=ExtResource("7_miguel")]
+position = Vector2(940, 200)
+
+[node name="DeliveryPoint" parent="." instance=ExtResource("8_drop")]
+position = Vector2(1800, -96)
+
+[node name="ConvoyDropPoint" parent="." instance=ExtResource("8_drop")]
+position = Vector2(220, -180)
+quest_id = "act2_miguel_favela"
+objective_id = "deliver_convoy"
+payout = 0
+
+[node name="PurgePointMorro" parent="." instance=ExtResource("8_drop")]
+position = Vector2(180, -260)
+quest_id = "act4_policia_purga"
+objective_id = "purge_morro"
+payout = 0
+
+[node name="PurgePointCalcadao" parent="." instance=ExtResource("8_drop")]
+position = Vector2(1100, 96)
+quest_id = "act4_policia_purga"
+objective_id = "purge_calcadao"
+payout = 0
+
+[node name="PurgePointAtlantica" parent="." instance=ExtResource("8_drop")]
+position = Vector2(1500, 32)
+quest_id = "act4_policia_purga"
+objective_id = "purge_atlantica"
+payout = 0
+
+[node name="Concierge" parent="." instance=ExtResource("10_concierge")]
+position = Vector2(1700, 100)
+
+[node name="TouristVIP" parent="." instance=ExtResource("13_tourist_vip")]
+position = Vector2(1790, 122)
+
+[node name="Musicien" parent="." instance=ExtResource("11_musicien")]
+position = Vector2(610, 118)
+
+[node name="Pecheur" parent="." instance=ExtResource("12_pecheur")]
+position = Vector2(200, 200)
+
+[node name="CoconutVendor" parent="." instance=ExtResource("14_coconut")]
+position = Vector2(420, 200)
+
+[node name="MilitaryPM" parent="." instance=ExtResource("15_mil_pm")]
+position = Vector2(110, 80)
+
+[node name="Joggeur" parent="." instance=ExtResource("16_joggeur")]
+position = Vector2(370, 124)
+
+[node name="Bracelet" parent="." instance=ExtResource("17_bracelet")]
+position = Vector2(1450, 280)
+
+[node name="ZeBar" parent="." instance=ExtResource("18_ze")]
+position = Vector2(480, 132)
+
+
+[node name="Policier" parent="." instance=ExtResource("21_policier")]
+position = Vector2(1200, -100)
+
+[node name="Tito" parent="." instance=ExtResource("22_tito")]
+position = Vector2(180, -270)
+
+[node name="FishingSpot" parent="." instance=ExtResource("23_fishing")]
+position = Vector2(280, 260)
+
+[node name="Jorge" parent="." instance=ExtResource("24_jorge")]
+position = Vector2(1335, -100)
+
+[node name="Traffic" type="Node" parent="."]
+script = ExtResource("25_traffic")
+
+[node name="AcademiaInterior" parent="." instance=ExtResource("27_academia_int")]
+position = Vector2(700, -2000)
+
+[node name="Consortium" parent="." instance=ExtResource("28_consortium")]
+position = Vector2(1550, 48)
+
+[node name="Ramos" parent="." instance=ExtResource("29_ramos")]
+position = Vector2(700, -96)
+
+[node name="SurfStation" parent="." instance=ExtResource("30_surf")]
+position = Vector2(1700, 380)
+
+[node name="Carlos" parent="." instance=ExtResource("31_carlos")]
+position = Vector2(880, -8)
+
+[node name="CarlosSign" type="Label" parent="."]
+offset_left = 850.0
+offset_top = -88.0
+offset_right = 950.0
+offset_bottom = -68.0
+text = "Café ISSIMO"
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.95, 0.8, 0.55, 1)
+theme_override_font_sizes/font_size = 10
+
+[node name="BikeStation" parent="." instance=ExtResource("32_bike")]
+position = Vector2(920, 96)
+
+
+[node name="Statue" parent="." instance=ExtResource("35_statue")]
+position = Vector2(400, 260)
+
+[node name="Contessa" parent="." instance=ExtResource("36_contessa")]
+position = Vector2(1760, 88)
+
+[node name="DonaIrene" parent="." instance=ExtResource("37_irene")]
+position = Vector2(1640, 108)
+
+[node name="BarPatrao" parent="." instance=ExtResource("38_patrao")]
+position = Vector2(1425, -96)
+
+[node name="LostDog" parent="." instance=ExtResource("39_dog")]
+position = Vector2(640, 240)
+
+
+
+[node name="MissionBoard" parent="." instance=ExtResource("44_mission_board")]
+position = Vector2(1130, 130)
+
+[node name="TaxiStand" parent="." instance=ExtResource("45_taxi_stand")]
+position = Vector2(1700, 30)
+
+[node name="CorcovadoDistrict" parent="." instance=ExtResource("46_corcovado")]
+position = Vector2(-3500, -2900)
+
+[node name="PaoAcucarDistrict" parent="." instance=ExtResource("47_paoacucar")]
+position = Vector2(-4500, -2900)
+
+[node name="LagoaDistrict" parent="." instance=ExtResource("48_lagoa")]
+position = Vector2(-5500, -2900)
+
+[node name="MaracanaDistrict" parent="." instance=ExtResource("49_maracana")]
+position = Vector2(-6500, -2900)
+
+[node name="SantosDumontDistrict" parent="." instance=ExtResource("50_santos")]
+position = Vector2(-7500, -2900)
+
+[node name="AterroFlamengoDistrict" parent="." instance=ExtResource("51_aterro")]
+position = Vector2(-8500, -2900)
+
+[node name="CagarrasDistrict" parent="." instance=ExtResource("52_cagarras")]
+position = Vector2(-9500, -2900)
+
+[node name="SambodromoDistrict" parent="." instance=ExtResource("53_sambodromo")]
+position = Vector2(-10500, -2900)
+
+[node name="Bike" parent="." instance=ExtResource("54_bike")]
+position = Vector2(1450, 100)
+
+[node name="BikeLabel" type="Label" parent="."]
+offset_left = 1410.0
+offset_top = 70.0
+offset_right = 1490.0
+offset_bottom = 88.0
+text = "🚲 Vélo"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 4
+z_index = 1
+
+[node name="Car" parent="." instance=ExtResource("55_car")]
+position = Vector2(1820, 38)
+
+[node name="CarLabel" type="Label" parent="."]
+offset_left = 1780.0
+offset_top = 4.0
+offset_right = 1860.0
+offset_bottom = 22.0
+text = "🚗 Voiture"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 4
+z_index = 1
+
+[node name="Sup" parent="." instance=ExtResource("56_sup")]
+position = Vector2(1100, 380)
+
+[node name="SupLabel" type="Label" parent="."]
+offset_left = 1060.0
+offset_top = 350.0
+offset_right = 1140.0
+offset_bottom = 368.0
+text = "🏄 SUP"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 4
+z_index = 1
+
+[node name="ZonaSulDistrict" parent="." instance=ExtResource("57_zonasul")]
+position = Vector2(-12000, -2900)
+
+[node name="ExitToZonaSul" parent="." instance=ExtResource("58_exit")]
+position = Vector2(180, 110)
+target_district = "zona_sul"
+label_text = "← ARPOADOR / IPANEMA"
+
+[node name="BotafogoFlamengoDistrict" parent="." instance=ExtResource("59_botafogo")]
+position = Vector2(-13800, -2900)
+
+[node name="ExitToBotafogo" parent="." instance=ExtResource("58_exit")]
+position = Vector2(2150, -50)
+target_district = "botafogo_flamengo"
+label_text = "↑ TÚNEL → BOTAFOGO"
+
+[node name="Otavio" parent="." instance=ExtResource("41_otavio")]
+position = Vector2(1840, 36)
+
+[node name="ValetStation" parent="." instance=ExtResource("42_valet")]
+position = Vector2(1820, 56)
+
+[node name="ValetSign" type="Label" parent="."]
+offset_left = 1780.0
+offset_top = 24.0
+offset_right = 1880.0
+offset_bottom = 44.0
+text = "🚗 Valet"
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.85, 0.85, 0.95, 1)
+theme_override_font_sizes/font_size = 11
+
+[node name="PadariaSign" type="Label" parent="."]
+offset_left = 710.0
+offset_top = 64.0
+offset_right = 800.0
+offset_bottom = 84.0
+text = "🥖 Padaria"
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.95, 0.85, 0.55, 1)
+theme_override_font_sizes/font_size = 11
+
+[node name="Player" parent="." instance=ExtResource("1_player")]
+position = Vector2(1200, 96)

@@ -1,0 +1,202 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/minigames/sup/SupGame.gd" id="1_game"]
+
+[node name="SupGame" type="Node2D"]
+script = ExtResource("1_game")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(960, 540)
+
+[node name="Arena" type="Node2D" parent="."]
+
+[node name="SeaDeep" type="ColorRect" parent="Arena"]
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 1920.0
+offset_bottom = 1080.0
+color = Color(0.18, 0.32, 0.5, 1)
+
+[node name="SeaShade" type="ColorRect" parent="Arena"]
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 1920.0
+offset_bottom = 220.0
+color = Color(0.22, 0.38, 0.55, 1)
+
+[node name="Wave1" type="ColorRect" parent="Arena"]
+offset_left = 100.0
+offset_top = 460.0
+offset_right = 280.0
+offset_bottom = 466.0
+color = Color(0.85, 0.92, 0.95, 0.45)
+
+[node name="Wave2" type="ColorRect" parent="Arena"]
+offset_left = 720.0
+offset_top = 540.0
+offset_right = 920.0
+offset_bottom = 546.0
+color = Color(0.85, 0.92, 0.95, 0.45)
+
+[node name="Wave3" type="ColorRect" parent="Arena"]
+offset_left = 1320.0
+offset_top = 470.0
+offset_right = 1520.0
+offset_bottom = 476.0
+color = Color(0.85, 0.92, 0.95, 0.45)
+
+[node name="Wave4" type="ColorRect" parent="Arena"]
+offset_left = 380.0
+offset_top = 880.0
+offset_right = 580.0
+offset_bottom = 886.0
+color = Color(0.85, 0.92, 0.95, 0.45)
+
+[node name="Wave5" type="ColorRect" parent="Arena"]
+offset_left = 1100.0
+offset_top = 880.0
+offset_right = 1280.0
+offset_bottom = 886.0
+color = Color(0.85, 0.92, 0.95, 0.45)
+
+[node name="Island1Rock" type="ColorRect" parent="Arena"]
+offset_left = 360.0
+offset_top = 660.0
+offset_right = 480.0
+offset_bottom = 740.0
+color = Color(0.42, 0.4, 0.42, 1)
+
+[node name="Island1Top" type="ColorRect" parent="Arena"]
+offset_left = 392.0
+offset_top = 632.0
+offset_right = 444.0
+offset_bottom = 660.0
+color = Color(0.32, 0.55, 0.32, 1)
+
+[node name="Island2Rock" type="ColorRect" parent="Arena"]
+offset_left = 640.0
+offset_top = 280.0
+offset_right = 760.0
+offset_bottom = 360.0
+color = Color(0.4, 0.38, 0.4, 1)
+
+[node name="Island2Top" type="ColorRect" parent="Arena"]
+offset_left = 672.0
+offset_top = 252.0
+offset_right = 728.0
+offset_bottom = 280.0
+color = Color(0.32, 0.55, 0.32, 1)
+
+[node name="Island3Rock" type="ColorRect" parent="Arena"]
+offset_left = 1240.0
+offset_top = 240.0
+offset_right = 1360.0
+offset_bottom = 320.0
+color = Color(0.42, 0.4, 0.42, 1)
+
+[node name="Island3Top" type="ColorRect" parent="Arena"]
+offset_left = 1272.0
+offset_top = 212.0
+offset_right = 1328.0
+offset_bottom = 240.0
+color = Color(0.32, 0.55, 0.32, 1)
+
+[node name="Island4Rock" type="ColorRect" parent="Arena"]
+offset_left = 1440.0
+offset_top = 660.0
+offset_right = 1560.0
+offset_bottom = 740.0
+color = Color(0.4, 0.38, 0.4, 1)
+
+[node name="Island4Top" type="ColorRect" parent="Arena"]
+offset_left = 1472.0
+offset_top = 632.0
+offset_right = 1528.0
+offset_bottom = 660.0
+color = Color(0.32, 0.55, 0.32, 1)
+
+[node name="CurrentArrow1" type="Label" parent="Arena"]
+offset_left = 100.0
+offset_top = 100.0
+offset_right = 200.0
+offset_bottom = 130.0
+text = "←  ←  ←"
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(0.85, 0.92, 0.95, 0.55)
+
+[node name="CurrentArrow2" type="Label" parent="Arena"]
+offset_left = 1700.0
+offset_top = 940.0
+offset_right = 1860.0
+offset_bottom = 970.0
+text = "←  ←  ←"
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(0.85, 0.92, 0.95, 0.55)
+
+[node name="Sign" type="Label" parent="Arena"]
+offset_left = 760.0
+offset_top = 30.0
+offset_right = 1160.0
+offset_bottom = 80.0
+text = "ILHAS CAGARRAS"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 30
+theme_override_colors/font_color = Color(0.95, 0.95, 1, 0.85)
+
+[node name="Checkpoints" type="Node2D" parent="Arena"]
+
+[node name="Sup" type="ColorRect" parent="Arena"]
+offset_left = 404.0
+offset_top = 684.0
+offset_right = 436.0
+offset_bottom = 716.0
+color = Color(0.95, 0.85, 0.35, 1)
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="Timer" type="Label" parent="UI"]
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -200.0
+offset_top = 24.0
+offset_right = -40.0
+offset_bottom = 80.0
+text = "90.0s"
+horizontal_alignment = 2
+theme_override_font_sizes/font_size = 42
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+
+[node name="Progress" type="Label" parent="UI"]
+offset_left = 40.0
+offset_top = 24.0
+offset_right = 360.0
+offset_bottom = 80.0
+text = "Îlots 0 / 4"
+theme_override_font_sizes/font_size = 32
+theme_override_colors/font_color = Color(1, 0.95, 0.55, 1)
+
+[node name="Status" type="Label" parent="UI"]
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -540.0
+offset_top = 24.0
+offset_right = 540.0
+offset_bottom = 72.0
+text = "Contourne les 4 îlots dans l'ordre. Le courant pousse vers l'ouest."
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(1, 0.95, 0.8, 1)
+
+[node name="Prompt" type="Label" parent="UI"]
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = -240.0
+offset_top = -52.0
+offset_right = 240.0
+offset_bottom = -16.0
+text = "[WASD / Flèches] pagayer"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(0.85, 0.85, 0.95, 1)

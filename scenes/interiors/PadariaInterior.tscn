@@ -1,0 +1,212 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/props/BuildingDoor.tscn" id="1_door"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/Padeiro.tscn" id="2_padeiro"]
+[ext_resource type="PackedScene" path="res://scenes/props/PadariaStation.tscn" id="3_station"]
+[ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="4_wander"]
+
+[sub_resource type="RectangleShape2D" id="WallH"]
+size = Vector2(360, 12)
+
+[sub_resource type="RectangleShape2D" id="WallV"]
+size = Vector2(12, 220)
+
+[sub_resource type="RectangleShape2D" id="CounterShape"]
+size = Vector2(220, 22)
+
+[sub_resource type="RectangleShape2D" id="ShelfShape"]
+size = Vector2(160, 16)
+
+[node name="PadariaInterior" type="Node2D"]
+
+[node name="Floor" type="ColorRect" parent="."]
+offset_left = -180.0
+offset_top = -110.0
+offset_right = 180.0
+offset_bottom = 110.0
+color = Color(0.95, 0.85, 0.65, 1)
+
+[node name="Tile1" type="ColorRect" parent="."]
+offset_left = -180.0
+offset_top = -55.0
+offset_right = 180.0
+offset_bottom = -53.0
+color = Color(0.78, 0.65, 0.45, 1)
+
+[node name="Tile2" type="ColorRect" parent="."]
+offset_left = -180.0
+offset_top = 0.0
+offset_right = 180.0
+offset_bottom = 2.0
+color = Color(0.78, 0.65, 0.45, 1)
+
+[node name="Tile3" type="ColorRect" parent="."]
+offset_left = -180.0
+offset_top = 55.0
+offset_right = 180.0
+offset_bottom = 57.0
+color = Color(0.78, 0.65, 0.45, 1)
+
+[node name="ShelfL" type="StaticBody2D" parent="."]
+position = Vector2(-90, -90)
+
+[node name="Shape" type="CollisionShape2D" parent="ShelfL"]
+shape = SubResource("ShelfShape")
+
+[node name="Rect" type="ColorRect" parent="ShelfL"]
+offset_left = -80.0
+offset_top = -8.0
+offset_right = 80.0
+offset_bottom = 8.0
+color = Color(0.55, 0.4, 0.28, 1)
+
+[node name="Loaf1" type="ColorRect" parent="ShelfL"]
+offset_left = -70.0
+offset_top = -14.0
+offset_right = -56.0
+offset_bottom = -4.0
+color = Color(0.78, 0.55, 0.32, 1)
+
+[node name="Loaf2" type="ColorRect" parent="ShelfL"]
+offset_left = -48.0
+offset_top = -14.0
+offset_right = -34.0
+offset_bottom = -4.0
+color = Color(0.85, 0.65, 0.42, 1)
+
+[node name="Loaf3" type="ColorRect" parent="ShelfL"]
+offset_left = -26.0
+offset_top = -14.0
+offset_right = -12.0
+offset_bottom = -4.0
+color = Color(0.78, 0.55, 0.32, 1)
+
+[node name="Loaf4" type="ColorRect" parent="ShelfL"]
+offset_left = -4.0
+offset_top = -14.0
+offset_right = 10.0
+offset_bottom = -4.0
+color = Color(0.95, 0.85, 0.55, 1)
+
+[node name="ShelfR" type="StaticBody2D" parent="."]
+position = Vector2(90, -90)
+
+[node name="Shape" type="CollisionShape2D" parent="ShelfR"]
+shape = SubResource("ShelfShape")
+
+[node name="Rect" type="ColorRect" parent="ShelfR"]
+offset_left = -80.0
+offset_top = -8.0
+offset_right = 80.0
+offset_bottom = 8.0
+color = Color(0.55, 0.4, 0.28, 1)
+
+[node name="Counter" type="StaticBody2D" parent="."]
+position = Vector2(0, -25)
+
+[node name="Shape" type="CollisionShape2D" parent="Counter"]
+shape = SubResource("CounterShape")
+
+[node name="Rect" type="ColorRect" parent="Counter"]
+offset_left = -110.0
+offset_top = -11.0
+offset_right = 110.0
+offset_bottom = 11.0
+color = Color(0.45, 0.32, 0.22, 1)
+
+[node name="CounterTop" type="ColorRect" parent="Counter"]
+offset_left = -110.0
+offset_top = -11.0
+offset_right = 110.0
+offset_bottom = -5.0
+color = Color(0.85, 0.78, 0.6, 1)
+
+[node name="Walls" type="Node2D" parent="."]
+
+[node name="Top" type="StaticBody2D" parent="Walls"]
+position = Vector2(0, -110)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Top"]
+shape = SubResource("WallH")
+
+[node name="Bottom" type="StaticBody2D" parent="Walls"]
+position = Vector2(0, 110)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Bottom"]
+shape = SubResource("WallH")
+
+[node name="Left" type="StaticBody2D" parent="Walls"]
+position = Vector2(-180, 0)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Left"]
+shape = SubResource("WallV")
+
+[node name="Right" type="StaticBody2D" parent="Walls"]
+position = Vector2(180, 0)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Right"]
+shape = SubResource("WallV")
+
+[node name="ExitDoor" parent="." instance=ExtResource("1_door")]
+position = Vector2(0, 105)
+prompt_text = "Sortir de la padaria"
+is_exit = true
+
+[node name="SpawnPoint" type="Marker2D" parent="."]
+position = Vector2(0, 75)
+
+[node name="Padeiro" parent="." instance=ExtResource("2_padeiro")]
+position = Vector2(-50, 0)
+
+[node name="PadariaStation" parent="." instance=ExtResource("3_station")]
+position = Vector2(80, 0)
+
+[node name="MorningRusherA" parent="." instance=ExtResource("4_wander")]
+position = Vector2(-100, 50)
+color = Color(0.42, 0.45, 0.5, 1)
+size = Vector2(10, 17)
+path = Array[Vector2]([Vector2(-100, 50), Vector2(-50, 30), Vector2(-150, 30)])
+speed = 22.0
+pause_at_waypoints = 2.0
+
+[node name="MorningRusherB" parent="." instance=ExtResource("4_wander")]
+position = Vector2(120, 30)
+color = Color(0.85, 0.55, 0.4, 1)
+size = Vector2(10, 17)
+path = Array[Vector2]([Vector2(120, 30), Vector2(150, 50), Vector2(80, 30)])
+speed = 18.0
+pause_at_waypoints = 2.4
+
+[node name="ChildWithBread" parent="." instance=ExtResource("4_wander")]
+position = Vector2(0, 60)
+color = Color(0.95, 0.85, 0.4, 1)
+size = Vector2(7, 12)
+path = Array[Vector2]([Vector2(0, 60), Vector2(80, 60), Vector2(-80, 60)])
+speed = 30.0
+pause_at_waypoints = 1.4
+
+[node name="GossipingDuoA" parent="." instance=ExtResource("4_wander")]
+position = Vector2(-130, -50)
+color = Color(0.85, 0.4, 0.55, 1)
+size = Vector2(10, 17)
+path = Array[Vector2]([Vector2(-130, -50), Vector2(-125, -45), Vector2(-135, -55)])
+speed = 4.0
+pause_at_waypoints = 6.0
+bob_strength = 0.6
+
+[node name="GossipingDuoB" parent="." instance=ExtResource("4_wander")]
+position = Vector2(-115, -55)
+color = Color(0.4, 0.65, 0.95, 1)
+size = Vector2(10, 17)
+path = Array[Vector2]([Vector2(-115, -55), Vector2(-110, -50), Vector2(-120, -60)])
+speed = 4.0
+pause_at_waypoints = 6.0
+bob_strength = 0.6
+
+[node name="DeliveryRunner" parent="." instance=ExtResource("4_wander")]
+position = Vector2(150, -50)
+color = Color(0.95, 0.55, 0.18, 1)
+size = Vector2(9, 16)
+path = Array[Vector2]([Vector2(150, -50), Vector2(50, -40), Vector2(150, 50), Vector2(170, -50)])
+speed = 40.0
+pause_at_waypoints = 0.8

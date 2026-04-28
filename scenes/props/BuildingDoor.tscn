@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/BuildingDoor.gd" id="1_door"]
+[ext_resource type="Script" path="res://scripts/world/Interactable.gd" id="2_inter"]
+
+[sub_resource type="RectangleShape2D" id="InteractShape"]
+size = Vector2(36, 32)
+
+[node name="BuildingDoor" type="Node2D"]
+script = ExtResource("1_door")
+interactable = NodePath("Interactable")
+
+[node name="Interactable" type="Area2D" parent="."]
+script = ExtResource("2_inter")
+prompt = "Entrer"
+
+[node name="InteractShape" type="CollisionShape2D" parent="Interactable"]
+shape = SubResource("InteractShape")

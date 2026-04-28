@@ -1,0 +1,50 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/minigames/valet/ValetLauncher.gd" id="1_launcher"]
+[ext_resource type="Script" path="res://scripts/world/Interactable.gd" id="2_inter"]
+[ext_resource type="PackedScene" path="res://scenes/minigames/Valet.tscn" id="3_match"]
+
+[sub_resource type="RectangleShape2D" id="InteractShape"]
+size = Vector2(56, 56)
+
+[node name="ValetStation" type="Node2D"]
+script = ExtResource("1_launcher")
+interactable = NodePath("Interactable")
+match_scene = ExtResource("3_match")
+
+[node name="Booth" type="ColorRect" parent="."]
+offset_left = -16.0
+offset_top = -28.0
+offset_right = 16.0
+offset_bottom = 8.0
+color = Color(0.2, 0.2, 0.32, 1)
+
+[node name="Roof" type="ColorRect" parent="."]
+offset_left = -22.0
+offset_top = -32.0
+offset_right = 22.0
+offset_bottom = -26.0
+color = Color(0.85, 0.2, 0.2, 1)
+
+[node name="KeyHook" type="ColorRect" parent="."]
+offset_left = -8.0
+offset_top = -22.0
+offset_right = 8.0
+offset_bottom = -10.0
+color = Color(0.95, 0.85, 0.45, 1)
+
+[node name="Marker" type="Label" parent="."]
+offset_left = -22.0
+offset_top = -56.0
+offset_right = 22.0
+offset_bottom = -36.0
+text = "🚗"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 18
+
+[node name="Interactable" type="Area2D" parent="."]
+script = ExtResource("2_inter")
+prompt = "Pointer au stand valet"
+
+[node name="InteractShape" type="CollisionShape2D" parent="Interactable"]
+shape = SubResource("InteractShape")

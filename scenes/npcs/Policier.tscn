@@ -1,0 +1,13 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/npcs/NPC.tscn" id="1_npc"]
+[ext_resource type="Resource" path="res://resources/npcs/policier.tres" id="2_data"]
+[ext_resource type="Script" path="res://scripts/npcs/Policier.gd" id="3_script"]
+
+[node name="Policier" instance=ExtResource("1_npc")]
+script = ExtResource("3_script")
+data = ExtResource("2_data")
+
+[node name="Sprite2D" parent="."]
+region_rect = Rect2(316, 53, 158, 196)
+scale = Vector2(0.246, 0.246)

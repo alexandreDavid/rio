@@ -1,0 +1,286 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/props/TaxiStand.tscn" id="1_taxi"]
+[ext_resource type="PackedScene" path="res://scenes/props/BikeRental.tscn" id="2_rental"]
+[ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="3_wander"]
+[ext_resource type="PackedScene" path="res://scenes/props/Viewpoint.tscn" id="4_view"]
+[ext_resource type="PackedScene" path="res://scenes/props/StreetVendor.tscn" id="5_vendor"]
+
+[sub_resource type="RectangleShape2D" id="WallH"]
+size = Vector2(700, 16)
+
+[sub_resource type="RectangleShape2D" id="WallV"]
+size = Vector2(16, 360)
+
+[node name="LagoaDistrict" type="Node2D"]
+
+[node name="Sky" type="ColorRect" parent="."]
+offset_left = -360.0
+offset_top = -260.0
+offset_right = 360.0
+offset_bottom = 0.0
+color = Color(0.55, 0.78, 0.92, 1)
+
+[node name="Hills" type="ColorRect" parent="."]
+offset_left = -360.0
+offset_top = -120.0
+offset_right = 360.0
+offset_bottom = 0.0
+color = Color(0.42, 0.55, 0.42, 1)
+
+[node name="HillsRight" type="ColorRect" parent="."]
+offset_left = 200.0
+offset_top = -180.0
+offset_right = 360.0
+offset_bottom = 0.0
+color = Color(0.38, 0.5, 0.38, 1)
+
+[node name="LakeFar" type="ColorRect" parent="."]
+offset_left = -340.0
+offset_top = -40.0
+offset_right = 340.0
+offset_bottom = 30.0
+color = Color(0.55, 0.78, 0.85, 1)
+
+[node name="LakeReflect" type="ColorRect" parent="."]
+offset_left = -200.0
+offset_top = -10.0
+offset_right = 200.0
+offset_bottom = -2.0
+color = Color(0.85, 0.92, 0.95, 0.5)
+
+[node name="LakeMid" type="ColorRect" parent="."]
+offset_left = -340.0
+offset_top = 10.0
+offset_right = 340.0
+offset_bottom = 100.0
+color = Color(0.45, 0.68, 0.78, 1)
+
+[node name="LakeNear" type="ColorRect" parent="."]
+offset_left = -340.0
+offset_top = 100.0
+offset_right = 340.0
+offset_bottom = 130.0
+color = Color(0.4, 0.62, 0.72, 1)
+
+[node name="Path" type="ColorRect" parent="."]
+offset_left = -340.0
+offset_top = 130.0
+offset_right = 340.0
+offset_bottom = 180.0
+color = Color(0.78, 0.74, 0.62, 1)
+
+[node name="PathLine" type="ColorRect" parent="."]
+offset_left = -340.0
+offset_top = 152.0
+offset_right = 340.0
+offset_bottom = 154.0
+color = Color(0.55, 0.5, 0.4, 1)
+
+[node name="TreeL" type="ColorRect" parent="."]
+offset_left = -310.0
+offset_top = 90.0
+offset_right = -270.0
+offset_bottom = 140.0
+color = Color(0.18, 0.42, 0.22, 1)
+
+[node name="TreeM" type="ColorRect" parent="."]
+offset_left = 240.0
+offset_top = 80.0
+offset_right = 285.0
+offset_bottom = 140.0
+color = Color(0.22, 0.48, 0.25, 1)
+
+[node name="Sign" type="Label" parent="."]
+offset_left = -150.0
+offset_top = 20.0
+offset_right = 150.0
+offset_bottom = 44.0
+text = "LAGOA RODRIGO DE FREITAS"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(1, 1, 1, 0.85)
+
+[node name="Walls" type="Node2D" parent="."]
+
+[node name="Top" type="StaticBody2D" parent="Walls"]
+position = Vector2(0, 122)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Top"]
+shape = SubResource("WallH")
+
+[node name="Bottom" type="StaticBody2D" parent="Walls"]
+position = Vector2(0, 188)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Bottom"]
+shape = SubResource("WallH")
+
+[node name="Left" type="StaticBody2D" parent="Walls"]
+position = Vector2(-348, 155)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Left"]
+shape = SubResource("WallV")
+
+[node name="Right" type="StaticBody2D" parent="Walls"]
+position = Vector2(348, 155)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Right"]
+shape = SubResource("WallV")
+
+[node name="PlayerSpawn" type="Marker2D" parent="."]
+position = Vector2(-200, 160)
+
+[node name="TaxiStand" parent="." instance=ExtResource("1_taxi")]
+position = Vector2(-260, 165)
+
+[node name="BikeRental" parent="." instance=ExtResource("2_rental")]
+position = Vector2(150, 158)
+
+[node name="LakeReflection" type="ColorRect" parent="."]
+offset_left = -300.0
+offset_top = -75.0
+offset_right = -200.0
+offset_bottom = -73.0
+color = Color(0.95, 0.92, 0.95, 0.55)
+
+[node name="LakeReflection2" type="ColorRect" parent="."]
+offset_left = -100.0
+offset_top = -85.0
+offset_right = 20.0
+offset_bottom = -83.0
+color = Color(0.95, 0.92, 0.95, 0.55)
+
+[node name="LakeReflection3" type="ColorRect" parent="."]
+offset_left = 140.0
+offset_top = -90.0
+offset_right = 240.0
+offset_bottom = -88.0
+color = Color(0.95, 0.92, 0.95, 0.55)
+
+[node name="DistantBoat" type="ColorRect" parent="."]
+offset_left = -180.0
+offset_top = -110.0
+offset_right = -150.0
+offset_bottom = -106.0
+color = Color(0.92, 0.92, 0.85, 0.85)
+
+[node name="DistantBoatMast" type="ColorRect" parent="."]
+offset_left = -168.0
+offset_top = -125.0
+offset_right = -166.0
+offset_bottom = -110.0
+color = Color(0.92, 0.92, 0.85, 0.85)
+
+[node name="ChristSilhouetteFar" type="ColorRect" parent="."]
+offset_left = 280.0
+offset_top = -200.0
+offset_right = 286.0
+offset_bottom = -180.0
+color = Color(0.32, 0.35, 0.45, 0.7)
+
+[node name="ChristSilhouetteFarBase" type="ColorRect" parent="."]
+offset_left = 282.0
+offset_top = -180.0
+offset_right = 285.0
+offset_bottom = -160.0
+color = Color(0.32, 0.35, 0.45, 0.7)
+
+[node name="JoggingPath" type="ColorRect" parent="."]
+offset_left = -340.0
+offset_top = -10.0
+offset_right = 340.0
+offset_bottom = 10.0
+color = Color(0.85, 0.78, 0.62, 0.6)
+
+[node name="PalmTrunkA" type="ColorRect" parent="."]
+offset_left = -180.0
+offset_top = 30.0
+offset_right = -174.0
+offset_bottom = 80.0
+color = Color(0.4, 0.3, 0.22, 1)
+
+[node name="PalmTopA" type="ColorRect" parent="."]
+offset_left = -200.0
+offset_top = 4.0
+offset_right = -150.0
+offset_bottom = 30.0
+color = Color(0.32, 0.55, 0.32, 1)
+
+[node name="PalmTrunkB" type="ColorRect" parent="."]
+offset_left = 240.0
+offset_top = 30.0
+offset_right = 246.0
+offset_bottom = 80.0
+color = Color(0.4, 0.3, 0.22, 1)
+
+[node name="PalmTopB" type="ColorRect" parent="."]
+offset_left = 220.0
+offset_top = 4.0
+offset_right = 270.0
+offset_bottom = 30.0
+color = Color(0.32, 0.55, 0.32, 1)
+
+[node name="BenchA" type="ColorRect" parent="."]
+offset_left = -80.0
+offset_top = 60.0
+offset_right = -30.0
+offset_bottom = 68.0
+color = Color(0.55, 0.42, 0.32, 1)
+
+[node name="BenchB" type="ColorRect" parent="."]
+offset_left = 40.0
+offset_top = 90.0
+offset_right = 90.0
+offset_bottom = 98.0
+color = Color(0.55, 0.42, 0.32, 1)
+
+[node name="ViewpointPedalboat" parent="." instance=ExtResource("4_view")]
+position = Vector2(-50, 60)
+viewpoint_id = "lagoa_pedalinhos"
+prompt_first = "Regarder les pédalos"
+flavor_speaker = "Sobrinho"
+flavor_text = "Cygnes en plastique, familles qui rament en zigzag, garçons qui flambent. La Lagoa fait sa parade tranquille."
+money_reward = 50
+
+[node name="AcaiVendor" parent="." instance=ExtResource("5_vendor")]
+position = Vector2(220, 80)
+vendor_id = "lagoa_acai"
+item_label = "Açaí com banana"
+price = 10
+stamina_recover = 40.0
+flavor_text_offer = "Açaí, banana, granola — gasolina pra dar a volta no lago !"
+
+[node name="JoggerA" parent="." instance=ExtResource("3_wander")]
+position = Vector2(-200, 0)
+color = Color(0.4, 0.85, 0.55, 1)
+size = Vector2(9, 16)
+path = Array[Vector2]([Vector2(-200, 0), Vector2(200, 0), Vector2(-200, 0)])
+speed = 60.0
+pause_at_waypoints = 0.2
+
+[node name="JoggerB" parent="." instance=ExtResource("3_wander")]
+position = Vector2(150, 0)
+color = Color(0.95, 0.55, 0.4, 1)
+size = Vector2(9, 16)
+path = Array[Vector2]([Vector2(150, 0), Vector2(-150, 0), Vector2(150, 0)])
+speed = 50.0
+pause_at_waypoints = 0.2
+
+[node name="StrollerA" parent="." instance=ExtResource("3_wander")]
+position = Vector2(-50, 100)
+color = Color(0.95, 0.85, 0.4, 1)
+path = Array[Vector2]([Vector2(-50, 100), Vector2(80, 100), Vector2(-100, 130)])
+speed = 18.0
+
+[node name="StrollerB" parent="." instance=ExtResource("3_wander")]
+position = Vector2(100, 130)
+color = Color(0.4, 0.65, 0.95, 1)
+path = Array[Vector2]([Vector2(100, 130), Vector2(-50, 140), Vector2(120, 90)])
+speed = 22.0
+
+[node name="DogWalker" parent="." instance=ExtResource("3_wander")]
+position = Vector2(-180, 60)
+color = Color(0.85, 0.55, 0.4, 1)
+path = Array[Vector2]([Vector2(-180, 60), Vector2(-150, 90), Vector2(-200, 80)])
+speed = 16.0
+pause_at_waypoints = 1.8

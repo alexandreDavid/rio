@@ -1,0 +1,194 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/props/BuildingDoor.tscn" id="1_door"]
+[ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="2_wander"]
+
+[sub_resource type="RectangleShape2D" id="WallH"]
+size = Vector2(360, 12)
+
+[sub_resource type="RectangleShape2D" id="WallV"]
+size = Vector2(12, 220)
+
+[sub_resource type="RectangleShape2D" id="ShelfShape"]
+size = Vector2(180, 18)
+
+[sub_resource type="RectangleShape2D" id="CounterShape"]
+size = Vector2(160, 22)
+
+[node name="MercadinhoInterior" type="Node2D"]
+
+[node name="Floor" type="ColorRect" parent="."]
+offset_left = -180.0
+offset_top = -110.0
+offset_right = 180.0
+offset_bottom = 110.0
+color = Color(0.92, 0.88, 0.78, 1)
+
+[node name="Tile1" type="ColorRect" parent="."]
+offset_left = -180.0
+offset_top = -55.0
+offset_right = 180.0
+offset_bottom = -53.0
+color = Color(0.7, 0.66, 0.55, 1)
+
+[node name="Tile2" type="ColorRect" parent="."]
+offset_left = -180.0
+offset_top = 0.0
+offset_right = 180.0
+offset_bottom = 2.0
+color = Color(0.7, 0.66, 0.55, 1)
+
+[node name="Tile3" type="ColorRect" parent="."]
+offset_left = -180.0
+offset_top = 55.0
+offset_right = 180.0
+offset_bottom = 57.0
+color = Color(0.7, 0.66, 0.55, 1)
+
+[node name="ShelfTop" type="StaticBody2D" parent="."]
+position = Vector2(-80, -90)
+
+[node name="Shape" type="CollisionShape2D" parent="ShelfTop"]
+shape = SubResource("ShelfShape")
+
+[node name="Rect" type="ColorRect" parent="ShelfTop"]
+offset_left = -90.0
+offset_top = -9.0
+offset_right = 90.0
+offset_bottom = 9.0
+color = Color(0.55, 0.4, 0.28, 1)
+
+[node name="Goods1" type="ColorRect" parent="ShelfTop"]
+offset_left = -80.0
+offset_top = -16.0
+offset_right = -50.0
+offset_bottom = -8.0
+color = Color(0.85, 0.5, 0.3, 1)
+
+[node name="Goods2" type="ColorRect" parent="ShelfTop"]
+offset_left = -40.0
+offset_top = -16.0
+offset_right = -10.0
+offset_bottom = -8.0
+color = Color(0.4, 0.65, 0.95, 1)
+
+[node name="Goods3" type="ColorRect" parent="ShelfTop"]
+offset_left = 0.0
+offset_top = -16.0
+offset_right = 30.0
+offset_bottom = -8.0
+color = Color(0.95, 0.85, 0.45, 1)
+
+[node name="Goods4" type="ColorRect" parent="ShelfTop"]
+offset_left = 40.0
+offset_top = -16.0
+offset_right = 70.0
+offset_bottom = -8.0
+color = Color(0.55, 0.85, 0.55, 1)
+
+[node name="ShelfRight" type="StaticBody2D" parent="."]
+position = Vector2(80, -90)
+
+[node name="Shape" type="CollisionShape2D" parent="ShelfRight"]
+shape = SubResource("ShelfShape")
+
+[node name="Rect" type="ColorRect" parent="ShelfRight"]
+offset_left = -90.0
+offset_top = -9.0
+offset_right = 90.0
+offset_bottom = 9.0
+color = Color(0.55, 0.4, 0.28, 1)
+
+[node name="Counter" type="StaticBody2D" parent="."]
+position = Vector2(0, 60)
+
+[node name="Shape" type="CollisionShape2D" parent="Counter"]
+shape = SubResource("CounterShape")
+
+[node name="Rect" type="ColorRect" parent="Counter"]
+offset_left = -80.0
+offset_top = -11.0
+offset_right = 80.0
+offset_bottom = 11.0
+color = Color(0.32, 0.22, 0.15, 1)
+
+[node name="Register" type="ColorRect" parent="Counter"]
+offset_left = 50.0
+offset_top = -18.0
+offset_right = 76.0
+offset_bottom = -4.0
+color = Color(0.18, 0.18, 0.22, 1)
+
+[node name="Walls" type="Node2D" parent="."]
+
+[node name="Top" type="StaticBody2D" parent="Walls"]
+position = Vector2(0, -110)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Top"]
+shape = SubResource("WallH")
+
+[node name="Bottom" type="StaticBody2D" parent="Walls"]
+position = Vector2(0, 110)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Bottom"]
+shape = SubResource("WallH")
+
+[node name="Left" type="StaticBody2D" parent="Walls"]
+position = Vector2(-180, 0)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Left"]
+shape = SubResource("WallV")
+
+[node name="Right" type="StaticBody2D" parent="Walls"]
+position = Vector2(180, 0)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Right"]
+shape = SubResource("WallV")
+
+[node name="ExitDoor" parent="." instance=ExtResource("1_door")]
+position = Vector2(0, 105)
+prompt_text = "Sortir du mercadinho"
+is_exit = true
+
+[node name="SpawnPoint" type="Marker2D" parent="."]
+position = Vector2(0, 80)
+
+[node name="Cashier" parent="." instance=ExtResource("2_wander")]
+position = Vector2(-130, -50)
+color = Color(0.95, 0.85, 0.4, 1)
+size = Vector2(10, 17)
+path = Array[Vector2]([Vector2(-130, -50), Vector2(-110, -50), Vector2(-150, -50)])
+speed = 8.0
+pause_at_waypoints = 3.5
+
+[node name="ShopperA" parent="." instance=ExtResource("2_wander")]
+position = Vector2(60, 0)
+color = Color(0.85, 0.55, 0.4, 1)
+size = Vector2(10, 17)
+path = Array[Vector2]([Vector2(60, 0), Vector2(110, -30), Vector2(20, 30), Vector2(-100, 0)])
+speed = 22.0
+pause_at_waypoints = 2.4
+
+[node name="ShopperBasket" parent="." instance=ExtResource("2_wander")]
+position = Vector2(-50, 30)
+color = Color(0.4, 0.65, 0.95, 1)
+size = Vector2(10, 17)
+path = Array[Vector2]([Vector2(-50, 30), Vector2(60, 50), Vector2(-130, 0)])
+speed = 18.0
+pause_at_waypoints = 3.0
+
+[node name="StockBoy" parent="." instance=ExtResource("2_wander")]
+position = Vector2(140, 30)
+color = Color(0.95, 0.55, 0.18, 1)
+size = Vector2(9, 16)
+path = Array[Vector2]([Vector2(140, 30), Vector2(140, -30), Vector2(160, 0)])
+speed = 28.0
+pause_at_waypoints = 1.4
+
+[node name="ChildSnack" parent="." instance=ExtResource("2_wander")]
+position = Vector2(0, 60)
+color = Color(0.4, 0.85, 0.55, 1)
+size = Vector2(7, 12)
+path = Array[Vector2]([Vector2(0, 60), Vector2(80, 50), Vector2(-60, 70), Vector2(20, 50)])
+speed = 32.0
+pause_at_waypoints = 1.0

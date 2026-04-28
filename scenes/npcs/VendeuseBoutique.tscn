@@ -1,0 +1,14 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/npcs/NPC.tscn" id="1_npc"]
+[ext_resource type="Resource" path="res://resources/npcs/vendeuse_boutique.tres" id="2_data"]
+[ext_resource type="Script" path="res://scripts/npcs/Beatriz.gd" id="3_script"]
+
+[node name="VendeuseBoutique" instance=ExtResource("1_npc")]
+script = ExtResource("3_script")
+data = ExtResource("2_data")
+modulate = Color(0.95, 0.75, 0.9, 1)
+
+[node name="Sprite2D" parent="."]
+region_rect = Rect2(555, 732, 145, 204)
+scale = Vector2(0.235, 0.235)

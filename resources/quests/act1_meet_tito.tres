@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_favor"]
+script = ExtResource("2_obj")
+id = "do_tito_favor"
+description = "Rendre un 'petit' service à Tito"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "act1_meet_tito"
+display_name = "Faveur au Morro"
+description = "Tito, qui régnait déjà sur le Morro quand ton oncle lui rendait des services, t'offre sa protection en échange d'un coup de main."
+journal_text = "Tito attend un service — les détails viendront chez lui, dans la favela."
+giver_npc_id = "tito"
+ink_knot = "tito_meet"
+objectives = Array[Resource]([SubResource("obj_favor")])
+money_reward = 150
+reputation_rewards = {2: 5, 1: -2}
+required_reputation = {}
+required_act = 1

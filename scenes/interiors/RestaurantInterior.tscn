@@ -1,0 +1,258 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/props/BuildingDoor.tscn" id="1_door"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/ChefRestaurant.tscn" id="2_chef"]
+[ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="3_wander"]
+
+[sub_resource type="RectangleShape2D" id="WallH"]
+size = Vector2(420, 12)
+
+[sub_resource type="RectangleShape2D" id="WallV"]
+size = Vector2(12, 260)
+
+[sub_resource type="RectangleShape2D" id="TableShape"]
+size = Vector2(60, 40)
+
+[sub_resource type="RectangleShape2D" id="CounterShape"]
+size = Vector2(220, 24)
+
+[sub_resource type="RectangleShape2D" id="StoveShape"]
+size = Vector2(60, 30)
+
+[node name="RestaurantInterior" type="Node2D"]
+
+[node name="Floor" type="ColorRect" parent="."]
+offset_left = -210.0
+offset_top = -130.0
+offset_right = 210.0
+offset_bottom = 130.0
+color = Color(0.55, 0.4, 0.3, 1)
+
+[node name="StripeA" type="ColorRect" parent="."]
+offset_left = -210.0
+offset_top = -65.0
+offset_right = 210.0
+offset_bottom = -63.0
+color = Color(0.35, 0.25, 0.18, 1)
+
+[node name="StripeB" type="ColorRect" parent="."]
+offset_left = -210.0
+offset_top = 0.0
+offset_right = 210.0
+offset_bottom = 2.0
+color = Color(0.35, 0.25, 0.18, 1)
+
+[node name="StripeC" type="ColorRect" parent="."]
+offset_left = -210.0
+offset_top = 65.0
+offset_right = 210.0
+offset_bottom = 67.0
+color = Color(0.35, 0.25, 0.18, 1)
+
+[node name="Counter" type="StaticBody2D" parent="."]
+position = Vector2(0, -100)
+
+[node name="Shape" type="CollisionShape2D" parent="Counter"]
+shape = SubResource("CounterShape")
+
+[node name="CounterRect" type="ColorRect" parent="Counter"]
+offset_left = -110.0
+offset_top = -12.0
+offset_right = 110.0
+offset_bottom = 12.0
+color = Color(0.32, 0.22, 0.15, 1)
+
+[node name="CounterTop" type="ColorRect" parent="Counter"]
+offset_left = -110.0
+offset_top = -12.0
+offset_right = 110.0
+offset_bottom = -6.0
+color = Color(0.85, 0.78, 0.6, 1)
+
+[node name="Stove" type="StaticBody2D" parent="."]
+position = Vector2(-130, -118)
+
+[node name="Shape" type="CollisionShape2D" parent="Stove"]
+shape = SubResource("StoveShape")
+
+[node name="StoveRect" type="ColorRect" parent="Stove"]
+offset_left = -30.0
+offset_top = -15.0
+offset_right = 30.0
+offset_bottom = 15.0
+color = Color(0.18, 0.18, 0.22, 1)
+
+[node name="StoveBurner" type="ColorRect" parent="Stove"]
+offset_left = -22.0
+offset_top = -8.0
+offset_right = -8.0
+offset_bottom = 6.0
+color = Color(0.85, 0.45, 0.25, 1)
+
+[node name="Table1" type="StaticBody2D" parent="."]
+position = Vector2(-110, 0)
+
+[node name="Shape" type="CollisionShape2D" parent="Table1"]
+shape = SubResource("TableShape")
+
+[node name="Rect" type="ColorRect" parent="Table1"]
+offset_left = -30.0
+offset_top = -20.0
+offset_right = 30.0
+offset_bottom = 20.0
+color = Color(0.85, 0.78, 0.6, 1)
+
+[node name="Cloth" type="ColorRect" parent="Table1"]
+offset_left = -28.0
+offset_top = -18.0
+offset_right = 28.0
+offset_bottom = 18.0
+color = Color(0.85, 0.2, 0.2, 1)
+
+[node name="Table2" type="StaticBody2D" parent="."]
+position = Vector2(110, 0)
+
+[node name="Shape" type="CollisionShape2D" parent="Table2"]
+shape = SubResource("TableShape")
+
+[node name="Rect" type="ColorRect" parent="Table2"]
+offset_left = -30.0
+offset_top = -20.0
+offset_right = 30.0
+offset_bottom = 20.0
+color = Color(0.85, 0.78, 0.6, 1)
+
+[node name="Cloth" type="ColorRect" parent="Table2"]
+offset_left = -28.0
+offset_top = -18.0
+offset_right = 28.0
+offset_bottom = 18.0
+color = Color(0.85, 0.2, 0.2, 1)
+
+[node name="Table3" type="StaticBody2D" parent="."]
+position = Vector2(-110, 70)
+
+[node name="Shape" type="CollisionShape2D" parent="Table3"]
+shape = SubResource("TableShape")
+
+[node name="Rect" type="ColorRect" parent="Table3"]
+offset_left = -30.0
+offset_top = -20.0
+offset_right = 30.0
+offset_bottom = 20.0
+color = Color(0.85, 0.78, 0.6, 1)
+
+[node name="Cloth" type="ColorRect" parent="Table3"]
+offset_left = -28.0
+offset_top = -18.0
+offset_right = 28.0
+offset_bottom = 18.0
+color = Color(0.85, 0.2, 0.2, 1)
+
+[node name="Table4" type="StaticBody2D" parent="."]
+position = Vector2(110, 70)
+
+[node name="Shape" type="CollisionShape2D" parent="Table4"]
+shape = SubResource("TableShape")
+
+[node name="Rect" type="ColorRect" parent="Table4"]
+offset_left = -30.0
+offset_top = -20.0
+offset_right = 30.0
+offset_bottom = 20.0
+color = Color(0.85, 0.78, 0.6, 1)
+
+[node name="Cloth" type="ColorRect" parent="Table4"]
+offset_left = -28.0
+offset_top = -18.0
+offset_right = 28.0
+offset_bottom = 18.0
+color = Color(0.85, 0.2, 0.2, 1)
+
+[node name="Walls" type="Node2D" parent="."]
+
+[node name="Top" type="StaticBody2D" parent="Walls"]
+position = Vector2(0, -130)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Top"]
+shape = SubResource("WallH")
+
+[node name="Bottom" type="StaticBody2D" parent="Walls"]
+position = Vector2(0, 130)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Bottom"]
+shape = SubResource("WallH")
+
+[node name="Left" type="StaticBody2D" parent="Walls"]
+position = Vector2(-210, 0)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Left"]
+shape = SubResource("WallV")
+
+[node name="Right" type="StaticBody2D" parent="Walls"]
+position = Vector2(210, 0)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Right"]
+shape = SubResource("WallV")
+
+[node name="ExitDoor" parent="." instance=ExtResource("1_door")]
+position = Vector2(0, 125)
+prompt_text = "Sortir du restaurant"
+is_exit = true
+
+[node name="SpawnPoint" type="Marker2D" parent="."]
+position = Vector2(0, 95)
+
+[node name="ChefRestaurant" parent="." instance=ExtResource("2_chef")]
+position = Vector2(70, -75)
+
+[node name="DinerCoupleA" parent="." instance=ExtResource("3_wander")]
+position = Vector2(-130, 30)
+color = Color(0.95, 0.85, 0.4, 1)
+size = Vector2(10, 17)
+path = Array[Vector2]([Vector2(-130, 30), Vector2(-125, 25), Vector2(-135, 35)])
+speed = 4.0
+pause_at_waypoints = 6.0
+bob_strength = 0.6
+
+[node name="DinerCoupleB" parent="." instance=ExtResource("3_wander")]
+position = Vector2(-115, 25)
+color = Color(0.4, 0.65, 0.95, 1)
+size = Vector2(10, 17)
+path = Array[Vector2]([Vector2(-115, 25), Vector2(-110, 30), Vector2(-120, 20)])
+speed = 4.0
+pause_at_waypoints = 6.0
+bob_strength = 0.6
+
+[node name="DinerSolo" parent="." instance=ExtResource("3_wander")]
+position = Vector2(80, 30)
+color = Color(0.85, 0.4, 0.55, 1)
+size = Vector2(10, 17)
+path = Array[Vector2]([Vector2(80, 30), Vector2(85, 25), Vector2(75, 35)])
+speed = 3.0
+pause_at_waypoints = 7.0
+bob_strength = 0.5
+
+[node name="Waiter" parent="." instance=ExtResource("3_wander")]
+position = Vector2(0, -10)
+color = Color(0.95, 0.92, 0.85, 1)
+size = Vector2(9, 16)
+path = Array[Vector2]([Vector2(0, -10), Vector2(-130, 30), Vector2(0, -50), Vector2(80, 30), Vector2(-50, -30)])
+speed = 36.0
+pause_at_waypoints = 1.6
+
+[node name="Sommelier" parent="." instance=ExtResource("3_wander")]
+position = Vector2(-180, -50)
+color = Color(0.18, 0.18, 0.22, 1)
+size = Vector2(10, 17)
+path = Array[Vector2]([Vector2(-180, -50), Vector2(-130, 30), Vector2(-180, -50)])
+speed = 18.0
+pause_at_waypoints = 3.0
+
+[node name="KidWithMenu" parent="." instance=ExtResource("3_wander")]
+position = Vector2(160, 70)
+color = Color(0.4, 0.85, 0.55, 1)
+size = Vector2(8, 14)
+path = Array[Vector2]([Vector2(160, 70), Vector2(140, 90), Vector2(180, 60)])
+speed = 22.0
+pause_at_waypoints = 2.0

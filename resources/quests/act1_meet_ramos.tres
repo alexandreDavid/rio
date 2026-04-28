@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_report"]
+script = ExtResource("2_obj")
+id = "report_to_ramos"
+description = "Rapporter quelque chose d'utile à Capitão Ramos"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "act1_meet_ramos"
+display_name = "Un ami dans la police"
+description = "Capitão Ramos te prend sous son aile. Rapporte-lui une info sur la rue et il t'ouvrira des portes."
+journal_text = "Ramos attend une info — observe la plage, la favela, le palace."
+giver_npc_id = "ramos"
+ink_knot = "ramos_intro"
+objectives = Array[Resource]([SubResource("obj_report")])
+money_reward = 100
+reputation_rewards = {1: 5, 0: 2}
+required_reputation = {}
+required_act = 1

@@ -1,0 +1,386 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/props/TaxiStand.tscn" id="1_taxi"]
+[ext_resource type="PackedScene" path="res://scenes/props/SupRental.tscn" id="2_sup"]
+[ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="3_wander"]
+[ext_resource type="PackedScene" path="res://scenes/props/Viewpoint.tscn" id="4_view"]
+[ext_resource type="PackedScene" path="res://scenes/props/StreetVendor.tscn" id="5_vendor"]
+
+[sub_resource type="RectangleShape2D" id="WallH"]
+size = Vector2(700, 16)
+
+[sub_resource type="RectangleShape2D" id="WallV"]
+size = Vector2(16, 360)
+
+[node name="CagarrasDistrict" type="Node2D"]
+
+[node name="SkyMorning" type="ColorRect" parent="."]
+offset_left = -360.0
+offset_top = -260.0
+offset_right = 360.0
+offset_bottom = -120.0
+color = Color(0.6, 0.78, 0.92, 1)
+
+[node name="SeaLine" type="ColorRect" parent="."]
+offset_left = -360.0
+offset_top = -130.0
+offset_right = 360.0
+offset_bottom = -120.0
+color = Color(0.45, 0.6, 0.72, 1)
+
+[node name="SeaDeep" type="ColorRect" parent="."]
+offset_left = -360.0
+offset_top = -120.0
+offset_right = 360.0
+offset_bottom = 0.0
+color = Color(0.22, 0.42, 0.58, 1)
+
+[node name="WaveLine1" type="ColorRect" parent="."]
+offset_left = -300.0
+offset_top = -90.0
+offset_right = -200.0
+offset_bottom = -88.0
+color = Color(0.85, 0.92, 0.95, 0.55)
+
+[node name="WaveLine2" type="ColorRect" parent="."]
+offset_left = -100.0
+offset_top = -75.0
+offset_right = 30.0
+offset_bottom = -73.0
+color = Color(0.85, 0.92, 0.95, 0.55)
+
+[node name="WaveLine3" type="ColorRect" parent="."]
+offset_left = 130.0
+offset_top = -85.0
+offset_right = 250.0
+offset_bottom = -83.0
+color = Color(0.85, 0.92, 0.95, 0.55)
+
+[node name="Cagarra1Rock" type="ColorRect" parent="."]
+offset_left = -240.0
+offset_top = -115.0
+offset_right = -180.0
+offset_bottom = -85.0
+color = Color(0.42, 0.4, 0.42, 1)
+
+[node name="Cagarra1Top" type="ColorRect" parent="."]
+offset_left = -228.0
+offset_top = -126.0
+offset_right = -192.0
+offset_bottom = -115.0
+color = Color(0.32, 0.55, 0.32, 1)
+
+[node name="Cagarra2Rock" type="ColorRect" parent="."]
+offset_left = -100.0
+offset_top = -110.0
+offset_right = -50.0
+offset_bottom = -85.0
+color = Color(0.4, 0.38, 0.4, 1)
+
+[node name="Cagarra3Rock" type="ColorRect" parent="."]
+offset_left = 40.0
+offset_top = -115.0
+offset_right = 100.0
+offset_bottom = -85.0
+color = Color(0.42, 0.4, 0.42, 1)
+
+[node name="Cagarra3Top" type="ColorRect" parent="."]
+offset_left = 52.0
+offset_top = -126.0
+offset_right = 88.0
+offset_bottom = -115.0
+color = Color(0.32, 0.55, 0.32, 1)
+
+[node name="Cagarra4Rock" type="ColorRect" parent="."]
+offset_left = 180.0
+offset_top = -110.0
+offset_right = 230.0
+offset_bottom = -85.0
+color = Color(0.4, 0.38, 0.4, 1)
+
+[node name="BeachSand" type="ColorRect" parent="."]
+offset_left = -340.0
+offset_top = 0.0
+offset_right = 340.0
+offset_bottom = 70.0
+color = Color(0.92, 0.82, 0.62, 1)
+
+[node name="BeachWaveLine" type="ColorRect" parent="."]
+offset_left = -340.0
+offset_top = 0.0
+offset_right = 340.0
+offset_bottom = 4.0
+color = Color(0.95, 0.95, 0.95, 0.6)
+
+[node name="Promenade" type="ColorRect" parent="."]
+offset_left = -340.0
+offset_top = 70.0
+offset_right = 340.0
+offset_bottom = 100.0
+color = Color(0.62, 0.55, 0.5, 1)
+
+[node name="Esplanade" type="ColorRect" parent="."]
+offset_left = -340.0
+offset_top = 100.0
+offset_right = 340.0
+offset_bottom = 180.0
+color = Color(0.55, 0.7, 0.42, 1)
+
+[node name="PalmTrunk" type="ColorRect" parent="."]
+offset_left = -260.0
+offset_top = 118.0
+offset_right = -254.0
+offset_bottom = 170.0
+color = Color(0.4, 0.3, 0.22, 1)
+
+[node name="PalmTop" type="ColorRect" parent="."]
+offset_left = -280.0
+offset_top = 90.0
+offset_right = -230.0
+offset_bottom = 118.0
+color = Color(0.32, 0.55, 0.32, 1)
+
+[node name="PalmTrunk2" type="ColorRect" parent="."]
+offset_left = 240.0
+offset_top = 122.0
+offset_right = 246.0
+offset_bottom = 170.0
+color = Color(0.4, 0.3, 0.22, 1)
+
+[node name="PalmTop2" type="ColorRect" parent="."]
+offset_left = 220.0
+offset_top = 96.0
+offset_right = 270.0
+offset_bottom = 122.0
+color = Color(0.32, 0.55, 0.32, 1)
+
+[node name="Sign" type="Label" parent="."]
+offset_left = -120.0
+offset_top = 120.0
+offset_right = 120.0
+offset_bottom = 144.0
+text = "POSTO 6 — Cagarras"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.18, 0.22, 0.32, 1)
+
+[node name="Walls" type="Node2D" parent="."]
+
+[node name="Top" type="StaticBody2D" parent="Walls"]
+position = Vector2(0, -8)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Top"]
+shape = SubResource("WallH")
+
+[node name="Bottom" type="StaticBody2D" parent="Walls"]
+position = Vector2(0, 188)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Bottom"]
+shape = SubResource("WallH")
+
+[node name="Left" type="StaticBody2D" parent="Walls"]
+position = Vector2(-348, 90)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Left"]
+shape = SubResource("WallV")
+
+[node name="Right" type="StaticBody2D" parent="Walls"]
+position = Vector2(348, 90)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Right"]
+shape = SubResource("WallV")
+
+[node name="PlayerSpawn" type="Marker2D" parent="."]
+position = Vector2(-220, 140)
+
+[node name="TaxiStand" parent="." instance=ExtResource("1_taxi")]
+position = Vector2(-260, 160)
+
+[node name="SupRental" parent="." instance=ExtResource("2_sup")]
+position = Vector2(140, 50)
+
+[node name="SeagullA" type="Label" parent="."]
+offset_left = -180.0
+offset_top = -210.0
+offset_right = -160.0
+offset_bottom = -200.0
+text = "˜"
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.95, 0.92, 0.85, 0.9)
+
+[node name="SeagullB" type="Label" parent="."]
+offset_left = 80.0
+offset_top = -190.0
+offset_right = 100.0
+offset_bottom = -180.0
+text = "˜"
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.95, 0.92, 0.85, 0.85)
+
+[node name="SeagullC" type="Label" parent="."]
+offset_left = 220.0
+offset_top = -220.0
+offset_right = 240.0
+offset_bottom = -210.0
+text = "˜"
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.95, 0.92, 0.85, 0.85)
+
+[node name="DistantBoatA" type="ColorRect" parent="."]
+offset_left = -20.0
+offset_top = -100.0
+offset_right = 8.0
+offset_bottom = -94.0
+color = Color(0.92, 0.92, 0.85, 0.85)
+
+[node name="DistantBoatAMast" type="ColorRect" parent="."]
+offset_left = -10.0
+offset_top = -118.0
+offset_right = -8.0
+offset_bottom = -100.0
+color = Color(0.92, 0.92, 0.85, 0.85)
+
+[node name="DistantBoatB" type="ColorRect" parent="."]
+offset_left = 160.0
+offset_top = -90.0
+offset_right = 188.0
+offset_bottom = -86.0
+color = Color(0.92, 0.92, 0.85, 0.85)
+
+[node name="LifeguardTowerPost1" type="ColorRect" parent="."]
+offset_left = 60.0
+offset_top = 0.0
+offset_right = 64.0
+offset_bottom = 30.0
+color = Color(0.55, 0.42, 0.32, 1)
+
+[node name="LifeguardTowerPost2" type="ColorRect" parent="."]
+offset_left = 84.0
+offset_top = 0.0
+offset_right = 88.0
+offset_bottom = 30.0
+color = Color(0.55, 0.42, 0.32, 1)
+
+[node name="LifeguardCabin" type="ColorRect" parent="."]
+offset_left = 56.0
+offset_top = -16.0
+offset_right = 92.0
+offset_bottom = 0.0
+color = Color(0.95, 0.85, 0.4, 1)
+
+[node name="LifeguardCabinRoof" type="ColorRect" parent="."]
+offset_left = 54.0
+offset_top = -22.0
+offset_right = 94.0
+offset_bottom = -16.0
+color = Color(0.85, 0.55, 0.4, 1)
+
+[node name="LifeguardLabel" type="Label" parent="."]
+offset_left = 50.0
+offset_top = -36.0
+offset_right = 100.0
+offset_bottom = -22.0
+text = "Posto 6"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 9
+theme_override_colors/font_color = Color(0.18, 0.22, 0.32, 1)
+
+[node name="UmbrellaA" type="ColorRect" parent="."]
+offset_left = -200.0
+offset_top = 20.0
+offset_right = -160.0
+offset_bottom = 26.0
+color = Color(0.95, 0.55, 0.4, 1)
+
+[node name="UmbrellaAPole" type="ColorRect" parent="."]
+offset_left = -182.0
+offset_top = 26.0
+offset_right = -178.0
+offset_bottom = 60.0
+color = Color(0.55, 0.42, 0.32, 1)
+
+[node name="UmbrellaB" type="ColorRect" parent="."]
+offset_left = -100.0
+offset_top = 20.0
+offset_right = -60.0
+offset_bottom = 26.0
+color = Color(0.4, 0.65, 0.95, 1)
+
+[node name="UmbrellaBPole" type="ColorRect" parent="."]
+offset_left = -82.0
+offset_top = 26.0
+offset_right = -78.0
+offset_bottom = 60.0
+color = Color(0.55, 0.42, 0.32, 1)
+
+[node name="UmbrellaC" type="ColorRect" parent="."]
+offset_left = 200.0
+offset_top = 30.0
+offset_right = 240.0
+offset_bottom = 36.0
+color = Color(0.95, 0.85, 0.4, 1)
+
+[node name="UmbrellaCPole" type="ColorRect" parent="."]
+offset_left = 218.0
+offset_top = 36.0
+offset_right = 222.0
+offset_bottom = 70.0
+color = Color(0.55, 0.42, 0.32, 1)
+
+[node name="ViewpointIslands" parent="." instance=ExtResource("4_view")]
+position = Vector2(-40, -60)
+viewpoint_id = "cagarras_arquipelago"
+prompt_first = "Observer l'archipel"
+flavor_speaker = "Sobrinho"
+flavor_text = "Les quatre rochers des Cagarras se découpent contre la mer comme une carapace de tatu géant. Les pêcheurs disent qu'on entend les sirènes les nuits de pleine lune."
+money_reward = 60
+
+[node name="CocoVendor" parent="." instance=ExtResource("5_vendor")]
+position = Vector2(-160, 60)
+vendor_id = "cagarras_coco"
+item_label = "Coco gelado"
+price = 8
+stamina_recover = 35.0
+flavor_text_offer = "Coco direto da praia, gelado e doce, freguês."
+
+[node name="SunBatherA" parent="." instance=ExtResource("3_wander")]
+position = Vector2(-150, 50)
+color = Color(0.95, 0.65, 0.55, 1)
+size = Vector2(11, 14)
+path = Array[Vector2]([Vector2(-150, 50), Vector2(-130, 60), Vector2(-160, 40)])
+speed = 8.0
+pause_at_waypoints = 4.0
+bob_strength = 0.4
+
+[node name="SunBatherB" parent="." instance=ExtResource("3_wander")]
+position = Vector2(-50, 60)
+color = Color(0.4, 0.65, 0.95, 1)
+size = Vector2(11, 14)
+path = Array[Vector2]([Vector2(-50, 60), Vector2(-30, 70), Vector2(-60, 50)])
+speed = 8.0
+pause_at_waypoints = 4.0
+bob_strength = 0.4
+
+[node name="ChildPlayingA" parent="." instance=ExtResource("3_wander")]
+position = Vector2(-30, 40)
+color = Color(0.95, 0.85, 0.4, 1)
+size = Vector2(7, 12)
+path = Array[Vector2]([Vector2(-30, 40), Vector2(20, 30), Vector2(0, 50), Vector2(-40, 30)])
+speed = 38.0
+pause_at_waypoints = 0.3
+
+[node name="ChildPlayingB" parent="." instance=ExtResource("3_wander")]
+position = Vector2(0, 50)
+color = Color(0.4, 0.85, 0.55, 1)
+size = Vector2(7, 12)
+path = Array[Vector2]([Vector2(0, 50), Vector2(-30, 30), Vector2(30, 40)])
+speed = 36.0
+pause_at_waypoints = 0.3
+
+[node name="VendorWalker" parent="." instance=ExtResource("3_wander")]
+position = Vector2(60, 40)
+color = Color(0.85, 0.55, 0.4, 1)
+size = Vector2(10, 17)
+path = Array[Vector2]([Vector2(60, 40), Vector2(220, 50), Vector2(-180, 50)])
+speed = 18.0
+pause_at_waypoints = 2.5

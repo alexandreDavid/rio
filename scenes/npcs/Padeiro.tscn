@@ -1,0 +1,14 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/npcs/NPC.tscn" id="1_npc"]
+[ext_resource type="Resource" path="res://resources/npcs/padeiro.tres" id="2_data"]
+[ext_resource type="Script" path="res://scripts/npcs/Padeiro.gd" id="3_script"]
+
+[node name="Padeiro" instance=ExtResource("1_npc")]
+script = ExtResource("3_script")
+data = ExtResource("2_data")
+modulate = Color(1, 0.92, 0.78, 1)
+
+[node name="Sprite2D" parent="."]
+region_rect = Rect2(768, 768, 256, 256)
+scale = Vector2(0.21, 0.21)

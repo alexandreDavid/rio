@@ -1,0 +1,38 @@
+# Godot 4+ ignores
+.godot/
+.import/
+export.cfg
+export_presets.cfg
+*.translation
+
+# Build artefacts
+build/
+dist/
+*.pck
+*.xcframework/
+*.xcodeproj/
+MoltenVK.xcframework/
+export_ios/
+export_ios.zip
+/Rio/
+/Rio2/
+/Rio — Copacabana/
+PrivacyInfo.xcprivacy
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# Claude Code state (local only)
+.claude/
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+*.swp
+.env

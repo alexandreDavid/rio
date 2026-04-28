@@ -1,0 +1,25 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/DeliveryPoint.gd" id="1_drop"]
+[ext_resource type="Script" path="res://scripts/world/POITrigger.gd" id="2_trigger"]
+
+[sub_resource type="CircleShape2D" id="ZoneShape"]
+radius = 20.0
+
+[node name="DeliveryPoint" type="Node2D"]
+script = ExtResource("1_drop")
+trigger = NodePath("Trigger")
+
+[node name="Marker" type="ColorRect" parent="."]
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+color = Color(0.95, 0.3, 0.3, 0.6)
+
+[node name="Trigger" type="Area2D" parent="."]
+script = ExtResource("2_trigger")
+poi_id = "delivery_drop"
+
+[node name="TriggerShape" type="CollisionShape2D" parent="Trigger"]
+shape = SubResource("ZoneShape")

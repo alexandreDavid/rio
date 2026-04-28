@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_bar"]
+script = ExtResource("2_obj")
+id = "escort_to_bar"
+description = "Accompagner la Contessa au Bar do Policial (montrer qu'elle sort 'avec un local')"
+optional = false
+
+[sub_resource type="Resource" id="obj_back"]
+script = ExtResource("2_obj")
+id = "escort_back_to_palace"
+description = "La raccompagner au palace en fin de soirée"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "escort_contessa"
+display_name = "Soirée avec la Contessa"
+description = "Contessa Bianchi veut être vue au bras d'un local charmant. Emmène-la au bar, puis raccompagne-la au palace. Pas de bêtises, juste du style."
+journal_text = "Bar do Policial avec la Contessa → retour au palace."
+giver_npc_id = "contessa"
+ink_knot = "contessa_intro"
+objectives = Array[Resource]([SubResource("obj_bar"), SubResource("obj_back")])
+money_reward = 200
+reputation_rewards = {3: 3, 4: 1}
+required_reputation = {4: 10}
+required_act = 0

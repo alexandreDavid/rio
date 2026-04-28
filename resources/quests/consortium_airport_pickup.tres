@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_meet"]
+script = ExtResource("2_obj")
+id = "meet_at_airport"
+description = "Récupérer Don Salvatore à Santos Dumont (taxi depuis l'Av. Atlântica)"
+optional = false
+
+[sub_resource type="Resource" id="obj_deliver"]
+script = ExtResource("2_obj")
+id = "deliver_to_consortium"
+description = "Ramener Don Salvatore à Dom Nilton sur l'Av. Atlântica"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "consortium_airport_pickup"
+display_name = "Boss em Santos Dumont"
+description = "Dom Nilton attend un visiteur — Don Salvatore, un boss de São Paulo qui pose à Santos Dumont ce matin. Il faut aller le récupérer et le ramener discrètement. La maison paie bien et oublie un peu de la dette en échange."
+journal_text = "Récupérer Don Salvatore à Santos Dumont, le ramener à Dom Nilton."
+giver_npc_id = "consortium"
+ink_knot = "consortium_airport_offer"
+objectives = Array[Resource]([SubResource("obj_meet"), SubResource("obj_deliver")])
+money_reward = 800
+reputation_rewards = {2: 4, 0: -2}
+required_reputation = {}
+required_act = 0

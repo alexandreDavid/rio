@@ -1,0 +1,28 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/minigames/volley/VolleyLauncher.gd" id="1_launch"]
+[ext_resource type="Script" path="res://scripts/world/Interactable.gd" id="2_inter"]
+[ext_resource type="PackedScene" path="res://scenes/minigames/BeachVolley.tscn" id="3_match"]
+[ext_resource type="Texture2D" path="res://assets/sprites/kenney_town.png" id="4_tiles"]
+
+[sub_resource type="RectangleShape2D" id="InteractShape"]
+size = Vector2(48, 48)
+
+[node name="VolleyNet" type="Node2D"]
+script = ExtResource("1_launch")
+interactable = NodePath("Interactable")
+match_scene = ExtResource("3_match")
+bet_amount = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("4_tiles")
+region_enabled = true
+region_rect = Rect2(16, 32, 48, 16)
+scale = Vector2(1.5, 1.5)
+
+[node name="Interactable" type="Area2D" parent="."]
+script = ExtResource("2_inter")
+prompt = "Jouer au volei"
+
+[node name="InteractShape" type="CollisionShape2D" parent="Interactable"]
+shape = SubResource("InteractShape")

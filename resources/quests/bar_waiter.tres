@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_shift"]
+script = ExtResource("2_obj")
+id = "first_shift"
+description = "Faire un premier service de soir au Bar do Policial"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "bar_waiter"
+display_name = "Garçom no Bar do Policial"
+description = "Le patron du Bar do Policial cherche un serveur pour les soirs chargés. Fais tes preuves sur un premier service — ensuite tu pourras revenir pour des shifts payés."
+journal_text = "Faire un premier service au Bar do Policial."
+giver_npc_id = "bar_patrao"
+ink_knot = "patrao_intro"
+objectives = Array[Resource]([SubResource("obj_shift")])
+money_reward = 40
+reputation_rewards = {2: 1, 4: 1}
+required_reputation = {}
+required_act = 0

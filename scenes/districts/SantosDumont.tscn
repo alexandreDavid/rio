@@ -1,0 +1,338 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/props/TaxiStand.tscn" id="1_taxi"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/DonSalvatore.tscn" id="2_salvatore"]
+[ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="3_wander"]
+[ext_resource type="PackedScene" path="res://scenes/props/Viewpoint.tscn" id="4_view"]
+[ext_resource type="PackedScene" path="res://scenes/props/StreetVendor.tscn" id="5_vendor"]
+
+[sub_resource type="RectangleShape2D" id="WallH"]
+size = Vector2(700, 16)
+
+[sub_resource type="RectangleShape2D" id="WallV"]
+size = Vector2(16, 360)
+
+[node name="SantosDumontDistrict" type="Node2D"]
+
+[node name="SkyDawn" type="ColorRect" parent="."]
+offset_left = -360.0
+offset_top = -260.0
+offset_right = 360.0
+offset_bottom = -120.0
+color = Color(0.55, 0.7, 0.85, 1)
+
+[node name="SkyHorizon" type="ColorRect" parent="."]
+offset_left = -360.0
+offset_top = -140.0
+offset_right = 360.0
+offset_bottom = -100.0
+color = Color(0.85, 0.78, 0.7, 1)
+
+[node name="BayWater" type="ColorRect" parent="."]
+offset_left = -360.0
+offset_top = -100.0
+offset_right = 360.0
+offset_bottom = -60.0
+color = Color(0.32, 0.48, 0.6, 1)
+
+[node name="PaoAcucarSilhouette" type="ColorRect" parent="."]
+offset_left = 220.0
+offset_top = -160.0
+offset_right = 290.0
+offset_bottom = -100.0
+color = Color(0.22, 0.28, 0.38, 1)
+
+[node name="MorroSilhouette" type="ColorRect" parent="."]
+offset_left = 290.0
+offset_top = -130.0
+offset_right = 340.0
+offset_bottom = -100.0
+color = Color(0.22, 0.28, 0.38, 1)
+
+[node name="Terminal" type="ColorRect" parent="."]
+offset_left = -260.0
+offset_top = -90.0
+offset_right = 100.0
+offset_bottom = -20.0
+color = Color(0.78, 0.78, 0.82, 1)
+
+[node name="TerminalRoof" type="ColorRect" parent="."]
+offset_left = -270.0
+offset_top = -96.0
+offset_right = 110.0
+offset_bottom = -90.0
+color = Color(0.55, 0.55, 0.58, 1)
+
+[node name="TerminalGlass" type="ColorRect" parent="."]
+offset_left = -240.0
+offset_top = -75.0
+offset_right = 80.0
+offset_bottom = -45.0
+color = Color(0.45, 0.62, 0.78, 0.8)
+
+[node name="ControlTower" type="ColorRect" parent="."]
+offset_left = 110.0
+offset_top = -150.0
+offset_right = 130.0
+offset_bottom = -20.0
+color = Color(0.7, 0.7, 0.72, 1)
+
+[node name="ControlTowerCab" type="ColorRect" parent="."]
+offset_left = 100.0
+offset_top = -160.0
+offset_right = 140.0
+offset_bottom = -140.0
+color = Color(0.4, 0.55, 0.7, 1)
+
+[node name="Runway" type="ColorRect" parent="."]
+offset_left = -340.0
+offset_top = 0.0
+offset_right = 340.0
+offset_bottom = 60.0
+color = Color(0.22, 0.22, 0.24, 1)
+
+[node name="RunwayDash1" type="ColorRect" parent="."]
+offset_left = -300.0
+offset_top = 28.0
+offset_right = -240.0
+offset_bottom = 32.0
+color = Color(0.95, 0.95, 0.92, 1)
+
+[node name="RunwayDash2" type="ColorRect" parent="."]
+offset_left = -180.0
+offset_top = 28.0
+offset_right = -120.0
+offset_bottom = 32.0
+color = Color(0.95, 0.95, 0.92, 1)
+
+[node name="RunwayDash3" type="ColorRect" parent="."]
+offset_left = -60.0
+offset_top = 28.0
+offset_right = 0.0
+offset_bottom = 32.0
+color = Color(0.95, 0.95, 0.92, 1)
+
+[node name="RunwayDash4" type="ColorRect" parent="."]
+offset_left = 60.0
+offset_top = 28.0
+offset_right = 120.0
+offset_bottom = 32.0
+color = Color(0.95, 0.95, 0.92, 1)
+
+[node name="RunwayDash5" type="ColorRect" parent="."]
+offset_left = 180.0
+offset_top = 28.0
+offset_right = 240.0
+offset_bottom = 32.0
+color = Color(0.95, 0.95, 0.92, 1)
+
+[node name="PlaneFuselage" type="ColorRect" parent="."]
+offset_left = 40.0
+offset_top = -8.0
+offset_right = 200.0
+offset_bottom = 8.0
+color = Color(0.95, 0.95, 0.95, 1)
+
+[node name="PlaneNose" type="ColorRect" parent="."]
+offset_left = 200.0
+offset_top = -4.0
+offset_right = 218.0
+offset_bottom = 4.0
+color = Color(0.85, 0.85, 0.85, 1)
+
+[node name="PlaneTail" type="ColorRect" parent="."]
+offset_left = 32.0
+offset_top = -22.0
+offset_right = 48.0
+offset_bottom = 0.0
+color = Color(0.85, 0.4, 0.35, 1)
+
+[node name="PlaneWing" type="ColorRect" parent="."]
+offset_left = 90.0
+offset_top = 6.0
+offset_right = 150.0
+offset_bottom = 18.0
+color = Color(0.78, 0.78, 0.78, 1)
+
+[node name="Apron" type="ColorRect" parent="."]
+offset_left = -340.0
+offset_top = 60.0
+offset_right = 340.0
+offset_bottom = 180.0
+color = Color(0.55, 0.5, 0.48, 1)
+
+[node name="ApronLine" type="ColorRect" parent="."]
+offset_left = -340.0
+offset_top = 96.0
+offset_right = 340.0
+offset_bottom = 100.0
+color = Color(0.95, 0.82, 0.3, 1)
+
+[node name="Sign" type="Label" parent="."]
+offset_left = -120.0
+offset_top = 110.0
+offset_right = 120.0
+offset_bottom = 134.0
+text = "AEROPORTO SANTOS DUMONT"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.95, 0.92, 0.85, 1)
+
+[node name="Walls" type="Node2D" parent="."]
+
+[node name="Top" type="StaticBody2D" parent="Walls"]
+position = Vector2(0, -8)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Top"]
+shape = SubResource("WallH")
+
+[node name="Bottom" type="StaticBody2D" parent="Walls"]
+position = Vector2(0, 188)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Bottom"]
+shape = SubResource("WallH")
+
+[node name="Left" type="StaticBody2D" parent="Walls"]
+position = Vector2(-348, 90)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Left"]
+shape = SubResource("WallV")
+
+[node name="Right" type="StaticBody2D" parent="Walls"]
+position = Vector2(348, 90)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Right"]
+shape = SubResource("WallV")
+
+[node name="PlayerSpawn" type="Marker2D" parent="."]
+position = Vector2(-220, 140)
+
+[node name="TaxiStand" parent="." instance=ExtResource("1_taxi")]
+position = Vector2(-260, 160)
+
+[node name="DonSalvatore" parent="." instance=ExtResource("2_salvatore")]
+position = Vector2(80, 130)
+
+[node name="DepartureBoard" type="ColorRect" parent="."]
+offset_left = -240.0
+offset_top = 100.0
+offset_right = -120.0
+offset_bottom = 124.0
+color = Color(0.18, 0.22, 0.28, 1)
+
+[node name="DepartureBoardLine" type="Label" parent="."]
+offset_left = -236.0
+offset_top = 100.0
+offset_right = -124.0
+offset_bottom = 124.0
+text = "GIG·08:30·EMBARQUE"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 9
+theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
+
+[node name="LuggageCart" type="ColorRect" parent="."]
+offset_left = 200.0
+offset_top = 96.0
+offset_right = 240.0
+offset_bottom = 116.0
+color = Color(0.55, 0.45, 0.42, 1)
+
+[node name="LuggageStack" type="ColorRect" parent="."]
+offset_left = 204.0
+offset_top = 80.0
+offset_right = 232.0
+offset_bottom = 96.0
+color = Color(0.42, 0.32, 0.28, 1)
+
+[node name="ApronGroundLine1" type="ColorRect" parent="."]
+offset_left = -340.0
+offset_top = 60.0
+offset_right = 340.0
+offset_bottom = 62.0
+color = Color(0.95, 0.82, 0.3, 0.6)
+
+[node name="HangarSilhouette" type="ColorRect" parent="."]
+offset_left = -340.0
+offset_top = -60.0
+offset_right = -260.0
+offset_bottom = -10.0
+color = Color(0.62, 0.62, 0.65, 1)
+
+[node name="HangarRoof" type="ColorRect" parent="."]
+offset_left = -340.0
+offset_top = -68.0
+offset_right = -260.0
+offset_bottom = -60.0
+color = Color(0.42, 0.42, 0.45, 1)
+
+[node name="HangarLogo" type="Label" parent="."]
+offset_left = -330.0
+offset_top = -42.0
+offset_right = -270.0
+offset_bottom = -22.0
+text = "FAB"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
+
+[node name="WindSock" type="ColorRect" parent="."]
+offset_left = 304.0
+offset_top = -72.0
+offset_right = 308.0
+offset_bottom = -32.0
+color = Color(0.55, 0.5, 0.45, 1)
+
+[node name="WindSockBody" type="ColorRect" parent="."]
+offset_left = 308.0
+offset_top = -68.0
+offset_right = 332.0
+offset_bottom = -56.0
+color = Color(0.95, 0.5, 0.18, 0.85)
+
+[node name="ViewpointTarmac" parent="." instance=ExtResource("4_view")]
+position = Vector2(140, 60)
+viewpoint_id = "santos_dumont_baia"
+prompt_first = "Regarder la baie"
+flavor_speaker = "Sobrinho"
+flavor_text = "L'aéroport pose ses pistes au ras de la baie de Guanabara. Un avion décolle, frôle le pão de açúcar, et disparaît dans le bleu. Les businessmen partent ; Rio reste."
+money_reward = 70
+
+[node name="EmpadaVendor" parent="." instance=ExtResource("5_vendor")]
+position = Vector2(-140, 130)
+vendor_id = "santos_dumont_empada"
+item_label = "Empada de frango"
+price = 6
+stamina_recover = 25.0
+flavor_text_offer = "Empadinha de frango fresca da manhã, freguês de avião."
+
+[node name="ExecutiveA" parent="." instance=ExtResource("3_wander")]
+position = Vector2(-180, 100)
+color = Color(0.18, 0.22, 0.32, 1)
+size = Vector2(10, 18)
+path = Array[Vector2]([Vector2(-180, 100), Vector2(-100, 100), Vector2(-160, 130)])
+speed = 32.0
+pause_at_waypoints = 0.8
+
+[node name="ExecutiveB" parent="." instance=ExtResource("3_wander")]
+position = Vector2(160, 110)
+color = Color(0.32, 0.32, 0.4, 1)
+size = Vector2(10, 18)
+path = Array[Vector2]([Vector2(160, 110), Vector2(220, 100), Vector2(180, 140)])
+speed = 30.0
+pause_at_waypoints = 0.6
+
+[node name="GroundCrew" parent="." instance=ExtResource("3_wander")]
+position = Vector2(-40, 80)
+color = Color(0.95, 0.55, 0.18, 1)
+size = Vector2(9, 16)
+path = Array[Vector2]([Vector2(-40, 80), Vector2(40, 80), Vector2(0, 60)])
+speed = 22.0
+pause_at_waypoints = 1.2
+
+[node name="StewardessKid" parent="." instance=ExtResource("3_wander")]
+position = Vector2(-220, 110)
+color = Color(0.18, 0.32, 0.62, 1)
+size = Vector2(9, 16)
+path = Array[Vector2]([Vector2(-220, 110), Vector2(-260, 130), Vector2(-200, 100)])
+speed = 24.0

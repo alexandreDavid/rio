@@ -1,0 +1,31 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/MobileControls.gd" id="1_mobile"]
+[ext_resource type="Script" path="res://scripts/ui/VirtualJoystick.gd" id="2_joy"]
+
+[node name="MobileControls" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+script = ExtResource("1_mobile")
+
+[node name="Joystick" type="Control" parent="."]
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 120.0
+offset_top = -320.0
+offset_right = 400.0
+offset_bottom = -40.0
+script = ExtResource("2_joy")
+
+[node name="InteractButton" type="Button" parent="."]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -200.0
+offset_top = -200.0
+offset_right = -40.0
+offset_bottom = -40.0
+theme_override_font_sizes/font_size = 40
+text = "Action"

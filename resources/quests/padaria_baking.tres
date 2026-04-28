@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_first_batch"]
+script = ExtResource("2_obj")
+id = "first_batch"
+description = "Cuire et vendre au moins une fournée de pão de queijo"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "padaria_baking"
+display_name = "Aprendiz de padeiro"
+description = "Seu Tonio te confie le fournil pour la fournée du matin. Assemble les ingrédients sur la plaque, enfourne, sors au bon moment, panier de vente. Le bairro a faim."
+journal_text = "Cuire un lot complet à la padaria São Sebastião."
+giver_npc_id = "padeiro"
+ink_knot = "padaria_baking_offer"
+objectives = Array[Resource]([SubResource("obj_first_batch")])
+money_reward = 0
+reputation_rewards = {0: 2, 2: 1}
+required_reputation = {}
+required_act = 0

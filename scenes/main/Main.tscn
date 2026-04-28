@@ -1,0 +1,45 @@
+[gd_scene load_steps=13 format=3]
+
+[ext_resource type="Script" path="res://scripts/main/MainBoot.gd" id="1_boot"]
+[ext_resource type="Script" path="res://scripts/world/DayLighting.gd" id="12_lighting"]
+[ext_resource type="PackedScene" path="res://scenes/world/Copacabana.tscn" id="2_world"]
+[ext_resource type="PackedScene" path="res://scenes/ui/HUD.tscn" id="3_hud"]
+[ext_resource type="PackedScene" path="res://scenes/ui/DialogueUI.tscn" id="4_dlg"]
+[ext_resource type="PackedScene" path="res://scenes/ui/QuestLog.tscn" id="5_log"]
+[ext_resource type="PackedScene" path="res://scenes/ui/MobileControls.tscn" id="6_mobile"]
+[ext_resource type="PackedScene" path="res://scenes/ui/EndingScreen.tscn" id="7_ending"]
+[ext_resource type="PackedScene" path="res://scenes/ui/MissionBoardUI.tscn" id="8_missions"]
+[ext_resource type="PackedScene" path="res://scenes/ui/TaxiUI.tscn" id="9_taxi"]
+[ext_resource type="PackedScene" path="res://scenes/ui/MiniMap.tscn" id="10_minimap"]
+[ext_resource type="PackedScene" path="res://scenes/ui/JournalUI.tscn" id="11_journal"]
+
+[node name="Main" type="Node"]
+script = ExtResource("1_boot")
+
+[node name="DayLighting" type="CanvasModulate" parent="."]
+script = ExtResource("12_lighting")
+
+[node name="World" parent="." instance=ExtResource("2_world")]
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="HUD" parent="UI" instance=ExtResource("3_hud")]
+
+[node name="DialogueUI" parent="UI" instance=ExtResource("4_dlg")]
+
+[node name="QuestLog" parent="UI" instance=ExtResource("5_log")]
+
+[node name="MiniMap" parent="UI" instance=ExtResource("10_minimap")]
+
+[node name="MobileLayer" type="CanvasLayer" parent="."]
+layer = 10
+
+[node name="MobileControls" parent="MobileLayer" instance=ExtResource("6_mobile")]
+
+[node name="EndingScreen" parent="." instance=ExtResource("7_ending")]
+
+[node name="MissionBoardUI" parent="." instance=ExtResource("8_missions")]
+
+[node name="TaxiUI" parent="." instance=ExtResource("9_taxi")]
+
+[node name="JournalUI" parent="." instance=ExtResource("11_journal")]

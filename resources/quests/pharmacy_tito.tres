@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_pickup"]
+script = ExtResource("2_obj")
+id = "receive_medicine"
+description = "Prendre le médicament chez Dona Carmen"
+optional = false
+
+[sub_resource type="Resource" id="obj_deliver"]
+script = ExtResource("2_obj")
+id = "deliver_medicine"
+description = "Livrer le médicament à Tito (Morro)"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "pharmacy_tito"
+display_name = "Livraison au Morro"
+description = "Dona Carmen a un médicament pour son neveu Tito, malade dans la favela. Livre-le et reviens encaisser."
+journal_text = "Livrer le médicament à Tito (favela), puis revenir à la pharmacie."
+giver_npc_id = "farmaceutico"
+ink_knot = "farma_intro"
+objectives = Array[Resource]([SubResource("obj_pickup"), SubResource("obj_deliver")])
+money_reward = 60
+reputation_rewards = {0: 2}
+required_reputation = {}
+required_act = 0

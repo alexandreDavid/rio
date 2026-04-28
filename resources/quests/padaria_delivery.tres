@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_deliver"]
+script = ExtResource("2_obj")
+id = "deliver_bread"
+description = "Apporter le pain frais à Dona Irene avant qu'il refroidisse"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "padaria_delivery"
+display_name = "Pain chaud para Dona Irene"
+description = "Seu Tonio sort la fournée de 7h. Dona Irene, sa cliente fidèle, ne descend plus du Palace les matins de pluie. Il faut lui monter son pain pendant qu'il fume encore."
+journal_text = "Apporter le pain à Dona Irene sur le calçadão."
+giver_npc_id = "padeiro"
+ink_knot = "padaria_offer"
+objectives = Array[Resource]([SubResource("obj_deliver")])
+money_reward = 30
+reputation_rewards = {0: 2}
+required_reputation = {}
+required_act = 0

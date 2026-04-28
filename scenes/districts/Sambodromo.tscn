@@ -1,0 +1,312 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/props/TaxiStand.tscn" id="1_taxi"]
+[ext_resource type="PackedScene" path="res://scenes/props/SambaStage.tscn" id="2_stage"]
+[ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="3_wander"]
+[ext_resource type="PackedScene" path="res://scenes/props/Viewpoint.tscn" id="4_view"]
+[ext_resource type="PackedScene" path="res://scenes/props/StreetVendor.tscn" id="5_vendor"]
+
+[sub_resource type="RectangleShape2D" id="WallH"]
+size = Vector2(700, 16)
+
+[sub_resource type="RectangleShape2D" id="WallV"]
+size = Vector2(16, 360)
+
+[node name="SambodromoDistrict" type="Node2D"]
+
+[node name="SkyNight" type="ColorRect" parent="."]
+offset_left = -360.0
+offset_top = -260.0
+offset_right = 360.0
+offset_bottom = -100.0
+color = Color(0.18, 0.12, 0.32, 1)
+
+[node name="StadiumLights" type="ColorRect" parent="."]
+offset_left = -360.0
+offset_top = -180.0
+offset_right = 360.0
+offset_bottom = -176.0
+color = Color(0.95, 0.92, 0.7, 0.6)
+
+[node name="GrandstandL" type="ColorRect" parent="."]
+offset_left = -340.0
+offset_top = -100.0
+offset_right = -200.0
+offset_bottom = 0.0
+color = Color(0.32, 0.28, 0.42, 1)
+
+[node name="GrandstandLDecor" type="ColorRect" parent="."]
+offset_left = -330.0
+offset_top = -88.0
+offset_right = -210.0
+offset_bottom = -82.0
+color = Color(0.95, 0.85, 0.4, 0.6)
+
+[node name="GrandstandR" type="ColorRect" parent="."]
+offset_left = 200.0
+offset_top = -100.0
+offset_right = 340.0
+offset_bottom = 0.0
+color = Color(0.32, 0.28, 0.42, 1)
+
+[node name="GrandstandRDecor" type="ColorRect" parent="."]
+offset_left = 210.0
+offset_top = -88.0
+offset_right = 330.0
+offset_bottom = -82.0
+color = Color(0.95, 0.5, 0.7, 0.6)
+
+[node name="Avenue" type="ColorRect" parent="."]
+offset_left = -200.0
+offset_top = -100.0
+offset_right = 200.0
+offset_bottom = 0.0
+color = Color(0.42, 0.32, 0.28, 1)
+
+[node name="AvenueLine" type="ColorRect" parent="."]
+offset_left = -200.0
+offset_top = -52.0
+offset_right = 200.0
+offset_bottom = -48.0
+color = Color(0.95, 0.85, 0.4, 0.7)
+
+[node name="ConfettiP1" type="ColorRect" parent="."]
+offset_left = -120.0
+offset_top = -200.0
+offset_right = -110.0
+offset_bottom = -190.0
+color = Color(0.95, 0.85, 0.4, 0.85)
+
+[node name="ConfettiP2" type="ColorRect" parent="."]
+offset_left = 80.0
+offset_top = -220.0
+offset_right = 90.0
+offset_bottom = -210.0
+color = Color(0.95, 0.5, 0.7, 0.85)
+
+[node name="ConfettiP3" type="ColorRect" parent="."]
+offset_left = 200.0
+offset_top = -180.0
+offset_right = 210.0
+offset_bottom = -170.0
+color = Color(0.4, 0.85, 0.55, 0.85)
+
+[node name="ConfettiP4" type="ColorRect" parent="."]
+offset_left = -240.0
+offset_top = -210.0
+offset_right = -230.0
+offset_bottom = -200.0
+color = Color(0.4, 0.55, 0.95, 0.85)
+
+[node name="StageFloor" type="ColorRect" parent="."]
+offset_left = -340.0
+offset_top = 0.0
+offset_right = 340.0
+offset_bottom = 180.0
+color = Color(0.55, 0.45, 0.42, 1)
+
+[node name="StageStripe" type="ColorRect" parent="."]
+offset_left = -340.0
+offset_top = 60.0
+offset_right = 340.0
+offset_bottom = 64.0
+color = Color(0.95, 0.85, 0.4, 0.6)
+
+[node name="Sign" type="Label" parent="."]
+offset_left = -160.0
+offset_top = 30.0
+offset_right = 160.0
+offset_bottom = 56.0
+text = "SAMBÓDROMO MARQUÊS DE SAPUCAÍ"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
+
+[node name="Walls" type="Node2D" parent="."]
+
+[node name="Top" type="StaticBody2D" parent="Walls"]
+position = Vector2(0, -8)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Top"]
+shape = SubResource("WallH")
+
+[node name="Bottom" type="StaticBody2D" parent="Walls"]
+position = Vector2(0, 188)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Bottom"]
+shape = SubResource("WallH")
+
+[node name="Left" type="StaticBody2D" parent="Walls"]
+position = Vector2(-348, 90)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Left"]
+shape = SubResource("WallV")
+
+[node name="Right" type="StaticBody2D" parent="Walls"]
+position = Vector2(348, 90)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Right"]
+shape = SubResource("WallV")
+
+[node name="PlayerSpawn" type="Marker2D" parent="."]
+position = Vector2(-220, 100)
+
+[node name="TaxiStand" parent="." instance=ExtResource("1_taxi")]
+position = Vector2(-260, 130)
+
+[node name="SambaStage" parent="." instance=ExtResource("2_stage")]
+position = Vector2(140, 90)
+
+[node name="DancerCarroA" type="ColorRect" parent="."]
+offset_left = -180.0
+offset_top = -90.0
+offset_right = -100.0
+offset_bottom = -50.0
+color = Color(0.85, 0.4, 0.55, 1)
+
+[node name="DancerCarroAFrills" type="ColorRect" parent="."]
+offset_left = -190.0
+offset_top = -54.0
+offset_right = -90.0
+offset_bottom = -50.0
+color = Color(0.95, 0.85, 0.4, 1)
+
+[node name="DancerCarroB" type="ColorRect" parent="."]
+offset_left = 100.0
+offset_top = -90.0
+offset_right = 180.0
+offset_bottom = -50.0
+color = Color(0.4, 0.65, 0.95, 1)
+
+[node name="DancerCarroBFrills" type="ColorRect" parent="."]
+offset_left = 90.0
+offset_top = -54.0
+offset_right = 190.0
+offset_bottom = -50.0
+color = Color(0.4, 0.85, 0.55, 1)
+
+[node name="SpotlightL" type="ColorRect" parent="."]
+offset_left = -340.0
+offset_top = -180.0
+offset_right = -260.0
+offset_bottom = -100.0
+color = Color(0.95, 0.92, 0.7, 0.18)
+
+[node name="SpotlightR" type="ColorRect" parent="."]
+offset_left = 260.0
+offset_top = -180.0
+offset_right = 340.0
+offset_bottom = -100.0
+color = Color(0.95, 0.85, 0.4, 0.18)
+
+[node name="MoonHalo" type="ColorRect" parent="."]
+offset_left = -270.0
+offset_top = -240.0
+offset_right = -230.0
+offset_bottom = -200.0
+color = Color(0.95, 0.92, 0.78, 0.85)
+
+[node name="ConfettiP5" type="ColorRect" parent="."]
+offset_left = -60.0
+offset_top = -160.0
+offset_right = -50.0
+offset_bottom = -150.0
+color = Color(0.4, 0.85, 0.55, 0.85)
+
+[node name="ConfettiP6" type="ColorRect" parent="."]
+offset_left = 30.0
+offset_top = -130.0
+offset_right = 40.0
+offset_bottom = -120.0
+color = Color(0.95, 0.85, 0.4, 0.85)
+
+[node name="ConfettiP7" type="ColorRect" parent="."]
+offset_left = 160.0
+offset_top = -100.0
+offset_right = 170.0
+offset_bottom = -90.0
+color = Color(0.85, 0.4, 0.55, 0.85)
+
+[node name="StreamerA" type="ColorRect" parent="."]
+offset_left = -300.0
+offset_top = -200.0
+offset_right = -180.0
+offset_bottom = -198.0
+color = Color(0.95, 0.85, 0.4, 0.7)
+
+[node name="StreamerB" type="ColorRect" parent="."]
+offset_left = 200.0
+offset_top = -210.0
+offset_right = 320.0
+offset_bottom = -208.0
+color = Color(0.85, 0.4, 0.55, 0.7)
+
+[node name="ViewpointAvenue" parent="." instance=ExtResource("4_view")]
+position = Vector2(-100, -50)
+viewpoint_id = "sambodromo_avenida"
+prompt_first = "Regarder l'avenue"
+flavor_speaker = "Sobrinho"
+flavor_text = "Marquês de Sapucaí, mille mètres de béton, cinquante mille gorges. Les écoles défilent une par une, les chars roulent au pas, et la samba ne s'arrête jamais avant l'aube."
+money_reward = 100
+
+[node name="CaipirinhaVendor" parent="." instance=ExtResource("5_vendor")]
+position = Vector2(220, 110)
+vendor_id = "sambodromo_caipirinha"
+item_label = "Caipirinha"
+price = 15
+stamina_recover = 20.0
+flavor_text_offer = "Caipirinha de limão, cachaça boa. Energia pra dançar até de manhã !"
+
+[node name="GlitterVendor" parent="." instance=ExtResource("5_vendor")]
+position = Vector2(-220, 110)
+vendor_id = "sambodromo_glitter"
+item_label = "Glitter & adesivos"
+price = 5
+stamina_recover = 0.0
+rep_axis = 4
+rep_gain = 1
+flavor_text_offer = "Glitter da escola, adesivos do Brasil — pra entrar no clima, freguês !"
+
+[node name="DancerA" parent="." instance=ExtResource("3_wander")]
+position = Vector2(-100, 110)
+color = Color(0.95, 0.85, 0.4, 1)
+size = Vector2(11, 19)
+path = Array[Vector2]([Vector2(-100, 110), Vector2(80, 110), Vector2(-80, 130)])
+speed = 38.0
+pause_at_waypoints = 0.3
+bob_strength = 2.5
+
+[node name="DancerB" parent="." instance=ExtResource("3_wander")]
+position = Vector2(80, 130)
+color = Color(0.85, 0.4, 0.55, 1)
+size = Vector2(11, 19)
+path = Array[Vector2]([Vector2(80, 130), Vector2(-80, 130), Vector2(120, 110)])
+speed = 36.0
+pause_at_waypoints = 0.3
+bob_strength = 2.5
+
+[node name="DancerC" parent="." instance=ExtResource("3_wander")]
+position = Vector2(180, 150)
+color = Color(0.4, 0.65, 0.95, 1)
+size = Vector2(11, 19)
+path = Array[Vector2]([Vector2(180, 150), Vector2(220, 130), Vector2(160, 170)])
+speed = 32.0
+pause_at_waypoints = 0.3
+bob_strength = 2.5
+
+[node name="DrummerA" parent="." instance=ExtResource("3_wander")]
+position = Vector2(-180, 150)
+color = Color(0.4, 0.85, 0.55, 1)
+size = Vector2(11, 19)
+path = Array[Vector2]([Vector2(-180, 150), Vector2(-220, 130), Vector2(-140, 170)])
+speed = 28.0
+pause_at_waypoints = 0.5
+bob_strength = 2.0
+
+[node name="ChildWithFlag" parent="." instance=ExtResource("3_wander")]
+position = Vector2(0, 165)
+color = Color(0.95, 0.85, 0.2, 1)
+size = Vector2(8, 14)
+path = Array[Vector2]([Vector2(0, 165), Vector2(150, 165), Vector2(-150, 165), Vector2(0, 165)])
+speed = 40.0
+pause_at_waypoints = 0.3

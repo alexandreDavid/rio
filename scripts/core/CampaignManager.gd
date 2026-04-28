@@ -1,0 +1,121 @@
+extends Node
+
+# Suit l'état narratif global : acte courant, dette envers le consortium,
+# progression vers l'un des trois endgames (Prefeito / Polícia / Tráfico).
+# Autoload name: CampaignManager.
+
+enum Endgame { NONE, PREFEITO, POLICIA, TRAFICO }
+
+# Somme totale due à la fin de l'acte 1 pour le consortium.
+const DEBT_TOTAL: int = 50000
+# Acompte à verser pour déclencher le passage à l'acte 2 (facilement atteignable).
+const ACT1_THRESHOLD: int = 500
+# Acompte cumulé nécessaire à l'acte 3 (dernière ligne droite avant remboursement final).
+const ACT2_THRESHOLD: int = 25000
+
+var current_act: int = 1
+var debt_paid: int = 0
+var chosen_endgame: int = Endgame.NONE
+# Flags narratifs libres (utilisés par les dialogues Ink et les cinématiques scriptées).
+# Ex. "met_ramos", "tio_ze_revealed", "ratted_on_tito".
+var flags: Dictionary = {}
+
+# --- Dette ---
+
+func debt_remaining() -> int:
+	return max(DEBT_TOTAL - debt_paid, 0)
+
+func pay_debt(amount: int) -> int:
+	if amount <= 0:
+		return 0
+	var applied: int = min(amount, debt_remaining())
+	if applied <= 0:
+		return 0
+	debt_paid += applied
+	EventBus.debt_paid.emit(applied, debt_remaining())
+	_check_act_advance()
+	return applied
+
+# --- Actes ---
+
+func can_advance_to_act(n: int) -> bool:
+	if n == 2:
+		return current_act == 1 and debt_paid >= ACT1_THRESHOLD
+	if n == 3:
+		return current_act == 2 and debt_paid >= ACT2_THRESHOLD
+	return false
+
+func advance_act() -> bool:
+	var next_act: int = current_act + 1
+	if not can_advance_to_act(next_act):
+		return false
+	current_act = next_act
+	EventBus.act_changed.emit(current_act)
+	return true
+
+func _check_act_advance() -> void:
+	# Avancement passif : dès que le seuil est atteint, l'acte progresse.
+	# Les dialogues peuvent réagir à EventBus.act_changed.
+	if can_advance_to_act(current_act + 1):
+		advance_act()
+
+# --- Endgame ---
+
+func set_endgame(path: int) -> void:
+	chosen_endgame = path
+	EventBus.endgame_chosen.emit(path)
+
+# Acte 3 : la finale clôture la dette (l'argent vient de la voie choisie, pas du joueur),
+# scelle la voie ET ouvre l'acte 4 (Reinado). Émet endgame_chosen + act_changed(4).
+func complete_endgame(path: int) -> void:
+	chosen_endgame = path
+	var remaining: int = debt_remaining()
+	if remaining > 0:
+		debt_paid = DEBT_TOTAL
+		EventBus.debt_paid.emit(remaining, 0)
+	EventBus.endgame_chosen.emit(path)
+	if current_act < 4:
+		current_act = 4
+		EventBus.act_changed.emit(4)
+
+# Titre du joueur en acte 4 selon la voie.
+func reign_title() -> String:
+	match chosen_endgame:
+		Endgame.PREFEITO: return "Coronel do Bairro"
+		Endgame.POLICIA:  return "Chefe de Polícia"
+		Endgame.TRAFICO:  return "Patrão do Morro"
+		_: return ""
+
+func endgame_name() -> String:
+	match chosen_endgame:
+		Endgame.PREFEITO: return "Prefeito"
+		Endgame.POLICIA:  return "Chefe de Polícia"
+		Endgame.TRAFICO:  return "Rei do Tráfico"
+		_: return "Indéterminé"
+
+# --- Flags narratifs ---
+
+func set_flag(key: String, value: Variant = true) -> void:
+	flags[key] = value
+
+func has_flag(key: String) -> bool:
+	return flags.has(key) and flags[key]
+
+func get_flag(key: String) -> Variant:
+	return flags.get(key)
+
+# --- Persistance ---
+
+func serialize() -> Dictionary:
+	return {
+		"current_act": current_act,
+		"debt_paid": debt_paid,
+		"chosen_endgame": chosen_endgame,
+		"flags": flags.duplicate(),
+	}
+
+func deserialize(data: Dictionary) -> void:
+	current_act = data.get("current_act", 1)
+	debt_paid = data.get("debt_paid", 0)
+	chosen_endgame = data.get("chosen_endgame", Endgame.NONE)
+	flags = data.get("flags", {}).duplicate() if data.get("flags") != null else {}

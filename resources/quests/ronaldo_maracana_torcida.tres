@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_torcida"]
+script = ExtResource("2_obj")
+id = "lead_torcida"
+description = "Mener une session de torcida au Maracanã"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "ronaldo_maracana_torcida"
+display_name = "Torcida pela Seleção"
+description = "Le Brésil joue ce soir au Maracanã. Ronaldo te file une caisse claire et le tuyau du chef de torcida — si tu mènes le rythme dans la tribune, les supporters paient bien le tambourineiro."
+journal_text = "Mener une session de torcida au Maracanã (taxi depuis l'Av. Atlântica)."
+giver_npc_id = "musicien"
+ink_knot = "ronaldo_torcida_offer"
+objectives = Array[Resource]([SubResource("obj_torcida")])
+money_reward = 0
+reputation_rewards = {2: 4, 0: 2, 4: 2}
+required_reputation = {}
+required_act = 0

@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_deliver"]
+script = ExtResource("2_obj")
+id = "deliver_report"
+description = "Remettre le rapport à Madame Dubois (près du Copacabana Palace)"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "police_report"
+display_name = "Le rapport de police"
+description = "L'agente Silva a besoin qu'un rapport de vol soit livré à une victime sur le calçadão."
+journal_text = "Livrer le rapport de vol à Madame Dubois"
+giver_npc_id = "policier"
+ink_knot = "policier_offer"
+objectives = Array[Resource]([SubResource("obj_deliver")])
+money_reward = 30
+reputation_rewards = {1: 3, 0: 2}

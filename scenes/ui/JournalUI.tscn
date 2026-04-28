@@ -1,0 +1,129 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/JournalUI.gd" id="1_journal"]
+
+[sub_resource type="StyleBoxFlat" id="PanelStyle"]
+bg_color = Color(0.12, 0.14, 0.18, 0.97)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.95, 0.85, 0.4, 0.85)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="HeaderStyle"]
+bg_color = Color(0.95, 0.85, 0.4, 0.92)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+
+[node name="JournalUI" type="CanvasLayer"]
+layer = 5
+script = ExtResource("1_journal")
+
+[node name="Root" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 0
+
+[node name="Backdrop" type="ColorRect" parent="Root"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.6)
+
+[node name="Panel" type="Panel" parent="Root"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -640.0
+offset_top = -380.0
+offset_right = 640.0
+offset_bottom = 380.0
+theme_override_styles/panel = SubResource("PanelStyle")
+
+[node name="Header" type="Panel" parent="Root/Panel"]
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 1264.0
+offset_bottom = 56.0
+theme_override_styles/panel = SubResource("HeaderStyle")
+
+[node name="Title" type="Label" parent="Root/Panel/Header"]
+offset_left = 16.0
+offset_right = 320.0
+offset_bottom = 40.0
+text = "Diário Narrativo"
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(0.18, 0.14, 0.1, 1)
+
+[node name="Counter" type="Label" parent="Root/Panel/Header"]
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -120.0
+offset_right = 120.0
+offset_bottom = 40.0
+text = "0 / 0 entradas"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.18, 0.14, 0.1, 1)
+
+[node name="Close" type="Button" parent="Root/Panel/Header"]
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -80.0
+offset_right = -8.0
+offset_top = 4.0
+offset_bottom = 36.0
+text = "Fechar (J)"
+theme_override_font_sizes/font_size = 13
+
+[node name="HBox" type="HBoxContainer" parent="Root/Panel"]
+offset_left = 16.0
+offset_top = 72.0
+offset_right = 1264.0
+offset_bottom = 744.0
+theme_override_constants/separation = 16
+
+[node name="Categories" type="PanelContainer" parent="Root/Panel/HBox"]
+custom_minimum_size = Vector2(260, 0)
+
+[node name="Scroll" type="ScrollContainer" parent="Root/Panel/HBox/Categories"]
+
+[node name="Box" type="VBoxContainer" parent="Root/Panel/HBox/Categories/Scroll"]
+custom_minimum_size = Vector2(244, 0)
+theme_override_constants/separation = 4
+
+[node name="Entries" type="PanelContainer" parent="Root/Panel/HBox"]
+custom_minimum_size = Vector2(360, 0)
+
+[node name="Scroll" type="ScrollContainer" parent="Root/Panel/HBox/Entries"]
+
+[node name="Box" type="VBoxContainer" parent="Root/Panel/HBox/Entries/Scroll"]
+custom_minimum_size = Vector2(344, 0)
+theme_override_constants/separation = 4
+
+[node name="Detail" type="VBoxContainer" parent="Root/Panel/HBox"]
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="Root/Panel/HBox/Detail"]
+text = ""
+autowrap_mode = 3
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
+
+[node name="Speaker" type="Label" parent="Root/Panel/HBox/Detail"]
+text = ""
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.7, 0.85, 0.95, 1)
+
+[node name="Body" type="Label" parent="Root/Panel/HBox/Detail"]
+text = "Sélectionne une entrée à gauche pour la relire."
+autowrap_mode = 3
+theme_override_font_sizes/font_size = 15
+theme_override_colors/font_color = Color(0.92, 0.92, 0.95, 1)

@@ -1,0 +1,14 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/npcs/NPC.tscn" id="1_npc"]
+[ext_resource type="Resource" path="res://resources/npcs/miguel.tres" id="2_data"]
+[ext_resource type="Script" path="res://scripts/npcs/Miguel.gd" id="3_script"]
+
+[node name="Miguel" instance=ExtResource("1_npc")]
+script = ExtResource("3_script")
+data = ExtResource("2_data")
+modulate = Color(0.7, 0.5, 0.4, 1)
+
+[node name="Sprite2D" parent="."]
+region_rect = Rect2(316, 280, 155, 198)
+scale = Vector2(0.2424, 0.2424)

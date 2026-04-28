@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_find"]
+script = ExtResource("2_obj")
+id = "find_tito"
+description = "Retrouver Tito dans la favela (Morro, ouest de la carte)"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "pedros_son"
+display_name = "Le fils de Seu Pedro"
+description = "Tito, le fils de Seu Pedro, est parti jouer dans la favela ce matin et n'est pas rentré."
+journal_text = "Retrouver Tito dans la Favela do Morro"
+giver_npc_id = "pecheur"
+ink_knot = "pecheur_worried"
+objectives = Array[Resource]([SubResource("obj_find")])
+money_reward = 40
+reputation_rewards = {2: 3, 0: 2}

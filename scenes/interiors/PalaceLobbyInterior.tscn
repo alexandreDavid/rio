@@ -1,0 +1,302 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/props/BuildingDoor.tscn" id="1_door"]
+[ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="2_wander"]
+
+[sub_resource type="RectangleShape2D" id="WallH"]
+size = Vector2(520, 12)
+
+[sub_resource type="RectangleShape2D" id="WallV"]
+size = Vector2(12, 300)
+
+[sub_resource type="RectangleShape2D" id="DeskShape"]
+size = Vector2(140, 28)
+
+[sub_resource type="RectangleShape2D" id="SofaShape"]
+size = Vector2(80, 32)
+
+[node name="PalaceLobbyInterior" type="Node2D"]
+
+[node name="Floor" type="ColorRect" parent="."]
+offset_left = -260.0
+offset_top = -150.0
+offset_right = 260.0
+offset_bottom = 150.0
+color = Color(0.92, 0.88, 0.78, 1)
+
+[node name="CheckerTile1" type="ColorRect" parent="."]
+offset_left = -80.0
+offset_top = -60.0
+offset_right = -20.0
+offset_bottom = 0.0
+color = Color(0.6, 0.5, 0.35, 0.6)
+
+[node name="CheckerTile2" type="ColorRect" parent="."]
+offset_left = 20.0
+offset_top = -60.0
+offset_right = 80.0
+offset_bottom = 0.0
+color = Color(0.6, 0.5, 0.35, 0.6)
+
+[node name="CheckerTile3" type="ColorRect" parent="."]
+offset_left = -130.0
+offset_top = 0.0
+offset_right = -70.0
+offset_bottom = 60.0
+color = Color(0.6, 0.5, 0.35, 0.6)
+
+[node name="CheckerTile4" type="ColorRect" parent="."]
+offset_left = -20.0
+offset_top = 0.0
+offset_right = 40.0
+offset_bottom = 60.0
+color = Color(0.6, 0.5, 0.35, 0.6)
+
+[node name="CheckerTile5" type="ColorRect" parent="."]
+offset_left = 70.0
+offset_top = 0.0
+offset_right = 130.0
+offset_bottom = 60.0
+color = Color(0.6, 0.5, 0.35, 0.6)
+
+[node name="Carpet" type="ColorRect" parent="."]
+offset_left = -30.0
+offset_top = 60.0
+offset_right = 30.0
+offset_bottom = 140.0
+color = Color(0.6, 0.15, 0.15, 1)
+
+[node name="ReceptionDesk" type="StaticBody2D" parent="."]
+position = Vector2(0, -110)
+
+[node name="Shape" type="CollisionShape2D" parent="ReceptionDesk"]
+shape = SubResource("DeskShape")
+
+[node name="Rect" type="ColorRect" parent="ReceptionDesk"]
+offset_left = -70.0
+offset_top = -14.0
+offset_right = 70.0
+offset_bottom = 14.0
+color = Color(0.5, 0.35, 0.2, 1)
+
+[node name="GoldTrim" type="ColorRect" parent="ReceptionDesk"]
+offset_left = -70.0
+offset_top = -16.0
+offset_right = 70.0
+offset_bottom = -12.0
+color = Color(0.85, 0.72, 0.3, 1)
+
+[node name="Sofa1" type="StaticBody2D" parent="."]
+position = Vector2(-200, 40)
+
+[node name="Shape" type="CollisionShape2D" parent="Sofa1"]
+shape = SubResource("SofaShape")
+
+[node name="Rect" type="ColorRect" parent="Sofa1"]
+offset_left = -40.0
+offset_top = -16.0
+offset_right = 40.0
+offset_bottom = 16.0
+color = Color(0.25, 0.35, 0.55, 1)
+
+[node name="Sofa2" type="StaticBody2D" parent="."]
+position = Vector2(200, 40)
+
+[node name="Shape" type="CollisionShape2D" parent="Sofa2"]
+shape = SubResource("SofaShape")
+
+[node name="Rect" type="ColorRect" parent="Sofa2"]
+offset_left = -40.0
+offset_top = -16.0
+offset_right = 40.0
+offset_bottom = 16.0
+color = Color(0.25, 0.35, 0.55, 1)
+
+[node name="Chandelier" type="ColorRect" parent="."]
+offset_left = -16.0
+offset_top = -148.0
+offset_right = 16.0
+offset_bottom = -130.0
+color = Color(0.95, 0.85, 0.3, 0.85)
+
+[node name="PalaceLabel" type="Label" parent="."]
+offset_left = -80.0
+offset_top = -148.0
+offset_right = 80.0
+offset_bottom = -130.0
+theme_override_font_sizes/font_size = 12
+text = "COPACABANA PALACE"
+horizontal_alignment = 1
+
+[node name="Walls" type="Node2D" parent="."]
+
+[node name="Top" type="StaticBody2D" parent="Walls"]
+position = Vector2(0, -150)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Top"]
+shape = SubResource("WallH")
+
+[node name="Bottom" type="StaticBody2D" parent="Walls"]
+position = Vector2(0, 150)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Bottom"]
+shape = SubResource("WallH")
+
+[node name="Left" type="StaticBody2D" parent="Walls"]
+position = Vector2(-260, 0)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Left"]
+shape = SubResource("WallV")
+
+[node name="Right" type="StaticBody2D" parent="Walls"]
+position = Vector2(260, 0)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Right"]
+shape = SubResource("WallV")
+
+[node name="ExitDoor" parent="." instance=ExtResource("1_door")]
+position = Vector2(0, 145)
+prompt_text = "Sortir"
+is_exit = true
+
+[node name="SpawnPoint" type="Marker2D" parent="."]
+position = Vector2(0, 115)
+
+[node name="ChandelierBase" type="ColorRect" parent="."]
+offset_left = -22.0
+offset_top = -150.0
+offset_right = 22.0
+offset_bottom = -130.0
+color = Color(0.85, 0.78, 0.45, 1)
+
+[node name="ChandelierGlow" type="ColorRect" parent="."]
+offset_left = -50.0
+offset_top = -130.0
+offset_right = 50.0
+offset_bottom = -100.0
+color = Color(0.95, 0.85, 0.55, 0.18)
+
+[node name="VasePedestalL" type="ColorRect" parent="."]
+offset_left = -240.0
+offset_top = -50.0
+offset_right = -224.0
+offset_bottom = -10.0
+color = Color(0.78, 0.62, 0.42, 1)
+
+[node name="VasePedestalLBowl" type="ColorRect" parent="."]
+offset_left = -242.0
+offset_top = -68.0
+offset_right = -222.0
+offset_bottom = -50.0
+color = Color(0.42, 0.32, 0.22, 1)
+
+[node name="VasePedestalLFlowers" type="ColorRect" parent="."]
+offset_left = -240.0
+offset_top = -82.0
+offset_right = -224.0
+offset_bottom = -68.0
+color = Color(0.85, 0.4, 0.55, 1)
+
+[node name="VasePedestalR" type="ColorRect" parent="."]
+offset_left = 224.0
+offset_top = -50.0
+offset_right = 240.0
+offset_bottom = -10.0
+color = Color(0.78, 0.62, 0.42, 1)
+
+[node name="VasePedestalRBowl" type="ColorRect" parent="."]
+offset_left = 222.0
+offset_top = -68.0
+offset_right = 242.0
+offset_bottom = -50.0
+color = Color(0.42, 0.32, 0.22, 1)
+
+[node name="VasePedestalRFlowers" type="ColorRect" parent="."]
+offset_left = 224.0
+offset_top = -82.0
+offset_right = 240.0
+offset_bottom = -68.0
+color = Color(0.95, 0.85, 0.4, 1)
+
+[node name="RedCarpet" type="ColorRect" parent="."]
+offset_left = -50.0
+offset_top = 0.0
+offset_right = 50.0
+offset_bottom = 145.0
+color = Color(0.65, 0.18, 0.22, 0.85)
+
+[node name="GoldEdgeL" type="ColorRect" parent="."]
+offset_left = -52.0
+offset_top = 0.0
+offset_right = -48.0
+offset_bottom = 145.0
+color = Color(0.95, 0.78, 0.32, 0.85)
+
+[node name="GoldEdgeR" type="ColorRect" parent="."]
+offset_left = 48.0
+offset_top = 0.0
+offset_right = 52.0
+offset_bottom = 145.0
+color = Color(0.95, 0.78, 0.32, 0.85)
+
+[node name="LobbySofa" type="ColorRect" parent="."]
+offset_left = -200.0
+offset_top = 70.0
+offset_right = -100.0
+offset_bottom = 95.0
+color = Color(0.42, 0.22, 0.18, 1)
+
+[node name="LobbySofaBack" type="ColorRect" parent="."]
+offset_left = -200.0
+offset_top = 60.0
+offset_right = -100.0
+offset_bottom = 70.0
+color = Color(0.55, 0.32, 0.28, 1)
+
+[node name="ConciergeBack" parent="." instance=ExtResource("2_wander")]
+position = Vector2(0, -50)
+color = Color(0.18, 0.18, 0.22, 1)
+size = Vector2(10, 18)
+path = Array[Vector2]([Vector2(-30, -50), Vector2(30, -50), Vector2(0, -60)])
+speed = 14.0
+pause_at_waypoints = 2.5
+
+[node name="GuestA" parent="." instance=ExtResource("2_wander")]
+position = Vector2(-150, 0)
+color = Color(0.95, 0.85, 0.4, 1)
+size = Vector2(10, 17)
+path = Array[Vector2]([Vector2(-150, 0), Vector2(-180, 30), Vector2(-100, 80), Vector2(-50, 130)])
+speed = 18.0
+pause_at_waypoints = 2.0
+
+[node name="GuestB" parent="." instance=ExtResource("2_wander")]
+position = Vector2(150, 30)
+color = Color(0.85, 0.4, 0.55, 1)
+size = Vector2(10, 17)
+path = Array[Vector2]([Vector2(150, 30), Vector2(200, 60), Vector2(50, 100), Vector2(180, 0)])
+speed = 16.0
+pause_at_waypoints = 2.4
+
+[node name="Bellboy" parent="." instance=ExtResource("2_wander")]
+position = Vector2(-80, 50)
+color = Color(0.95, 0.32, 0.22, 1)
+size = Vector2(9, 16)
+path = Array[Vector2]([Vector2(-80, 50), Vector2(80, 50), Vector2(0, 100), Vector2(-150, 60)])
+speed = 38.0
+pause_at_waypoints = 1.0
+
+[node name="VipGuest" parent="." instance=ExtResource("2_wander")]
+position = Vector2(60, 80)
+color = Color(0.18, 0.18, 0.32, 1)
+size = Vector2(11, 19)
+path = Array[Vector2]([Vector2(60, 80), Vector2(120, 60), Vector2(0, 100)])
+speed = 12.0
+pause_at_waypoints = 3.5
+
+[node name="Maid" parent="." instance=ExtResource("2_wander")]
+position = Vector2(180, -90)
+color = Color(0.4, 0.65, 0.95, 1)
+size = Vector2(9, 16)
+path = Array[Vector2]([Vector2(180, -90), Vector2(220, -50), Vector2(150, -90)])
+speed = 22.0
+pause_at_waypoints = 1.6

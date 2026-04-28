@@ -1,0 +1,310 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/minigames/valet/ValetGame.gd" id="1_game"]
+
+[node name="Valet" type="Node2D"]
+script = ExtResource("1_game")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(960, 540)
+
+[node name="Arena" type="Node2D" parent="."]
+
+[node name="Floor" type="ColorRect" parent="Arena"]
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 1920.0
+offset_bottom = 1080.0
+color = Color(0.34, 0.34, 0.38, 1)
+
+[node name="DropZone" type="ColorRect" parent="Arena"]
+offset_left = 720.0
+offset_top = 60.0
+offset_right = 1200.0
+offset_bottom = 300.0
+color = Color(0.85, 0.78, 0.45, 0.5)
+
+[node name="DropArrowLeft" type="ColorRect" parent="Arena"]
+offset_left = 720.0
+offset_top = 60.0
+offset_right = 728.0
+offset_bottom = 300.0
+color = Color(0.95, 0.85, 0.45, 1)
+
+[node name="DropArrowRight" type="ColorRect" parent="Arena"]
+offset_left = 1192.0
+offset_top = 60.0
+offset_right = 1200.0
+offset_bottom = 300.0
+color = Color(0.95, 0.85, 0.45, 1)
+
+[node name="DropZoneLabel" type="Label" parent="Arena"]
+offset_left = 720.0
+offset_top = 78.0
+offset_right = 1200.0
+offset_bottom = 124.0
+text = "ENTRÉE — clients arrivent ici"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 28
+theme_override_colors/font_color = Color(0.18, 0.18, 0.22, 1)
+
+[node name="ParkingLineLabel" type="Label" parent="Arena"]
+offset_left = 80.0
+offset_top = 670.0
+offset_right = 1840.0
+offset_bottom = 700.0
+text = "PLACES DE PARKING"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(0.85, 0.85, 0.95, 1)
+
+[node name="Slot0" type="ColorRect" parent="Arena"]
+offset_left = 170.0
+offset_top = 690.0
+offset_right = 310.0
+offset_bottom = 870.0
+color = Color(0.55, 0.55, 0.6, 0.4)
+
+[node name="Slot0Number" type="Label" parent="Arena"]
+offset_left = 170.0
+offset_top = 700.0
+offset_right = 310.0
+offset_bottom = 740.0
+text = "1"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 32
+theme_override_colors/font_color = Color(1, 1, 1, 0.6)
+
+[node name="Slot1" type="ColorRect" parent="Arena"]
+offset_left = 490.0
+offset_top = 690.0
+offset_right = 630.0
+offset_bottom = 870.0
+color = Color(0.55, 0.55, 0.6, 0.4)
+
+[node name="Slot1Number" type="Label" parent="Arena"]
+offset_left = 490.0
+offset_top = 700.0
+offset_right = 630.0
+offset_bottom = 740.0
+text = "2"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 32
+theme_override_colors/font_color = Color(1, 1, 1, 0.6)
+
+[node name="Slot2" type="ColorRect" parent="Arena"]
+offset_left = 890.0
+offset_top = 690.0
+offset_right = 1030.0
+offset_bottom = 870.0
+color = Color(0.55, 0.55, 0.6, 0.4)
+
+[node name="Slot2Number" type="Label" parent="Arena"]
+offset_left = 890.0
+offset_top = 700.0
+offset_right = 1030.0
+offset_bottom = 740.0
+text = "3"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 32
+theme_override_colors/font_color = Color(1, 1, 1, 0.6)
+
+[node name="Slot3" type="ColorRect" parent="Arena"]
+offset_left = 1290.0
+offset_top = 690.0
+offset_right = 1430.0
+offset_bottom = 870.0
+color = Color(0.55, 0.55, 0.6, 0.4)
+
+[node name="Slot3Number" type="Label" parent="Arena"]
+offset_left = 1290.0
+offset_top = 700.0
+offset_right = 1430.0
+offset_bottom = 740.0
+text = "4"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 32
+theme_override_colors/font_color = Color(1, 1, 1, 0.6)
+
+[node name="Slot4" type="ColorRect" parent="Arena"]
+offset_left = 1610.0
+offset_top = 690.0
+offset_right = 1750.0
+offset_bottom = 870.0
+color = Color(0.55, 0.55, 0.6, 0.4)
+
+[node name="Slot4Number" type="Label" parent="Arena"]
+offset_left = 1610.0
+offset_top = 700.0
+offset_right = 1750.0
+offset_bottom = 740.0
+text = "5"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 32
+theme_override_colors/font_color = Color(1, 1, 1, 0.6)
+
+[node name="Player" type="ColorRect" parent="Arena"]
+offset_left = 932.0
+offset_top = 452.0
+offset_right = 988.0
+offset_bottom = 508.0
+color = Color(0.95, 0.85, 0.35, 1)
+
+[node name="Context" type="Label" parent="Arena/Player"]
+offset_left = -120.0
+offset_top = -42.0
+offset_right = 180.0
+offset_bottom = -16.0
+text = ""
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 20
+theme_override_colors/font_color = Color(1, 0.95, 0.55, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="Timer" type="Label" parent="UI"]
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -200.0
+offset_top = 24.0
+offset_right = -40.0
+offset_bottom = 80.0
+text = "120.0s"
+horizontal_alignment = 2
+theme_override_font_sizes/font_size = 42
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+
+[node name="Tips" type="Label" parent="UI"]
+offset_left = 40.0
+offset_top = 24.0
+offset_right = 460.0
+offset_bottom = 80.0
+text = "💰 R$ 0 (0/4)"
+theme_override_font_sizes/font_size = 36
+theme_override_colors/font_color = Color(1, 0.95, 0.55, 1)
+
+[node name="Status" type="Label" parent="UI"]
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -520.0
+offset_top = 24.0
+offset_right = 520.0
+offset_bottom = 76.0
+text = "Bem-vindo ao Copa. Le service ouvre."
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 26
+theme_override_colors/font_color = Color(1, 0.95, 0.8, 1)
+
+[node name="Prompt" type="Label" parent="UI"]
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = -520.0
+offset_top = -64.0
+offset_right = 520.0
+offset_bottom = -24.0
+text = "[E] Prendre · Garer · Restituer    [WASD/Flèches] Bouger"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(0.85, 0.85, 0.95, 1)
+
+[node name="HelpButton" type="Button" parent="UI"]
+visible = false
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -64.0
+offset_top = 96.0
+offset_right = -24.0
+offset_bottom = 136.0
+text = "?"
+theme_override_font_sizes/font_size = 24
+
+[node name="Tutorial" type="Control" parent="UI"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Backdrop" type="ColorRect" parent="UI/Tutorial"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.05, 0.05, 0.08, 0.9)
+
+[node name="Panel" type="PanelContainer" parent="UI/Tutorial"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -460.0
+offset_top = -340.0
+offset_right = 460.0
+offset_bottom = 340.0
+
+[node name="Margin" type="MarginContainer" parent="UI/Tutorial/Panel"]
+theme_override_constants/margin_left = 36
+theme_override_constants/margin_top = 28
+theme_override_constants/margin_right = 36
+theme_override_constants/margin_bottom = 28
+
+[node name="Layout" type="VBoxContainer" parent="UI/Tutorial/Panel/Margin"]
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="UI/Tutorial/Panel/Margin/Layout"]
+text = "Valet do Copa Palace — Comment jouer"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 30
+theme_override_colors/font_color = Color(1, 0.92, 0.55, 1)
+
+[node name="Goal" type="Label" parent="UI/Tutorial/Panel/Margin/Layout"]
+text = "Sers un maximum de clients en 120 secondes (jusqu'à 4). Plus tu es rapide à restituer une voiture demandée, plus le tip grimpe (12 à 40 R$)."
+autowrap_mode = 3
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.95, 0.92, 0.85, 1)
+
+[node name="Sep1" type="HSeparator" parent="UI/Tutorial/Panel/Margin/Layout"]
+
+[node name="Step1" type="Label" parent="UI/Tutorial/Panel/Margin/Layout"]
+text = "1. Une voiture arrive à l'entrée (zone jaune en haut).
+   Approche → [E] pour la prendre."
+autowrap_mode = 3
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.95, 0.92, 0.85, 1)
+
+[node name="Step2" type="Label" parent="UI/Tutorial/Panel/Margin/Layout"]
+text = "2. Va à une place libre (les places passent en vert quand tu portes une voiture).
+   [E] pour garer."
+autowrap_mode = 3
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.95, 0.92, 0.85, 1)
+
+[node name="Step3" type="Label" parent="UI/Tutorial/Panel/Margin/Layout"]
+text = "3. Après quelques secondes, le client revient : la voiture pulse en rouge.
+   Cours la chercher → [E] pour la prendre."
+autowrap_mode = 3
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.95, 0.92, 0.85, 1)
+
+[node name="Step4" type="Label" parent="UI/Tutorial/Panel/Margin/Layout"]
+text = "4. Ramène-la à l'entrée. La zone passe en vert et devient \"RESTITUER ICI\".
+   [E] pour la rendre. Tip versé selon le temps d'attente du client."
+autowrap_mode = 3
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.95, 0.92, 0.85, 1)
+
+[node name="Sep2" type="HSeparator" parent="UI/Tutorial/Panel/Margin/Layout"]
+
+[node name="Tips" type="Label" parent="UI/Tutorial/Panel/Margin/Layout"]
+text = "Astuces : le label au-dessus de toi indique toujours ce que [E] fait.
+Tu peux gérer plusieurs voitures à la fois — gare-en une pendant qu'une autre attend.
+Contrôles : WASD ou Flèches pour bouger, E pour interagir."
+autowrap_mode = 3
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.75, 0.85, 0.95, 1)
+
+[node name="StartButton" type="Button" parent="UI/Tutorial/Panel/Margin/Layout"]
+text = "Commencer le service"
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 22

@@ -1,0 +1,31 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/vendor/CustomerNPC.gd" id="1_cust"]
+[ext_resource type="Script" path="res://scripts/world/Interactable.gd" id="2_inter"]
+[ext_resource type="Texture2D" path="res://assets/sprites/characters_ai.png" id="3_chars"]
+
+[sub_resource type="RectangleShape2D" id="BodyShape"]
+size = Vector2(14, 20)
+
+[sub_resource type="RectangleShape2D" id="InteractShape"]
+size = Vector2(40, 40)
+
+[node name="Customer" type="CharacterBody2D"]
+script = ExtResource("1_cust")
+interactable = NodePath("Interactable")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("BodyShape")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("3_chars")
+region_enabled = true
+region_rect = Rect2(768, 0, 256, 256)
+scale = Vector2(0.1875, 0.1875)
+
+[node name="Interactable" type="Area2D" parent="."]
+script = ExtResource("2_inter")
+prompt = "Parler"
+
+[node name="InteractShape" type="CollisionShape2D" parent="Interactable"]
+shape = SubResource("InteractShape")

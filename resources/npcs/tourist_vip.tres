@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="NPCData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/npcs/NPCData.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+id = "tourist_vip"
+display_name = "Madame Dubois"
+ink_knot = "tourist_vip_intro"
+faction = "tourists"

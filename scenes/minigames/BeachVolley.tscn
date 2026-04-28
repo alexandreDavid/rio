@@ -1,0 +1,150 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/minigames/volley/VolleyMatch.gd" id="1_match"]
+[ext_resource type="Script" path="res://scripts/minigames/volley/VolleyBall.gd" id="2_ball"]
+[ext_resource type="Script" path="res://scripts/minigames/volley/VolleyPlayer.gd" id="3_vp"]
+[ext_resource type="Script" path="res://scripts/minigames/volley/VolleyAI.gd" id="4_vai"]
+
+[sub_resource type="RectangleShape2D" id="GroundShape"]
+size = Vector2(500, 20)
+
+[sub_resource type="CircleShape2D" id="BallShape"]
+radius = 8.0
+
+[sub_resource type="PhysicsMaterial" id="BouncyPhys"]
+friction = 0.3
+bounce = 0.55
+
+[sub_resource type="RectangleShape2D" id="NetShape"]
+size = Vector2(8, 120)
+
+[sub_resource type="RectangleShape2D" id="CharShape"]
+size = Vector2(20, 48)
+
+[node name="BeachVolley" type="Node2D"]
+script = ExtResource("1_match")
+target_score = 5
+ball = NodePath("Ball")
+score_label = NodePath("UI/Score")
+status_label = NodePath("UI/Status")
+serve_position = Vector2(-100, -160)
+
+[node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(2, 2)
+
+[node name="Background" type="ColorRect" parent="."]
+offset_left = -960.0
+offset_top = -540.0
+offset_right = 960.0
+offset_bottom = 540.0
+color = Color(0.45, 0.7, 0.85, 1)
+
+[node name="Ground" type="StaticBody2D" parent="." groups=["ground"]]
+position = Vector2(0, 10)
+
+[node name="GroundVisual" type="ColorRect" parent="Ground"]
+offset_left = -250.0
+offset_top = 0.0
+offset_right = 250.0
+offset_bottom = 80.0
+color = Color(0.95, 0.85, 0.55, 1)
+
+[node name="GroundShape" type="CollisionShape2D" parent="Ground"]
+position = Vector2(0, 10)
+shape = SubResource("GroundShape")
+
+[node name="Net" type="StaticBody2D" parent="."]
+position = Vector2(0, -50)
+
+[node name="NetVisual" type="ColorRect" parent="Net"]
+offset_left = -4.0
+offset_top = -60.0
+offset_right = 4.0
+offset_bottom = 60.0
+color = Color(0.9, 0.9, 0.85, 1)
+
+[node name="NetShape" type="CollisionShape2D" parent="Net"]
+shape = SubResource("NetShape")
+
+[node name="Ball" type="RigidBody2D" parent="."]
+script = ExtResource("2_ball")
+position = Vector2(-100, -160)
+mass = 0.3
+physics_material_override = SubResource("BouncyPhys")
+contact_monitor = true
+max_contacts_reported = 4
+gravity_scale = 0.55
+
+[node name="BallVisual" type="ColorRect" parent="Ball"]
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+color = Color(0.97, 0.95, 0.88, 1)
+
+[node name="BallShape" type="CollisionShape2D" parent="Ball"]
+shape = SubResource("BallShape")
+
+[node name="Player" type="CharacterBody2D" parent="."]
+script = ExtResource("3_vp")
+position = Vector2(-150, -14)
+ball = NodePath("../Ball")
+
+[node name="PlayerVisual" type="ColorRect" parent="Player"]
+offset_left = -10.0
+offset_top = -24.0
+offset_right = 10.0
+offset_bottom = 24.0
+color = Color(0.85, 0.35, 0.35, 1)
+
+[node name="PlayerShape" type="CollisionShape2D" parent="Player"]
+shape = SubResource("CharShape")
+
+[node name="AI" type="CharacterBody2D" parent="."]
+script = ExtResource("4_vai")
+position = Vector2(150, -14)
+ball = NodePath("../Ball")
+team = 1
+side_sign = 1
+
+[node name="AIVisual" type="ColorRect" parent="AI"]
+offset_left = -10.0
+offset_top = -24.0
+offset_right = 10.0
+offset_bottom = 24.0
+color = Color(0.35, 0.5, 0.85, 1)
+
+[node name="AIShape" type="CollisionShape2D" parent="AI"]
+shape = SubResource("CharShape")
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="Score" type="Label" parent="UI"]
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -80.0
+offset_top = 24.0
+offset_right = 80.0
+offset_bottom = 64.0
+theme_override_font_sizes/font_size = 36
+text = "0  —  0"
+horizontal_alignment = 1
+
+[node name="Status" type="Label" parent="UI"]
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -240.0
+offset_top = 72.0
+offset_right = 240.0
+offset_bottom = 104.0
+theme_override_font_sizes/font_size = 22
+horizontal_alignment = 1
+
+[node name="Help" type="Label" parent="UI"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = -40.0
+offset_right = 600.0
+offset_bottom = -8.0
+text = "A/D : déplacement    Espace : frapper"

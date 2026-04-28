@@ -1,0 +1,602 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/props/TaxiStand.tscn" id="1_taxi"]
+[ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="2_wander"]
+[ext_resource type="PackedScene" path="res://scenes/props/Viewpoint.tscn" id="3_view"]
+[ext_resource type="PackedScene" path="res://scenes/props/StreetVendor.tscn" id="4_vendor"]
+[ext_resource type="PackedScene" path="res://scenes/props/DistrictExit.tscn" id="5_exit"]
+
+[sub_resource type="RectangleShape2D" id="WallH"]
+size = Vector2(1900, 16)
+
+[sub_resource type="RectangleShape2D" id="WallV"]
+size = Vector2(16, 480)
+
+[node name="ZonaSulDistrict" type="Node2D"]
+
+[node name="Sky" type="ColorRect" parent="."]
+offset_left = -940.0
+offset_top = -260.0
+offset_right = 940.0
+offset_bottom = -100.0
+color = Color(0.55, 0.78, 0.92, 1)
+
+[node name="SkyHorizon" type="ColorRect" parent="."]
+offset_left = -940.0
+offset_top = -120.0
+offset_right = 940.0
+offset_bottom = -100.0
+color = Color(0.85, 0.85, 0.78, 1)
+
+[node name="Sea" type="ColorRect" parent="."]
+offset_left = -940.0
+offset_top = -100.0
+offset_right = 940.0
+offset_bottom = 0.0
+color = Color(0.32, 0.5, 0.62, 1)
+
+[node name="SeaHighlight" type="ColorRect" parent="."]
+offset_left = -940.0
+offset_top = -100.0
+offset_right = 940.0
+offset_bottom = -94.0
+color = Color(0.78, 0.88, 0.92, 0.55)
+
+[node name="WaveLineA" type="ColorRect" parent="."]
+offset_left = -800.0
+offset_top = -76.0
+offset_right = -680.0
+offset_bottom = -73.0
+color = Color(0.85, 0.92, 0.95, 0.5)
+
+[node name="WaveLineB" type="ColorRect" parent="."]
+offset_left = -300.0
+offset_top = -68.0
+offset_right = -180.0
+offset_bottom = -65.0
+color = Color(0.85, 0.92, 0.95, 0.5)
+
+[node name="WaveLineC" type="ColorRect" parent="."]
+offset_left = 200.0
+offset_top = -72.0
+offset_right = 320.0
+offset_bottom = -69.0
+color = Color(0.85, 0.92, 0.95, 0.5)
+
+[node name="WaveLineD" type="ColorRect" parent="."]
+offset_left = 600.0
+offset_top = -64.0
+offset_right = 720.0
+offset_bottom = -61.0
+color = Color(0.85, 0.92, 0.95, 0.5)
+
+[node name="DoisIrmaosL" type="ColorRect" parent="."]
+offset_left = -880.0
+offset_top = -180.0
+offset_right = -780.0
+offset_bottom = -100.0
+color = Color(0.18, 0.22, 0.32, 1)
+
+[node name="DoisIrmaosLPeak" type="ColorRect" parent="."]
+offset_left = -870.0
+offset_top = -210.0
+offset_right = -790.0
+offset_bottom = -180.0
+color = Color(0.16, 0.2, 0.28, 1)
+
+[node name="DoisIrmaosR" type="ColorRect" parent="."]
+offset_left = -780.0
+offset_top = -160.0
+offset_right = -680.0
+offset_bottom = -100.0
+color = Color(0.18, 0.22, 0.32, 1)
+
+[node name="DoisIrmaosRPeak" type="ColorRect" parent="."]
+offset_left = -770.0
+offset_top = -190.0
+offset_right = -690.0
+offset_bottom = -160.0
+color = Color(0.16, 0.2, 0.28, 1)
+
+[node name="PedraArpoador" type="ColorRect" parent="."]
+offset_left = 720.0
+offset_top = -130.0
+offset_right = 880.0
+offset_bottom = 20.0
+color = Color(0.42, 0.4, 0.42, 1)
+
+[node name="PedraArpoadorTop" type="ColorRect" parent="."]
+offset_left = 760.0
+offset_top = -160.0
+offset_right = 840.0
+offset_bottom = -130.0
+color = Color(0.32, 0.32, 0.36, 1)
+
+[node name="PedraArpoadorVeg" type="ColorRect" parent="."]
+offset_left = 720.0
+offset_top = -135.0
+offset_right = 880.0
+offset_bottom = -130.0
+color = Color(0.32, 0.55, 0.32, 0.85)
+
+[node name="DistantBoatA" type="ColorRect" parent="."]
+offset_left = -540.0
+offset_top = -88.0
+offset_right = -518.0
+offset_bottom = -82.0
+color = Color(0.95, 0.95, 0.92, 0.85)
+
+[node name="DistantBoatAMast" type="ColorRect" parent="."]
+offset_left = -532.0
+offset_top = -100.0
+offset_right = -528.0
+offset_bottom = -88.0
+color = Color(0.95, 0.95, 0.92, 0.85)
+
+[node name="DistantBoatB" type="ColorRect" parent="."]
+offset_left = 320.0
+offset_top = -84.0
+offset_right = 340.0
+offset_bottom = -80.0
+color = Color(0.95, 0.95, 0.92, 0.85)
+
+[node name="BuildingsRow" type="ColorRect" parent="."]
+offset_left = -940.0
+offset_top = 0.0
+offset_right = 720.0
+offset_bottom = 30.0
+color = Color(0.78, 0.72, 0.65, 1)
+
+[node name="BuildingA" type="ColorRect" parent="."]
+offset_left = -880.0
+offset_top = -40.0
+offset_right = -760.0
+offset_bottom = 30.0
+color = Color(0.85, 0.78, 0.62, 1)
+
+[node name="BuildingARoof" type="ColorRect" parent="."]
+offset_left = -880.0
+offset_top = -44.0
+offset_right = -760.0
+offset_bottom = -40.0
+color = Color(0.65, 0.55, 0.42, 1)
+
+[node name="BuildingB" type="ColorRect" parent="."]
+offset_left = -640.0
+offset_top = -50.0
+offset_right = -520.0
+offset_bottom = 30.0
+color = Color(0.95, 0.92, 0.85, 1)
+
+[node name="BuildingBRoof" type="ColorRect" parent="."]
+offset_left = -640.0
+offset_top = -54.0
+offset_right = -520.0
+offset_bottom = -50.0
+color = Color(0.78, 0.72, 0.65, 1)
+
+[node name="BuildingC" type="ColorRect" parent="."]
+offset_left = -380.0
+offset_top = -55.0
+offset_right = -260.0
+offset_bottom = 30.0
+color = Color(0.92, 0.78, 0.55, 1)
+
+[node name="BuildingCRoof" type="ColorRect" parent="."]
+offset_left = -380.0
+offset_top = -60.0
+offset_right = -260.0
+offset_bottom = -55.0
+color = Color(0.78, 0.65, 0.42, 1)
+
+[node name="BuildingD" type="ColorRect" parent="."]
+offset_left = -120.0
+offset_top = -45.0
+offset_right = 0.0
+offset_bottom = 30.0
+color = Color(0.85, 0.85, 0.85, 1)
+
+[node name="BuildingDRoof" type="ColorRect" parent="."]
+offset_left = -120.0
+offset_top = -50.0
+offset_right = 0.0
+offset_bottom = -45.0
+color = Color(0.62, 0.62, 0.65, 1)
+
+[node name="BuildingE" type="ColorRect" parent="."]
+offset_left = 100.0
+offset_top = -52.0
+offset_right = 220.0
+offset_bottom = 30.0
+color = Color(0.62, 0.78, 0.85, 1)
+
+[node name="BuildingERoof" type="ColorRect" parent="."]
+offset_left = 100.0
+offset_top = -56.0
+offset_right = 220.0
+offset_bottom = -52.0
+color = Color(0.42, 0.55, 0.62, 1)
+
+[node name="BuildingF" type="ColorRect" parent="."]
+offset_left = 380.0
+offset_top = -42.0
+offset_right = 500.0
+offset_bottom = 30.0
+color = Color(0.85, 0.62, 0.55, 1)
+
+[node name="BuildingFRoof" type="ColorRect" parent="."]
+offset_left = 380.0
+offset_top = -46.0
+offset_right = 500.0
+offset_bottom = -42.0
+color = Color(0.65, 0.42, 0.38, 1)
+
+[node name="BuildingG" type="ColorRect" parent="."]
+offset_left = 580.0
+offset_top = -48.0
+offset_right = 700.0
+offset_bottom = 30.0
+color = Color(0.78, 0.78, 0.62, 1)
+
+[node name="BuildingGRoof" type="ColorRect" parent="."]
+offset_left = 580.0
+offset_top = -52.0
+offset_right = 700.0
+offset_bottom = -48.0
+color = Color(0.55, 0.55, 0.42, 1)
+
+[node name="Avenida" type="ColorRect" parent="."]
+offset_left = -940.0
+offset_top = 30.0
+offset_right = 720.0
+offset_bottom = 70.0
+color = Color(0.42, 0.4, 0.42, 1)
+
+[node name="AvenidaLine" type="ColorRect" parent="."]
+offset_left = -940.0
+offset_top = 50.0
+offset_right = 720.0
+offset_bottom = 52.0
+color = Color(0.95, 0.85, 0.4, 0.7)
+
+[node name="Calcadao" type="ColorRect" parent="."]
+offset_left = -940.0
+offset_top = 70.0
+offset_right = 720.0
+offset_bottom = 100.0
+color = Color(0.95, 0.95, 0.92, 1)
+
+[node name="WaveBlackA" type="ColorRect" parent="."]
+offset_left = -360.0
+offset_top = 70.0
+offset_right = -340.0
+offset_bottom = 100.0
+color = Color(0.18, 0.18, 0.22, 1)
+
+[node name="WaveBlackB" type="ColorRect" parent="."]
+offset_left = -300.0
+offset_top = 70.0
+offset_right = -280.0
+offset_bottom = 100.0
+color = Color(0.18, 0.18, 0.22, 1)
+
+[node name="WaveBlackC" type="ColorRect" parent="."]
+offset_left = -240.0
+offset_top = 70.0
+offset_right = -220.0
+offset_bottom = 100.0
+color = Color(0.18, 0.18, 0.22, 1)
+
+[node name="WaveBlackD" type="ColorRect" parent="."]
+offset_left = -180.0
+offset_top = 70.0
+offset_right = -160.0
+offset_bottom = 100.0
+color = Color(0.18, 0.18, 0.22, 1)
+
+[node name="WaveBlackE" type="ColorRect" parent="."]
+offset_left = -120.0
+offset_top = 70.0
+offset_right = -100.0
+offset_bottom = 100.0
+color = Color(0.18, 0.18, 0.22, 1)
+
+[node name="WaveBlackF" type="ColorRect" parent="."]
+offset_left = -60.0
+offset_top = 70.0
+offset_right = -40.0
+offset_bottom = 100.0
+color = Color(0.18, 0.18, 0.22, 1)
+
+[node name="WaveBlackG" type="ColorRect" parent="."]
+offset_left = 0.0
+offset_top = 70.0
+offset_right = 20.0
+offset_bottom = 100.0
+color = Color(0.18, 0.18, 0.22, 1)
+
+[node name="WaveBlackH" type="ColorRect" parent="."]
+offset_left = 60.0
+offset_top = 70.0
+offset_right = 80.0
+offset_bottom = 100.0
+color = Color(0.18, 0.18, 0.22, 1)
+
+[node name="WaveBlackI" type="ColorRect" parent="."]
+offset_left = 120.0
+offset_top = 70.0
+offset_right = 140.0
+offset_bottom = 100.0
+color = Color(0.18, 0.18, 0.22, 1)
+
+[node name="WaveBlackJ" type="ColorRect" parent="."]
+offset_left = 180.0
+offset_top = 70.0
+offset_right = 200.0
+offset_bottom = 100.0
+color = Color(0.18, 0.18, 0.22, 1)
+
+[node name="Sand" type="ColorRect" parent="."]
+offset_left = -940.0
+offset_top = 100.0
+offset_right = 940.0
+offset_bottom = 200.0
+color = Color(0.92, 0.82, 0.62, 1)
+
+[node name="SandFoam" type="ColorRect" parent="."]
+offset_left = -940.0
+offset_top = 196.0
+offset_right = 940.0
+offset_bottom = 200.0
+color = Color(0.95, 0.95, 0.95, 0.6)
+
+[node name="UmbrellaA" type="ColorRect" parent="."]
+offset_left = -700.0
+offset_top = 130.0
+offset_right = -660.0
+offset_bottom = 136.0
+color = Color(0.95, 0.55, 0.4, 1)
+
+[node name="UmbrellaAPole" type="ColorRect" parent="."]
+offset_left = -682.0
+offset_top = 136.0
+offset_right = -678.0
+offset_bottom = 170.0
+color = Color(0.55, 0.42, 0.32, 1)
+
+[node name="UmbrellaB" type="ColorRect" parent="."]
+offset_left = -300.0
+offset_top = 140.0
+offset_right = -260.0
+offset_bottom = 146.0
+color = Color(0.4, 0.65, 0.95, 1)
+
+[node name="UmbrellaBPole" type="ColorRect" parent="."]
+offset_left = -282.0
+offset_top = 146.0
+offset_right = -278.0
+offset_bottom = 180.0
+color = Color(0.55, 0.42, 0.32, 1)
+
+[node name="UmbrellaC" type="ColorRect" parent="."]
+offset_left = 100.0
+offset_top = 130.0
+offset_right = 140.0
+offset_bottom = 136.0
+color = Color(0.95, 0.85, 0.4, 1)
+
+[node name="UmbrellaCPole" type="ColorRect" parent="."]
+offset_left = 118.0
+offset_top = 136.0
+offset_right = 122.0
+offset_bottom = 170.0
+color = Color(0.55, 0.42, 0.32, 1)
+
+[node name="UmbrellaD" type="ColorRect" parent="."]
+offset_left = 460.0
+offset_top = 145.0
+offset_right = 500.0
+offset_bottom = 151.0
+color = Color(0.4, 0.85, 0.55, 1)
+
+[node name="UmbrellaDPole" type="ColorRect" parent="."]
+offset_left = 478.0
+offset_top = 151.0
+offset_right = 482.0
+offset_bottom = 185.0
+color = Color(0.55, 0.42, 0.32, 1)
+
+[node name="ZoneLabelLeblon" type="Label" parent="."]
+offset_left = -880.0
+offset_top = -10.0
+offset_right = -640.0
+offset_bottom = 10.0
+text = "LEBLON"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 4
+
+[node name="ZoneLabelIpanema" type="Label" parent="."]
+offset_left = -180.0
+offset_top = -10.0
+offset_right = 180.0
+offset_bottom = 10.0
+text = "IPANEMA"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 4
+
+[node name="ZoneLabelArpoador" type="Label" parent="."]
+offset_left = 540.0
+offset_top = -10.0
+offset_right = 740.0
+offset_bottom = 10.0
+text = "ARPOADOR"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 4
+
+[node name="Walls" type="Node2D" parent="."]
+
+[node name="Top" type="StaticBody2D" parent="Walls"]
+position = Vector2(0, -8)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Top"]
+shape = SubResource("WallH")
+
+[node name="Bottom" type="StaticBody2D" parent="Walls"]
+position = Vector2(0, 200)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Bottom"]
+shape = SubResource("WallH")
+
+[node name="Left" type="StaticBody2D" parent="Walls"]
+position = Vector2(-948, 96)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Left"]
+shape = SubResource("WallV")
+
+[node name="Right" type="StaticBody2D" parent="Walls"]
+position = Vector2(908, 96)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Right"]
+shape = SubResource("WallV")
+
+[node name="PlayerSpawn" type="Marker2D" parent="."]
+position = Vector2(800, 130)
+
+[node name="TaxiStand" parent="." instance=ExtResource("1_taxi")]
+position = Vector2(-700, 50)
+
+[node name="ExitToCopa" parent="." instance=ExtResource("5_exit")]
+position = Vector2(880, 130)
+target_district = "copacabana"
+label_text = "→ COPACABANA"
+
+[node name="ViewpointArpoador" parent="." instance=ExtResource("3_view")]
+position = Vector2(680, 80)
+viewpoint_id = "arpoador_pedra"
+prompt_first = "Voir le coucher de soleil"
+flavor_speaker = "Sobrinho"
+flavor_text = "La Pedra do Arpoador. Quand le soleil se couche derrière les Dois Irmãos, la foule applaudit comme à un concert. Tu n'avais jamais vu une côte applaudir le ciel."
+money_reward = 90
+
+[node name="ViewpointIpanema" parent="." instance=ExtResource("3_view")]
+position = Vector2(0, 60)
+viewpoint_id = "ipanema_calcadao"
+prompt_first = "Admirer le calçadão"
+flavor_speaker = "Sobrinho"
+flavor_text = "Le motif d'ondas — noir et blanc, signé Burle Marx. Tu marches dessus comme tout le monde, et soudain tu repenses à 'Garota de Ipanema'. Ça résonne dans tes pas."
+money_reward = 80
+
+[node name="ViewpointLeblon" parent="." instance=ExtResource("3_view")]
+position = Vector2(-700, 60)
+viewpoint_id = "leblon_dois_irmaos"
+prompt_first = "Contempler les Dois Irmãos"
+flavor_speaker = "Sobrinho"
+flavor_text = "Au bout du calçadão, les Dois Irmãos plongent dans la mer. Le quartier devient plus calme, plus chic. Le sable est plus blanc, l'air plus salé. Fim da praia."
+money_reward = 70
+
+[node name="AcaiVendor" parent="." instance=ExtResource("4_vendor")]
+position = Vector2(-200, 90)
+vendor_id = "ipanema_acai"
+item_label = "Açaí com cupuaçu"
+price = 14
+stamina_recover = 50.0
+flavor_text_offer = "Açaí especial Ipanema, com cupuaçu da Amazônia. Geladinho !"
+
+[node name="CocoVendor" parent="." instance=ExtResource("4_vendor")]
+position = Vector2(580, 130)
+vendor_id = "arpoador_coco"
+item_label = "Coco gelado"
+price = 8
+stamina_recover = 35.0
+flavor_text_offer = "Coquinho do Arpoador, freguês. Energia pra ver o pôr do sol."
+
+[node name="JoggerA" parent="." instance=ExtResource("2_wander")]
+position = Vector2(-800, 85)
+color = Color(0.4, 0.85, 0.55, 1)
+size = Vector2(9, 16)
+path = Array[Vector2]([Vector2(-800, 85), Vector2(700, 85), Vector2(-800, 85)])
+speed = 60.0
+pause_at_waypoints = 0.2
+
+[node name="JoggerB" parent="." instance=ExtResource("2_wander")]
+position = Vector2(500, 85)
+color = Color(0.95, 0.55, 0.4, 1)
+size = Vector2(9, 16)
+path = Array[Vector2]([Vector2(500, 85), Vector2(-500, 85), Vector2(500, 85)])
+speed = 50.0
+pause_at_waypoints = 0.2
+
+[node name="ChicWalkerA" parent="." instance=ExtResource("2_wander")]
+position = Vector2(-700, 50)
+color = Color(0.95, 0.85, 0.4, 1)
+size = Vector2(10, 18)
+path = Array[Vector2]([Vector2(-700, 50), Vector2(-500, 50), Vector2(-700, 70)])
+speed = 22.0
+pause_at_waypoints = 1.8
+
+[node name="ChicWalkerB" parent="." instance=ExtResource("2_wander")]
+position = Vector2(-200, 50)
+color = Color(0.85, 0.4, 0.55, 1)
+size = Vector2(10, 18)
+path = Array[Vector2]([Vector2(-200, 50), Vector2(100, 50), Vector2(-200, 70)])
+speed = 24.0
+pause_at_waypoints = 1.6
+
+[node name="SurferA" parent="." instance=ExtResource("2_wander")]
+position = Vector2(580, 130)
+color = Color(0.4, 0.65, 0.95, 1)
+size = Vector2(10, 17)
+path = Array[Vector2]([Vector2(580, 130), Vector2(700, 150), Vector2(450, 140)])
+speed = 16.0
+pause_at_waypoints = 2.5
+
+[node name="SunBatherA" parent="." instance=ExtResource("2_wander")]
+position = Vector2(-300, 160)
+color = Color(0.95, 0.65, 0.55, 1)
+size = Vector2(11, 14)
+path = Array[Vector2]([Vector2(-300, 160), Vector2(-280, 170), Vector2(-310, 150)])
+speed = 8.0
+pause_at_waypoints = 5.0
+bob_strength = 0.4
+
+[node name="SunBatherB" parent="." instance=ExtResource("2_wander")]
+position = Vector2(150, 170)
+color = Color(0.4, 0.65, 0.95, 1)
+size = Vector2(11, 14)
+path = Array[Vector2]([Vector2(150, 170), Vector2(170, 180), Vector2(140, 160)])
+speed = 8.0
+pause_at_waypoints = 5.0
+bob_strength = 0.4
+
+[node name="ChildrenPlay" parent="." instance=ExtResource("2_wander")]
+position = Vector2(-100, 180)
+color = Color(0.95, 0.85, 0.4, 1)
+size = Vector2(7, 12)
+path = Array[Vector2]([Vector2(-100, 180), Vector2(50, 170), Vector2(-150, 175), Vector2(0, 180)])
+speed = 36.0
+pause_at_waypoints = 0.5
+
+[node name="VendorWalker" parent="." instance=ExtResource("2_wander")]
+position = Vector2(0, 165)
+color = Color(0.85, 0.55, 0.4, 1)
+size = Vector2(10, 17)
+path = Array[Vector2]([Vector2(0, 165), Vector2(700, 165), Vector2(-800, 165)])
+speed = 18.0
+pause_at_waypoints = 3.0
+
+[node name="DogWalker" parent="." instance=ExtResource("2_wander")]
+position = Vector2(-500, 50)
+color = Color(0.55, 0.42, 0.32, 1)
+size = Vector2(10, 17)
+path = Array[Vector2]([Vector2(-500, 50), Vector2(-400, 70), Vector2(-550, 60)])
+speed = 16.0
+pause_at_waypoints = 2.0

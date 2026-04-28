@@ -1,0 +1,36 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_carlos"]
+script = ExtResource("2_obj")
+id = "tribute_carlos"
+description = "Encaisser le tribut chez Carlos (Café ISSIMO)"
+optional = false
+
+[sub_resource type="Resource" id="obj_beatriz"]
+script = ExtResource("2_obj")
+id = "tribute_beatriz"
+description = "Encaisser le tribut chez Beatriz (Rio Style)"
+optional = false
+
+[sub_resource type="Resource" id="obj_chef"]
+script = ExtResource("2_obj")
+id = "tribute_chef"
+description = "Encaisser le tribut chez le Chef (Cantinho Carioca)"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "act4_trafico_tributo"
+display_name = "Coleta do Patrão"
+description = "Le Morro a un nouveau Patrão et les commerçants doivent le savoir. Passe chez Carlos, Beatriz, le Chef. Pas de violence — juste un rappel."
+journal_text = "Collecter le tribut chez les trois commerces."
+giver_npc_id = "miguel"
+ink_knot = "miguel_act4_tributo"
+objectives = Array[Resource]([SubResource("obj_carlos"), SubResource("obj_beatriz"), SubResource("obj_chef")])
+money_reward = 1500
+reputation_rewards = {2: 5, 0: -3}
+required_reputation = {}
+required_act = 4

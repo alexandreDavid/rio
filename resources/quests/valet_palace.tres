@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_shift"]
+script = ExtResource("2_obj")
+id = "first_valet_shift"
+description = "Boucler un service complet de valet (5 clients ou 90s)"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "valet_palace"
+display_name = "Valet do Copa Palace"
+description = "Otávio, chef-valet du Copacabana Palace, cherche du sang neuf. Gare les voitures des clients à leur arrivée et restitue-les vite quand ils sortent. Tips proportionnels à ton service."
+journal_text = "Faire un service complet au stand valet du Palace."
+giver_npc_id = "otavio"
+ink_knot = "otavio_intro"
+objectives = Array[Resource]([SubResource("obj_shift")])
+money_reward = 0
+reputation_rewards = {3: 2, 4: 1}
+required_reputation = {}
+required_act = 0

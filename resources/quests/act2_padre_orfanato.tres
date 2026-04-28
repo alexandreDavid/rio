@@ -1,0 +1,36 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_carlos"]
+script = ExtResource("2_obj")
+id = "signed_carlos"
+description = "Faire signer Carlos (Café ISSIMO)"
+optional = false
+
+[sub_resource type="Resource" id="obj_beatriz"]
+script = ExtResource("2_obj")
+id = "signed_beatriz"
+description = "Faire signer Beatriz (Rio Style)"
+optional = false
+
+[sub_resource type="Resource" id="obj_carmen"]
+script = ExtResource("2_obj")
+id = "signed_carmen"
+description = "Faire signer Dona Carmen (Farmácia)"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "act2_padre_orfanato"
+display_name = "Salvem o Orfanato"
+description = "La mairie veut raser l'orfanato Nossa Senhora pour bâtir un parking touristique. Le Padre rassemble une pétition : trois commerçants de poids manquent à l'appel. Trouve-les."
+journal_text = "Faire signer la pétition à Carlos, Beatriz et Dona Carmen."
+giver_npc_id = "padre"
+ink_knot = "padre_act2_offer"
+objectives = Array[Resource]([SubResource("obj_carlos"), SubResource("obj_beatriz"), SubResource("obj_carmen")])
+money_reward = 400
+reputation_rewards = {0: 8, 4: 2}
+required_reputation = {0: 5}
+required_act = 2

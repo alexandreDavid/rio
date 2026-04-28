@@ -1,0 +1,36 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_corcovado"]
+script = ExtResource("2_obj")
+id = "see_corcovado"
+description = "Emmener le touriste au Mirante do Cristo (Corcovado)"
+optional = false
+
+[sub_resource type="Resource" id="obj_paoacucar"]
+script = ExtResource("2_obj")
+id = "see_paoacucar"
+description = "Emmener le touriste au coucher de soleil au Pão de Açúcar"
+optional = false
+
+[sub_resource type="Resource" id="obj_lagoa"]
+script = ExtResource("2_obj")
+id = "see_lagoa"
+description = "Emmener le touriste à la Lagoa Rodrigo de Freitas"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "tourist_vip_tour"
+display_name = "Guia turística VIP"
+description = "Le touriste VIP du Palace cherche un guide pour voir le vrai Rio. Trois arrêts à boucler — Cristo, Pão de Açúcar, Lagoa. Il pourboire à chaque arrêt et finit avec un beau bonus."
+journal_text = "Faire visiter Corcovado, Pão de Açúcar et la Lagoa au touriste VIP."
+giver_npc_id = "tourist_vip"
+ink_knot = "tourist_vip_tour_offer"
+objectives = Array[Resource]([SubResource("obj_corcovado"), SubResource("obj_paoacucar"), SubResource("obj_lagoa")])
+money_reward = 600
+reputation_rewards = {3: 8, 4: 3}
+required_reputation = {}
+required_act = 0

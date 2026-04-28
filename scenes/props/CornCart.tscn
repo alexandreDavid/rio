@@ -1,0 +1,25 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/vendor/CornCart.gd" id="1_cart"]
+[ext_resource type="Script" path="res://scripts/world/Interactable.gd" id="2_inter"]
+[ext_resource type="Texture2D" path="res://assets/sprites/kenney_town.png" id="3_tiles"]
+
+[sub_resource type="RectangleShape2D" id="InteractShape"]
+size = Vector2(40, 40)
+
+[node name="CornCart" type="Node2D"]
+script = ExtResource("1_cart")
+interactable = NodePath("Interactable")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("3_tiles")
+region_enabled = true
+region_rect = Rect2(160, 128, 16, 16)
+scale = Vector2(1.5, 1.5)
+
+[node name="Interactable" type="Area2D" parent="."]
+script = ExtResource("2_inter")
+prompt = "Prendre la charrette"
+
+[node name="InteractShape" type="CollisionShape2D" parent="Interactable"]
+shape = SubResource("InteractShape")

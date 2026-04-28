@@ -1,0 +1,70 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/QuestLog.gd" id="1_log"]
+
+[sub_resource type="StyleBoxFlat" id="PanelStyle"]
+bg_color = Color(0.12, 0.14, 0.18, 0.92)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.95, 0.85, 0.4, 0.6)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="HeaderStyle"]
+bg_color = Color(0.95, 0.85, 0.4, 0.85)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+
+[node name="QuestLog" type="Panel"]
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -340.0
+offset_top = 104.0
+offset_right = -16.0
+offset_bottom = 392.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("PanelStyle")
+script = ExtResource("1_log")
+
+[node name="HeaderBg" type="Panel" parent="."]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 316.0
+offset_bottom = 32.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("HeaderStyle")
+
+[node name="HeaderTitle" type="Label" parent="HeaderBg"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 12.0
+offset_right = -60.0
+text = "Diário de missões"
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.18, 0.14, 0.1, 1)
+
+[node name="HeaderCount" type="Label" parent="HeaderBg"]
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -64.0
+offset_right = -8.0
+text = "0 ativa(s)"
+horizontal_alignment = 2
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.18, 0.14, 0.1, 1)
+
+[node name="VBox" type="VBoxContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 12.0
+offset_top = 40.0
+offset_right = -12.0
+offset_bottom = -12.0
+theme_override_constants/separation = 6

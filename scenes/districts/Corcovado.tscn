@@ -1,0 +1,313 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/props/TaxiStand.tscn" id="1_taxi"]
+[ext_resource type="PackedScene" path="res://scenes/props/DeliveryPoint.tscn" id="2_drop"]
+[ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="3_wander"]
+[ext_resource type="PackedScene" path="res://scenes/props/Viewpoint.tscn" id="4_view"]
+[ext_resource type="PackedScene" path="res://scenes/props/StreetVendor.tscn" id="5_vendor"]
+
+[sub_resource type="RectangleShape2D" id="WallH"]
+size = Vector2(700, 16)
+
+[sub_resource type="RectangleShape2D" id="WallV"]
+size = Vector2(16, 360)
+
+[node name="CorcovadoDistrict" type="Node2D"]
+
+[node name="Sky" type="ColorRect" parent="."]
+offset_left = -360.0
+offset_top = -260.0
+offset_right = 360.0
+offset_bottom = 200.0
+color = Color(0.18, 0.22, 0.45, 1)
+
+[node name="MountainBg" type="ColorRect" parent="."]
+offset_left = -360.0
+offset_top = -100.0
+offset_right = 360.0
+offset_bottom = 0.0
+color = Color(0.28, 0.32, 0.38, 1)
+
+[node name="MountainPeakL" type="ColorRect" parent="."]
+offset_left = -200.0
+offset_top = -150.0
+offset_right = -80.0
+offset_bottom = -100.0
+color = Color(0.24, 0.28, 0.34, 1)
+
+[node name="MountainPeakC" type="ColorRect" parent="."]
+offset_left = -90.0
+offset_top = -190.0
+offset_right = 90.0
+offset_bottom = -100.0
+color = Color(0.22, 0.26, 0.32, 1)
+
+[node name="MountainPeakR" type="ColorRect" parent="."]
+offset_left = 80.0
+offset_top = -140.0
+offset_right = 200.0
+offset_bottom = -100.0
+color = Color(0.24, 0.28, 0.34, 1)
+
+[node name="ChristBase" type="ColorRect" parent="."]
+offset_left = -10.0
+offset_top = -220.0
+offset_right = 10.0
+offset_bottom = -190.0
+color = Color(0.92, 0.88, 0.78, 1)
+
+[node name="ChristCrossV" type="ColorRect" parent="."]
+offset_left = -3.0
+offset_top = -250.0
+offset_right = 3.0
+offset_bottom = -210.0
+color = Color(0.92, 0.88, 0.78, 1)
+
+[node name="ChristCrossH" type="ColorRect" parent="."]
+offset_left = -16.0
+offset_top = -240.0
+offset_right = 16.0
+offset_bottom = -232.0
+color = Color(0.92, 0.88, 0.78, 1)
+
+[node name="Stars" type="ColorRect" parent="."]
+offset_left = -200.0
+offset_top = -240.0
+offset_right = -198.0
+offset_bottom = -238.0
+color = Color(0.95, 0.95, 0.85, 1)
+
+[node name="Star2" type="ColorRect" parent="."]
+offset_left = 220.0
+offset_top = -210.0
+offset_right = 222.0
+offset_bottom = -208.0
+color = Color(0.95, 0.95, 0.85, 1)
+
+[node name="Star3" type="ColorRect" parent="."]
+offset_left = 80.0
+offset_top = -255.0
+offset_right = 82.0
+offset_bottom = -253.0
+color = Color(0.95, 0.95, 0.85, 1)
+
+[node name="Platform" type="ColorRect" parent="."]
+offset_left = -340.0
+offset_top = 0.0
+offset_right = 340.0
+offset_bottom = 180.0
+color = Color(0.55, 0.5, 0.42, 1)
+
+[node name="PlatformLine" type="ColorRect" parent="."]
+offset_left = -340.0
+offset_top = 50.0
+offset_right = 340.0
+offset_bottom = 52.0
+color = Color(0.4, 0.36, 0.3, 1)
+
+[node name="ParapetTop" type="ColorRect" parent="."]
+offset_left = -340.0
+offset_top = -8.0
+offset_right = 340.0
+offset_bottom = 0.0
+color = Color(0.65, 0.6, 0.5, 1)
+
+[node name="Sign" type="Label" parent="."]
+offset_left = -90.0
+offset_top = 12.0
+offset_right = 90.0
+offset_bottom = 36.0
+text = "MIRANTE DO CRISTO"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.95, 0.92, 0.85, 1)
+
+[node name="Walls" type="Node2D" parent="."]
+
+[node name="Top" type="StaticBody2D" parent="Walls"]
+position = Vector2(0, -8)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Top"]
+shape = SubResource("WallH")
+
+[node name="Bottom" type="StaticBody2D" parent="Walls"]
+position = Vector2(0, 188)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Bottom"]
+shape = SubResource("WallH")
+
+[node name="Left" type="StaticBody2D" parent="Walls"]
+position = Vector2(-348, 90)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Left"]
+shape = SubResource("WallV")
+
+[node name="Right" type="StaticBody2D" parent="Walls"]
+position = Vector2(348, 90)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Right"]
+shape = SubResource("WallV")
+
+[node name="PlayerSpawn" type="Marker2D" parent="."]
+position = Vector2(-200, 100)
+
+[node name="TaxiStand" parent="." instance=ExtResource("1_taxi")]
+position = Vector2(-260, 130)
+
+[node name="BlessingSpot" parent="." instance=ExtResource("2_drop")]
+position = Vector2(0, 80)
+quest_id = "padre_corcovado_relic"
+objective_id = "bless_at_corcovado"
+payout = 0
+
+[node name="BlessingLabel" type="Label" parent="."]
+offset_left = -90.0
+offset_top = 50.0
+offset_right = 90.0
+offset_bottom = 70.0
+text = "✚ Lieu de bénédiction"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.95, 0.92, 0.85, 1)
+
+[node name="CityLightsR" type="ColorRect" parent="."]
+offset_left = 60.0
+offset_top = -60.0
+offset_right = 64.0
+offset_bottom = -56.0
+color = Color(0.95, 0.92, 0.55, 0.9)
+
+[node name="CityLightsR2" type="ColorRect" parent="."]
+offset_left = 130.0
+offset_top = -55.0
+offset_right = 134.0
+offset_bottom = -51.0
+color = Color(0.95, 0.85, 0.4, 0.85)
+
+[node name="CityLightsR3" type="ColorRect" parent="."]
+offset_left = 220.0
+offset_top = -45.0
+offset_right = 224.0
+offset_bottom = -41.0
+color = Color(0.95, 0.92, 0.55, 0.85)
+
+[node name="CityLightsL" type="ColorRect" parent="."]
+offset_left = -200.0
+offset_top = -50.0
+offset_right = -196.0
+offset_bottom = -46.0
+color = Color(0.95, 0.85, 0.4, 0.9)
+
+[node name="CityLightsL2" type="ColorRect" parent="."]
+offset_left = -120.0
+offset_top = -42.0
+offset_right = -116.0
+offset_bottom = -38.0
+color = Color(0.95, 0.85, 0.55, 0.85)
+
+[node name="ChristGlow" type="ColorRect" parent="."]
+offset_left = -30.0
+offset_top = -270.0
+offset_right = 30.0
+offset_bottom = -180.0
+color = Color(0.95, 0.95, 0.85, 0.12)
+show_behind_parent = true
+
+[node name="MoonHalo" type="ColorRect" parent="."]
+offset_left = 240.0
+offset_top = -240.0
+offset_right = 280.0
+offset_bottom = -200.0
+color = Color(0.95, 0.92, 0.78, 0.85)
+
+[node name="StatueLightingPole1" type="ColorRect" parent="."]
+offset_left = -160.0
+offset_top = -20.0
+offset_right = -156.0
+offset_bottom = 8.0
+color = Color(0.55, 0.5, 0.42, 1)
+
+[node name="StatueLightingBulb1" type="ColorRect" parent="."]
+offset_left = -164.0
+offset_top = -28.0
+offset_right = -152.0
+offset_bottom = -20.0
+color = Color(0.95, 0.92, 0.7, 0.95)
+
+[node name="StatueLightingPole2" type="ColorRect" parent="."]
+offset_left = 156.0
+offset_top = -20.0
+offset_right = 160.0
+offset_bottom = 8.0
+color = Color(0.55, 0.5, 0.42, 1)
+
+[node name="StatueLightingBulb2" type="ColorRect" parent="."]
+offset_left = 152.0
+offset_top = -28.0
+offset_right = 164.0
+offset_bottom = -20.0
+color = Color(0.95, 0.92, 0.7, 0.95)
+
+[node name="BenchL" type="ColorRect" parent="."]
+offset_left = -250.0
+offset_top = 70.0
+offset_right = -200.0
+offset_bottom = 78.0
+color = Color(0.55, 0.42, 0.32, 1)
+
+[node name="BenchR" type="ColorRect" parent="."]
+offset_left = 200.0
+offset_top = 70.0
+offset_right = 250.0
+offset_bottom = 78.0
+color = Color(0.55, 0.42, 0.32, 1)
+
+[node name="ViewpointSouth" parent="." instance=ExtResource("4_view")]
+position = Vector2(180, 70)
+viewpoint_id = "corcovado_baia"
+prompt_first = "Admirer la baie"
+flavor_speaker = "Sobrinho"
+flavor_text = "La baie de Guanabara s'allume comme un tableau. Le pain de sucre découpe la nuit. Tu en oublierais presque la dette."
+money_reward = 80
+
+[node name="ViewpointNorth" parent="." instance=ExtResource("4_view")]
+position = Vector2(-180, 70)
+viewpoint_id = "corcovado_zona_norte"
+prompt_first = "Voir la zona norte"
+flavor_speaker = "Sobrinho"
+flavor_text = "Au loin, les favelas grimpent les morros, les antennes se mêlent aux étoiles. Tudo é Rio, sobrinho."
+money_reward = 60
+
+[node name="WaterVendor" parent="." instance=ExtResource("5_vendor")]
+position = Vector2(-100, 130)
+vendor_id = "corcovado_water"
+item_label = "Água gelada"
+price = 8
+stamina_recover = 35.0
+flavor_text_offer = "Geladinha pra subida do morro, freguês."
+flavor_text_broke = "Os trocos primeiro, depois a água."
+
+[node name="Tourist1" parent="." instance=ExtResource("3_wander")]
+position = Vector2(-100, 110)
+color = Color(0.95, 0.85, 0.4, 1)
+path = Array[Vector2]([Vector2(-100, 110), Vector2(80, 110), Vector2(-40, 140)])
+speed = 22.0
+
+[node name="Tourist2" parent="." instance=ExtResource("3_wander")]
+position = Vector2(60, 150)
+color = Color(0.4, 0.65, 0.95, 1)
+path = Array[Vector2]([Vector2(60, 150), Vector2(-60, 150), Vector2(60, 110)])
+speed = 18.0
+
+[node name="Tourist3" parent="." instance=ExtResource("3_wander")]
+position = Vector2(180, 130)
+color = Color(0.85, 0.4, 0.55, 1)
+path = Array[Vector2]([Vector2(180, 130), Vector2(220, 110), Vector2(150, 160)])
+speed = 16.0
+
+[node name="GuideKid" parent="." instance=ExtResource("3_wander")]
+position = Vector2(0, 165)
+color = Color(0.4, 0.85, 0.55, 1)
+size = Vector2(8, 14)
+path = Array[Vector2]([Vector2(0, 165), Vector2(120, 165), Vector2(-120, 165)])
+speed = 30.0

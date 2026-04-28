@@ -1,0 +1,434 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/minigames/padaria/PadariaGame.gd" id="1_game"]
+
+[node name="Padaria" type="Node2D"]
+script = ExtResource("1_game")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(960, 540)
+
+[node name="Arena" type="Node2D" parent="."]
+
+[node name="Floor" type="ColorRect" parent="Arena"]
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 1920.0
+offset_bottom = 1080.0
+color = Color(0.4, 0.32, 0.25, 1)
+
+[node name="WallTop" type="ColorRect" parent="Arena"]
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 1920.0
+offset_bottom = 180.0
+color = Color(0.55, 0.45, 0.35, 1)
+
+[node name="WallBottom" type="ColorRect" parent="Arena"]
+offset_left = 0.0
+offset_top = 920.0
+offset_right = 1920.0
+offset_bottom = 1080.0
+color = Color(0.55, 0.45, 0.35, 1)
+
+[node name="FlourBin" type="ColorRect" parent="Arena"]
+offset_left = 200.0
+offset_top = 220.0
+offset_right = 320.0
+offset_bottom = 340.0
+color = Color(0.95, 0.92, 0.85, 1)
+
+[node name="FlourLabel" type="Label" parent="Arena"]
+offset_left = 180.0
+offset_top = 340.0
+offset_right = 340.0
+offset_bottom = 380.0
+text = "Farine"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+
+[node name="WaterTap" type="ColorRect" parent="Arena"]
+offset_left = 600.0
+offset_top = 220.0
+offset_right = 720.0
+offset_bottom = 340.0
+color = Color(0.4, 0.65, 0.95, 1)
+
+[node name="WaterLabel" type="Label" parent="Arena"]
+offset_left = 580.0
+offset_top = 340.0
+offset_right = 740.0
+offset_bottom = 380.0
+text = "Eau"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+
+[node name="QueijoBox" type="ColorRect" parent="Arena"]
+offset_left = 1000.0
+offset_top = 220.0
+offset_right = 1120.0
+offset_bottom = 340.0
+color = Color(0.95, 0.85, 0.45, 1)
+
+[node name="QueijoLabel" type="Label" parent="Arena"]
+offset_left = 980.0
+offset_top = 340.0
+offset_right = 1140.0
+offset_bottom = 380.0
+text = "Queijo"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+
+[node name="Counter" type="ColorRect" parent="Arena"]
+offset_left = 80.0
+offset_top = 480.0
+offset_right = 1840.0
+offset_bottom = 600.0
+color = Color(0.32, 0.25, 0.18, 1)
+
+[node name="CounterHighlight" type="ColorRect" parent="Arena"]
+visible = false
+offset_left = 580.0
+offset_top = 480.0
+offset_right = 820.0
+offset_bottom = 600.0
+color = Color(0.55, 0.95, 0.55, 0.35)
+
+[node name="CounterLabel" type="Label" parent="Arena"]
+offset_left = 580.0
+offset_top = 600.0
+offset_right = 820.0
+offset_bottom = 640.0
+text = "Plan de travail"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 20
+theme_override_colors/font_color = Color(0.85, 0.85, 0.85, 1)
+
+[node name="Plate" type="Node2D" parent="Arena"]
+position = Vector2(700, 540)
+
+[node name="Base" type="ColorRect" parent="Arena/Plate"]
+offset_left = -54.0
+offset_top = -18.0
+offset_right = 54.0
+offset_bottom = 14.0
+color = Color(0.85, 0.78, 0.6, 1)
+
+[node name="Flour" type="ColorRect" parent="Arena/Plate"]
+visible = false
+offset_left = -46.0
+offset_top = -14.0
+offset_right = -14.0
+offset_bottom = 10.0
+color = Color(0.95, 0.92, 0.85, 1)
+
+[node name="Water" type="ColorRect" parent="Arena/Plate"]
+visible = false
+offset_left = -10.0
+offset_top = -14.0
+offset_right = 22.0
+offset_bottom = 10.0
+color = Color(0.4, 0.65, 0.95, 1)
+
+[node name="Queijo" type="ColorRect" parent="Arena/Plate"]
+visible = false
+offset_left = 26.0
+offset_top = -14.0
+offset_right = 50.0
+offset_bottom = 10.0
+color = Color(0.95, 0.85, 0.45, 1)
+
+[node name="Oven" type="Node2D" parent="Arena"]
+position = Vector2(700, 820)
+
+[node name="OvenBox" type="ColorRect" parent="Arena/Oven"]
+offset_left = -100.0
+offset_top = -100.0
+offset_right = 100.0
+offset_bottom = 100.0
+color = Color(0.18, 0.18, 0.22, 1)
+
+[node name="Glow" type="ColorRect" parent="Arena/Oven"]
+offset_left = -78.0
+offset_top = -78.0
+offset_right = 78.0
+offset_bottom = 78.0
+color = Color(0.4, 0.4, 0.4, 0.4)
+
+[node name="Smoke" type="ColorRect" parent="Arena/Oven"]
+visible = false
+offset_left = -28.0
+offset_top = -150.0
+offset_right = 28.0
+offset_bottom = -100.0
+color = Color(0.7, 0.7, 0.7, 0.6)
+
+[node name="OvenLabel" type="Label" parent="Arena"]
+offset_left = 600.0
+offset_top = 940.0
+offset_right = 800.0
+offset_bottom = 980.0
+text = "Four"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+
+[node name="Basket" type="ColorRect" parent="Arena"]
+offset_left = 1420.0
+offset_top = 740.0
+offset_right = 1580.0
+offset_bottom = 900.0
+color = Color(0.85, 0.55, 0.3, 1)
+
+[node name="BasketLabel" type="Label" parent="Arena"]
+offset_left = 1380.0
+offset_top = 900.0
+offset_right = 1620.0
+offset_bottom = 940.0
+text = "Panier de vente"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+
+[node name="Trash" type="ColorRect" parent="Arena"]
+offset_left = 1680.0
+offset_top = 760.0
+offset_right = 1800.0
+offset_bottom = 880.0
+color = Color(0.45, 0.45, 0.5, 1)
+
+[node name="TrashLabel" type="Label" parent="Arena"]
+offset_left = 1640.0
+offset_top = 880.0
+offset_right = 1840.0
+offset_bottom = 920.0
+text = "Poubelle"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 20
+theme_override_colors/font_color = Color(0.85, 0.85, 0.85, 1)
+
+[node name="Player" type="ColorRect" parent="Arena"]
+offset_left = 936.0
+offset_top = 516.0
+offset_right = 984.0
+offset_bottom = 564.0
+color = Color(0.95, 0.85, 0.35, 1)
+
+[node name="CarryDot" type="ColorRect" parent="Arena/Player"]
+visible = false
+offset_left = -10.0
+offset_top = -22.0
+offset_right = 10.0
+offset_bottom = -2.0
+color = Color(1, 1, 1, 1)
+
+[node name="Context" type="Label" parent="Arena/Player"]
+offset_left = -140.0
+offset_top = -52.0
+offset_right = 180.0
+offset_bottom = -28.0
+text = ""
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 20
+theme_override_colors/font_color = Color(1, 0.95, 0.55, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="Timer" type="Label" parent="UI"]
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -200.0
+offset_top = 24.0
+offset_right = -40.0
+offset_bottom = 80.0
+text = "100.0s"
+horizontal_alignment = 2
+theme_override_font_sizes/font_size = 42
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+
+[node name="Tips" type="Label" parent="UI"]
+offset_left = 40.0
+offset_top = 24.0
+offset_right = 460.0
+offset_bottom = 80.0
+text = "💰 R$ 0 (0/5)"
+theme_override_font_sizes/font_size = 36
+theme_override_colors/font_color = Color(1, 0.95, 0.55, 1)
+
+[node name="Status" type="Label" parent="UI"]
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -520.0
+offset_top = 24.0
+offset_right = 520.0
+offset_bottom = 76.0
+text = "Bom dia ! Trois ingrédients sur la plaque, puis four, puis panier."
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 24
+theme_override_colors/font_color = Color(1, 0.95, 0.8, 1)
+
+[node name="CookBar" type="Control" parent="UI"]
+visible = false
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -180.0
+offset_top = 96.0
+offset_right = 180.0
+offset_bottom = 124.0
+
+[node name="Bg" type="ColorRect" parent="UI/CookBar"]
+offset_right = 360.0
+offset_bottom = 22.0
+color = Color(0.15, 0.15, 0.18, 0.85)
+
+[node name="Fill" type="ColorRect" parent="UI/CookBar"]
+offset_right = 0.0
+offset_bottom = 22.0
+color = Color(0.55, 0.85, 0.95, 1)
+
+[node name="PerfectStart" type="ColorRect" parent="UI/CookBar"]
+offset_left = 130.0
+offset_top = -4.0
+offset_right = 134.0
+offset_bottom = 26.0
+color = Color(0.55, 0.95, 0.55, 1)
+
+[node name="PerfectEnd" type="ColorRect" parent="UI/CookBar"]
+offset_left = 258.0
+offset_top = -4.0
+offset_right = 262.0
+offset_bottom = 26.0
+color = Color(0.55, 0.95, 0.55, 1)
+
+[node name="CookLabel" type="Label" parent="UI"]
+visible = false
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -180.0
+offset_top = 130.0
+offset_right = 180.0
+offset_bottom = 162.0
+text = ""
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 20
+theme_override_colors/font_color = Color(0.95, 0.85, 0.45, 1)
+
+[node name="Prompt" type="Label" parent="UI"]
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = -560.0
+offset_top = -64.0
+offset_right = 560.0
+offset_bottom = -24.0
+text = "[E] Prendre · Déposer · Sortir du four · Vendre · Jeter"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(0.85, 0.85, 0.95, 1)
+
+[node name="HelpButton" type="Button" parent="UI"]
+visible = false
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -64.0
+offset_top = 96.0
+offset_right = -24.0
+offset_bottom = 136.0
+text = "?"
+theme_override_font_sizes/font_size = 24
+
+[node name="Tutorial" type="Control" parent="UI"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Backdrop" type="ColorRect" parent="UI/Tutorial"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.05, 0.05, 0.08, 0.9)
+
+[node name="Panel" type="PanelContainer" parent="UI/Tutorial"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -460.0
+offset_top = -340.0
+offset_right = 460.0
+offset_bottom = 340.0
+
+[node name="Margin" type="MarginContainer" parent="UI/Tutorial/Panel"]
+theme_override_constants/margin_left = 36
+theme_override_constants/margin_top = 28
+theme_override_constants/margin_right = 36
+theme_override_constants/margin_bottom = 28
+
+[node name="Layout" type="VBoxContainer" parent="UI/Tutorial/Panel/Margin"]
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="UI/Tutorial/Panel/Margin/Layout"]
+text = "Padaria São Sebastião — Comment jouer"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 32
+theme_override_colors/font_color = Color(1, 0.92, 0.55, 1)
+
+[node name="Goal" type="Label" parent="UI/Tutorial/Panel/Margin/Layout"]
+text = "Sors un maximum de fournées de pão de queijo en 100 secondes. Chaque fournée parfaite = R$ 22 de tip."
+autowrap_mode = 3
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.95, 0.92, 0.85, 1)
+
+[node name="Sep1" type="HSeparator" parent="UI/Tutorial/Panel/Margin/Layout"]
+
+[node name="Step1" type="Label" parent="UI/Tutorial/Panel/Margin/Layout"]
+text = "1. Assemble la plaque (3 ingrédients)
+   Va à Farine, Eau ou Queijo → [E] pour prendre.
+   Reviens au plan de travail → [E] pour déposer. Répète × 3."
+autowrap_mode = 3
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.95, 0.92, 0.85, 1)
+
+[node name="Step2" type="Label" parent="UI/Tutorial/Panel/Margin/Layout"]
+text = "2. Enfourne
+   Mains libres au plan de travail → [E] prend la plaque.
+   Va au four → [E] enfourne."
+autowrap_mode = 3
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.95, 0.92, 0.85, 1)
+
+[node name="Step3" type="Label" parent="UI/Tutorial/Panel/Margin/Layout"]
+text = "3. Surveille la cuisson
+   Barre verte = parfait (4-8 s, R$ 22). Trop court = cru (R$ 6).
+   Trop long = brûlé (R$ 0). De la fumée sort du four = sors-la !"
+autowrap_mode = 3
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.95, 0.92, 0.85, 1)
+
+[node name="Step4" type="Label" parent="UI/Tutorial/Panel/Margin/Layout"]
+text = "4. Sors et vends
+   [E] au four = la plaque arrive directement en main.
+   Va au panier de vente → [E] vend. Plaque ratée → poubelle [E]."
+autowrap_mode = 3
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.95, 0.92, 0.85, 1)
+
+[node name="Sep2" type="HSeparator" parent="UI/Tutorial/Panel/Margin/Layout"]
+
+[node name="Tips" type="Label" parent="UI/Tutorial/Panel/Margin/Layout"]
+text = "Astuces : le label au-dessus de toi indique toujours ce que [E] fait. Les stations qui s'éclairent = action possible.
+Contrôles : WASD ou Flèches pour bouger, E pour interagir."
+autowrap_mode = 3
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.75, 0.85, 0.95, 1)
+
+[node name="StartButton" type="Button" parent="UI/Tutorial/Panel/Margin/Layout"]
+text = "Commencer le service"
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 22

@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_choice"]
+script = ExtResource("2_obj")
+id = "answer_ramos"
+description = "Donner ou couvrir Tito auprès du capitão Ramos"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "act2_ramos_operacao"
+display_name = "Operação Carnaval"
+description = "Capitão Ramos prépare une descente sur le Morro et veut la position de Tito. Le balancer rapporte huit cents reais et te place dans le camp bleu. Le couvrir te ferme cette porte mais ouvre l'autre."
+journal_text = "Choisir : balancer Tito à Ramos ou le couvrir."
+giver_npc_id = "ramos"
+ink_knot = "ramos_act2_offer"
+objectives = Array[Resource]([SubResource("obj_choice")])
+money_reward = 0
+reputation_rewards = {}
+required_reputation = {}
+required_act = 2

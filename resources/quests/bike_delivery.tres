@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_one_delivery"]
+script = ExtResource("2_obj")
+id = "one_delivery"
+description = "Réussir une livraison avec le vélo (station à côté de Carlos)"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "bike_delivery"
+display_name = "Coursier pour Carlos"
+description = "Carlos, le gérant du café ISSIMO, te file son vélo pour livrer ses clients. Évite la circulation de l'Av. Atlântica."
+journal_text = "Prends le vélo (station devant le café) et livre un colis."
+giver_npc_id = "carlos"
+ink_knot = "carlos_intro"
+objectives = Array[Resource]([SubResource("obj_one_delivery")])
+money_reward = 20
+reputation_rewards = {0: 2}
+required_reputation = {}
+required_act = 0
