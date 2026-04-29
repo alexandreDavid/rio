@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3]
+[gd_scene load_steps=15 format=3]
 
 [ext_resource type="Script" path="res://scripts/main/MainBoot.gd" id="1_boot"]
 [ext_resource type="Script" path="res://scripts/world/DayLighting.gd" id="12_lighting"]
@@ -13,6 +13,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/MiniMap.tscn" id="10_minimap"]
 [ext_resource type="PackedScene" path="res://scenes/ui/JournalUI.tscn" id="11_journal"]
 [ext_resource type="PackedScene" path="res://scenes/ui/IntroFade.tscn" id="13_fade"]
+[ext_resource type="PackedScene" path="res://scenes/ui/ObjectiveBanner.tscn" id="14_banner"]
 
 [node name="Main" type="Node"]
 script = ExtResource("1_boot")
@@ -31,6 +32,8 @@ script = ExtResource("12_lighting")
 [node name="QuestLog" parent="UI" instance=ExtResource("5_log")]
 
 [node name="MiniMap" parent="UI" instance=ExtResource("10_minimap")]
+
+[node name="ObjectiveBanner" parent="UI" instance=ExtResource("14_banner")]
 
 [node name="MobileLayer" type="CanvasLayer" parent="."]
 layer = 10
