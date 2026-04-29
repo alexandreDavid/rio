@@ -49,11 +49,11 @@ func _ready() -> void:
 	if stock_label:
 		stock_label.hide()
 	if character_sheet:
-		character_sheet.hide()
+		character_sheet.hide()  # remplacé par l'app Saúde du téléphone
 	if menu_button:
-		menu_button.pressed.connect(_toggle_character_sheet)
+		menu_button.pressed.connect(_toggle_phone)
 	if close_sheet_button:
-		close_sheet_button.pressed.connect(_toggle_character_sheet)
+		close_sheet_button.pressed.connect(_toggle_phone)
 	if journal_button:
 		journal_button.pressed.connect(_toggle_journal)
 	_init_abilities()
@@ -62,17 +62,16 @@ func _unhandled_input(event: InputEvent) -> void:
 	if not (event is InputEventKey) or not event.pressed or event.echo:
 		return
 	var key: int = event.physical_keycode
-	if key == KEY_C:
-		_toggle_character_sheet()
-		get_viewport().set_input_as_handled()
-	elif key == KEY_ESCAPE and character_sheet and character_sheet.visible:
-		character_sheet.hide()
+	# P : ouvre / ferme le téléphone (bouton 📱 du HUD).
+	# C : raccourci historique vers la fiche perso → ouvre maintenant l'app Saúde du téléphone.
+	if key == KEY_P or key == KEY_C:
+		_toggle_phone()
 		get_viewport().set_input_as_handled()
 
-func _toggle_character_sheet() -> void:
-	if character_sheet == null:
-		return
-	character_sheet.visible = not character_sheet.visible
+func _toggle_phone() -> void:
+	var phone: Node = get_tree().current_scene.get_node_or_null("Phone")
+	if phone and phone.has_method("toggle"):
+		phone.toggle()
 
 func _toggle_journal() -> void:
 	var journal: Node = get_tree().current_scene.get_node_or_null("JournalUI")

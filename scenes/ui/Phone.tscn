@@ -1,0 +1,277 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/Phone.gd" id="1_phone"]
+
+[sub_resource type="StyleBoxFlat" id="FrameStyle"]
+bg_color = Color(0.1, 0.1, 0.13, 1)
+border_width_left = 6
+border_width_top = 6
+border_width_right = 6
+border_width_bottom = 6
+border_color = Color(0.18, 0.18, 0.22, 1)
+corner_radius_top_left = 28
+corner_radius_top_right = 28
+corner_radius_bottom_right = 28
+corner_radius_bottom_left = 28
+shadow_color = Color(0, 0, 0, 0.7)
+shadow_size = 16
+
+[sub_resource type="StyleBoxFlat" id="StatusBarStyle"]
+bg_color = Color(0.18, 0.18, 0.22, 1)
+corner_radius_top_left = 22
+corner_radius_top_right = 22
+
+[sub_resource type="StyleBoxFlat" id="AppButtonStyle"]
+bg_color = Color(0.95, 0.85, 0.4, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[sub_resource type="StyleBoxFlat" id="AppButtonStyleStats"]
+bg_color = Color(0.55, 0.95, 0.55, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[sub_resource type="StyleBoxFlat" id="AppButtonStyleJournal"]
+bg_color = Color(0.85, 0.55, 0.95, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[sub_resource type="StyleBoxFlat" id="AppButtonStyleMissions"]
+bg_color = Color(0.4, 0.65, 0.95, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[node name="Phone" type="CanvasLayer"]
+layer = 6
+script = ExtResource("1_phone")
+
+[node name="Backdrop" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.55)
+
+[node name="Frame" type="Panel" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -340.0
+offset_right = 200.0
+offset_bottom = 340.0
+theme_override_styles/panel = SubResource("FrameStyle")
+
+[node name="StatusBar" type="Panel" parent="Frame"]
+offset_left = 6.0
+offset_top = 6.0
+offset_right = 394.0
+offset_bottom = 38.0
+theme_override_styles/panel = SubResource("StatusBarStyle")
+
+[node name="Clock" type="Label" parent="Frame/StatusBar"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+text = "10:00"
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.95, 0.95, 0.92, 1)
+
+[node name="Signal" type="Label" parent="Frame/StatusBar"]
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -90.0
+offset_right = -42.0
+text = "📶"
+vertical_alignment = 1
+horizontal_alignment = 2
+theme_override_font_sizes/font_size = 13
+
+[node name="Battery" type="Label" parent="Frame/StatusBar"]
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -36.0
+offset_right = -12.0
+text = "🔋"
+vertical_alignment = 1
+horizontal_alignment = 2
+theme_override_font_sizes/font_size = 13
+
+[node name="Screens" type="Control" parent="Frame"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = 50.0
+offset_right = -16.0
+offset_bottom = -60.0
+mouse_filter = 2
+
+[node name="Home" type="Control" parent="Frame/Screens"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="Title" type="Label" parent="Frame/Screens/Home"]
+offset_top = 8.0
+offset_right = 368.0
+offset_bottom = 36.0
+text = "Rio Mobile"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.95, 0.92, 0.85, 1)
+
+[node name="Subtitle" type="Label" parent="Frame/Screens/Home"]
+offset_top = 36.0
+offset_right = 368.0
+offset_bottom = 56.0
+text = "carioca edition"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.6, 0.6, 0.65, 1)
+
+[node name="Grid" type="GridContainer" parent="Frame/Screens/Home"]
+offset_top = 80.0
+offset_right = 368.0
+offset_bottom = 480.0
+columns = 2
+theme_override_constants/h_separation = 24
+theme_override_constants/v_separation = 24
+
+[node name="Taxi" type="Button" parent="Frame/Screens/Home/Grid"]
+custom_minimum_size = Vector2(150, 150)
+text = "🚕
+Taxi"
+theme_override_styles/normal = SubResource("AppButtonStyle")
+theme_override_styles/hover = SubResource("AppButtonStyle")
+theme_override_styles/pressed = SubResource("AppButtonStyle")
+theme_override_font_sizes/font_size = 24
+theme_override_colors/font_color = Color(0.18, 0.14, 0.1, 1)
+
+[node name="Stats" type="Button" parent="Frame/Screens/Home/Grid"]
+custom_minimum_size = Vector2(150, 150)
+text = "💪
+Saúde"
+theme_override_styles/normal = SubResource("AppButtonStyleStats")
+theme_override_styles/hover = SubResource("AppButtonStyleStats")
+theme_override_styles/pressed = SubResource("AppButtonStyleStats")
+theme_override_font_sizes/font_size = 24
+theme_override_colors/font_color = Color(0.12, 0.18, 0.12, 1)
+
+[node name="Journal" type="Button" parent="Frame/Screens/Home/Grid"]
+custom_minimum_size = Vector2(150, 150)
+text = "📖
+Diário"
+theme_override_styles/normal = SubResource("AppButtonStyleJournal")
+theme_override_styles/hover = SubResource("AppButtonStyleJournal")
+theme_override_styles/pressed = SubResource("AppButtonStyleJournal")
+theme_override_font_sizes/font_size = 24
+theme_override_colors/font_color = Color(0.18, 0.12, 0.18, 1)
+
+[node name="Missions" type="Button" parent="Frame/Screens/Home/Grid"]
+custom_minimum_size = Vector2(150, 150)
+text = "📋
+Missões"
+theme_override_styles/normal = SubResource("AppButtonStyleMissions")
+theme_override_styles/hover = SubResource("AppButtonStyleMissions")
+theme_override_styles/pressed = SubResource("AppButtonStyleMissions")
+theme_override_font_sizes/font_size = 24
+theme_override_colors/font_color = Color(0.12, 0.18, 0.22, 1)
+
+[node name="Taxi" type="Control" parent="Frame/Screens"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Header" type="Label" parent="Frame/Screens/Taxi"]
+offset_top = 8.0
+offset_right = 368.0
+offset_bottom = 36.0
+text = "🚕 Taxi"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
+
+[node name="Status" type="Label" parent="Frame/Screens/Taxi"]
+offset_top = 40.0
+offset_right = 368.0
+offset_bottom = 60.0
+text = ""
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.95, 0.92, 0.85, 1)
+
+[node name="Scroll" type="ScrollContainer" parent="Frame/Screens/Taxi"]
+offset_top = 70.0
+offset_right = 368.0
+offset_bottom = 480.0
+
+[node name="Box" type="VBoxContainer" parent="Frame/Screens/Taxi/Scroll"]
+custom_minimum_size = Vector2(360, 0)
+theme_override_constants/separation = 6
+
+[node name="Stats" type="Control" parent="Frame/Screens"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Header" type="Label" parent="Frame/Screens/Stats"]
+offset_top = 8.0
+offset_right = 368.0
+offset_bottom = 36.0
+text = "💪 Saúde"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.55, 0.95, 0.55, 1)
+
+[node name="Scroll" type="ScrollContainer" parent="Frame/Screens/Stats"]
+offset_top = 50.0
+offset_right = 368.0
+offset_bottom = 480.0
+
+[node name="Box" type="VBoxContainer" parent="Frame/Screens/Stats/Scroll"]
+custom_minimum_size = Vector2(360, 0)
+theme_override_constants/separation = 8
+
+[node name="HomeIndicator" type="ColorRect" parent="Frame"]
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = -50.0
+offset_top = -22.0
+offset_right = 50.0
+offset_bottom = -16.0
+color = Color(0.95, 0.92, 0.85, 0.85)
+
+[node name="BackButton" type="Button" parent="Frame"]
+visible = false
+offset_left = 16.0
+offset_top = 50.0
+offset_right = 50.0
+offset_bottom = 80.0
+text = "←"
+flat = true
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(0.95, 0.92, 0.85, 1)
+
+[node name="CloseButton" type="Button" parent="Frame"]
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -50.0
+offset_top = 50.0
+offset_right = -16.0
+offset_bottom = 80.0
+text = "✕"
+flat = true
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.95, 0.92, 0.85, 1)
