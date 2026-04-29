@@ -118,6 +118,7 @@ shape = SubResource("WallV")
 position = Vector2(0, 105)
 prompt_text = "Sortir"
 is_exit = true
+destination = Vector2(-15080, -2768)
 
 [node name="SpawnPoint" type="Marker2D" parent="."]
 position = Vector2(0, 75)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=55 format=3]
+[gd_scene load_steps=56 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/npcs/DonaIrene.tscn" id="37_irene"]
 [ext_resource type="PackedScene" path="res://scenes/npcs/BarPatrao.tscn" id="38_patrao"]
@@ -23,6 +23,7 @@
 [ext_resource type="PackedScene" path="res://scenes/districts/ZonaSul.tscn" id="57_zonasul"]
 [ext_resource type="PackedScene" path="res://scenes/props/DistrictExit.tscn" id="58_exit"]
 [ext_resource type="PackedScene" path="res://scenes/districts/BotafogoFlamengo.tscn" id="59_botafogo"]
+[ext_resource type="PackedScene" path="res://scenes/districts/FavelaDoMorro.tscn" id="60_favela"]
 [ext_resource type="PackedScene" path="res://scenes/npcs/Consortium.tscn" id="28_consortium"]
 [ext_resource type="PackedScene" path="res://scenes/npcs/Ramos.tscn" id="29_ramos"]
 [ext_resource type="PackedScene" path="res://scenes/props/SurfStation.tscn" id="30_surf"]
@@ -372,6 +373,14 @@ position = Vector2(2150, -50)
 target_district = "botafogo_flamengo"
 label_text = "↑ TÚNEL → BOTAFOGO"
 
+[node name="FavelaDoMorroDistrict" parent="." instance=ExtResource("60_favela")]
+position = Vector2(-15000, -2900)
+
+[node name="ExitToFavela" parent="." instance=ExtResource("58_exit")]
+position = Vector2(1100, -210)
+target_district = "favela_morro"
+label_text = "↑ MORRO / FAVELA"
+
 [node name="Otavio" parent="." instance=ExtResource("41_otavio")]
 position = Vector2(1840, 36)
 
@@ -399,4 +408,4 @@ theme_override_colors/font_color = Color(0.95, 0.85, 0.55, 1)
 theme_override_font_sizes/font_size = 11
 
 [node name="Player" parent="." instance=ExtResource("1_player")]
-position = Vector2(1200, 96)
+position = Vector2(-14920, -5825)

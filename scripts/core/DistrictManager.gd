@@ -67,6 +67,11 @@ const DISTRICTS: Dictionary = {
 		"fare": 14,
 		"node_name": "BotafogoFlamengoDistrict",
 	},
+	"favela_morro": {
+		"label": "Favela do Morro — chez tio Zé",
+		"fare": 8,
+		"node_name": "FavelaDoMorroDistrict",
+	},
 }
 
 # Position d'arrivée custom quand on entre via une sortie piétonne (pas via le
@@ -77,12 +82,16 @@ const WALK_ENTRIES: Dictionary = {
 	"copacabana": {
 		"zona_sul":           Vector2(220, 110),     # depuis l'ouest (Arpoador)
 		"botafogo_flamengo":  Vector2(2120, -50),    # depuis le tunnel Leme (côté est-nord)
+		"favela_morro":       Vector2(1100, -180),   # arrivée depuis le morro (escalier 2nd row)
 	},
 	"zona_sul": {
 		"copacabana": Vector2(800, 130),  # arrivée depuis l'est (Copa)
 	},
 	"botafogo_flamengo": {
 		"copacabana": Vector2(800, 130),  # arrivée depuis le tunnel (côté est = Urca)
+	},
+	"favela_morro": {
+		"copacabana": Vector2(0, 195),    # arrivée depuis le bas (escalier sud)
 	},
 }
 
