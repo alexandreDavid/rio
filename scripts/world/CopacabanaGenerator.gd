@@ -35,6 +35,13 @@ const BUILDINGS_TEXTURE: String = "res://assets/sprites/buildings_ai_clean.png"
 @export var map_end_x: float = 2200.0
 @export var building_count: int = 14
 
+# Bornes globales de la map (tuiles, sable, calçadão, etc.).
+# Inclut Forte de Copacabana à l'ouest (-300..0) et Leme étendu à l'est (2200..3200).
+# Les bâtiments NPC restent dans map_start_x..map_end_x — Forte et Leme sont décorés à part.
+const MAP_LEFT: float = -300.0
+const MAP_RIGHT: float = 3200.0
+const MAP_TOTAL_W: float = 3500.0  # MAP_RIGHT - MAP_LEFT
+
 const COMMERCES: Array = [
 	{"x": 500.0, "label": "", "region": Rect2(70, 540, 440, 450)},
 	{"x": 1050.0, "label": "", "region": Rect2(540, 540, 480, 450)},
@@ -146,6 +153,8 @@ func _ready() -> void:
 	_spawn_calcadao()
 	_spawn_beach_props()
 	_spawn_postos()
+	_spawn_forte()
+	_spawn_leme_rocks()
 	_spawn_zone_markers()
 	_spawn_ambient_wanderers()
 
@@ -156,8 +165,7 @@ func _spawn_tile_strip(container_name: String, y_top: float, y_bot: float, tile_
 	add_child(container)
 	var tex: Texture2D = load(TILESET_TEXTURE)
 	var scale: Vector2 = Vector2(GROUND_TILE_SIZE / tile_region.size.x, GROUND_TILE_SIZE / tile_region.size.y)
-	var total_w: float = 2400.0
-	var cols: int = int(ceil(total_w / GROUND_TILE_SIZE))
+	var cols: int = int(ceil(MAP_TOTAL_W / GROUND_TILE_SIZE))
 	var rows: int = int(ceil((y_bot - y_top) / GROUND_TILE_SIZE))
 	for row in rows:
 		for col in cols:
@@ -166,7 +174,7 @@ func _spawn_tile_strip(container_name: String, y_top: float, y_bot: float, tile_
 			s.region_enabled = true
 			s.region_rect = tile_region
 			s.scale = scale
-			s.position = Vector2(col * GROUND_TILE_SIZE + GROUND_TILE_SIZE * 0.5, y_top + row * GROUND_TILE_SIZE + GROUND_TILE_SIZE * 0.5)
+			s.position = Vector2(MAP_LEFT + col * GROUND_TILE_SIZE + GROUND_TILE_SIZE * 0.5, y_top + row * GROUND_TILE_SIZE + GROUND_TILE_SIZE * 0.5)
 			container.add_child(s)
 
 func _spawn_sand() -> void:
@@ -196,8 +204,7 @@ func _spawn_sea_foam() -> void:
 	var tex: Texture2D = load(TILESET_TEXTURE)
 	var strip_h: float = 32.0
 	var tile_w: float = 96.0
-	var total_w: float = 2400.0
-	var tile_count: int = int(ceil(total_w / tile_w))
+	var tile_count: int = int(ceil(MAP_TOTAL_W / tile_w))
 	var scale_x: float = tile_w / FOAM_TILE_REGION.size.x
 	var scale_y: float = strip_h / FOAM_TILE_REGION.size.y
 	for i in tile_count:
@@ -206,7 +213,7 @@ func _spawn_sea_foam() -> void:
 		s.region_enabled = true
 		s.region_rect = FOAM_TILE_REGION
 		s.scale = Vector2(scale_x, scale_y)
-		s.position = Vector2(i * tile_w + tile_w * 0.5, 400.0 + strip_h * 0.5)
+		s.position = Vector2(MAP_LEFT + i * tile_w + tile_w * 0.5, 400.0 + strip_h * 0.5)
 		container.add_child(s)
 
 func _spawn_beach_props() -> void:
@@ -283,15 +290,14 @@ func _spawn_calcadao() -> void:
 	add_child(container)
 	var tex: Texture2D = load(TILESET_TEXTURE)
 	var scale_factor: float = CALCADAO_TILE_SIZE / CALCADAO_TILE_REGION.size.x
-	var total_w: float = 2400.0
-	var tile_count: int = int(ceil(total_w / CALCADAO_TILE_SIZE))
+	var tile_count: int = int(ceil(MAP_TOTAL_W / CALCADAO_TILE_SIZE))
 	for i in tile_count:
 		var s: Sprite2D = Sprite2D.new()
 		s.texture = tex
 		s.region_enabled = true
 		s.region_rect = CALCADAO_TILE_REGION
 		s.scale = Vector2(scale_factor, scale_factor)
-		s.position = Vector2(i * CALCADAO_TILE_SIZE + CALCADAO_TILE_SIZE * 0.5, CALCADAO_Y + CALCADAO_HEIGHT * 0.5)
+		s.position = Vector2(MAP_LEFT + i * CALCADAO_TILE_SIZE + CALCADAO_TILE_SIZE * 0.5, CALCADAO_Y + CALCADAO_HEIGHT * 0.5)
 		container.add_child(s)
 
 func _spawn_buildings() -> void:
@@ -1024,9 +1030,145 @@ func _spawn_zone_markers() -> void:
 	var container: Node2D = Node2D.new()
 	container.name = "ZoneMarkers"
 	add_child(container)
-	# LEME à l'est (droite), FORTE à l'ouest (gauche)
-	_spawn_sign(container, Vector2(70, -360), "FORTE", Color(0.85, 0.85, 0.9, 1), 16)
-	_spawn_sign(container, Vector2(2300, -360), "LEME", Color(0.5, 0.85, 0.6, 1), 16)
+	# LEME à l'est (Pedra do Leme), FORTE à l'ouest (Forte de Copacabana)
+	_spawn_sign(container, Vector2(-160, -360), "FORTE", Color(0.85, 0.85, 0.9, 1), 16)
+	_spawn_sign(container, Vector2(3050, -360), "LEME", Color(0.5, 0.85, 0.6, 1), 16)
+
+# Forte de Copacabana — extrémité ouest. Petit promontoire rocheux avec une
+# fortification militaire historique (mur épais blanc, deux canons, drapeau BR).
+# x=-280..-50, y=128..200 (sur le sable). C'est le bord ouest de la map jouable.
+func _spawn_forte() -> void:
+	var container: Node2D = Node2D.new()
+	container.name = "ForteDeCopacabana"
+	add_child(container)
+	# Promontoire rocheux qui s'avance dans la mer
+	var rock: ColorRect = ColorRect.new()
+	rock.offset_left = -290.0
+	rock.offset_top = 140.0
+	rock.offset_right = -40.0
+	rock.offset_bottom = 360.0
+	rock.color = Color(0.45, 0.42, 0.45, 1)
+	container.add_child(rock)
+	var rock_top: ColorRect = ColorRect.new()
+	rock_top.offset_left = -270.0
+	rock_top.offset_top = 130.0
+	rock_top.offset_right = -70.0
+	rock_top.offset_bottom = 145.0
+	rock_top.color = Color(0.35, 0.32, 0.36, 1)
+	container.add_child(rock_top)
+	# Vegetation au sommet
+	var veg: ColorRect = ColorRect.new()
+	veg.offset_left = -250.0
+	veg.offset_top = 124.0
+	veg.offset_right = -90.0
+	veg.offset_bottom = 132.0
+	veg.color = Color(0.32, 0.55, 0.32, 0.85)
+	container.add_child(veg)
+	# Mur du fort (blanc, ouvert vers la mer)
+	var fort_wall: ColorRect = ColorRect.new()
+	fort_wall.offset_left = -240.0
+	fort_wall.offset_top = 152.0
+	fort_wall.offset_right = -100.0
+	fort_wall.offset_bottom = 200.0
+	fort_wall.color = Color(0.92, 0.88, 0.78, 1)
+	container.add_child(fort_wall)
+	# Créneaux du fort
+	for cx in [-230.0, -210.0, -190.0, -170.0, -150.0, -130.0, -110.0]:
+		var crenel: ColorRect = ColorRect.new()
+		crenel.offset_left = cx - 4.0
+		crenel.offset_top = 145.0
+		crenel.offset_right = cx + 4.0
+		crenel.offset_bottom = 152.0
+		crenel.color = Color(0.92, 0.88, 0.78, 1)
+		container.add_child(crenel)
+	# Deux canons
+	for cx in [-200.0, -140.0]:
+		var cannon: ColorRect = ColorRect.new()
+		cannon.offset_left = cx - 8.0
+		cannon.offset_top = 156.0
+		cannon.offset_right = cx + 8.0
+		cannon.offset_bottom = 162.0
+		cannon.color = Color(0.18, 0.18, 0.22, 1)
+		container.add_child(cannon)
+	# Drapeau brésilien
+	var pole: ColorRect = ColorRect.new()
+	pole.offset_left = -170.0
+	pole.offset_top = 130.0
+	pole.offset_right = -167.0
+	pole.offset_bottom = 152.0
+	pole.color = Color(0.32, 0.28, 0.22, 1)
+	container.add_child(pole)
+	var flag_g: ColorRect = ColorRect.new()
+	flag_g.offset_left = -167.0
+	flag_g.offset_top = 130.0
+	flag_g.offset_right = -148.0
+	flag_g.offset_bottom = 142.0
+	flag_g.color = Color(0.18, 0.55, 0.32, 1)
+	container.add_child(flag_g)
+	var flag_y: ColorRect = ColorRect.new()
+	flag_y.offset_left = -161.0
+	flag_y.offset_top = 132.0
+	flag_y.offset_right = -154.0
+	flag_y.offset_bottom = 140.0
+	flag_y.color = Color(0.95, 0.85, 0.18, 1)
+	container.add_child(flag_y)
+	_spawn_sign(container, Vector2(-200, 174), "FORTE DE COPACABANA", Color(0.55, 0.4, 0.32, 1), 8)
+
+# Leme — extrémité est. Petit prolongement de la plage avec un rocher
+# (Pedra do Leme) et une végétation montagneuse en arrière-plan, marquant la
+# transition vers le tunnel pour Botafogo.
+func _spawn_leme_rocks() -> void:
+	var container: Node2D = Node2D.new()
+	container.name = "PedraDoLeme"
+	add_child(container)
+	# Rocher principal au bord de l'eau
+	var rock: ColorRect = ColorRect.new()
+	rock.offset_left = 2980.0
+	rock.offset_top = 140.0
+	rock.offset_right = 3180.0
+	rock.offset_bottom = 380.0
+	rock.color = Color(0.48, 0.45, 0.48, 1)
+	container.add_child(rock)
+	var rock_top: ColorRect = ColorRect.new()
+	rock_top.offset_left = 3000.0
+	rock_top.offset_top = 130.0
+	rock_top.offset_right = 3160.0
+	rock_top.offset_bottom = 145.0
+	rock_top.color = Color(0.38, 0.35, 0.38, 1)
+	container.add_child(rock_top)
+	# Vegetation au sommet
+	var veg: ColorRect = ColorRect.new()
+	veg.offset_left = 3010.0
+	veg.offset_top = 122.0
+	veg.offset_right = 3150.0
+	veg.offset_bottom = 132.0
+	veg.color = Color(0.28, 0.5, 0.32, 0.9)
+	container.add_child(veg)
+	# Morro qui se prolonge au nord-est (vue sur les hills derrière le tunnel)
+	var morro_back: ColorRect = ColorRect.new()
+	morro_back.offset_left = 2900.0
+	morro_back.offset_top = -350.0
+	morro_back.offset_right = 3200.0
+	morro_back.offset_bottom = -100.0
+	morro_back.color = Color(0.32, 0.42, 0.35, 0.92)
+	container.add_child(morro_back)
+	# Tunnel arch (entrée vers Botafogo) — au nord-est de la map
+	var tunnel: ColorRect = ColorRect.new()
+	tunnel.offset_left = 3060.0
+	tunnel.offset_top = -100.0
+	tunnel.offset_right = 3160.0
+	tunnel.offset_bottom = -40.0
+	tunnel.color = Color(0.18, 0.16, 0.18, 1)
+	container.add_child(tunnel)
+	var tunnel_arch: ColorRect = ColorRect.new()
+	tunnel_arch.offset_left = 3050.0
+	tunnel_arch.offset_top = -110.0
+	tunnel_arch.offset_right = 3170.0
+	tunnel_arch.offset_bottom = -100.0
+	tunnel_arch.color = Color(0.55, 0.5, 0.5, 1)
+	container.add_child(tunnel_arch)
+	_spawn_sign(container, Vector2(3110, -120), "TÚNEL NOVO", Color(0.92, 0.88, 0.78, 1), 9)
+	_spawn_sign(container, Vector2(3080, 174), "PEDRA DO LEME", Color(0.55, 0.4, 0.32, 1), 8)
 
 func _spawn_sign(parent: Node, pos: Vector2, text: String, color: Color, size: int = 11) -> void:
 	var label: Label = Label.new()

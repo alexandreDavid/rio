@@ -80,8 +80,8 @@ const DISTRICTS: Dictionary = {
 const WALK_ENTRIES: Dictionary = {
 	# id_district -> {from_id: Vector2 dans le world (copacabana) ou local (autres)}
 	"copacabana": {
-		"zona_sul":           Vector2(220, 110),     # depuis l'ouest (Arpoador)
-		"botafogo_flamengo":  Vector2(2120, -50),    # depuis le tunnel Leme (côté est-nord)
+		"zona_sul":           Vector2(-240, 110),    # depuis Arpoador (ouest, après le Forte)
+		"botafogo_flamengo":  Vector2(3070, -50),    # depuis le tunnel Leme (extrémité est)
 		"favela_morro":       Vector2(1100, -180),   # arrivée depuis le morro (escalier 2nd row)
 	},
 	"zona_sul": {

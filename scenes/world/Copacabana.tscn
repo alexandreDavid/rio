@@ -357,7 +357,7 @@ z_index = 1
 position = Vector2(-12000, -2900)
 
 [node name="ExitToZonaSul" parent="." instance=ExtResource("58_exit")]
-position = Vector2(180, 110)
+position = Vector2(-280, 110)
 target_district = "zona_sul"
 label_text = "← ARPOADOR / IPANEMA"
 
@@ -365,7 +365,7 @@ label_text = "← ARPOADOR / IPANEMA"
 position = Vector2(-13800, -2900)
 
 [node name="ExitToBotafogo" parent="." instance=ExtResource("58_exit")]
-position = Vector2(2150, -50)
+position = Vector2(3110, -50)
 target_district = "botafogo_flamengo"
 label_text = "↑ TÚNEL → BOTAFOGO"
 
