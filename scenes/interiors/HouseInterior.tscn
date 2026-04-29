@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/props/BuildingDoor.tscn" id="1_door"]
 [ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="2_wander"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/SeuJoao.tscn" id="3_seu_joao"]
 
 [sub_resource type="RectangleShape2D" id="WallH"]
 size = Vector2(360, 12)
@@ -156,3 +157,6 @@ path = Array[Vector2]([Vector2(60, 30), Vector2(62, 28), Vector2(58, 32)])
 speed = 2.0
 pause_at_waypoints = 10.0
 bob_strength = 0.6
+
+[node name="SeuJoao" parent="." instance=ExtResource("3_seu_joao")]
+position = Vector2(-60, 50)

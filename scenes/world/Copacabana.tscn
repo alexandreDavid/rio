@@ -136,8 +136,6 @@ position = Vector2(2408, 120)
 [node name="Shape" type="CollisionShape2D" parent="EdgeWalls/Right"]
 shape = SubResource("WallV")
 
-[node name="SeuJoao" parent="." instance=ExtResource("2_seu_joao")]
-position = Vector2(1260, 100)
 
 [node name="CornCart" parent="." instance=ExtResource("3_cart")]
 position = Vector2(1300, 96)
