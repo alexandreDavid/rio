@@ -1,8 +1,9 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/props/BuildingDoor.tscn" id="1_door"]
 [ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="2_wander"]
 [ext_resource type="PackedScene" path="res://scenes/npcs/SeuJoao.tscn" id="3_seu_joao"]
+[ext_resource type="PackedScene" path="res://scenes/props/DialogueSpot.tscn" id="4_spot"]
 
 [sub_resource type="RectangleShape2D" id="WallH"]
 size = Vector2(360, 12)
@@ -205,3 +206,19 @@ bob_strength = 0.6
 
 [node name="SeuJoao" parent="." instance=ExtResource("3_seu_joao")]
 position = Vector2(-60, 50)
+
+[node name="MotherSpot" parent="." instance=ExtResource("4_spot")]
+position = Vector2(120, -50)
+npc_id = "mae"
+speaker = "Mãe"
+prompt = "Parler à Mãe"
+text = "*remue la moqueca, ne te regarde pas* Mange avant de partir, sobrinho. La rue est dure ce matin. Et n'oublie pas le jantar — j'ai mis le couvert pour trois, comme avant. Comme si Zé allait rentrer."
+choices = PackedStringArray(["Obrigado, mãe"])
+
+[node name="GrandmaSpot" parent="." instance=ExtResource("4_spot")]
+position = Vector2(-130, -30)
+npc_id = "vovo"
+speaker = "Vovó"
+prompt = "Parler à Vovó"
+text = "*sans cesser de tricoter, voix douce* Sobrinho. J'ai rêvé de ton oncle cette nuit. Il était assis au bord de la mer, en train de faire griller du milho, comme quand t'étais petit. Il riait. Va lui faire honneur. Vends son milho. La famille tient debout par les mains qui travaillent."
+choices = PackedStringArray(["Sim, vovó"])
