@@ -23,5 +23,7 @@ static func run() -> void:
 		await CutsceneRunner.say("seu_joao", "seu_joao_heritage")
 		CampaignManager.set_flag("intro_seen")
 		await CutsceneRunner.wait(POST_DIALOGUE_PAUSE)
+		# Tutoriel narratif : tio Zé pointe la carrocinha + Copa + acompte.
+		await CutsceneRunner.say("seu_joao", "seu_joao_intro_tutorial")
 		# Tio Zé reste dans la maison — pas de retour au calçadão.
 	)

@@ -1,10 +1,11 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/props/TaxiStand.tscn" id="1_taxi"]
 [ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="2_wander"]
 [ext_resource type="PackedScene" path="res://scenes/props/DistrictExit.tscn" id="3_exit"]
 [ext_resource type="PackedScene" path="res://scenes/interiors/HouseInterior.tscn" id="4_house_int"]
 [ext_resource type="PackedScene" path="res://scenes/props/BuildingDoor.tscn" id="5_door"]
+[ext_resource type="PackedScene" path="res://scenes/props/CornCart.tscn" id="6_cart"]
 
 [sub_resource type="RectangleShape2D" id="WallH"]
 size = Vector2(1500, 16)
@@ -427,6 +428,21 @@ label_text = "↓ COPACABANA"
 
 [node name="HouseInterior" parent="." instance=ExtResource("4_house_int")]
 position = Vector2(80, -3000)
+
+[node name="CornCart" parent="." instance=ExtResource("6_cart")]
+position = Vector2(40, 130)
+
+[node name="CartHint" type="Label" parent="."]
+offset_left = -10.0
+offset_top = 100.0
+offset_right = 90.0
+offset_bottom = 116.0
+text = "Carrocinha de tio Zé"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 9
+theme_override_colors/font_color = Color(0.95, 0.92, 0.78, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 4
 
 [node name="KidA" parent="." instance=ExtResource("2_wander")]
 position = Vector2(-300, 145)

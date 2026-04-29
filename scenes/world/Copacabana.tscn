@@ -137,8 +137,6 @@ position = Vector2(2408, 120)
 shape = SubResource("WallV")
 
 
-[node name="CornCart" parent="." instance=ExtResource("3_cart")]
-position = Vector2(1300, 96)
 
 [node name="CustomerTourist" parent="." instance=ExtResource("4_customer")]
 position = Vector2(1100, 208)

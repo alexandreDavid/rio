@@ -52,6 +52,11 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 			"0": {"accept_quest": "act1_heritage", "set_flag": "act1_started"},
 		},
 	},
+	"seu_joao_intro_tutorial": {
+		"speaker": "Seu João",
+		"text": "*pose sa main sur ton épaule* La carrocinha est dehors, à côté de la maison. Charge-la, descends l'escalier vers Copacabana, vends du milho au calçadão. Le consortium veut 500 reais d'acompte cette semaine. Cinquante mille au Carnaval. Boa sorte, sobrinho. Et reviens dîner.",
+		"choices": ["Obrigado, tio"],
+	},
 	"consortium_intro": {
 		"speaker": "Dom Nilton (consortium)",
 		"text": "Ah, le neveu de Zé. Assieds-toi. Cinquante mille reais. T'as jusqu'au Carnaval. Cinq cents d'acompte et je te laisse respirer une semaine. Sinon…",
