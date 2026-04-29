@@ -25,8 +25,8 @@ venv/
 __pycache__/
 *.pyc
 
-# Claude Code state (local only)
-.claude/
+# Claude Code : agents + skills sont versionnés (équipe), settings.local.json reste local
+.claude/settings.local.json
 
 # macOS
 .DS_Store
