@@ -171,6 +171,16 @@ func _on_district_changed(district_id: String) -> void:
 	if district_id == "copacabana" and CampaignManager.current_act >= 3 \
 			and not CampaignManager.has_flag("act3_intro_played"):
 		_Act3IntroCutsceneRef.run()
+	# Visite famille : entrer dans la favela suffit à consommer le hint
+	# "should_visit_home" — peu importe à quelle variante mãe/vovó le joueur
+	# parle (letter / sick / revisit / after_payment), être chez lui = visite
+	# accomplie. Évite que le bandeau reste figé sur "Monte voir tio Zé" quand
+	# une variante de palier post-5k prend le dessus sur "after_payment" et
+	# ne pose pas elle-même home_visit_done.
+	if district_id == "favela_morro" \
+			and CampaignManager.has_flag("should_visit_home") \
+			and not CampaignManager.has_flag("home_visit_done"):
+		CampaignManager.set_flag("home_visit_done")
 	if not QuestManager.is_active("tourist_vip_tour"):
 		return
 	if not TOUR_OBJECTIVES.has(district_id):
