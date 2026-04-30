@@ -84,8 +84,8 @@ const WALK_ENTRIES: Dictionary = {
 	# touche immédiatement le trigger retour, repart, etc.).
 	"copacabana": {
 		"zona_sul":           Vector2(-240, 110),    # depuis Arpoador (ouest, après le Forte)
-		"botafogo_flamengo":  Vector2(3070, -50),    # depuis le tunnel Leme (extrémité est)
-		"favela_morro":       Vector2(1100, -100),   # arrivée depuis le morro — sud de ExitToFavela (-210)
+		"botafogo_flamengo":  Vector2(2150, -100),   # arrivée Túnel Novo (Av. Princesa Isabel) — sud de l'exit (-210)
+		"favela_morro":       Vector2(200, -100),    # arrivée pied du morro (Forte) — sud de ExitToFavela (-210)
 	},
 	"zona_sul": {
 		"copacabana": Vector2(800, 130),  # arrivée depuis l'est (Copa) — ouest de ExitToCopa (905)

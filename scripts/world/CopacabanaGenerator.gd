@@ -150,6 +150,7 @@ func _ready() -> void:
 	_spawn_cop_bar()
 	_spawn_academia()
 	_spawn_favelas()
+	_spawn_botafogo_tunnels()
 	_spawn_calcadao()
 	_spawn_beach_props()
 	_spawn_postos()
@@ -923,6 +924,36 @@ func _spawn_favelas() -> void:
 	# Favela do Leme (est, sur la colline)
 	_spawn_favela_cluster(container, Rect2(2240, -340, 156, 150), 25, 54321, "FAVELA DO LEME", Color(0.95, 0.85, 0.35, 1))
 
+# Bouches de tunnel Copa→Botafogo, alignées avec les ExitToBotafogo* dans
+# Copacabana.tscn. Arch sombre + nom de rue, dans la bande favela (y < -200).
+# Túnel Velho (mid-Copa, R. Figueiredo Magalhães / Siqueira Campos) à x=1100,
+# Túnel Novo (Leme, Av. Princesa Isabel) à x=2150.
+func _spawn_botafogo_tunnels() -> void:
+	var container: Node2D = Node2D.new()
+	container.name = "BotafogoTunnels"
+	add_child(container)
+	_spawn_tunnel_arch(container, Vector2(1100, -210), "TÚNEL VELHO", "R. SIQUEIRA CAMPOS")
+	_spawn_tunnel_arch(container, Vector2(2150, -210), "TÚNEL NOVO", "AV. PRINCESA ISABEL")
+
+func _spawn_tunnel_arch(parent: Node, top_center: Vector2, name_text: String, street_text: String) -> void:
+	# Bouche du tunnel : rectangle sombre pour le passage, voussure plus claire au-dessus.
+	var mouth: ColorRect = ColorRect.new()
+	mouth.offset_left = top_center.x - 50
+	mouth.offset_top = top_center.y - 60
+	mouth.offset_right = top_center.x + 50
+	mouth.offset_bottom = top_center.y
+	mouth.color = Color(0.14, 0.13, 0.16, 1)
+	parent.add_child(mouth)
+	var arch: ColorRect = ColorRect.new()
+	arch.offset_left = top_center.x - 60
+	arch.offset_top = top_center.y - 70
+	arch.offset_right = top_center.x + 60
+	arch.offset_bottom = top_center.y - 60
+	arch.color = Color(0.55, 0.5, 0.5, 1)
+	parent.add_child(arch)
+	_spawn_sign(parent, Vector2(top_center.x - 30, top_center.y - 84), name_text, Color(0.92, 0.88, 0.78, 1), 9)
+	_spawn_sign(parent, Vector2(top_center.x - 50, top_center.y + 4), street_text, Color(0.85, 0.82, 0.7, 0.9), 7)
+
 func _spawn_favela_cluster(parent: Node, zone: Rect2, house_count: int, seed_val: int, label_text: String, label_color: Color) -> void:
 	var rng: RandomNumberGenerator = RandomNumberGenerator.new()
 	rng.seed = seed_val
@@ -1167,7 +1198,9 @@ func _spawn_leme_rocks() -> void:
 	tunnel_arch.offset_bottom = -100.0
 	tunnel_arch.color = Color(0.55, 0.5, 0.5, 1)
 	container.add_child(tunnel_arch)
-	_spawn_sign(container, Vector2(3110, -120), "TÚNEL NOVO", Color(0.92, 0.88, 0.78, 1), 9)
+	# Le panneau "TÚNEL NOVO" a migré sur l'ExitToBotafogoNovo en x=2150 (Av.
+	# Princesa Isabel). Ici on garde juste la silhouette du morro derrière la
+	# Pedra do Leme — décor lointain, hors zone jouable.
 	_spawn_sign(container, Vector2(3080, 174), "PEDRA DO LEME", Color(0.55, 0.4, 0.32, 1), 8)
 
 func _spawn_sign(parent: Node, pos: Vector2, text: String, color: Color, size: int = 11) -> void:

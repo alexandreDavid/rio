@@ -394,16 +394,21 @@ label_text = "← ARPOADOR / IPANEMA"
 [node name="BotafogoFlamengoDistrict" parent="." instance=ExtResource("59_botafogo")]
 position = Vector2(-13800, -6000)
 
-[node name="ExitToBotafogo" parent="." instance=ExtResource("58_exit")]
-position = Vector2(3110, -50)
+[node name="ExitToBotafogoNovo" parent="." instance=ExtResource("58_exit")]
+position = Vector2(2150, -210)
 target_district = "botafogo_flamengo"
-label_text = "↑ TÚNEL → BOTAFOGO"
+label_text = "↑ TÚNEL NOVO → BOTAFOGO"
+
+[node name="ExitToBotafogoVelho" parent="." instance=ExtResource("58_exit")]
+position = Vector2(1100, -210)
+target_district = "botafogo_flamengo"
+label_text = "↑ TÚNEL VELHO → BOTAFOGO"
 
 [node name="FavelaDoMorroDistrict" parent="." instance=ExtResource("60_favela")]
 position = Vector2(-15000, -2900)
 
 [node name="ExitToFavela" parent="." instance=ExtResource("58_exit")]
-position = Vector2(1100, -210)
+position = Vector2(200, -210)
 target_district = "favela_morro"
 label_text = "↑ MORRO / FAVELA"
 

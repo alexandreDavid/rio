@@ -1357,7 +1357,9 @@ func _test_walk_entries_no_pingpong() -> void:
 		var instance: Node = packed.instantiate()
 		add_child(instance)
 		await get_tree().physics_frame
-		# Index toutes les DistrictExit du target par leur target_district.
+		# Index toutes les DistrictExit du target par leur target_district. Un même
+		# target peut avoir plusieurs exits (ex. Túnel Novo + Túnel Velho pour
+		# Botafogo) — on les valide toutes.
 		var exits_by_target: Dictionary = {}
 		_index_exits_by_target(instance, exits_by_target)
 		for source_id in sources:
@@ -1367,25 +1369,26 @@ func _test_walk_entries_no_pingpong() -> void:
 			var arrival_world: Vector2 = arrival_pos
 			if target_id != "copacabana" and instance is Node2D:
 				arrival_world = (instance as Node2D).global_position + arrival_pos
-			# L'exit qui pointe vers source_id (= chemin retour) ne doit pas
-			# couvrir arrival_world.
-			var return_exit: Node = exits_by_target.get(source_id)
-			if return_exit == null:
-				continue  # pas d'exit retour → pas de ping-pong possible
-			var rect: Rect2 = _exit_world_rect(return_exit)
-			if rect == Rect2():
-				continue
-			_assert(not rect.has_point(arrival_world),
-				"%s arrival from '%s' (%s) hors de %s_exit %s" % [
-					target_id, source_id, str(arrival_pos),
-					source_id, str(rect)])
+			# Tous les exits qui pointent vers source_id (= chemins retour) doivent
+			# laisser arrival_world hors de leur trigger.
+			var return_exits: Array = exits_by_target.get(source_id, [])
+			for return_exit in return_exits:
+				var rect: Rect2 = _exit_world_rect(return_exit)
+				if rect == Rect2():
+					continue
+				_assert(not rect.has_point(arrival_world),
+					"%s arrival from '%s' (%s) hors de %s.%s %s" % [
+						target_id, source_id, str(arrival_pos),
+						source_id, return_exit.name, str(rect)])
 		instance.queue_free()
 		await get_tree().process_frame
 
 func _index_exits_by_target(root: Node, out: Dictionary) -> void:
 	if root is DistrictExit:
 		var ex: DistrictExit = root
-		out[ex.target_district] = ex
+		var arr: Array = out.get(ex.target_district, [])
+		arr.append(ex)
+		out[ex.target_district] = arr
 	for child in root.get_children():
 		_index_exits_by_target(child, out)
 
