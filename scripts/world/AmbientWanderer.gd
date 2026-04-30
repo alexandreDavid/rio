@@ -177,6 +177,10 @@ func _ready() -> void:
 	_registry.append(self)
 
 # --- Génération procédurale du sprite pokemon-style ---
+# Préload pour s'assurer que la factory est résolue au parse-time (pas
+# besoin d'attendre que Godot génère le .uid de classe).
+const _PokemonSpriteFactoryRef = preload("res://scripts/world/PokemonSpriteFactory.gd")
+
 # Une feuille 3×3 cellules (16×24 px chacune) générée à _ready à partir des
 # couleurs (color, skin_color, hair_color) du wanderer. Pas d'asset binaire :
 # le sprite vit uniquement en mémoire. Cache statique pour éviter de
@@ -353,6 +357,8 @@ func _exit_tree() -> void:
 # Crée un Sprite2D avec la sheet 3×3 procédurale et masque les ColorRects de
 # la composition historique. Le sprite est ancré sur la position du wanderer
 # (pieds en bas), scaledd 2× pour matcher la hauteur typique de NPC (48 px).
+# Utilise PokemonSpriteFactory si une config est piochée — sinon retombe sur
+# le générateur historique en couleurs uniformes.
 func _setup_pokemon_pixel_sprite() -> void:
 	# Masque tout ce qui appartient à la composition ColorRect.
 	for n in [body, head, hair, hat_rect, leg_l, leg_r, arm_l, arm_r]:
@@ -365,7 +371,12 @@ func _setup_pokemon_pixel_sprite() -> void:
 		shadow.color = Color(0, 0, 0, 0.32)
 	_pokemon_sprite = Sprite2D.new()
 	_pokemon_sprite.name = "PokemonSprite"
-	_pokemon_sprite.texture = _build_pokemon_sprite_sheet()
+	# Pioche une config style chibi cohérente via la factory paramétrique.
+	# Seed = hash du nom du wanderer pour stabilité entre runs (un même
+	# "JoggerA" garde toujours la même apparence).
+	var seed_value: int = name.hash() if name != "" else int(_spawn_position.x * 31.0 + _spawn_position.y)
+	var config: Dictionary = _PokemonSpriteFactoryRef.random_config(seed_value)
+	_pokemon_sprite.texture = _PokemonSpriteFactoryRef.build_sheet(config)
 	_pokemon_sprite.region_enabled = true
 	_pokemon_sprite.region_rect = Rect2(0, 0, PX_CELL_W, PX_CELL_H)
 	# Scale pour atteindre une hauteur ~ size.y (utilise la même target que

@@ -92,6 +92,7 @@ func _ready() -> void:
 	_test_wanderer_greeting_logic()
 	await _test_wanderer_full_init()
 	await _test_wanderer_render_toggle()
+	await _test_pokemon_sprite_factory()
 	await _test_wanderer_pokemon_pixel_sheet()
 	await _test_wanderer_4dir_facing()
 	await _test_npc_quest_indicator()
@@ -1359,6 +1360,39 @@ func _exit_world_rect(exit_node: Node) -> Rect2:
 		return Rect2()
 	var pos: Vector2 = (exit_node as Node2D).global_position
 	return Rect2(pos - size / 2.0, size)
+
+func _test_pokemon_sprite_factory() -> void:
+	_section("PokemonSpriteFactory — palettes + configs reproductibles + cache")
+	var factory: GDScript = load("res://scripts/world/PokemonSpriteFactory.gd")
+	_assert(factory != null, "PokemonSpriteFactory.gd charge")
+	if factory == null:
+		return
+	# Palettes non vides — minimum requis pour avoir de la variété.
+	var consts: Dictionary = factory.get_script_constant_map()
+	_assert(consts.get("PALETTE_SKIN", []).size() >= 3, "PALETTE_SKIN ≥ 3 teints")
+	_assert(consts.get("PALETTE_HAIR_COLOR", []).size() >= 4, "PALETTE_HAIR_COLOR ≥ 4 couleurs")
+	_assert(consts.get("PALETTE_HAIR_STYLE", []).size() >= 4, "PALETTE_HAIR_STYLE ≥ 4 styles")
+	_assert(consts.get("PALETTE_SHIRT_COLOR", []).size() >= 5, "PALETTE_SHIRT_COLOR ≥ 5 couleurs")
+	_assert(consts.get("PALETTE_HAT_STYLE", []).size() >= 3, "PALETTE_HAT_STYLE ≥ 3 styles")
+	# random_config est reproductible (même seed → même config).
+	var c1: Dictionary = factory.random_config(42)
+	var c2: Dictionary = factory.random_config(42)
+	_assert(c1 == c2, "random_config(42) reproductible")
+	# Seeds différentes produisent (très probablement) des configs différentes.
+	var c3: Dictionary = factory.random_config(43)
+	_assert(c1 != c3, "random_config(43) ≠ random_config(42)")
+	# Toutes les clés attendues présentes.
+	for k in ["skin", "hair_color", "hair_style", "shirt_color", "shirt_pattern",
+			"pants_color", "hat_style", "hat_color"]:
+		_assert(c1.has(k), "config a la clé '%s'" % k)
+	# Cache : deux build_sheet avec même config → même ImageTexture (référence).
+	var t1: ImageTexture = factory.build_sheet(c1)
+	var t2: ImageTexture = factory.build_sheet(c1)
+	_assert(t1 == t2, "build_sheet partage le cache pour configs identiques")
+	# Texture aux bonnes dimensions.
+	if t1 != null:
+		var sz: Vector2 = t1.get_size()
+		_assert(int(sz.x) == 48 and int(sz.y) == 72, "Texture 48×72 (3 dirs × 3 frames de 16×24)")
 
 func _test_wanderer_pokemon_pixel_sheet() -> void:
 	_section("AmbientWanderer — sheet pixel-art procédurale 16×24")
