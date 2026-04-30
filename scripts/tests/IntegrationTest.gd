@@ -38,6 +38,9 @@ const QUEST_RESOURCES: Array[String] = [
 	"res://resources/quests/act2_padre_orfanato.tres",
 	"res://resources/quests/act2_pecheur_secret.tres",
 	"res://resources/quests/act2_contessa_gala.tres",
+	"res://resources/quests/act3_policia_intel.tres",
+	"res://resources/quests/act3_trafico_pickup.tres",
+	"res://resources/quests/act3_prefeito_endorsements.tres",
 	"res://resources/quests/act3_policia_madrugada.tres",
 	"res://resources/quests/act3_trafico_corrida.tres",
 	"res://resources/quests/act3_prefeito_eleicao.tres",
@@ -492,6 +495,7 @@ const NPC_DISPATCH_KNOTS: Dictionary = {
 		"seu_joao_carnaval_offer", "seu_joao_carnaval_remind", "seu_joao_carnaval_done",
 		"seu_joao_evening_first_payment", "seu_joao_evening_act2_reveal",
 		"seu_joao_evening_path_chosen", "seu_joao_evening_carnaval_eve",
+		"seu_joao_act3_intel",
 		"seu_joao_ng_plus_intro",
 	],
 	"tito": [
@@ -512,16 +516,25 @@ const NPC_DISPATCH_KNOTS: Dictionary = {
 	"ramos": [
 		"ramos_intro", "ramos_active", "ramos_thanks",
 		"ramos_act2_offer", "ramos_act2_rat", "ramos_act2_protect",
-		"ramos_act3_done",
+		"ramos_act3_intel_offer", "ramos_act3_intel_remind", "ramos_act3_intel_close",
+		"ramos_act3_offer", "ramos_act3_done",
 	],
 	"miguel": [
 		"miguel_offer", "miguel_act2_offer", "miguel_act2_warning",
 		"miguel_act2_remind", "miguel_act2_done",
-		"miguel_act3_done",
+		"miguel_act3_pickup_offer", "miguel_act3_pickup_remind", "miguel_act3_pickup_close",
+		"miguel_act3_offer", "miguel_act3_done",
 	],
 	"padre": [
 		"padre_intro", "padre_act2_offer",
-		"padre_act3_done",
+		"padre_act3_endorse_offer", "padre_act3_endorse_remind", "padre_act3_endorse_close",
+		"padre_act3_offer", "padre_act3_done",
+	],
+	"carlos": [
+		"carlos_act3_endorse",
+	],
+	"padeiro": [
+		"padeiro_act3_endorse",
 	],
 	"concierge": [
 		"concierge_act2_reveal",
@@ -656,6 +669,10 @@ const SCRIPT_COMPLETED_OBJECTIVES: Dictionary = {
 	"tourist_vip_tour": ["see_corcovado", "see_paoacucar", "see_lagoa"],
 	# Side quest favela — ReactiveDialogueSpot actions.
 	"beto_lost": ["find_beto", "tell_vizinha"],
+	# Acte 3 Polícia — intel via VizinhaSpot (variante runtime, pas dans PLACEHOLDER).
+	"act3_policia_intel": ["intel_vizinha"],
+	# Acte 3 Tráfico — pickup auto-coché par MainBoot district_changed (Botafogo).
+	"act3_trafico_pickup": ["pickup_botafogo"],
 }
 
 func _test_quest_objectives_reachable() -> void:
@@ -729,6 +746,12 @@ func _test_full_path_policia() -> void:
 	_reset_for_path_simulation()
 	_drive_to_act3()
 	_assert(CampaignManager.current_act == 3, "acte 3 atteint")
+	# Acte 3 — Polícia : intel intermédiaire (Le carnet do Capitão).
+	_assert(QuestManager.accept("act3_policia_intel"), "accept act3_policia_intel")
+	QuestManager.complete_objective("act3_policia_intel", "intel_vizinha")
+	QuestManager.complete_objective("act3_policia_intel", "intel_seu_joao")
+	QuestManager.complete_objective("act3_policia_intel", "report_ramos")
+	_assert(QuestManager.is_completed("act3_policia_intel"), "act3_policia_intel complétée")
 	# Acte 3 — Polícia : Operação Madrugada.
 	_assert(QuestManager.accept("act3_policia_madrugada"), "accept act3_policia_madrugada")
 	QuestManager.complete_objective("act3_policia_madrugada", "complete_madrugada")
@@ -750,6 +773,11 @@ func _test_full_path_trafico() -> void:
 	_section("Voie complète — Tráfico (Tito / Miguel)")
 	_reset_for_path_simulation()
 	_drive_to_act3()
+	# Acte 3 — Tráfico : pickup intermédiaire (Le sac de Botafogo).
+	_assert(QuestManager.accept("act3_trafico_pickup"), "accept act3_trafico_pickup")
+	QuestManager.complete_objective("act3_trafico_pickup", "pickup_botafogo")
+	QuestManager.complete_objective("act3_trafico_pickup", "pickup_deliver")
+	_assert(QuestManager.is_completed("act3_trafico_pickup"), "act3_trafico_pickup complétée")
 	_assert(QuestManager.accept("act3_trafico_corrida"), "accept act3_trafico_corrida")
 	QuestManager.complete_objective("act3_trafico_corrida", "execute_run")
 	_assert(QuestManager.is_completed("act3_trafico_corrida"), "act3 complétée")
@@ -770,6 +798,12 @@ func _test_full_path_prefeito() -> void:
 	_section("Voie complète — Prefeito (Padre)")
 	_reset_for_path_simulation()
 	_drive_to_act3()
+	# Acte 3 — Prefeito : trois soutiens publics (endorsements).
+	_assert(QuestManager.accept("act3_prefeito_endorsements"), "accept act3_prefeito_endorsements")
+	QuestManager.complete_objective("act3_prefeito_endorsements", "endorse_carlos")
+	QuestManager.complete_objective("act3_prefeito_endorsements", "endorse_padeiro")
+	QuestManager.complete_objective("act3_prefeito_endorsements", "endorse_padre")
+	_assert(QuestManager.is_completed("act3_prefeito_endorsements"), "act3_prefeito_endorsements complétée")
 	_assert(QuestManager.accept("act3_prefeito_eleicao"), "accept act3_prefeito_eleicao")
 	QuestManager.complete_objective("act3_prefeito_eleicao", "win_election")
 	_assert(QuestManager.is_completed("act3_prefeito_eleicao"), "act3 complétée")

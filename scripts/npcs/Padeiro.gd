@@ -6,11 +6,19 @@ extends NPC
 const QUEST: String = "padaria_delivery"
 const OBJ: String = "deliver_bread"
 const QUEST_BAKING: String = "padaria_baking"
+const ENDORSE: String = "act3_prefeito_endorsements"
+const ENDORSE_OBJ: String = "endorse_padeiro"
 
 func _on_interacted(_by: Node) -> void:
 	if data == null:
 		return
 	var knot: String = data.ink_knot  # padaria_intro
+	# Acte 3 : soutien Prefeito (avant la finale eleicao).
+	if QuestManager.is_active(ENDORSE):
+		var end_state: Dictionary = QuestManager.get_objectives_state(ENDORSE)
+		if not end_state.get(ENDORSE_OBJ, false):
+			DialogueBridge.start_dialogue(data.id, "padeiro_act3_endorse")
+			return
 	if QuestManager.is_active(QUEST):
 		# Quête à objectif unique : auto-complétée à la livraison, donc 'active' = pas livré.
 		knot = "padaria_remind"

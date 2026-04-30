@@ -7,6 +7,8 @@ const QUEST: String = "bike_delivery"
 const OBJ: String = "one_delivery"
 const ORFANATO: String = "act2_padre_orfanato"
 const ORFANATO_OBJ: String = "signed_carlos"
+const ENDORSE: String = "act3_prefeito_endorsements"
+const ENDORSE_OBJ: String = "endorse_carlos"
 const GALA: String = "act2_contessa_gala"
 const GALA_OBJ: String = "secured_sponsor"
 const AUDIENCIA: String = "act4_prefeito_audiencia"
@@ -19,6 +21,12 @@ func _on_interacted(_by: Node) -> void:
 	if data == null:
 		return
 	var knot: String = data.ink_knot  # carlos_intro
+	# Acte 3 endorsement Prefeito (avant le finale eleicao).
+	if QuestManager.is_active(ENDORSE):
+		var end_state: Dictionary = QuestManager.get_objectives_state(ENDORSE)
+		if not end_state.get(ENDORSE_OBJ, false):
+			DialogueBridge.start_dialogue(data.id, "carlos_act3_endorse")
+			return
 	# Acte 4 priorité : doléance (Prefeito) ou tribut (Tráfico).
 	if QuestManager.is_active(AUDIENCIA):
 		var aud: Dictionary = QuestManager.get_objectives_state(AUDIENCIA)

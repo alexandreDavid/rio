@@ -1101,6 +1101,15 @@ position = Vector2(-180, -150)
 npc_id = "vizinha"
 prompt = "Parler à la voisine"
 variants = [{
+"id": "act3_intel",
+"flag": "act3_intel_accepted",
+"not_flag": "vizinha_intel_done",
+"set_flag_after": "vizinha_intel_done",
+"actions": {"finish_quest": {"quest": "act3_policia_intel", "objective": "intel_vizinha", "payout": 0}},
+"speaker": "Vizinha",
+"text": "*regarde par la fenêtre, parle bas* Ramos t'envoie ? *soupire* Bom. Je vais te dire ce que je vois passer. Trois mecs descendent par l'escalier vers Copa chaque mardi à l'aube — sacs noirs, mêmes baskets blanches. Le quatrième porte une chaîne, c'est lui qui paie le silence. *te serre le bras* Ne dis jamais d'où ça vient.",
+"choices": ["Tu peux compter sur moi"]
+}, {
 "id": "thanked",
 "flag": "vizinha_quest_done",
 "speaker": "Vizinha",

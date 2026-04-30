@@ -6,6 +6,7 @@ extends NPC
 # veille du Carnaval). Sur le calçadão / charrette, il garde son rôle d'origine.
 
 const QUEST_ID: String = "quest_milho_01"
+const QUEST_INTEL: String = "act3_policia_intel"
 const QUEST_CARNAVAL: String = "act4_carnaval_desfile"
 
 func _ready() -> void:
@@ -57,6 +58,12 @@ func _pick_knot() -> String:
 			and not CampaignManager.has_flag("seu_joao_path_chosen_seen"):
 		CampaignManager.set_flag("seu_joao_path_chosen_seen")
 		return "seu_joao_evening_path_chosen"
+
+	# --- Acte 3 : Ramos a demandé une intel — tio Zé recoupe ---
+	if QuestManager.is_active(QUEST_INTEL):
+		var iobjs: Dictionary = QuestManager.get_objectives_state(QUEST_INTEL)
+		if not iobjs.get("intel_seu_joao", false):
+			return "seu_joao_act3_intel"
 
 	# --- États historiques (charrette / quête milho) ---
 	if cart != null and cart.is_carrying():

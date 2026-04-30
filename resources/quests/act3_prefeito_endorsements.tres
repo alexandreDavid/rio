@@ -1,0 +1,36 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_endorse_carlos"]
+script = ExtResource("2_obj")
+id = "endorse_carlos"
+description = "Convaincre Carlos (Lagoa) de soutenir le candidat"
+optional = false
+
+[sub_resource type="Resource" id="obj_endorse_padeiro"]
+script = ExtResource("2_obj")
+id = "endorse_padeiro"
+description = "Obtenir le soutien du padeiro de la Padaria"
+optional = false
+
+[sub_resource type="Resource" id="obj_endorse_padre"]
+script = ExtResource("2_obj")
+id = "endorse_padre"
+description = "Sceller la coalition avec le Padre"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "act3_prefeito_endorsements"
+display_name = "Trois signatures"
+description = "Le Padre veut une coalition visible avant le scrutin. Trois figures du quartier — Carlos à la Lagoa, le padeiro de la Padaria, et le Padre lui-même — doivent te soutenir publiquement. Sans ça, le candidat civique ne pèse rien."
+journal_text = "Carlos (Lagoa), padeiro, Padre."
+giver_npc_id = "padre"
+ink_knot = "padre_act3_endorse_offer"
+objectives = Array[Resource]([SubResource("obj_endorse_carlos"), SubResource("obj_endorse_padeiro"), SubResource("obj_endorse_padre")])
+money_reward = 0
+reputation_rewards = {0: 5}
+required_reputation = {}
+required_act = 3

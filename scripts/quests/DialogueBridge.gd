@@ -109,6 +109,15 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 		"text": "*hoche la tête, lentement* Donc c'est fait. T'as choisi ta voie. *boit* Ton oncle aurait choisi pareil. Ou pas. Ce sera ton règne, sobrinho. Pas le sien. *te tend un petit médaillon de bois sculpté* Ton grand-père l'a porté contre le Estado Novo. Zé l'a porté avant sa fausse mort. Maintenant tu le portes. Va au Carnaval la tête haute.",
 		"choices": ["Obrigado, tio"],
 	},
+	# --- Acte 3 : tio Zé recoupe l'intel pour Ramos ---
+	"seu_joao_act3_intel": {
+		"speaker": "Seu João",
+		"text": "*pose le balai, baisse la voix* Ramos veut savoir qui monte au Morro. Je vais te dire ce que les bombeiros voient quand ils éteignent un feu là-haut. *te chuchote trois noms et un horaire* Voilà. Maintenant tu redescends, et tu n'as jamais entendu ces noms de ma bouche. Compris ?",
+		"choices": ["Entendu, tio"],
+		"on_choose": {
+			"0": {"finish_quest": {"quest": "act3_policia_intel", "objective": "intel_seu_joao", "payout": 0}},
+		},
+	},
 	# --- Soirée 4 : la veille du Carnaval (acte 4) ---
 	"seu_joao_evening_carnaval_eve": {
 		"speaker": "Seu João",
@@ -866,6 +875,28 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 			"0": {"finish_quest": {"quest": "act2_contessa_gala", "objective": "secured_security", "payout": 0}},
 		},
 	},
+	# --- ACTE 3 : Le carnet do Capitão (intel intermédiaire, voie Polícia) ---
+	"ramos_act3_intel_offer": {
+		"speaker": "Capitão Ramos",
+		"text": "*pose un dossier vide sur le bar* Sobrinho, l'opération demande des noms, des horaires, des routes. Pas de preuves, pas de mandat. Va voir la voisine du Morro, elle voit tout passer. Recoupe avec ce que sait tio Zé sur les bombeiros qui montent là-haut. Rapporte-moi le tout — ensuite on parle de la grande nuit.",
+		"choices": ["J'y vais, Capitão", "Plus tard"],
+		"on_choose": {
+			"0": {"accept_quest": "act3_policia_intel", "set_flag": "act3_intel_accepted"},
+		},
+	},
+	"ramos_act3_intel_remind": {
+		"speaker": "Capitão Ramos",
+		"text": "*tape le dossier* Voisine du Morro, tio Zé. Deux sources, je te demande pas la lune. Reviens quand tu auras les deux.",
+		"choices": ["Compris"],
+	},
+	"ramos_act3_intel_close": {
+		"speaker": "Capitão Ramos",
+		"text": "*ouvre le dossier, prend des notes serrées* Bom. Réseau confirmé, planque identifiée, créneau ouvert. Tu viens de me donner ce qu'il fallait. Repose-toi — la prochaine fois qu'on se voit, je te parle de la nuit.",
+		"choices": ["Salut, Capitão"],
+		"on_choose": {
+			"0": {"finish_quest": {"quest": "act3_policia_intel", "objective": "report_ramos", "payout": 0}},
+		},
+	},
 	# --- ACTE 3 : Operação Madrugada (voie Polícia) ---
 	"ramos_act3_offer": {
 		"speaker": "Capitão Ramos",
@@ -888,6 +919,28 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 		"text": "*salue* Chefe. Tout le poste est à toi.",
 		"choices": ["Continue à veiller"],
 	},
+	# --- ACTE 3 : Le sac de Botafogo (test pickup, voie Tráfico) ---
+	"miguel_act3_pickup_offer": {
+		"speaker": "Miguel",
+		"text": "*tire sur sa cigarette* Sobrinho. Avant la grande corrida, je teste tes nerfs. Mon gars laisse un sac au pied du Bondinho de Botafogo, côté gare. Tu le récupères, tu reviens vite, tu regardes derrière toi tout le chemin. Si tout est clean, on parle de la nuit du Carnaval.",
+		"choices": ["Beleza, j'y vais", "Plus tard"],
+		"on_choose": {
+			"0": {"accept_quest": "act3_trafico_pickup"},
+		},
+	},
+	"miguel_act3_pickup_remind": {
+		"speaker": "Miguel",
+		"text": "*tape la table* Bondinho de Botafogo. Sac noir, à côté du banc. Pas de questions, tu rapportes. Andiamo.",
+		"choices": ["J'y retourne"],
+	},
+	"miguel_act3_pickup_close": {
+		"speaker": "Miguel",
+		"text": "*soupèse le sac, sourit* Parfait. Pas une éraflure, pas un retard. T'es prêt pour la nuit qui vient. Reviens me voir, on fixe les détails du convoi.",
+		"choices": ["Valeu, parceiro"],
+		"on_choose": {
+			"0": {"finish_quest": {"quest": "act3_trafico_pickup", "objective": "pickup_deliver", "payout": 200}},
+		},
+	},
 	# --- ACTE 3 : Última corrida (voie Tráfico) ---
 	"miguel_act3_offer": {
 		"speaker": "Miguel",
@@ -909,6 +962,44 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 		"speaker": "Miguel",
 		"text": "*lève la bière* Roi du Morro. Os caras te suivent maintenant.",
 		"choices": ["Valeu, parceiro"],
+	},
+	# --- ACTE 3 : Trois signatures (endorsements, voie Prefeito) ---
+	"padre_act3_endorse_offer": {
+		"speaker": "Padre Anselmo",
+		"text": "Meu filho, le scrutin se joue dans la rue, pas à la mairie. Il me faut trois soutiens publics avant la fin de la semaine : Carlos à la Lagoa pour les commerces, le padeiro de la Padaria pour les ouvriers, et moi-même pour la paroisse. Va leur parler, ramène les voix. C'est une coalition que je te demande, pas un favor.",
+		"choices": ["Je m'en occupe, padre", "Plus tard"],
+		"on_choose": {
+			"0": {"accept_quest": "act3_prefeito_endorsements"},
+		},
+	},
+	"padre_act3_endorse_remind": {
+		"speaker": "Padre Anselmo",
+		"text": "Carlos, le padeiro, et moi. Trois signatures, trois quartiers. Sans ça, le candidat civique n'existe pas.",
+		"choices": ["J'y travaille"],
+	},
+	"padre_act3_endorse_close": {
+		"speaker": "Padre Anselmo",
+		"text": "*pose la main sur l'épaule, sourire grave* Tu as Carlos et le padeiro. Tu as ma bénédiction. La coalition tient. Reviens me voir quand tu seras prêt — le scrutin, c'est l'autre chose qu'on va préparer ensemble.",
+		"choices": ["Amen, padre"],
+		"on_choose": {
+			"0": {"finish_quest": {"quest": "act3_prefeito_endorsements", "objective": "endorse_padre", "payout": 0}},
+		},
+	},
+	"carlos_act3_endorse": {
+		"speaker": "Carlos",
+		"text": "*essuie le comptoir* Le candidat du Padre ? *réfléchit* Honnête, pas voleur, et il connaît les commerçants. Bom, tu peux mettre l'enseigne d'ISSIMO sur l'affiche officielle. Ça vaut signature.",
+		"choices": ["Obrigado, Carlos"],
+		"on_choose": {
+			"0": {"finish_quest": {"quest": "act3_prefeito_endorsements", "objective": "endorse_carlos", "payout": 0}},
+		},
+	},
+	"padeiro_act3_endorse": {
+		"speaker": "Seu Tonio",
+		"text": "*saupoudre le pão de queijo* Une signature pour le candidat civique ? Le quartier en a besoin, sobrinho. Mes ouvriers et moi, on signe — affiche-le sur la vitrine, ça parle plus que mille tracts.",
+		"choices": ["Valeu, seu Tonio"],
+		"on_choose": {
+			"0": {"finish_quest": {"quest": "act3_prefeito_endorsements", "objective": "endorse_padeiro", "payout": 0}},
+		},
 	},
 	# --- ACTE 3 : Coronel do Bairro (voie Prefeito) ---
 	"padre_act3_offer": {

@@ -7,6 +7,7 @@ const OBJ_FIND: String = "find_statue"
 const OBJ_RETURN: String = "return_statue"
 const QUEST_CORCOVADO: String = "padre_corcovado_relic"
 const QUEST_ORFANATO: String = "act2_padre_orfanato"
+const QUEST_ENDORSE: String = "act3_prefeito_endorsements"
 const QUEST_ELEICAO: String = "act3_prefeito_eleicao"
 const QUEST_AUDIENCIA: String = "act4_prefeito_audiencia"
 
@@ -24,14 +25,23 @@ func _on_interacted(_by: Node) -> void:
 			knot = "padre_act4_audiencia"
 		DialogueBridge.start_dialogue(data.id, knot)
 		return
-	# Acte 3 : finale Prefeito.
+	# Acte 3 : trois soutiens (endorsements) puis finale Prefeito (eleicao).
 	if CampaignManager.current_act >= 3 and _eligible_for_act3():
 		if QuestManager.is_completed(QUEST_ELEICAO):
 			knot = "padre_act3_done"
 		elif QuestManager.is_active(QUEST_ELEICAO):
 			knot = "padre_act3_offer"
-		elif QuestManager.is_available(QUEST_ELEICAO):
+		elif QuestManager.is_available(QUEST_ELEICAO) and QuestManager.is_completed(QUEST_ENDORSE):
 			knot = "padre_act3_offer"
+		elif QuestManager.is_active(QUEST_ENDORSE):
+			var eobjs: Dictionary = QuestManager.get_objectives_state(QUEST_ENDORSE)
+			if eobjs.get("endorse_carlos", false) and eobjs.get("endorse_padeiro", false) \
+					and not eobjs.get("endorse_padre", false):
+				knot = "padre_act3_endorse_close"
+			else:
+				knot = "padre_act3_endorse_remind"
+		elif QuestManager.is_available(QUEST_ENDORSE):
+			knot = "padre_act3_endorse_offer"
 		DialogueBridge.start_dialogue(data.id, knot)
 		return
 	# Acte 2 : pétition orfanato.

@@ -6,6 +6,7 @@ extends NPC
 const QUEST_ACT1: String = "act1_meet_ramos"
 const OBJ_ACT1: String = "report_to_ramos"
 const QUEST_ACT2: String = "act2_ramos_operacao"
+const QUEST_INTEL: String = "act3_policia_intel"
 const QUEST_ACT3: String = "act3_policia_madrugada"
 const QUEST_PURGA: String = "act4_policia_purga"
 
@@ -23,14 +24,24 @@ func _on_interacted(_by: Node) -> void:
 			knot = "ramos_act4_purga"
 		DialogueBridge.start_dialogue(data.id, knot)
 		return
-	# Acte 3 : finale Polícia.
+	# Acte 3 : enquête intermédiaire (intel) puis finale Polícia (madrugada).
+	# Chaîne : intel_offer → intel_remind → intel_close (rapport) → act3_offer → act3_close.
 	if CampaignManager.current_act >= 3 and _eligible_for_act3():
 		if QuestManager.is_completed(QUEST_ACT3):
 			knot = "ramos_act3_done"
 		elif QuestManager.is_active(QUEST_ACT3):
 			knot = "ramos_act3_offer"
-		elif QuestManager.is_available(QUEST_ACT3):
+		elif QuestManager.is_available(QUEST_ACT3) and QuestManager.is_completed(QUEST_INTEL):
 			knot = "ramos_act3_offer"
+		elif QuestManager.is_active(QUEST_INTEL):
+			var iobjs: Dictionary = QuestManager.get_objectives_state(QUEST_INTEL)
+			if iobjs.get("intel_vizinha", false) and iobjs.get("intel_seu_joao", false) \
+					and not iobjs.get("report_ramos", false):
+				knot = "ramos_act3_intel_close"
+			else:
+				knot = "ramos_act3_intel_remind"
+		elif QuestManager.is_available(QUEST_INTEL):
+			knot = "ramos_act3_intel_offer"
 		DialogueBridge.start_dialogue(data.id, knot)
 		return
 	if QuestManager.is_active(QUEST_ACT2):

@@ -131,13 +131,85 @@ func _compute_hint() -> String:
 			var still: int = CampaignManager.ACT2_THRESHOLD - debt_paid
 			return "🎯 Continue de payer la dette (%s R$ avant l'acte 3)" % still
 
-	# --- Acte 3 : choisir une voie ---
-	if act == 3 and CampaignManager.chosen_endgame == CampaignManager.Endgame.NONE:
-		return "🎯 Choisis ta voie : Prefeito / Polícia / Tráfico"
+	# --- Acte 3 : missions intermédiaires par voie (priorité sur "choisis ta voie") ---
+	if act == 3:
+		var inferred_path: int = _infer_act3_path()
+		if inferred_path != CampaignManager.Endgame.NONE:
+			var act3_hint: String = _act3_path_hint(district, inferred_path)
+			if act3_hint != "":
+				return act3_hint
+		else:
+			return "🎯 Choisis ta voie : Prefeito / Polícia / Tráfico"
 
 	# --- Acte 4 : reinado ---
 	if act == 4:
 		return "🎯 Mène ton règne — défilé du Carnaval au Sambódromo"
 
 	# Fallback
+	return ""
+
+# Détecte la voie engagée à partir de l'état des quêtes intermédiaires/finales.
+# `chosen_endgame` n'est posé qu'à la complétion du finale — trop tard pour piloter
+# la bannière pendant la mission intermédiaire.
+func _infer_act3_path() -> int:
+	if CampaignManager.chosen_endgame != CampaignManager.Endgame.NONE:
+		return CampaignManager.chosen_endgame
+	for qid in ["act3_policia_intel", "act3_policia_madrugada"]:
+		if QuestManager.is_active(qid) or QuestManager.is_completed(qid):
+			return CampaignManager.Endgame.POLICIA
+	for qid in ["act3_trafico_pickup", "act3_trafico_corrida"]:
+		if QuestManager.is_active(qid) or QuestManager.is_completed(qid):
+			return CampaignManager.Endgame.TRAFICO
+	for qid in ["act3_prefeito_endorsements", "act3_prefeito_eleicao"]:
+		if QuestManager.is_active(qid) or QuestManager.is_completed(qid):
+			return CampaignManager.Endgame.PREFEITO
+	return CampaignManager.Endgame.NONE
+
+# Hint contextuel pour la voie engagée en acte 3 : pointe vers le mentor au début,
+# vers les sources d'intel/pickup/endorsements pendant la mission intermédiaire,
+# vers le mentor pour le rapport final, puis vers le finale.
+func _act3_path_hint(district: String, path: int) -> String:
+	if path == CampaignManager.Endgame.POLICIA:
+		var iquest: String = "act3_policia_intel"
+		if QuestManager.is_completed(iquest):
+			return "🎯 Va voir Ramos — l'Operação Madrugada t'attend"
+		if QuestManager.is_active(iquest):
+			var iobjs: Dictionary = QuestManager.get_objectives_state(iquest)
+			var has_v: bool = iobjs.get("intel_vizinha", false)
+			var has_z: bool = iobjs.get("intel_seu_joao", false)
+			if has_v and has_z:
+				return "🎯 Rapporte le dossier à Ramos (poste de police)"
+			if district == "favela_morro":
+				if not has_v:
+					return "🎯 Soutire-lui une info — la voisine du Morro"
+				return "🎯 Recoupe avec ce que sait tio Zé"
+			return "🎯 Monte au Morro — voisine + tio Zé pour Ramos"
+		return "🎯 Va voir Ramos — il a un dossier à monter"
+	if path == CampaignManager.Endgame.TRAFICO:
+		var pquest: String = "act3_trafico_pickup"
+		if QuestManager.is_completed(pquest):
+			return "🎯 Retrouve Miguel — la corrida se prépare"
+		if QuestManager.is_active(pquest):
+			var pobjs: Dictionary = QuestManager.get_objectives_state(pquest)
+			if not pobjs.get("pickup_botafogo", false):
+				return "🎯 → Bondinho de Botafogo : récupère le sac"
+			return "🎯 Rapporte le sac à Miguel (Morro)"
+		return "🎯 Va voir Miguel — il a un test pour toi"
+	if path == CampaignManager.Endgame.PREFEITO:
+		var equest: String = "act3_prefeito_endorsements"
+		if QuestManager.is_completed(equest):
+			return "🎯 Retourne au Padre — la coalition tient"
+		if QuestManager.is_active(equest):
+			var eobjs: Dictionary = QuestManager.get_objectives_state(equest)
+			var has_c: bool = eobjs.get("endorse_carlos", false)
+			var has_p: bool = eobjs.get("endorse_padeiro", false)
+			var has_pa: bool = eobjs.get("endorse_padre", false)
+			if has_c and has_p and not has_pa:
+				return "🎯 Reviens voir le Padre — coalition à sceller"
+			if not has_c:
+				return "🎯 Convaincs Carlos (café ISSIMO) de signer"
+			if not has_p:
+				return "🎯 Convaincs le padeiro (Padaria São Sebastião)"
+			return "🎯 Retourne voir le Padre"
+		return "🎯 Va voir le Padre — coalition à monter"
 	return ""

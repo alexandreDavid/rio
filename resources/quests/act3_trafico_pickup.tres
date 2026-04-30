@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_pickup_botafogo"]
+script = ExtResource("2_obj")
+id = "pickup_botafogo"
+description = "Récupérer le paquet au pied du Bondinho à Botafogo"
+optional = false
+
+[sub_resource type="Resource" id="obj_pickup_deliver"]
+script = ExtResource("2_obj")
+id = "pickup_deliver"
+description = "Remettre le paquet à Miguel au Morro"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "act3_trafico_pickup"
+display_name = "Le sac de Botafogo"
+description = "Avant la grande corrida, Miguel a besoin d'un test. Un de ses gars laisse un sac au pied du Bondinho de Botafogo. Tu vas le chercher, tu reviens vite, sans te faire suivre. Pas de questions."
+journal_text = "Bondinho de Botafogo → Morro (Miguel)."
+giver_npc_id = "miguel"
+ink_knot = "miguel_act3_pickup_offer"
+objectives = Array[Resource]([SubResource("obj_pickup_botafogo"), SubResource("obj_pickup_deliver")])
+money_reward = 200
+reputation_rewards = {2: 5}
+required_reputation = {}
+required_act = 3

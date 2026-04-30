@@ -50,6 +50,9 @@ const QUEST_RESOURCES: Array[String] = [
 	"res://resources/quests/padaria_delivery.tres",
 	"res://resources/quests/valet_palace.tres",
 	"res://resources/quests/padaria_baking.tres",
+	"res://resources/quests/act3_policia_intel.tres",
+	"res://resources/quests/act3_trafico_pickup.tres",
+	"res://resources/quests/act3_prefeito_endorsements.tres",
 	"res://resources/quests/act3_policia_madrugada.tres",
 	"res://resources/quests/act3_trafico_corrida.tres",
 	"res://resources/quests/act3_prefeito_eleicao.tres",
@@ -181,6 +184,11 @@ func _on_district_changed(district_id: String) -> void:
 			and CampaignManager.has_flag("should_visit_home") \
 			and not CampaignManager.has_flag("home_visit_done"):
 		CampaignManager.set_flag("home_visit_done")
+	# Pickup Tráfico acte 3 : entrer à Botafogo coche pickup_botafogo.
+	if district_id == "botafogo_flamengo" and QuestManager.is_active("act3_trafico_pickup"):
+		var pobjs: Dictionary = QuestManager.get_objectives_state("act3_trafico_pickup")
+		if not pobjs.get("pickup_botafogo", false):
+			QuestManager.complete_objective("act3_trafico_pickup", "pickup_botafogo")
 	if not QuestManager.is_active("tourist_vip_tour"):
 		return
 	if not TOUR_OBJECTIVES.has(district_id):
