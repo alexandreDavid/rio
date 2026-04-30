@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3]
+[gd_scene load_steps=17 format=3]
 
 [ext_resource type="Script" path="res://scripts/main/MainBoot.gd" id="1_boot"]
 [ext_resource type="Script" path="res://scripts/world/DayLighting.gd" id="12_lighting"]
@@ -15,6 +15,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/IntroFade.tscn" id="13_fade"]
 [ext_resource type="PackedScene" path="res://scenes/ui/ObjectiveBanner.tscn" id="14_banner"]
 [ext_resource type="PackedScene" path="res://scenes/ui/Phone.tscn" id="15_phone"]
+[ext_resource type="PackedScene" path="res://scenes/ui/EpilogueScreen.tscn" id="16_epilogue"]
 
 [node name="Main" type="Node"]
 script = ExtResource("1_boot")
@@ -52,3 +53,5 @@ layer = 10
 [node name="IntroFade" parent="." instance=ExtResource("13_fade")]
 
 [node name="Phone" parent="." instance=ExtResource("15_phone")]
+
+[node name="EpilogueScreen" parent="." instance=ExtResource("16_epilogue")]

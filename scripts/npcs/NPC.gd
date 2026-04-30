@@ -45,6 +45,72 @@ func _ready() -> void:
 	if data and data.id != "":
 		NPCScheduler.register(data.id, self)
 	_setup_visual_polish()
+	_setup_quest_indicator()
+
+# --- Indicateur de quête style Pokemon ("!" au-dessus de la tête) ---
+
+const QI_FONT_SIZE: int = 22
+const QI_OFFSET_Y: float = -52.0
+const QI_BOB_AMPLITUDE: float = 2.5
+const QI_VISIBLE_DISTANCE: float = 140.0
+const QI_CHECK_INTERVAL: float = 0.4   # throttle : check distance + état tous les 0.4s
+
+var _qi_label: Label = null
+var _qi_has_available: bool = false
+var _qi_last_check: float = 0.0
+
+func _setup_quest_indicator() -> void:
+	# Un seul Label visuel, créé en code pour ne pas modifier la scène NPC.
+	_qi_label = Label.new()
+	_qi_label.name = "QuestIndicator"
+	_qi_label.text = "!"
+	_qi_label.position = Vector2(-6.0, QI_OFFSET_Y)
+	_qi_label.add_theme_font_size_override("font_size", QI_FONT_SIZE)
+	_qi_label.add_theme_color_override("font_color", Color(1.0, 0.95, 0.4, 1))
+	_qi_label.add_theme_color_override("font_outline_color", Color(0.4, 0.1, 0.05, 0.95))
+	_qi_label.add_theme_constant_override("outline_size", 3)
+	_qi_label.z_index = 100
+	_qi_label.visible = false
+	add_child(_qi_label)
+	# Refresh sur les transitions d'état des quêtes (accept/complete).
+	EventBus.quest_accepted.connect(_qi_refresh_availability)
+	EventBus.quest_completed.connect(_qi_refresh_availability)
+	EventBus.act_changed.connect(_qi_refresh_availability_from_act)
+	_qi_refresh_availability("")
+
+func _qi_refresh_availability(_quest_id: String) -> void:
+	if data == null or data.id == "":
+		_qi_has_available = false
+		return
+	# Cherche une quête disponible dont le NPC est le giver.
+	_qi_has_available = false
+	for q in QuestManager._quests.values():
+		if q is Quest and (q as Quest).giver_npc_id == data.id and QuestManager.is_available((q as Quest).id):
+			_qi_has_available = true
+			break
+
+func _qi_refresh_availability_from_act(_act: int) -> void:
+	# Les quêtes peuvent devenir disponibles au passage d'acte (gating required_act).
+	_qi_refresh_availability("")
+
+func _process(_delta: float) -> void:
+	if _qi_label == null:
+		return
+	# Throttle des checks : 2-3 fois par seconde suffit pour le visuel.
+	var now: float = Time.get_ticks_msec() / 1000.0
+	if now - _qi_last_check >= QI_CHECK_INTERVAL:
+		_qi_last_check = now
+		var should_show: bool = _qi_has_available and _qi_player_nearby()
+		if should_show != _qi_label.visible:
+			_qi_label.visible = should_show
+	# Bob vertical pour attirer l'œil quand visible.
+	if _qi_label.visible:
+		_qi_label.position.y = QI_OFFSET_Y + sin(now * 5.0) * QI_BOB_AMPLITUDE
+
+func _qi_player_nearby() -> bool:
+	if GameManager.player == null:
+		return false
+	return global_position.distance_to(GameManager.player.global_position) <= QI_VISIBLE_DISTANCE
 
 func _setup_visual_polish() -> void:
 	# Repère le sprite principal pour le scale-punch d'interaction.

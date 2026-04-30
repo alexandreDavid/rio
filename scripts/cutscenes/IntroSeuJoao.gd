@@ -19,6 +19,10 @@ static func run() -> void:
 		await CutsceneRunner.walk_npc_to("seu_joao", target)
 		CutsceneRunner.face_npc("seu_joao", CutsceneRunner.DIR_RIGHT)
 		await CutsceneRunner.wait(0.2)
+		# Run+ : tio Zé acknowledge le déjà-vu avant l'héritage canonique.
+		# Le knot heritage reste le même (pivot quest), on précède juste d'un beat.
+		if CampaignManager.ng_plus_count > 0:
+			await CutsceneRunner.say("seu_joao", "seu_joao_ng_plus_intro")
 		# Dialogue d'héritage (existant, accepte la quête act1_heritage).
 		await CutsceneRunner.say("seu_joao", "seu_joao_heritage")
 		CampaignManager.set_flag("intro_seen")

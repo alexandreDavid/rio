@@ -30,6 +30,9 @@ const JOURNAL_ENTRIES: Dictionary = {
 	"seu_joao_heritage":        {"category": "act1", "title": "L'héritage de tio Zé"},
 	"seu_joao_debt_who":        {"category": "act1", "title": "Une dette de cinquante mille"},
 	"seu_joao_advice":          {"category": "act1", "title": "Les conseils de tio Seu João"},
+	"seu_joao_evening_first_payment": {"category": "act1", "title": "Premier acompte — la soirée"},
+	"seu_joao_evening_ramos":   {"category": "act1", "title": "Tio Zé sur Capitão Ramos"},
+	"seu_joao_evening_what_next":{"category": "act1", "title": "Trouver un parrain ou payer seul"},
 	# --- CONSORTIUM ---
 	"consortium_intro":         {"category": "consortium", "title": "Première visite chez Dom Nilton"},
 	"consortium_threat":        {"category": "consortium", "title": "La menace de Claudinho"},
@@ -47,11 +50,31 @@ const JOURNAL_ENTRIES: Dictionary = {
 	"contessa_act2_offer":      {"category": "act2", "title": "Le gala de la Contessa"},
 	"pecheur_act2_offer":       {"category": "act2", "title": "Seu Pedro a vu quelque chose"},
 	"pecheur_act2_done":        {"category": "act2", "title": "La mer parle moins fort"},
+	"seu_joao_evening_act2_reveal": {"category": "act2", "title": "La vérité sur ton oncle Zé"},
+	"seu_joao_evening_why_silent":  {"category": "act2", "title": "La règle du silence"},
+	"seu_joao_evening_how_known":   {"category": "act2", "title": "Le morro savait depuis huit ans"},
+	"spot_mae_letter":              {"category": "act2", "title": "La lettre du consortium chez mãe"},
+	"spot_vovo_letter_observed":    {"category": "act2", "title": "Vovó a vu mãe pleurer en silence"},
+	"spot_mae_revisit":             {"category": "act2", "title": "Le consortium a demandé du sucre"},
+	"spot_mae_sick":                {"category": "act2", "title": "Mãe tombe malade"},
+	"spot_vovo_ze_anonymous_letter":{"category": "act2", "title": "Un mot anonyme sous la porte"},
+	"tito_act2_loyalty_offer":      {"category": "trafico", "title": "Tito veut une preuve de loyauté"},
+	"tito_act2_loyalty_done":       {"category": "trafico", "title": "Tito te confie la corrida"},
+	"tito_act2_loyalty_declined":   {"category": "trafico", "title": "Tito te tourne le dos"},
+	"consortium_act3_intro":        {"category": "act2", "title": "Dom Nilton ouvre les trois portes"},
+	"spot_vizinha_default":         {"category": "sides", "title": "La voisine cherche son fils"},
+	"spot_vizinha_found":           {"category": "sides", "title": "Beto rendu à sa mère"},
+	"spot_beto_lost":               {"category": "sides", "title": "Beto perdu sur le calçadão"},
+	# --- META : runs cumulées ---
+	"seu_joao_ng_plus_intro":       {"category": "act1", "title": "Le déjà-vu de tio Zé"},
+	"spot_vovo_ng_plus_dejavu":     {"category": "carnaval", "title": "Vovó se souvient des autres règnes"},
 	# --- ACTE 3 ---
 	# (Les knots act3_ sont auto-générés ; on documente les pivots clés.)
+	"seu_joao_evening_path_chosen": {"category": "act3", "title": "Le médaillon de l'aïeul"},
 	# --- ACTE 4 ---
 	"seu_joao_carnaval_offer":  {"category": "act4", "title": "Reinado au Sambódromo"},
 	"seu_joao_carnaval_done":   {"category": "act4", "title": "Toute la Sapucaí chante ton nom"},
+	"seu_joao_evening_carnaval_eve": {"category": "act4", "title": "La veille de la Sapucaí"},
 	# --- CARNAVAL / FINALE ---
 	# --- SIDES ---
 	"tourist_vip_tour_offer":   {"category": "sides", "title": "Le touriste VIP cherche un guide"},

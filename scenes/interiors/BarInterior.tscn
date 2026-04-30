@@ -241,46 +241,54 @@ color = Color(0.95, 0.55, 0.18, 0.85)
 position = Vector2(0, -65)
 color = Color(0.55, 0.42, 0.32, 1)
 size = Vector2(10, 18)
-path = Array[Vector2]([Vector2(-60, -65), Vector2(60, -65), Vector2(0, -65)])
+roam_zone = Rect2(-40, -10, 80, 20)
 speed = 18.0
-pause_at_waypoints = 1.4
+pause_at_waypoints = 1.0
+pause_random_jitter = 0.6
+look_at_player_distance = 40.0
 
 [node name="DrunkPatron" parent="." instance=ExtResource("2_wander")]
 position = Vector2(-110, 30)
 color = Color(0.85, 0.4, 0.3, 1)
 size = Vector2(10, 17)
-path = Array[Vector2]([Vector2(-110, 30), Vector2(-90, 50), Vector2(-130, 30)])
+stationary = true
 speed = 8.0
 pause_at_waypoints = 3.5
+look_at_player_distance = 40.0
 
 [node name="ChattingPatronA" parent="." instance=ExtResource("2_wander")]
 position = Vector2(110, 30)
 color = Color(0.4, 0.65, 0.95, 1)
 size = Vector2(10, 17)
-path = Array[Vector2]([Vector2(110, 30), Vector2(95, 25), Vector2(125, 35)])
+stationary = true
 speed = 6.0
 pause_at_waypoints = 4.5
+look_at_player_distance = 40.0
 
 [node name="ChattingPatronB" parent="." instance=ExtResource("2_wander")]
 position = Vector2(125, 35)
 color = Color(0.85, 0.55, 0.4, 1)
 size = Vector2(10, 17)
-path = Array[Vector2]([Vector2(125, 35), Vector2(120, 30), Vector2(130, 40)])
+stationary = true
 speed = 6.0
 pause_at_waypoints = 4.5
+look_at_player_distance = 40.0
 
 [node name="WaiterRunner" parent="." instance=ExtResource("2_wander")]
 position = Vector2(-50, -30)
 color = Color(0.95, 0.92, 0.85, 1)
 size = Vector2(9, 16)
-path = Array[Vector2]([Vector2(-50, -30), Vector2(-110, 10), Vector2(-50, -50), Vector2(110, 10), Vector2(60, -50)])
+roam_zone = Rect2(-40, -10, 80, 20)
 speed = 35.0
-pause_at_waypoints = 1.8
+pause_at_waypoints = 1.0
+pause_random_jitter = 0.6
+look_at_player_distance = 40.0
 
 [node name="DartPlayer" parent="." instance=ExtResource("2_wander")]
 position = Vector2(150, 70)
 color = Color(0.55, 0.95, 0.55, 1)
 size = Vector2(10, 17)
-path = Array[Vector2]([Vector2(150, 70), Vector2(130, 70), Vector2(150, 70)])
+stationary = true
 speed = 12.0
 pause_at_waypoints = 2.8
+look_at_player_distance = 40.0

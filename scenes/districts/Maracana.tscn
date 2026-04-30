@@ -244,35 +244,49 @@ flavor_text_offer = "Espetinho de carne, com farofa e vinagrete. Aqui no Maracan
 position = Vector2(-100, 130)
 color = Color(0.95, 0.85, 0.2, 1)
 size = Vector2(10, 18)
-path = Array[Vector2]([Vector2(-100, 130), Vector2(100, 130), Vector2(0, 100)])
 speed = 28.0
 pause_at_waypoints = 0.6
+stationary = true
+bob_strength = 1.4
+look_at_player_distance = 50.0
+active_phases = [1, 2]
 
 [node name="FanB" parent="." instance=ExtResource("3_wander")]
 position = Vector2(80, 110)
 color = Color(0.4, 0.65, 0.95, 1)
 size = Vector2(10, 18)
-path = Array[Vector2]([Vector2(80, 110), Vector2(-80, 110), Vector2(120, 150)])
 speed = 26.0
+stationary = true
+bob_strength = 1.4
+look_at_player_distance = 50.0
+active_phases = [1, 2]
 
 [node name="FanC" parent="." instance=ExtResource("3_wander")]
 position = Vector2(180, 140)
 color = Color(0.2, 0.65, 0.4, 1)
 size = Vector2(10, 18)
-path = Array[Vector2]([Vector2(180, 140), Vector2(220, 110), Vector2(150, 160)])
 speed = 24.0
+stationary = true
+bob_strength = 1.4
+look_at_player_distance = 50.0
+active_phases = [1, 2]
 
 [node name="FanD" parent="." instance=ExtResource("3_wander")]
 position = Vector2(-180, 150)
 color = Color(0.95, 0.85, 0.2, 1)
 size = Vector2(10, 18)
-path = Array[Vector2]([Vector2(-180, 150), Vector2(-220, 110), Vector2(-140, 130)])
 speed = 22.0
+stationary = true
+bob_strength = 1.4
+look_at_player_distance = 50.0
+active_phases = [1, 2]
 
 [node name="DrummerKid" parent="." instance=ExtResource("3_wander")]
 position = Vector2(0, 165)
 color = Color(0.85, 0.4, 0.55, 1)
 size = Vector2(8, 14)
-path = Array[Vector2]([Vector2(0, 165), Vector2(120, 165), Vector2(-120, 165), Vector2(0, 165)])
 speed = 36.0
 pause_at_waypoints = 0.3
+roam_zone = Rect2(-150, -50, 300, 100)
+pause_random_jitter = 0.5
+look_at_player_distance = 50.0

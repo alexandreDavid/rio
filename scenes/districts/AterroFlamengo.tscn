@@ -265,17 +265,21 @@ flavor_text_offer = "Guaraná batido com gelo, energia natural da Amazônia !"
 position = Vector2(-160, 130)
 color = Color(0.85, 0.4, 0.55, 1)
 size = Vector2(10, 16)
-path = Array[Vector2]([Vector2(-160, 130), Vector2(-200, 150), Vector2(-100, 130)])
+roam_zone = Rect2(-100, -30, 200, 60)
 speed = 50.0
 pause_at_waypoints = 0.4
+pause_random_jitter = 0.6
+look_at_player_distance = 50.0
 
 [node name="SkaterB" parent="." instance=ExtResource("3_wander")]
 position = Vector2(-100, 150)
 color = Color(0.4, 0.85, 0.55, 1)
 size = Vector2(10, 16)
-path = Array[Vector2]([Vector2(-100, 150), Vector2(-180, 130), Vector2(-60, 150)])
+roam_zone = Rect2(-100, -30, 200, 60)
 speed = 45.0
 pause_at_waypoints = 0.4
+pause_random_jitter = 0.6
+look_at_player_distance = 50.0
 
 [node name="JoggerSundayA" parent="." instance=ExtResource("3_wander")]
 position = Vector2(-200, 15)
@@ -284,6 +288,8 @@ size = Vector2(9, 16)
 path = Array[Vector2]([Vector2(-200, 15), Vector2(200, 15), Vector2(-200, 15)])
 speed = 55.0
 pause_at_waypoints = 0.2
+pause_random_jitter = 0.4
+active_phases = [0]
 
 [node name="JoggerSundayB" parent="." instance=ExtResource("3_wander")]
 position = Vector2(150, 15)
@@ -292,16 +298,22 @@ size = Vector2(9, 16)
 path = Array[Vector2]([Vector2(150, 15), Vector2(-150, 15), Vector2(150, 15)])
 speed = 48.0
 pause_at_waypoints = 0.2
+pause_random_jitter = 0.4
+active_phases = [0]
 
 [node name="StrollerA" parent="." instance=ExtResource("3_wander")]
 position = Vector2(80, 70)
 color = Color(0.95, 0.55, 0.4, 1)
-path = Array[Vector2]([Vector2(80, 70), Vector2(-50, 80), Vector2(120, 60)])
+roam_zone = Rect2(-100, -30, 200, 60)
 speed = 18.0
+pause_random_jitter = 0.6
+look_at_player_distance = 50.0
 
 [node name="StrollerB" parent="." instance=ExtResource("3_wander")]
 position = Vector2(180, 50)
 color = Color(0.4, 0.65, 0.95, 1)
-path = Array[Vector2]([Vector2(180, 50), Vector2(220, 80), Vector2(140, 60)])
+roam_zone = Rect2(-100, -30, 200, 60)
 speed = 16.0
 pause_at_waypoints = 1.5
+pause_random_jitter = 0.6
+look_at_player_distance = 50.0

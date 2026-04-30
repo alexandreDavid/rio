@@ -347,40 +347,48 @@ flavor_text_offer = "Coco direto da praia, gelado e doce, freguês."
 position = Vector2(-150, 50)
 color = Color(0.95, 0.65, 0.55, 1)
 size = Vector2(11, 14)
-path = Array[Vector2]([Vector2(-150, 50), Vector2(-130, 60), Vector2(-160, 40)])
 speed = 8.0
 pause_at_waypoints = 4.0
 bob_strength = 0.4
+stationary = true
+look_at_player_distance = 50.0
 
 [node name="SunBatherB" parent="." instance=ExtResource("3_wander")]
 position = Vector2(-50, 60)
 color = Color(0.4, 0.65, 0.95, 1)
 size = Vector2(11, 14)
-path = Array[Vector2]([Vector2(-50, 60), Vector2(-30, 70), Vector2(-60, 50)])
 speed = 8.0
 pause_at_waypoints = 4.0
 bob_strength = 0.4
+stationary = true
+look_at_player_distance = 50.0
 
 [node name="ChildPlayingA" parent="." instance=ExtResource("3_wander")]
 position = Vector2(-30, 40)
 color = Color(0.95, 0.85, 0.4, 1)
 size = Vector2(7, 12)
-path = Array[Vector2]([Vector2(-30, 40), Vector2(20, 30), Vector2(0, 50), Vector2(-40, 30)])
 speed = 38.0
 pause_at_waypoints = 0.3
+roam_zone = Rect2(-150, -50, 300, 100)
+pause_random_jitter = 0.5
+look_at_player_distance = 50.0
 
 [node name="ChildPlayingB" parent="." instance=ExtResource("3_wander")]
 position = Vector2(0, 50)
 color = Color(0.4, 0.85, 0.55, 1)
 size = Vector2(7, 12)
-path = Array[Vector2]([Vector2(0, 50), Vector2(-30, 30), Vector2(30, 40)])
 speed = 36.0
 pause_at_waypoints = 0.3
+roam_zone = Rect2(-150, -50, 300, 100)
+pause_random_jitter = 0.5
+look_at_player_distance = 50.0
 
 [node name="VendorWalker" parent="." instance=ExtResource("3_wander")]
 position = Vector2(60, 40)
 color = Color(0.85, 0.55, 0.4, 1)
 size = Vector2(10, 17)
-path = Array[Vector2]([Vector2(60, 40), Vector2(220, 50), Vector2(-180, 50)])
 speed = 18.0
 pause_at_waypoints = 2.5
+roam_zone = Rect2(-300, -30, 600, 60)
+pause_random_jitter = 1.0
+look_at_player_distance = 60.0

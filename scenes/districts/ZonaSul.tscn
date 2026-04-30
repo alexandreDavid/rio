@@ -12,6 +12,9 @@ size = Vector2(1900, 16)
 [sub_resource type="RectangleShape2D" id="WallV"]
 size = Vector2(16, 480)
 
+[sub_resource type="RectangleShape2D" id="ExitWideShape"]
+size = Vector2(64, 400)
+
 [node name="ZonaSulDistrict" type="Node2D"]
 
 [node name="Sky" type="ColorRect" parent="."]
@@ -475,9 +478,12 @@ position = Vector2(800, 130)
 position = Vector2(-700, 50)
 
 [node name="ExitToCopa" parent="." instance=ExtResource("5_exit")]
-position = Vector2(880, 130)
+position = Vector2(905, 0)
 target_district = "copacabana"
 label_text = "→ COPACABANA"
+
+[node name="CollisionShape2D" parent="ExitToCopa" index="0"]
+shape = SubResource("ExitWideShape")
 
 [node name="ViewpointArpoador" parent="." instance=ExtResource("3_view")]
 position = Vector2(680, 80)
@@ -526,6 +532,8 @@ size = Vector2(9, 16)
 path = Array[Vector2]([Vector2(-800, 85), Vector2(700, 85), Vector2(-800, 85)])
 speed = 60.0
 pause_at_waypoints = 0.2
+pause_random_jitter = 0.4
+active_phases = [0]
 
 [node name="JoggerB" parent="." instance=ExtResource("2_wander")]
 position = Vector2(500, 85)
@@ -534,22 +542,28 @@ size = Vector2(9, 16)
 path = Array[Vector2]([Vector2(500, 85), Vector2(-500, 85), Vector2(500, 85)])
 speed = 50.0
 pause_at_waypoints = 0.2
+pause_random_jitter = 0.4
+active_phases = [0]
 
 [node name="ChicWalkerA" parent="." instance=ExtResource("2_wander")]
 position = Vector2(-700, 50)
 color = Color(0.95, 0.85, 0.4, 1)
 size = Vector2(10, 18)
-path = Array[Vector2]([Vector2(-700, 50), Vector2(-500, 50), Vector2(-700, 70)])
+roam_zone = Rect2(-300, -30, 600, 60)
 speed = 22.0
 pause_at_waypoints = 1.8
+pause_random_jitter = 1.0
+look_at_player_distance = 60.0
 
 [node name="ChicWalkerB" parent="." instance=ExtResource("2_wander")]
 position = Vector2(-200, 50)
 color = Color(0.85, 0.4, 0.55, 1)
 size = Vector2(10, 18)
-path = Array[Vector2]([Vector2(-200, 50), Vector2(100, 50), Vector2(-200, 70)])
+roam_zone = Rect2(-300, -30, 600, 60)
 speed = 24.0
 pause_at_waypoints = 1.6
+pause_random_jitter = 1.0
+look_at_player_distance = 60.0
 
 [node name="SurferA" parent="." instance=ExtResource("2_wander")]
 position = Vector2(580, 130)
@@ -558,45 +572,55 @@ size = Vector2(10, 17)
 path = Array[Vector2]([Vector2(580, 130), Vector2(700, 150), Vector2(450, 140)])
 speed = 16.0
 pause_at_waypoints = 2.5
+pause_random_jitter = 0.4
+active_phases = [0]
 
 [node name="SunBatherA" parent="." instance=ExtResource("2_wander")]
 position = Vector2(-300, 160)
 color = Color(0.95, 0.65, 0.55, 1)
 size = Vector2(11, 14)
-path = Array[Vector2]([Vector2(-300, 160), Vector2(-280, 170), Vector2(-310, 150)])
+stationary = true
 speed = 8.0
 pause_at_waypoints = 5.0
 bob_strength = 0.4
+look_at_player_distance = 50.0
 
 [node name="SunBatherB" parent="." instance=ExtResource("2_wander")]
 position = Vector2(150, 170)
 color = Color(0.4, 0.65, 0.95, 1)
 size = Vector2(11, 14)
-path = Array[Vector2]([Vector2(150, 170), Vector2(170, 180), Vector2(140, 160)])
+stationary = true
 speed = 8.0
 pause_at_waypoints = 5.0
 bob_strength = 0.4
+look_at_player_distance = 50.0
 
 [node name="ChildrenPlay" parent="." instance=ExtResource("2_wander")]
 position = Vector2(-100, 180)
 color = Color(0.95, 0.85, 0.4, 1)
 size = Vector2(7, 12)
-path = Array[Vector2]([Vector2(-100, 180), Vector2(50, 170), Vector2(-150, 175), Vector2(0, 180)])
+roam_zone = Rect2(-150, -50, 300, 100)
 speed = 36.0
 pause_at_waypoints = 0.5
+pause_random_jitter = 0.5
+look_at_player_distance = 50.0
 
 [node name="VendorWalker" parent="." instance=ExtResource("2_wander")]
 position = Vector2(0, 165)
 color = Color(0.85, 0.55, 0.4, 1)
 size = Vector2(10, 17)
-path = Array[Vector2]([Vector2(0, 165), Vector2(700, 165), Vector2(-800, 165)])
+roam_zone = Rect2(-300, -30, 600, 60)
 speed = 18.0
 pause_at_waypoints = 3.0
+pause_random_jitter = 1.0
+look_at_player_distance = 60.0
 
 [node name="DogWalker" parent="." instance=ExtResource("2_wander")]
 position = Vector2(-500, 50)
 color = Color(0.55, 0.42, 0.32, 1)
 size = Vector2(10, 17)
-path = Array[Vector2]([Vector2(-500, 50), Vector2(-400, 70), Vector2(-550, 60)])
+roam_zone = Rect2(-300, -30, 600, 60)
 speed = 16.0
 pause_at_waypoints = 2.0
+pause_random_jitter = 1.0
+look_at_player_distance = 60.0

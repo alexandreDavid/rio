@@ -1,4 +1,4 @@
-[gd_scene load_steps=56 format=3]
+[gd_scene load_steps=58 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/npcs/DonaIrene.tscn" id="37_irene"]
 [ext_resource type="PackedScene" path="res://scenes/npcs/BarPatrao.tscn" id="38_patrao"]
@@ -35,6 +35,8 @@
 [ext_resource type="PackedScene" path="res://scenes/npcs/Contessa.tscn" id="36_contessa"]
 [ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="1_player"]
 [ext_resource type="PackedScene" path="res://scenes/interiors/AcademiaInterior.tscn" id="27_academia_int"]
+[ext_resource type="PackedScene" path="res://scenes/interiors/HouseInterior.tscn" id="61_house_int"]
+[ext_resource type="PackedScene" path="res://scenes/props/ReactiveDialogueSpot.tscn" id="62_reactive"]
 [ext_resource type="PackedScene" path="res://scenes/npcs/SeuJoao.tscn" id="2_seu_joao"]
 [ext_resource type="PackedScene" path="res://scenes/props/CornCart.tscn" id="3_cart"]
 [ext_resource type="PackedScene" path="res://scenes/npcs/Customer.tscn" id="4_customer"]
@@ -232,6 +234,34 @@ script = ExtResource("25_traffic")
 [node name="AcademiaInterior" parent="." instance=ExtResource("27_academia_int")]
 position = Vector2(700, -2000)
 
+[node name="TioZeHouseInterior" parent="." instance=ExtResource("61_house_int")]
+position = Vector2(7200, -3000)
+
+[node name="BetoSpot" parent="." instance=ExtResource("62_reactive")]
+position = Vector2(1920, 110)
+npc_id = "beto"
+prompt = "Parler au gamin"
+variants = [{
+"id": "found_followup",
+"flag": "beto_found",
+"speaker": "Beto",
+"text": "*lève les yeux du sable où il dessine, te sourit largement* Je rentre ce soir, sobrinho ! J'ai promis ! Et après le dîner, vovó va me tricoter un poulpe, elle a dit !",
+"choices": ["Boa, Beto"]
+}, {
+"id": "lost",
+"flag": "vizinha_quest_taken",
+"set_flag_after": "beto_found",
+"actions": {"finish_quest": {"quest": "beto_lost", "objective": "find_beto", "payout": 0}},
+"speaker": "Beto",
+"text": "*petit, neuf ans, t-shirt jaune, sandales bleues — il joue dans le sable, seul* Eu... j'sais plus comment on rentre. *renifle, ne pleure pas pour ne pas avouer qu'il a peur* Le monsieur du coco, il m'a dit d'attendre maman, mais maman elle vient pas. *te regarde* T'es du morro ? Tu connais la voisine d'en bas, celle qui chante ?",
+"choices": ["Cours rentrer chez ta mère, Beto"]
+}, {
+"id": "default",
+"speaker": "Beto",
+"text": "*joue dans le sable, fait un château bancal* Olá ! Tu sais faire les châteaux qui tiennent jusqu'à la marée ?",
+"choices": ["Bonne chance, Beto"]
+}]
+
 [node name="Consortium" parent="." instance=ExtResource("28_consortium")]
 position = Vector2(1550, 48)
 
@@ -362,7 +392,7 @@ target_district = "zona_sul"
 label_text = "← ARPOADOR / IPANEMA"
 
 [node name="BotafogoFlamengoDistrict" parent="." instance=ExtResource("59_botafogo")]
-position = Vector2(-13800, -2900)
+position = Vector2(-13800, -6000)
 
 [node name="ExitToBotafogo" parent="." instance=ExtResource("58_exit")]
 position = Vector2(3110, -50)
@@ -404,4 +434,4 @@ theme_override_colors/font_color = Color(0.95, 0.85, 0.55, 1)
 theme_override_font_sizes/font_size = 11
 
 [node name="Player" parent="." instance=ExtResource("1_player")]
-position = Vector2(-14920, -5825)
+position = Vector2(7200, -2925)

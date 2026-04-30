@@ -1,9 +1,10 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/props/BuildingDoor.tscn" id="1_door"]
 [ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="2_wander"]
 [ext_resource type="PackedScene" path="res://scenes/npcs/SeuJoao.tscn" id="3_seu_joao"]
 [ext_resource type="PackedScene" path="res://scenes/props/DialogueSpot.tscn" id="4_spot"]
+[ext_resource type="PackedScene" path="res://scenes/props/ReactiveDialogueSpot.tscn" id="5_reactive"]
 
 [sub_resource type="RectangleShape2D" id="WallH"]
 size = Vector2(360, 12)
@@ -165,7 +166,7 @@ shape = SubResource("WallV")
 position = Vector2(0, 105)
 prompt_text = "Sortir"
 is_exit = true
-destination = Vector2(-15080, -2768)
+destination = Vector2(-15050, -3440)
 
 [node name="SpawnPoint" type="Marker2D" parent="."]
 position = Vector2(0, 75)
@@ -174,51 +175,142 @@ position = Vector2(0, 75)
 position = Vector2(-130, -30)
 color = Color(0.62, 0.55, 0.5, 1)
 size = Vector2(10, 17)
-path = Array[Vector2]([Vector2(-130, -30), Vector2(-128, -28), Vector2(-132, -32)])
-speed = 2.0
-pause_at_waypoints = 12.0
+stationary = true
 bob_strength = 1.0
+look_at_player_distance = 40.0
 
 [node name="HousewifeCooking" parent="." instance=ExtResource("2_wander")]
 position = Vector2(120, -50)
 color = Color(0.85, 0.4, 0.55, 1)
 size = Vector2(10, 17)
-path = Array[Vector2]([Vector2(120, -50), Vector2(140, -50), Vector2(100, -50)])
-speed = 8.0
-pause_at_waypoints = 4.0
+stationary = true
+look_at_player_distance = 40.0
 
 [node name="ChildPlayingTV" parent="." instance=ExtResource("2_wander")]
 position = Vector2(-30, 50)
 color = Color(0.4, 0.85, 0.55, 1)
 size = Vector2(8, 14)
-path = Array[Vector2]([Vector2(-30, 50), Vector2(20, 60), Vector2(-50, 40)])
-speed = 18.0
-pause_at_waypoints = 3.0
+stationary = true
+look_at_player_distance = 40.0
 
 [node name="MotherKnitting" parent="." instance=ExtResource("2_wander")]
 position = Vector2(60, 30)
 color = Color(0.4, 0.65, 0.95, 1)
 size = Vector2(10, 17)
-path = Array[Vector2]([Vector2(60, 30), Vector2(62, 28), Vector2(58, 32)])
-speed = 2.0
-pause_at_waypoints = 10.0
+stationary = true
 bob_strength = 0.6
+look_at_player_distance = 40.0
 
 [node name="SeuJoao" parent="." instance=ExtResource("3_seu_joao")]
 position = Vector2(-60, 50)
 
-[node name="MotherSpot" parent="." instance=ExtResource("4_spot")]
+[node name="MotherSpot" parent="." instance=ExtResource("5_reactive")]
 position = Vector2(120, -50)
 npc_id = "mae"
-speaker = "Mãe"
 prompt = "Parler à Mãe"
-text = "*remue la moqueca, ne te regarde pas* Mange avant de partir, sobrinho. La rue est dure ce matin. Et n'oublie pas le jantar — j'ai mis le couvert pour trois, comme avant. Comme si Zé allait rentrer."
-choices = PackedStringArray(["Obrigado, mãe"])
+variants = [{
+"id": "carnaval",
+"act": 4,
+"speaker": "Mãe",
+"text": "*essuie ses mains sur son tablier* Mon roi du Sambódromo. Tu rentres à quatre heures du matin maintenant — mais tu rentres entier. C'est tout ce que je demandais à ton oncle. Va, va. La moqueca chauffe.",
+"choices": ["Obrigado, mãe"]
+}, {
+"id": "sick",
+"flag": "mae_sick_triggered",
+"not_flag": "mae_sick_seen",
+"set_flag_after": "mae_sick_seen",
+"speaker": "Mãe",
+"text": "*tousse profondément, s'assied sur la chaise sans pouvoir terminer la moqueca* Ne t'inquiète pas, sobrinho. *reprend son souffle* Vovó dit que je marche trop vite vers la chapelle. *te tend une enveloppe pliée trois fois* Pour la pharmacie de Tito — il a une remise pour la famille maintenant. Si tu peux passer, je dormirai mieux.",
+"choices": ["Vai dar tudo certo, mãe"]
+}, {
+"id": "revisit",
+"flag": "mae_consortium_revisit_triggered",
+"not_flag": "mae_revisit_seen",
+"set_flag_after": "mae_revisit_seen",
+"speaker": "Mãe",
+"text": "*ne se retourne pas, fixe la marmite* Ils sont revenus aujourd'hui. Trois hommes cette fois. *touille très lentement* Ils ont demandé du sucre. Du sucre, sobrinho. Pour me faire savoir qu'ils savent où on vit, où je range mes provisions, comment fonctionne ma cuisine. *te regarde enfin* Continue de payer. Mais pas trop vite. Si tu paies trop vite ils penseront que tu mens sur tes revenus.",
+"choices": ["Compris, mãe"]
+}, {
+"id": "letter",
+"flag": "mae_letter_triggered",
+"not_flag": "mae_letter_seen",
+"set_flag_after": "mae_letter_seen",
+"speaker": "Mãe",
+"text": "*tient une enveloppe froissée, les mains tremblantes* Sobrinho... un homme du consortium est passé pendant que tu vendais. Costume blanc, sourire trop large. *te tend la lettre, une croix noire au dos* Ils savent que t'es le neveu de Zé. Ils savent où on dort. *éclate en larmes silencieuses, sans bouger* Promets-moi que tu rentres entier ce soir. Promets-moi.",
+"choices": ["Promets, mãe"]
+}, {
+"id": "after_payment",
+"flag": "first_payment_done",
+"set_flag_after": "home_visit_done",
+"speaker": "Mãe",
+"text": "*pose la louche, te regarde enfin droit dans les yeux* Cinq cents reais d'acompte. *sa voix tremble un peu* Tu portes la famille comme Zé portait la charrette. Mange, sobrinho. C'est encore chaud. Et le consortium peut attendre cinq minutes.",
+"choices": ["Obrigado, mãe"]
+}, {
+"id": "after_first_sale",
+"flag": "first_sale_done",
+"speaker": "Mãe",
+"text": "*essuie une larme du dos de la main* T'as vendu ton premier milho aujourd'hui. *te touche la joue* Bom rapaz. Le calçadão mâche les hommes faibles, mais il se souvient des honnêtes. Reviens dîner.",
+"choices": ["Sim, mãe"]
+}, {
+"id": "default",
+"speaker": "Mãe",
+"text": "*remue la moqueca, ne te regarde pas* Mange avant de partir, sobrinho. La rue est dure ce matin. Et n'oublie pas le jantar — j'ai mis le couvert pour trois, comme avant. Comme si Zé allait rentrer.",
+"choices": ["Obrigado, mãe"]
+}]
 
-[node name="GrandmaSpot" parent="." instance=ExtResource("4_spot")]
+[node name="GrandmaSpot" parent="." instance=ExtResource("5_reactive")]
 position = Vector2(-130, -30)
 npc_id = "vovo"
-speaker = "Vovó"
 prompt = "Parler à Vovó"
-text = "*sans cesser de tricoter, voix douce* Sobrinho. J'ai rêvé de ton oncle cette nuit. Il était assis au bord de la mer, en train de faire griller du milho, comme quand t'étais petit. Il riait. Va lui faire honneur. Vends son milho. La famille tient debout par les mains qui travaillent."
-choices = PackedStringArray(["Sim, vovó"])
+variants = [{
+"id": "carnaval",
+"act": 4,
+"speaker": "Vovó",
+"text": "*lève les yeux de son tricot, sourit* Tu sens la sueur de Sambódromo et la samba qui colle. *recommence à tricoter* Ton oncle aurait dansé jusqu'au lever du soleil. Il danse encore, à sa façon. Va te laver, mon petit roi.",
+"choices": ["Sim, vovó"]
+}, {
+"id": "ng_plus_dejavu",
+"flag": "is_ng_plus",
+"set_flag_after": "vovo_ng_plus_seen",
+"speaker": "Vovó",
+"text": "*pose son tricot, te scrute longuement* Sobrinho. Cette nuit j'ai rêvé de toi en écharpe verte. Ou en uniforme bleu. Ou avec un drapeau rouge à la fenêtre — j'sais plus, je vieillis. *reprend son tricot, voix plus basse* Mais je sais que je t'ai déjà vu rentrer entier. *sourit pour elle-même* La famille reste debout. À chaque fois.",
+"choices": ["Sim, vovó"]
+}, {
+"id": "ze_anonymous_letter",
+"flag": "tio_ze_letter_triggered",
+"not_flag": "vovo_ze_letter_seen",
+"set_flag_after": "vovo_ze_letter_seen",
+"speaker": "Vovó",
+"text": "*sort une feuille pliée de sous son tricot, la garde dans sa main, ne te la donne pas* Sobrinho. Hier sous la porte. Pas de signature. Mais l'écriture, je la connais depuis cinquante ans. *lit à voix basse, sans articuler* « Le neveu fait honneur. Ne pose pas de questions. Continue. » *replie la feuille, la rentre dans son tricot* Tu n'as rien vu. Tu m'as rien entendu. *reprend sa maille comme si rien*",
+"choices": ["…Obrigado, vovó"]
+}, {
+"id": "letter_observed",
+"flag": "mae_letter_triggered",
+"speaker": "Vovó",
+"text": "*continue de tricoter, voix très basse* Ta mère a pleuré sans bruit cet après-midi. Elle pleure toujours sans bruit, comme sa mère. *ne lève pas les yeux* La lettre, elle l'a brûlée. Mais l'enveloppe avec la croix, elle l'a glissée sous mon tricot. *te regarde enfin* Fais-leur du mal en retour, sobrinho. Pas de la peur. Du mal.",
+"choices": ["Sim, vovó"]
+}, {
+"id": "after_reveal",
+"flag": "tio_ze_revealed",
+"speaker": "Vovó",
+"text": "*sans cesser de tricoter* Sobrinho. Le Concierge du Palace… *baisse la voix d'un cran* La famille n'est pas toujours où on croit. Mais c'est encore la famille, hein. Le sang ne ment pas, même quand l'homme se cache derrière un uniforme.",
+"choices": ["Sim, vovó"]
+}, {
+"id": "after_payment",
+"flag": "first_payment_done",
+"set_flag_after": "home_visit_done",
+"speaker": "Vovó",
+"text": "*pose son tricot* Cinq cents reais. *te prend la main, ses doigts secs et chauds* Le premier billet est le plus dur, sobrinho. Les autres suivront, comme les vagues. Tudo é teu, comme disait Zé. Maintenant prouve-le.",
+"choices": ["Obrigado, vovó"]
+}, {
+"id": "after_first_sale",
+"flag": "first_sale_done",
+"speaker": "Vovó",
+"text": "*ferme un œil pour t'examiner* Tu sens l'huile de milho et la transpiration honnête. *tape une maille* C'est l'odeur des hommes qui nourrissent leur maison. Continue.",
+"choices": ["Sim, vovó"]
+}, {
+"id": "default",
+"speaker": "Vovó",
+"text": "*sans cesser de tricoter, voix douce* Sobrinho. J'ai rêvé de ton oncle cette nuit. Il était assis au bord de la mer, en train de faire griller du milho, comme quand t'étais petit. Il riait. Va lui faire honneur. Vends son milho. La famille tient debout par les mains qui travaillent.",
+"choices": ["Sim, vovó"]
+}]

@@ -282,34 +282,43 @@ flavor_text_offer = "Açaí com granola e mel, freguês. Bota energia pra próxi
 [node name="Tourist1" parent="." instance=ExtResource("3_wander")]
 position = Vector2(-100, 100)
 color = Color(0.95, 0.85, 0.4, 1)
-path = Array[Vector2]([Vector2(-100, 100), Vector2(80, 100), Vector2(0, 130)])
+roam_zone = Rect2(-100, -20, 200, 40)
 speed = 22.0
+pause_random_jitter = 1.5
+look_at_player_distance = 70.0
 
 [node name="Tourist2" parent="." instance=ExtResource("3_wander")]
 position = Vector2(80, 110)
 color = Color(0.4, 0.85, 0.55, 1)
-path = Array[Vector2]([Vector2(80, 110), Vector2(-80, 110), Vector2(120, 140)])
+roam_zone = Rect2(-100, -20, 200, 40)
 speed = 18.0
+pause_random_jitter = 1.5
+look_at_player_distance = 70.0
 
 [node name="DancerL" parent="." instance=ExtResource("3_wander")]
 position = Vector2(120, 130)
 color = Color(0.85, 0.3, 0.5, 1)
 size = Vector2(11, 19)
-path = Array[Vector2]([Vector2(120, 130), Vector2(160, 100), Vector2(140, 150)])
+roam_zone = Rect2(-100, -30, 200, 60)
 speed = 35.0
 pause_at_waypoints = 0.4
+pause_random_jitter = 0.6
+look_at_player_distance = 50.0
 
 [node name="DancerR" parent="." instance=ExtResource("3_wander")]
 position = Vector2(220, 140)
 color = Color(0.4, 0.65, 0.95, 1)
 size = Vector2(11, 19)
-path = Array[Vector2]([Vector2(220, 140), Vector2(180, 110), Vector2(240, 150)])
+roam_zone = Rect2(-100, -30, 200, 60)
 speed = 32.0
 pause_at_waypoints = 0.4
+pause_random_jitter = 0.6
+look_at_player_distance = 50.0
 
 [node name="PhotoTourist" parent="." instance=ExtResource("3_wander")]
 position = Vector2(-160, 60)
 color = Color(0.95, 0.55, 0.4, 1)
-path = Array[Vector2]([Vector2(-160, 60), Vector2(-180, 80), Vector2(-140, 60)])
+stationary = true
 speed = 12.0
 pause_at_waypoints = 2.5
+look_at_player_distance = 50.0

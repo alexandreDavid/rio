@@ -257,46 +257,46 @@ color = Color(0.55, 0.32, 0.28, 1)
 position = Vector2(0, -50)
 color = Color(0.18, 0.18, 0.22, 1)
 size = Vector2(10, 18)
-path = Array[Vector2]([Vector2(-30, -50), Vector2(30, -50), Vector2(0, -60)])
-speed = 14.0
-pause_at_waypoints = 2.5
+roam_zone = Rect2(-40, -10, 80, 20)
+pause_random_jitter = 0.6
+look_at_player_distance = 40.0
 
 [node name="GuestA" parent="." instance=ExtResource("2_wander")]
 position = Vector2(-150, 0)
 color = Color(0.95, 0.85, 0.4, 1)
 size = Vector2(10, 17)
-path = Array[Vector2]([Vector2(-150, 0), Vector2(-180, 30), Vector2(-100, 80), Vector2(-50, 130)])
-speed = 18.0
-pause_at_waypoints = 2.0
+roam_zone = Rect2(-100, -20, 200, 40)
+pause_random_jitter = 1.5
+look_at_player_distance = 60.0
 
 [node name="GuestB" parent="." instance=ExtResource("2_wander")]
 position = Vector2(150, 30)
 color = Color(0.85, 0.4, 0.55, 1)
 size = Vector2(10, 17)
-path = Array[Vector2]([Vector2(150, 30), Vector2(200, 60), Vector2(50, 100), Vector2(180, 0)])
-speed = 16.0
-pause_at_waypoints = 2.4
+roam_zone = Rect2(-100, -20, 200, 40)
+pause_random_jitter = 1.5
+look_at_player_distance = 60.0
 
 [node name="Bellboy" parent="." instance=ExtResource("2_wander")]
 position = Vector2(-80, 50)
 color = Color(0.95, 0.32, 0.22, 1)
 size = Vector2(9, 16)
-path = Array[Vector2]([Vector2(-80, 50), Vector2(80, 50), Vector2(0, 100), Vector2(-150, 60)])
-speed = 38.0
-pause_at_waypoints = 1.0
+roam_zone = Rect2(-40, -10, 80, 20)
+pause_random_jitter = 0.6
+look_at_player_distance = 40.0
 
 [node name="VipGuest" parent="." instance=ExtResource("2_wander")]
 position = Vector2(60, 80)
 color = Color(0.18, 0.18, 0.32, 1)
 size = Vector2(11, 19)
-path = Array[Vector2]([Vector2(60, 80), Vector2(120, 60), Vector2(0, 100)])
-speed = 12.0
-pause_at_waypoints = 3.5
+roam_zone = Rect2(-100, -20, 200, 40)
+pause_random_jitter = 1.5
+look_at_player_distance = 60.0
 
 [node name="Maid" parent="." instance=ExtResource("2_wander")]
 position = Vector2(180, -90)
 color = Color(0.4, 0.65, 0.95, 1)
 size = Vector2(9, 16)
-path = Array[Vector2]([Vector2(180, -90), Vector2(220, -50), Vector2(150, -90)])
-speed = 22.0
-pause_at_waypoints = 1.6
+roam_zone = Rect2(-60, -30, 120, 60)
+pause_random_jitter = 0.8
+look_at_player_distance = 40.0

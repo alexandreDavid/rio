@@ -8,6 +8,11 @@ extends CharacterBody2D
 @export_range(0.0, 1.0) var chance: float = 0.9
 @export var cooldown_seconds: float = 20.0
 
+# Tarif récurrent (post-1er shakedown) : moins fréquent mais plus cher,
+# pour ne pas étouffer le joueur sans pour autant disparaître.
+const RECURRING_CHANCE: float = 0.3
+const RECURRING_COOLDOWN: float = 90.0
+
 var _cooldown_until: float = 0.0
 
 func _ready() -> void:
@@ -28,19 +33,42 @@ func _ready() -> void:
 func set_cooldown(seconds: float) -> void:
 	_cooldown_until = Time.get_ticks_msec() / 1000.0 + seconds
 
+# Tarif récurrent par acte. La rente du calçadão s'ajuste à la prospérité.
+const BRIBE_BY_ACT: Dictionary = {
+	1: {"amount": 50,  "knot": "cop_shakedown_recurring"},
+	2: {"amount": 80,  "knot": "cop_shakedown_recurring_act2"},
+	3: {"amount": 150, "knot": "cop_shakedown_recurring_act3"},
+	4: {"amount": 150, "knot": "cop_shakedown_recurring_act3"},  # acte 4 : même que 3
+}
+
+func _bribe_for_current_act() -> Dictionary:
+	var act: int = CampaignManager.current_act
+	return BRIBE_BY_ACT.get(act, BRIBE_BY_ACT[1])
+
 func _on_player_entered() -> void:
+	# Tant que la cinématique du 1er shakedown n'a pas joué, on laisse MainBoot
+	# gérer (il déclenche FirstShakedownCutscene quand le joueur a la charrette
+	# + 20 R$ + est sur le calçadão). PMPatrol ne fait rien pour ne pas dédoubler.
+	if not CampaignManager.has_flag("first_shakedown_played"):
+		return
 	var cart: CornCart = get_tree().get_first_node_in_group("corn_cart") as CornCart
-	print("[PMPatrol] player entered — cart=%s carrying=%s" % [cart, cart.is_carrying() if cart else "N/A"])
 	if cart == null or not cart.is_carrying():
+		return
+	if GameManager.player == null:
+		return
+	var inv: Inventory = GameManager.player.get_node_or_null("Inventory") as Inventory
+	if inv == null:
+		return
+	var bribe: Dictionary = _bribe_for_current_act()
+	# Argent du pot-de-vin requis : sinon le choix "Payer" est inutile et le
+	# joueur n'a plus que la fuite avec malus de réputation. On le laisse passer.
+	if inv.money < int(bribe.amount):
 		return
 	var now: float = Time.get_ticks_msec() / 1000.0
 	if now < _cooldown_until:
-		print("[PMPatrol] cooldown active")
 		return
-	if randf() > chance:
+	if randf() > RECURRING_CHANCE:
 		_cooldown_until = now + 5.0
-		print("[PMPatrol] lucky roll, no shakedown")
 		return
-	_cooldown_until = now + cooldown_seconds
-	print("[PMPatrol] SHAKEDOWN")
-	DialogueBridge.start_dialogue("pm", "cop_shakedown")
+	_cooldown_until = now + RECURRING_COOLDOWN
+	DialogueBridge.start_dialogue("pm", String(bribe.knot))

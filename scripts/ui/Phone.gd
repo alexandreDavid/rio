@@ -203,7 +203,7 @@ func _add_rep_row(axis_name: String, value: int) -> void:
 	row.add_child(val_label)
 	stats_box.add_child(row)
 
-func _on_rep_changed(_axis: int, _value: int) -> void:
+func _on_rep_changed(_axis_name: String, _value: int) -> void:
 	if visible and stats_screen.visible:
 		_refresh_stats()
 

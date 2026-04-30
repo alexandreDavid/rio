@@ -26,9 +26,8 @@ signal npc_repositioned(npc_id: String, pos: Vector2)
 # Chaque règle : { "flag": String?, "act": int?, "phase": int?, "pos": Vector2 }
 # Le premier match complet gagne ; sinon on utilise la dernière règle sans condition.
 const DEFAULT_SCHEDULE: Dictionary = {
-	"seu_joao": [
-		{"pos": Vector2(1260, 96)},  # default: carrocinha sur le calçadão Posto 4
-	],
+	# seu_joao vit désormais dans la maison du morro (HouseInterior, hors monde joué).
+	# Pas de règle ici pour ne pas le téléporter sur le calçadão au démarrage.
 	"miguel": [
 		{"act": 2, "pos": Vector2(200, -220)},  # s'installe dans la favela en acte 2
 		{"pos": Vector2(866, 96)},

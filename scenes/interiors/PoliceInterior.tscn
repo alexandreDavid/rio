@@ -198,9 +198,8 @@ color = Color(0.4, 0.55, 0.32, 1)
 position = Vector2(-120, -75)
 color = Color(0.18, 0.32, 0.62, 1)
 size = Vector2(10, 18)
-path = Array[Vector2]([Vector2(-120, -75), Vector2(-100, -85), Vector2(-140, -75)])
-speed = 8.0
-pause_at_waypoints = 4.0
+stationary = true
+look_at_player_distance = 40.0
 
 [node name="PatrolOfficer" parent="." instance=ExtResource("2_wander")]
 position = Vector2(-50, 30)
@@ -209,27 +208,26 @@ size = Vector2(10, 18)
 path = Array[Vector2]([Vector2(-180, 30), Vector2(60, 30), Vector2(-50, -10), Vector2(-180, 30)])
 speed = 32.0
 pause_at_waypoints = 1.0
+pause_random_jitter = 0.6
+look_at_player_distance = 40.0
 
 [node name="Detainee" parent="." instance=ExtResource("2_wander")]
 position = Vector2(150, -80)
 color = Color(0.85, 0.55, 0.4, 1)
 size = Vector2(10, 17)
-path = Array[Vector2]([Vector2(120, -80), Vector2(200, -80), Vector2(160, -100)])
-speed = 18.0
-pause_at_waypoints = 1.6
+stationary = true
+look_at_player_distance = 40.0
 
 [node name="Complainant" parent="." instance=ExtResource("2_wander")]
 position = Vector2(-150, 65)
 color = Color(0.95, 0.85, 0.4, 1)
 size = Vector2(10, 17)
-path = Array[Vector2]([Vector2(-150, 65), Vector2(-130, 65), Vector2(-170, 65)])
-speed = 6.0
-pause_at_waypoints = 5.0
+stationary = true
+look_at_player_distance = 40.0
 
 [node name="ReporterKid" parent="." instance=ExtResource("2_wander")]
 position = Vector2(0, 80)
 color = Color(0.4, 0.85, 0.55, 1)
 size = Vector2(8, 14)
-path = Array[Vector2]([Vector2(0, 80), Vector2(-80, 90), Vector2(80, 90), Vector2(0, 80)])
-speed = 30.0
-pause_at_waypoints = 1.4
+stationary = true
+look_at_player_distance = 40.0

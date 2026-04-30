@@ -257,6 +257,8 @@ size = Vector2(9, 16)
 path = Array[Vector2]([Vector2(-200, 0), Vector2(200, 0), Vector2(-200, 0)])
 speed = 60.0
 pause_at_waypoints = 0.2
+pause_random_jitter = 0.4
+active_phases = [0]
 
 [node name="JoggerB" parent="." instance=ExtResource("3_wander")]
 position = Vector2(150, 0)
@@ -265,18 +267,24 @@ size = Vector2(9, 16)
 path = Array[Vector2]([Vector2(150, 0), Vector2(-150, 0), Vector2(150, 0)])
 speed = 50.0
 pause_at_waypoints = 0.2
+pause_random_jitter = 0.4
+active_phases = [0]
 
 [node name="StrollerA" parent="." instance=ExtResource("3_wander")]
 position = Vector2(-50, 100)
 color = Color(0.95, 0.85, 0.4, 1)
-path = Array[Vector2]([Vector2(-50, 100), Vector2(80, 100), Vector2(-100, 130)])
+roam_zone = Rect2(-100, -30, 200, 60)
 speed = 18.0
+pause_random_jitter = 0.6
+look_at_player_distance = 50.0
 
 [node name="StrollerB" parent="." instance=ExtResource("3_wander")]
 position = Vector2(100, 130)
 color = Color(0.4, 0.65, 0.95, 1)
-path = Array[Vector2]([Vector2(100, 130), Vector2(-50, 140), Vector2(120, 90)])
+roam_zone = Rect2(-100, -30, 200, 60)
 speed = 22.0
+pause_random_jitter = 0.6
+look_at_player_distance = 50.0
 
 [node name="DogWalker" parent="." instance=ExtResource("3_wander")]
 position = Vector2(-180, 60)
@@ -284,3 +292,4 @@ color = Color(0.85, 0.55, 0.4, 1)
 path = Array[Vector2]([Vector2(-180, 60), Vector2(-150, 90), Vector2(-200, 80)])
 speed = 16.0
 pause_at_waypoints = 1.8
+pause_random_jitter = 0.8

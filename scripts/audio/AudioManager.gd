@@ -16,15 +16,18 @@ extends Node
 # = silence sur ce district. La piste de Copacabana est aussi la piste de fond
 # par défaut tant qu'aucun district n'est entré.
 const DISTRICT_MUSIC: Dictionary = {
-	"copacabana":      "res://assets/audio/music/beach.ogg",
-	"corcovado":       "res://assets/audio/music/corcovado.ogg",
-	"pao_acucar":      "res://assets/audio/music/sunset.ogg",
-	"lagoa":           "res://assets/audio/music/lagoa.ogg",
-	"maracana":        "res://assets/audio/music/torcida.ogg",
-	"santos_dumont":   "res://assets/audio/music/airport.ogg",
-	"aterro_flamengo": "res://assets/audio/music/aterro.ogg",
-	"cagarras":        "res://assets/audio/music/sea.ogg",
-	"sambodromo":      "res://assets/audio/music/carnaval.ogg",
+	"copacabana":         "res://assets/audio/music/beach.ogg",        # samba lounge
+	"corcovado":          "res://assets/audio/music/corcovado.ogg",
+	"pao_acucar":         "res://assets/audio/music/sunset.ogg",
+	"lagoa":              "res://assets/audio/music/lagoa.ogg",
+	"maracana":           "res://assets/audio/music/torcida.ogg",
+	"santos_dumont":      "res://assets/audio/music/airport.ogg",
+	"aterro_flamengo":    "res://assets/audio/music/aterro.ogg",
+	"cagarras":           "res://assets/audio/music/sea.ogg",
+	"sambodromo":         "res://assets/audio/music/carnaval.ogg",
+	"favela_morro":       "res://assets/audio/music/favela.ogg",       # forró doux + radio lointaine
+	"zona_sul":           "res://assets/audio/music/ipanema.ogg",      # bossa lounge
+	"botafogo_flamengo":  "res://assets/audio/music/botafogo.ogg",     # groove urbain calme
 }
 
 const AMBIENT_PATH: String = "res://assets/audio/sfx/waves.ogg"

@@ -79,19 +79,22 @@ const DISTRICTS: Dictionary = {
 # district (ex. arriver à l'est de la Zona Sul depuis Copa, à l'ouest depuis Leblon).
 const WALK_ENTRIES: Dictionary = {
 	# id_district -> {from_id: Vector2 dans le world (copacabana) ou local (autres)}
+	# /!\ Ces positions doivent être HORS des Area2D ExitTo... du district cible
+	# pointant vers la source — sinon ping-pong infini (le joueur arrive,
+	# touche immédiatement le trigger retour, repart, etc.).
 	"copacabana": {
 		"zona_sul":           Vector2(-240, 110),    # depuis Arpoador (ouest, après le Forte)
 		"botafogo_flamengo":  Vector2(3070, -50),    # depuis le tunnel Leme (extrémité est)
-		"favela_morro":       Vector2(1100, -180),   # arrivée depuis le morro (escalier 2nd row)
+		"favela_morro":       Vector2(1100, -100),   # arrivée depuis le morro — sud de ExitToFavela (-210)
 	},
 	"zona_sul": {
-		"copacabana": Vector2(800, 130),  # arrivée depuis l'est (Copa)
+		"copacabana": Vector2(800, 130),  # arrivée depuis l'est (Copa) — ouest de ExitToCopa (905)
 	},
 	"botafogo_flamengo": {
-		"copacabana": Vector2(800, 130),  # arrivée depuis le tunnel (côté est = Urca)
+		"copacabana": Vector2(0, 250),  # sortie nord du Túnel Novo — nord de ExitToCopa (365)
 	},
 	"favela_morro": {
-		"copacabana": Vector2(0, 195),    # arrivée depuis le bas (escalier sud)
+		"copacabana": Vector2(0, 150),    # arrivée depuis le bas — nord de ExitToCopa (250) à 70 px
 	},
 }
 
@@ -102,6 +105,19 @@ var _current: String = "copacabana"
 
 func current() -> String:
 	return _current
+
+# Setter explicite. À utiliser quand le joueur change de district sans passer
+# par travel_to / walk_to — typiquement au démarrage (la nouvelle partie commence
+# dans la favela via la maison de tio Zé) ou dans un cas de cinématique scriptée.
+# Émet district_changed comme les autres mécanismes d'entrée pour cohérence.
+func set_current(district_id: String) -> void:
+	if not DISTRICTS.has(district_id):
+		push_warning("[DistrictManager] set_current: district inconnu : %s" % district_id)
+		return
+	if _current == district_id:
+		return
+	_current = district_id
+	district_changed.emit(district_id)
 
 func get_label(district_id: String) -> String:
 	return DISTRICTS.get(district_id, {}).get("label", district_id)

@@ -1,442 +1,1037 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=8 format=3]
 
-[ext_resource type="PackedScene" path="res://scenes/props/TaxiStand.tscn" id="1_taxi"]
 [ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="2_wander"]
 [ext_resource type="PackedScene" path="res://scenes/props/DistrictExit.tscn" id="3_exit"]
-[ext_resource type="PackedScene" path="res://scenes/interiors/HouseInterior.tscn" id="4_house_int"]
 [ext_resource type="PackedScene" path="res://scenes/props/BuildingDoor.tscn" id="5_door"]
 [ext_resource type="PackedScene" path="res://scenes/props/CornCart.tscn" id="6_cart"]
+[ext_resource type="PackedScene" path="res://scenes/props/ReactiveDialogueSpot.tscn" id="7_reactive"]
 
 [sub_resource type="RectangleShape2D" id="WallH"]
-size = Vector2(1500, 16)
+size = Vector2(820, 16)
 
 [sub_resource type="RectangleShape2D" id="WallV"]
-size = Vector2(16, 480)
+size = Vector2(16, 1620)
+
+[sub_resource type="RectangleShape2D" id="ExitWideShape"]
+size = Vector2(800, 64)
 
 [node name="FavelaDoMorroDistrict" type="Node2D"]
 
 [node name="Sky" type="ColorRect" parent="."]
-offset_left = -740.0
-offset_top = -260.0
-offset_right = 740.0
-offset_bottom = -100.0
+offset_left = -400.0
+offset_top = -1300.0
+offset_right = 400.0
+offset_bottom = -1100.0
 color = Color(0.92, 0.62, 0.35, 1)
 
 [node name="SkyHorizon" type="ColorRect" parent="."]
-offset_left = -740.0
-offset_top = -120.0
-offset_right = 740.0
-offset_bottom = -100.0
+offset_left = -400.0
+offset_top = -1130.0
+offset_right = 400.0
+offset_bottom = -1100.0
 color = Color(0.95, 0.78, 0.42, 1)
 
-[node name="HillBg" type="ColorRect" parent="."]
-offset_left = -740.0
-offset_top = -200.0
-offset_right = 740.0
-offset_bottom = -80.0
-color = Color(0.32, 0.42, 0.32, 1)
+[node name="DistantCorcovadoMorro" type="ColorRect" parent="."]
+offset_left = -360.0
+offset_top = -1240.0
+offset_right = -120.0
+offset_bottom = -1140.0
+color = Color(0.32, 0.28, 0.32, 1)
 
-[node name="HillRidge" type="ColorRect" parent="."]
-offset_left = -700.0
-offset_top = -180.0
-offset_right = -400.0
-offset_bottom = -80.0
-color = Color(0.28, 0.38, 0.32, 1)
+[node name="DistantCristoSilhouette" type="ColorRect" parent="."]
+offset_left = -244.0
+offset_top = -1270.0
+offset_right = -236.0
+offset_bottom = -1240.0
+color = Color(0.28, 0.22, 0.26, 0.9)
 
-[node name="HillRidgeR" type="ColorRect" parent="."]
-offset_left = 400.0
-offset_top = -170.0
-offset_right = 700.0
-offset_bottom = -80.0
-color = Color(0.28, 0.38, 0.32, 1)
+[node name="DistantCristoCross" type="ColorRect" parent="."]
+offset_left = -254.0
+offset_top = -1258.0
+offset_right = -226.0
+offset_bottom = -1252.0
+color = Color(0.28, 0.22, 0.26, 0.9)
 
-[node name="ChristSilhouetteFar" type="ColorRect" parent="."]
-offset_left = 80.0
-offset_top = -190.0
-offset_right = 86.0
-offset_bottom = -160.0
-color = Color(0.22, 0.28, 0.22, 0.85)
+[node name="DistantPaoAcucarMorro" type="ColorRect" parent="."]
+offset_left = 180.0
+offset_top = -1220.0
+offset_right = 360.0
+offset_bottom = -1100.0
+color = Color(0.32, 0.28, 0.34, 1)
 
-[node name="ChristCrossFar" type="ColorRect" parent="."]
-offset_left = 76.0
-offset_top = -178.0
-offset_right = 90.0
-offset_bottom = -174.0
-color = Color(0.22, 0.28, 0.22, 0.85)
+[node name="DistantPaoAcucarTop" type="ColorRect" parent="."]
+offset_left = 220.0
+offset_top = -1240.0
+offset_right = 320.0
+offset_bottom = -1220.0
+color = Color(0.28, 0.24, 0.3, 1)
 
-[node name="GroundDirt" type="ColorRect" parent="."]
-offset_left = -740.0
-offset_top = 100.0
-offset_right = 740.0
-offset_bottom = 200.0
-color = Color(0.55, 0.42, 0.32, 1)
-
-[node name="StairsCenter" type="ColorRect" parent="."]
-offset_left = -8.0
-offset_top = 100.0
-offset_right = 8.0
-offset_bottom = 200.0
+[node name="MorroTopGround" type="ColorRect" parent="."]
+offset_left = -400.0
+offset_top = -1100.0
+offset_right = 400.0
+offset_bottom = -1000.0
 color = Color(0.42, 0.32, 0.22, 1)
 
-[node name="StairLine1" type="ColorRect" parent="."]
-offset_left = -10.0
-offset_top = 120.0
-offset_right = 10.0
-offset_bottom = 122.0
-color = Color(0.32, 0.22, 0.18, 1)
-
-[node name="StairLine2" type="ColorRect" parent="."]
-offset_left = -10.0
-offset_top = 140.0
-offset_right = 10.0
-offset_bottom = 142.0
-color = Color(0.32, 0.22, 0.18, 1)
-
-[node name="StairLine3" type="ColorRect" parent="."]
-offset_left = -10.0
-offset_top = 160.0
-offset_right = 10.0
-offset_bottom = 162.0
-color = Color(0.32, 0.22, 0.18, 1)
-
-[node name="StairLine4" type="ColorRect" parent="."]
-offset_left = -10.0
-offset_top = 180.0
-offset_right = 10.0
-offset_bottom = 182.0
-color = Color(0.32, 0.22, 0.18, 1)
-
-[node name="VegetationL" type="ColorRect" parent="."]
-offset_left = -740.0
-offset_top = 100.0
-offset_right = -640.0
-offset_bottom = 200.0
-color = Color(0.32, 0.55, 0.32, 1)
-
-[node name="VegetationR" type="ColorRect" parent="."]
-offset_left = 640.0
-offset_top = 100.0
-offset_right = 740.0
-offset_bottom = 200.0
-color = Color(0.32, 0.55, 0.32, 1)
-
-[node name="HouseRow1" type="Node2D" parent="."]
-
-[node name="House1Wall" type="ColorRect" parent="HouseRow1"]
-offset_left = -650.0
-offset_top = 0.0
-offset_right = -570.0
-offset_bottom = 100.0
-color = Color(0.85, 0.55, 0.4, 1)
-
-[node name="House1Roof" type="ColorRect" parent="HouseRow1"]
-offset_left = -660.0
-offset_top = -10.0
-offset_right = -560.0
-offset_bottom = 0.0
-color = Color(0.62, 0.32, 0.22, 1)
-
-[node name="House1Window" type="ColorRect" parent="HouseRow1"]
-offset_left = -630.0
-offset_top = 30.0
-offset_right = -610.0
-offset_bottom = 50.0
-color = Color(0.32, 0.55, 0.78, 0.85)
-
-[node name="House2Wall" type="ColorRect" parent="HouseRow1"]
-offset_left = -540.0
-offset_top = -10.0
-offset_right = -440.0
-offset_bottom = 100.0
-color = Color(0.95, 0.85, 0.4, 1)
-
-[node name="House2Roof" type="ColorRect" parent="HouseRow1"]
-offset_left = -550.0
-offset_top = -22.0
-offset_right = -430.0
-offset_bottom = -10.0
-color = Color(0.42, 0.32, 0.22, 1)
-
-[node name="House2Window" type="ColorRect" parent="HouseRow1"]
-offset_left = -515.0
-offset_top = 22.0
-offset_right = -495.0
-offset_bottom = 42.0
-color = Color(0.32, 0.55, 0.78, 0.85)
-
-[node name="House3Wall" type="ColorRect" parent="HouseRow1"]
-offset_left = -410.0
-offset_top = 0.0
-offset_right = -310.0
-offset_bottom = 100.0
-color = Color(0.55, 0.78, 0.55, 1)
-
-[node name="House3Roof" type="ColorRect" parent="HouseRow1"]
-offset_left = -420.0
-offset_top = -10.0
-offset_right = -300.0
-offset_bottom = 0.0
-color = Color(0.62, 0.32, 0.22, 1)
-
-[node name="House3Window" type="ColorRect" parent="HouseRow1"]
-offset_left = -385.0
-offset_top = 30.0
-offset_right = -365.0
-offset_bottom = 50.0
-color = Color(0.32, 0.55, 0.78, 0.85)
-
-[node name="House4Wall" type="ColorRect" parent="HouseRow1"]
-offset_left = -280.0
-offset_top = -20.0
-offset_right = -180.0
-offset_bottom = 100.0
-color = Color(0.4, 0.65, 0.95, 1)
-
-[node name="House4Roof" type="ColorRect" parent="HouseRow1"]
-offset_left = -290.0
-offset_top = -32.0
-offset_right = -170.0
-offset_bottom = -20.0
-color = Color(0.42, 0.32, 0.22, 1)
-
-[node name="House4Window" type="ColorRect" parent="HouseRow1"]
-offset_left = -250.0
-offset_top = 12.0
-offset_right = -230.0
-offset_bottom = 32.0
-color = Color(0.95, 0.85, 0.4, 0.85)
-
-[node name="TioZeHouseWall" type="ColorRect" parent="HouseRow1"]
-offset_left = -150.0
-offset_top = -30.0
-offset_right = -10.0
-offset_bottom = 100.0
-color = Color(0.95, 0.65, 0.45, 1)
-
-[node name="TioZeHouseRoof" type="ColorRect" parent="HouseRow1"]
-offset_left = -160.0
-offset_top = -42.0
-offset_right = 0.0
-offset_bottom = -30.0
-color = Color(0.62, 0.32, 0.22, 1)
-
-[node name="TioZeHouseRoof2" type="ColorRect" parent="HouseRow1"]
-offset_left = -100.0
-offset_top = -52.0
-offset_right = -50.0
-offset_bottom = -42.0
-color = Color(0.62, 0.32, 0.22, 1)
-
-[node name="TioZeWindowL" type="ColorRect" parent="HouseRow1"]
-offset_left = -125.0
-offset_top = 0.0
-offset_right = -100.0
-offset_bottom = 25.0
-color = Color(0.95, 0.85, 0.4, 0.92)
-
-[node name="TioZeWindowR" type="ColorRect" parent="HouseRow1"]
+[node name="CapelaWall" type="ColorRect" parent="."]
 offset_left = -50.0
-offset_top = 0.0
-offset_right = -25.0
-offset_bottom = 25.0
-color = Color(0.95, 0.85, 0.4, 0.92)
+offset_top = -1080.0
+offset_right = 50.0
+offset_bottom = -1010.0
+color = Color(0.95, 0.92, 0.85, 1)
 
-[node name="TioZeLabel" type="Label" parent="HouseRow1"]
-offset_left = -130.0
-offset_top = -60.0
-offset_right = -30.0
-offset_bottom = -42.0
-text = "Casa do tio Zé"
+[node name="CapelaRoof" type="ColorRect" parent="."]
+offset_left = -56.0
+offset_top = -1098.0
+offset_right = 56.0
+offset_bottom = -1080.0
+color = Color(0.62, 0.32, 0.22, 1)
+
+[node name="CapelaCross" type="ColorRect" parent="."]
+offset_left = -3.0
+offset_top = -1118.0
+offset_right = 3.0
+offset_bottom = -1098.0
+color = Color(0.55, 0.45, 0.3, 1)
+
+[node name="CapelaCrossH" type="ColorRect" parent="."]
+offset_left = -10.0
+offset_top = -1112.0
+offset_right = 10.0
+offset_bottom = -1108.0
+color = Color(0.55, 0.45, 0.3, 1)
+
+[node name="CapelaDoor" type="ColorRect" parent="."]
+offset_left = -10.0
+offset_top = -1042.0
+offset_right = 10.0
+offset_bottom = -1010.0
+color = Color(0.32, 0.18, 0.12, 1)
+
+[node name="CapelaLabel" type="Label" parent="."]
+offset_left = -90.0
+offset_top = -1140.0
+offset_right = 90.0
+offset_bottom = -1122.0
+text = "Capela do Morro"
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 11
 theme_override_colors/font_color = Color(0.95, 0.92, 0.78, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
 theme_override_constants/outline_size = 4
 
-[node name="House6Wall" type="ColorRect" parent="HouseRow1"]
-offset_left = 30.0
+[node name="MorroAntenna" type="ColorRect" parent="."]
+offset_left = 200.0
+offset_top = -1080.0
+offset_right = 204.0
+offset_bottom = -1010.0
+color = Color(0.45, 0.4, 0.36, 1)
+
+[node name="MorroAntennaTop" type="ColorRect" parent="."]
+offset_left = 196.0
+offset_top = -1090.0
+offset_right = 208.0
+offset_bottom = -1080.0
+color = Color(0.6, 0.5, 0.4, 1)
+
+[node name="MorroTopTreeA" type="ColorRect" parent="."]
+offset_left = -300.0
+offset_top = -1040.0
+offset_right = -292.0
+offset_bottom = -1010.0
+color = Color(0.32, 0.22, 0.18, 1)
+
+[node name="MorroTopTreeATop" type="ColorRect" parent="."]
+offset_left = -316.0
+offset_top = -1058.0
+offset_right = -276.0
+offset_bottom = -1040.0
+color = Color(0.28, 0.45, 0.28, 1)
+
+[node name="MorroTopTreeB" type="ColorRect" parent="."]
+offset_left = 320.0
+offset_top = -1030.0
+offset_right = 326.0
+offset_bottom = -1010.0
+color = Color(0.32, 0.22, 0.18, 1)
+
+[node name="MorroTopTreeBTop" type="ColorRect" parent="."]
+offset_left = 308.0
+offset_top = -1048.0
+offset_right = 338.0
+offset_bottom = -1030.0
+color = Color(0.28, 0.45, 0.28, 1)
+
+[node name="ZoneLabelTop" type="Label" parent="."]
+offset_left = -180.0
+offset_top = -1180.0
+offset_right = 180.0
+offset_bottom = -1158.0
+text = "FAVELA DO MORRO"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 4
+
+[node name="HillsideGround" type="ColorRect" parent="."]
+offset_left = -400.0
+offset_top = -1000.0
+offset_right = 400.0
+offset_bottom = 200.0
+color = Color(0.55, 0.42, 0.32, 1)
+
+[node name="HillsideGroundShadeA" type="ColorRect" parent="."]
+offset_left = -400.0
+offset_top = -800.0
+offset_right = 400.0
+offset_bottom = -796.0
+color = Color(0.45, 0.35, 0.26, 0.6)
+
+[node name="HillsideGroundShadeB" type="ColorRect" parent="."]
+offset_left = -400.0
+offset_top = -400.0
+offset_right = 400.0
+offset_bottom = -396.0
+color = Color(0.45, 0.35, 0.26, 0.6)
+
+[node name="HillsideGroundShadeC" type="ColorRect" parent="."]
+offset_left = -400.0
 offset_top = 0.0
+offset_right = 400.0
+offset_bottom = 4.0
+color = Color(0.45, 0.35, 0.26, 0.6)
+
+[node name="VegetationLeft" type="ColorRect" parent="."]
+offset_left = -400.0
+offset_top = -1000.0
+offset_right = -340.0
+offset_bottom = 200.0
+color = Color(0.32, 0.5, 0.32, 1)
+
+[node name="VegetationRight" type="ColorRect" parent="."]
+offset_left = 340.0
+offset_top = -1000.0
+offset_right = 400.0
+offset_bottom = 200.0
+color = Color(0.32, 0.5, 0.32, 1)
+
+[node name="VegetationLeftDetailA" type="ColorRect" parent="."]
+offset_left = -380.0
+offset_top = -800.0
+offset_right = -360.0
+offset_bottom = -780.0
+color = Color(0.28, 0.45, 0.28, 1)
+
+[node name="VegetationLeftDetailB" type="ColorRect" parent="."]
+offset_left = -380.0
+offset_top = -400.0
+offset_right = -360.0
+offset_bottom = -380.0
+color = Color(0.28, 0.45, 0.28, 1)
+
+[node name="VegetationLeftDetailC" type="ColorRect" parent="."]
+offset_left = -380.0
+offset_top = -100.0
+offset_right = -360.0
+offset_bottom = -80.0
+color = Color(0.28, 0.45, 0.28, 1)
+
+[node name="VegetationRightDetailA" type="ColorRect" parent="."]
+offset_left = 360.0
+offset_top = -700.0
+offset_right = 380.0
+offset_bottom = -680.0
+color = Color(0.28, 0.45, 0.28, 1)
+
+[node name="VegetationRightDetailB" type="ColorRect" parent="."]
+offset_left = 360.0
+offset_top = -300.0
+offset_right = 380.0
+offset_bottom = -280.0
+color = Color(0.28, 0.45, 0.28, 1)
+
+[node name="VegetationRightDetailC" type="ColorRect" parent="."]
+offset_left = 360.0
+offset_top = 50.0
+offset_right = 380.0
+offset_bottom = 70.0
+color = Color(0.28, 0.45, 0.28, 1)
+
+[node name="StairsCenter" type="ColorRect" parent="."]
+offset_left = -28.0
+offset_top = -1000.0
+offset_right = 28.0
+offset_bottom = 280.0
+color = Color(0.42, 0.32, 0.22, 1)
+
+[node name="StairsBorderL" type="ColorRect" parent="."]
+offset_left = -32.0
+offset_top = -1000.0
+offset_right = -28.0
+offset_bottom = 280.0
+color = Color(0.32, 0.22, 0.18, 1)
+
+[node name="StairsBorderR" type="ColorRect" parent="."]
+offset_left = 28.0
+offset_top = -1000.0
+offset_right = 32.0
+offset_bottom = 280.0
+color = Color(0.32, 0.22, 0.18, 1)
+
+[node name="StairLine_n950" type="ColorRect" parent="."]
+offset_left = -28.0
+offset_top = -950.0
+offset_right = 28.0
+offset_bottom = -946.0
+color = Color(0.32, 0.22, 0.18, 1)
+
+[node name="StairLine_n900" type="ColorRect" parent="."]
+offset_left = -28.0
+offset_top = -900.0
+offset_right = 28.0
+offset_bottom = -896.0
+color = Color(0.32, 0.22, 0.18, 1)
+
+[node name="StairLine_n850" type="ColorRect" parent="."]
+offset_left = -28.0
+offset_top = -850.0
+offset_right = 28.0
+offset_bottom = -846.0
+color = Color(0.32, 0.22, 0.18, 1)
+
+[node name="StairLine_n800" type="ColorRect" parent="."]
+offset_left = -28.0
+offset_top = -800.0
+offset_right = 28.0
+offset_bottom = -796.0
+color = Color(0.32, 0.22, 0.18, 1)
+
+[node name="StairLine_n750" type="ColorRect" parent="."]
+offset_left = -28.0
+offset_top = -750.0
+offset_right = 28.0
+offset_bottom = -746.0
+color = Color(0.32, 0.22, 0.18, 1)
+
+[node name="StairLine_n700" type="ColorRect" parent="."]
+offset_left = -28.0
+offset_top = -700.0
+offset_right = 28.0
+offset_bottom = -696.0
+color = Color(0.32, 0.22, 0.18, 1)
+
+[node name="StairLine_n650" type="ColorRect" parent="."]
+offset_left = -28.0
+offset_top = -650.0
+offset_right = 28.0
+offset_bottom = -646.0
+color = Color(0.32, 0.22, 0.18, 1)
+
+[node name="StairLine_n600" type="ColorRect" parent="."]
+offset_left = -28.0
+offset_top = -600.0
+offset_right = 28.0
+offset_bottom = -596.0
+color = Color(0.32, 0.22, 0.18, 1)
+
+[node name="StairLine_n550" type="ColorRect" parent="."]
+offset_left = -28.0
+offset_top = -550.0
+offset_right = 28.0
+offset_bottom = -546.0
+color = Color(0.32, 0.22, 0.18, 1)
+
+[node name="StairLine_n500" type="ColorRect" parent="."]
+offset_left = -28.0
+offset_top = -500.0
+offset_right = 28.0
+offset_bottom = -496.0
+color = Color(0.32, 0.22, 0.18, 1)
+
+[node name="StairLine_n450" type="ColorRect" parent="."]
+offset_left = -28.0
+offset_top = -450.0
+offset_right = 28.0
+offset_bottom = -446.0
+color = Color(0.32, 0.22, 0.18, 1)
+
+[node name="StairLine_n400" type="ColorRect" parent="."]
+offset_left = -28.0
+offset_top = -400.0
+offset_right = 28.0
+offset_bottom = -396.0
+color = Color(0.32, 0.22, 0.18, 1)
+
+[node name="StairLine_n350" type="ColorRect" parent="."]
+offset_left = -28.0
+offset_top = -350.0
+offset_right = 28.0
+offset_bottom = -346.0
+color = Color(0.32, 0.22, 0.18, 1)
+
+[node name="StairLine_n300" type="ColorRect" parent="."]
+offset_left = -28.0
+offset_top = -300.0
+offset_right = 28.0
+offset_bottom = -296.0
+color = Color(0.32, 0.22, 0.18, 1)
+
+[node name="StairLine_n250" type="ColorRect" parent="."]
+offset_left = -28.0
+offset_top = -250.0
+offset_right = 28.0
+offset_bottom = -246.0
+color = Color(0.32, 0.22, 0.18, 1)
+
+[node name="StairLine_n200" type="ColorRect" parent="."]
+offset_left = -28.0
+offset_top = -200.0
+offset_right = 28.0
+offset_bottom = -196.0
+color = Color(0.32, 0.22, 0.18, 1)
+
+[node name="StairLine_n150" type="ColorRect" parent="."]
+offset_left = -28.0
+offset_top = -150.0
+offset_right = 28.0
+offset_bottom = -146.0
+color = Color(0.32, 0.22, 0.18, 1)
+
+[node name="StairLine_n100" type="ColorRect" parent="."]
+offset_left = -28.0
+offset_top = -100.0
+offset_right = 28.0
+offset_bottom = -96.0
+color = Color(0.32, 0.22, 0.18, 1)
+
+[node name="StairLine_n50" type="ColorRect" parent="."]
+offset_left = -28.0
+offset_top = -50.0
+offset_right = 28.0
+offset_bottom = -46.0
+color = Color(0.32, 0.22, 0.18, 1)
+
+[node name="StairLine_0" type="ColorRect" parent="."]
+offset_left = -28.0
+offset_top = 0.0
+offset_right = 28.0
+offset_bottom = 4.0
+color = Color(0.32, 0.22, 0.18, 1)
+
+[node name="StairLine_50" type="ColorRect" parent="."]
+offset_left = -28.0
+offset_top = 50.0
+offset_right = 28.0
+offset_bottom = 54.0
+color = Color(0.32, 0.22, 0.18, 1)
+
+[node name="StairLine_100" type="ColorRect" parent="."]
+offset_left = -28.0
+offset_top = 100.0
+offset_right = 28.0
+offset_bottom = 104.0
+color = Color(0.32, 0.22, 0.18, 1)
+
+[node name="StairLine_150" type="ColorRect" parent="."]
+offset_left = -28.0
+offset_top = 150.0
+offset_right = 28.0
+offset_bottom = 154.0
+color = Color(0.32, 0.22, 0.18, 1)
+
+[node name="StairLine_200" type="ColorRect" parent="."]
+offset_left = -28.0
+offset_top = 200.0
+offset_right = 28.0
+offset_bottom = 204.0
+color = Color(0.32, 0.22, 0.18, 1)
+
+[node name="StairLine_250" type="ColorRect" parent="."]
+offset_left = -28.0
+offset_top = 250.0
+offset_right = 28.0
+offset_bottom = 254.0
+color = Color(0.32, 0.22, 0.18, 1)
+
+[node name="HousesUpper" type="Node2D" parent="."]
+
+[node name="House_top_L" type="ColorRect" parent="HousesUpper"]
+offset_left = -260.0
+offset_top = -990.0
+offset_right = -160.0
+offset_bottom = -900.0
+color = Color(0.85, 0.55, 0.4, 1)
+
+[node name="House_top_L_Roof" type="ColorRect" parent="HousesUpper"]
+offset_left = -270.0
+offset_top = -1000.0
+offset_right = -150.0
+offset_bottom = -990.0
+color = Color(0.62, 0.32, 0.22, 1)
+
+[node name="House_top_L_Window" type="ColorRect" parent="HousesUpper"]
+offset_left = -230.0
+offset_top = -960.0
+offset_right = -210.0
+offset_bottom = -940.0
+color = Color(0.32, 0.55, 0.78, 0.85)
+
+[node name="House_top_R" type="ColorRect" parent="HousesUpper"]
+offset_left = 100.0
+offset_top = -980.0
+offset_right = 220.0
+offset_bottom = -880.0
+color = Color(0.95, 0.85, 0.4, 1)
+
+[node name="House_top_R_Roof" type="ColorRect" parent="HousesUpper"]
+offset_left = 90.0
+offset_top = -990.0
+offset_right = 230.0
+offset_bottom = -980.0
+color = Color(0.42, 0.32, 0.22, 1)
+
+[node name="House_top_R_Window" type="ColorRect" parent="HousesUpper"]
+offset_left = 130.0
+offset_top = -950.0
+offset_right = 150.0
+offset_bottom = -930.0
+color = Color(0.32, 0.55, 0.78, 0.85)
+
+[node name="House_900_L" type="ColorRect" parent="HousesUpper"]
+offset_left = -200.0
+offset_top = -880.0
+offset_right = -100.0
+offset_bottom = -800.0
+color = Color(0.55, 0.78, 0.55, 1)
+
+[node name="House_900_L_Roof" type="ColorRect" parent="HousesUpper"]
+offset_left = -210.0
+offset_top = -890.0
+offset_right = -90.0
+offset_bottom = -880.0
+color = Color(0.62, 0.32, 0.22, 1)
+
+[node name="House_850_R" type="ColorRect" parent="HousesUpper"]
+offset_left = 60.0
+offset_top = -850.0
+offset_right = 180.0
+offset_bottom = -750.0
+color = Color(0.4, 0.65, 0.95, 1)
+
+[node name="House_850_R_Roof" type="ColorRect" parent="HousesUpper"]
+offset_left = 50.0
+offset_top = -862.0
+offset_right = 190.0
+offset_bottom = -850.0
+color = Color(0.42, 0.32, 0.22, 1)
+
+[node name="House_850_R_Window" type="ColorRect" parent="HousesUpper"]
+offset_left = 100.0
+offset_top = -820.0
+offset_right = 120.0
+offset_bottom = -800.0
+color = Color(0.95, 0.85, 0.4, 0.85)
+
+[node name="House_750_L" type="ColorRect" parent="HousesUpper"]
+offset_left = -250.0
+offset_top = -780.0
+offset_right = -130.0
+offset_bottom = -680.0
+color = Color(0.78, 0.42, 0.55, 1)
+
+[node name="House_750_L_Roof" type="ColorRect" parent="HousesUpper"]
+offset_left = -260.0
+offset_top = -790.0
+offset_right = -120.0
+offset_bottom = -780.0
+color = Color(0.62, 0.32, 0.22, 1)
+
+[node name="House_750_L_Window" type="ColorRect" parent="HousesUpper"]
+offset_left = -210.0
+offset_top = -740.0
+offset_right = -190.0
+offset_bottom = -720.0
+color = Color(0.32, 0.55, 0.78, 0.85)
+
+[node name="House_700_R" type="ColorRect" parent="HousesUpper"]
+offset_left = 80.0
+offset_top = -700.0
+offset_right = 200.0
+offset_bottom = -600.0
+color = Color(0.55, 0.78, 0.85, 1)
+
+[node name="House_700_R_Roof" type="ColorRect" parent="HousesUpper"]
+offset_left = 70.0
+offset_top = -710.0
+offset_right = 210.0
+offset_bottom = -700.0
+color = Color(0.62, 0.32, 0.22, 1)
+
+[node name="House_700_R_Window" type="ColorRect" parent="HousesUpper"]
+offset_left = 130.0
+offset_top = -660.0
+offset_right = 150.0
+offset_bottom = -640.0
+color = Color(0.32, 0.55, 0.78, 0.85)
+
+[node name="HousesMid" type="Node2D" parent="."]
+
+[node name="TioZeHouseWall" type="ColorRect" parent="HousesMid"]
+offset_left = -300.0
+offset_top = -680.0
+offset_right = -120.0
+offset_bottom = -540.0
+color = Color(0.95, 0.65, 0.45, 1)
+
+[node name="TioZeHouseRoof" type="ColorRect" parent="HousesMid"]
+offset_left = -310.0
+offset_top = -695.0
+offset_right = -110.0
+offset_bottom = -680.0
+color = Color(0.62, 0.32, 0.22, 1)
+
+[node name="TioZeHouseRoof2" type="ColorRect" parent="HousesMid"]
+offset_left = -240.0
+offset_top = -710.0
+offset_right = -180.0
+offset_bottom = -695.0
+color = Color(0.62, 0.32, 0.22, 1)
+
+[node name="TioZeWindowL" type="ColorRect" parent="HousesMid"]
+offset_left = -270.0
+offset_top = -640.0
+offset_right = -240.0
+offset_bottom = -610.0
+color = Color(0.95, 0.85, 0.4, 0.92)
+
+[node name="TioZeWindowR" type="ColorRect" parent="HousesMid"]
+offset_left = -180.0
+offset_top = -640.0
+offset_right = -150.0
+offset_bottom = -610.0
+color = Color(0.95, 0.85, 0.4, 0.92)
+
+[node name="TioZeBalcony" type="ColorRect" parent="HousesMid"]
+offset_left = -260.0
+offset_top = -560.0
+offset_right = -130.0
+offset_bottom = -540.0
+color = Color(0.55, 0.32, 0.22, 1)
+
+[node name="TioZeLabel" type="Label" parent="HousesMid"]
+offset_left = -270.0
+offset_top = -728.0
+offset_right = -150.0
+offset_bottom = -710.0
+text = "Casa do tio Zé"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.95, 0.92, 0.78, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 4
+
+[node name="TioZeStairAccess" type="ColorRect" parent="HousesMid"]
+offset_left = -120.0
+offset_top = -560.0
+offset_right = -32.0
+offset_bottom = -540.0
+color = Color(0.45, 0.32, 0.22, 1)
+
+[node name="House_600_R" type="ColorRect" parent="HousesMid"]
+offset_left = 80.0
+offset_top = -600.0
+offset_right = 220.0
+offset_bottom = -480.0
+color = Color(0.85, 0.55, 0.4, 1)
+
+[node name="House_600_R_Roof" type="ColorRect" parent="HousesMid"]
+offset_left = 70.0
+offset_top = -612.0
+offset_right = 230.0
+offset_bottom = -600.0
+color = Color(0.42, 0.32, 0.22, 1)
+
+[node name="House_600_R_Window" type="ColorRect" parent="HousesMid"]
+offset_left = 130.0
+offset_top = -560.0
+offset_right = 160.0
+offset_bottom = -530.0
+color = Color(0.32, 0.55, 0.78, 0.85)
+
+[node name="House_500_L" type="ColorRect" parent="HousesMid"]
+offset_left = -260.0
+offset_top = -520.0
+offset_right = -130.0
+offset_bottom = -400.0
+color = Color(0.55, 0.78, 0.55, 1)
+
+[node name="House_500_L_Roof" type="ColorRect" parent="HousesMid"]
+offset_left = -270.0
+offset_top = -532.0
+offset_right = -120.0
+offset_bottom = -520.0
+color = Color(0.62, 0.32, 0.22, 1)
+
+[node name="House_500_L_Window" type="ColorRect" parent="HousesMid"]
+offset_left = -210.0
+offset_top = -480.0
+offset_right = -180.0
+offset_bottom = -450.0
+color = Color(0.32, 0.55, 0.78, 0.85)
+
+[node name="BarDoMorroWall" type="ColorRect" parent="HousesMid"]
+offset_left = 60.0
+offset_top = -460.0
+offset_right = 240.0
+offset_bottom = -340.0
+color = Color(0.95, 0.85, 0.4, 1)
+
+[node name="BarDoMorroRoof" type="ColorRect" parent="HousesMid"]
+offset_left = 50.0
+offset_top = -472.0
+offset_right = 250.0
+offset_bottom = -460.0
+color = Color(0.42, 0.32, 0.22, 1)
+
+[node name="BarDoMorroSign" type="ColorRect" parent="HousesMid"]
+offset_left = 80.0
+offset_top = -488.0
+offset_right = 220.0
+offset_bottom = -472.0
+color = Color(0.85, 0.32, 0.32, 1)
+
+[node name="BarDoMorroSignText" type="Label" parent="HousesMid"]
+offset_left = 80.0
+offset_top = -488.0
+offset_right = 220.0
+offset_bottom = -472.0
+text = "BAR DO MORRO"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.98, 0.98, 0.92, 1)
+theme_override_colors/font_outline_color = Color(0.32, 0.05, 0.05, 1)
+theme_override_constants/outline_size = 3
+
+[node name="BarDoMorroDoor" type="ColorRect" parent="HousesMid"]
+offset_left = 140.0
+offset_top = -380.0
+offset_right = 160.0
+offset_bottom = -340.0
+color = Color(0.32, 0.18, 0.12, 1)
+
+[node name="BarDoMorroWindow" type="ColorRect" parent="HousesMid"]
+offset_left = 90.0
+offset_top = -420.0
 offset_right = 130.0
+offset_bottom = -390.0
+color = Color(0.95, 0.78, 0.32, 0.85)
+
+[node name="HousesLower" type="Node2D" parent="."]
+
+[node name="House_350_L" type="ColorRect" parent="HousesLower"]
+offset_left = -250.0
+offset_top = -380.0
+offset_right = -120.0
+offset_bottom = -260.0
+color = Color(0.4, 0.65, 0.95, 1)
+
+[node name="House_350_L_Roof" type="ColorRect" parent="HousesLower"]
+offset_left = -260.0
+offset_top = -392.0
+offset_right = -110.0
+offset_bottom = -380.0
+color = Color(0.42, 0.32, 0.22, 1)
+
+[node name="House_350_L_Window" type="ColorRect" parent="HousesLower"]
+offset_left = -200.0
+offset_top = -340.0
+offset_right = -170.0
+offset_bottom = -310.0
+color = Color(0.95, 0.85, 0.4, 0.85)
+
+[node name="House_250_R" type="ColorRect" parent="HousesLower"]
+offset_left = 100.0
+offset_top = -300.0
+offset_right = 220.0
+offset_bottom = -180.0
+color = Color(0.85, 0.55, 0.4, 1)
+
+[node name="House_250_R_Roof" type="ColorRect" parent="HousesLower"]
+offset_left = 90.0
+offset_top = -312.0
+offset_right = 230.0
+offset_bottom = -300.0
+color = Color(0.62, 0.32, 0.22, 1)
+
+[node name="House_250_R_Window" type="ColorRect" parent="HousesLower"]
+offset_left = 130.0
+offset_top = -260.0
+offset_right = 160.0
+offset_bottom = -230.0
+color = Color(0.32, 0.55, 0.78, 0.85)
+
+[node name="House_180_L" type="ColorRect" parent="HousesLower"]
+offset_left = -240.0
+offset_top = -220.0
+offset_right = -120.0
+offset_bottom = -100.0
+color = Color(0.95, 0.92, 0.85, 1)
+
+[node name="House_180_L_Roof" type="ColorRect" parent="HousesLower"]
+offset_left = -250.0
+offset_top = -232.0
+offset_right = -110.0
+offset_bottom = -220.0
+color = Color(0.42, 0.32, 0.22, 1)
+
+[node name="House_180_L_Window" type="ColorRect" parent="HousesLower"]
+offset_left = -200.0
+offset_top = -180.0
+offset_right = -170.0
+offset_bottom = -150.0
+color = Color(0.32, 0.55, 0.78, 0.85)
+
+[node name="House_180_L_Door" type="ColorRect" parent="HousesLower"]
+offset_left = -150.0
+offset_top = -140.0
+offset_right = -130.0
+offset_bottom = -100.0
+color = Color(0.32, 0.18, 0.12, 1)
+
+[node name="House_100_R" type="ColorRect" parent="HousesLower"]
+offset_left = 80.0
+offset_top = -150.0
+offset_right = 200.0
+offset_bottom = -50.0
+color = Color(0.55, 0.78, 0.85, 1)
+
+[node name="House_100_R_Roof" type="ColorRect" parent="HousesLower"]
+offset_left = 70.0
+offset_top = -160.0
+offset_right = 210.0
+offset_bottom = -150.0
+color = Color(0.62, 0.32, 0.22, 1)
+
+[node name="PadariaWall" type="ColorRect" parent="HousesLower"]
+offset_left = -260.0
+offset_top = -80.0
+offset_right = -110.0
+offset_bottom = 30.0
+color = Color(0.95, 0.78, 0.62, 1)
+
+[node name="PadariaRoof" type="ColorRect" parent="HousesLower"]
+offset_left = -270.0
+offset_top = -92.0
+offset_right = -100.0
+offset_bottom = -80.0
+color = Color(0.42, 0.32, 0.22, 1)
+
+[node name="PadariaSign" type="ColorRect" parent="HousesLower"]
+offset_left = -240.0
+offset_top = -108.0
+offset_right = -130.0
+offset_bottom = -92.0
+color = Color(0.62, 0.32, 0.22, 1)
+
+[node name="PadariaSignText" type="Label" parent="HousesLower"]
+offset_left = -240.0
+offset_top = -108.0
+offset_right = -130.0
+offset_bottom = -92.0
+text = "Padaria"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.95, 0.92, 0.78, 1)
+
+[node name="PadariaWindow" type="ColorRect" parent="HousesLower"]
+offset_left = -220.0
+offset_top = -50.0
+offset_right = -180.0
+offset_bottom = -20.0
+color = Color(0.95, 0.78, 0.32, 0.85)
+
+[node name="PadariaDoor" type="ColorRect" parent="HousesLower"]
+offset_left = -150.0
+offset_top = -10.0
+offset_right = -130.0
+offset_bottom = 30.0
+color = Color(0.32, 0.18, 0.12, 1)
+
+[node name="House_30_R" type="ColorRect" parent="HousesLower"]
+offset_left = 100.0
+offset_top = 0.0
+offset_right = 220.0
 offset_bottom = 100.0
 color = Color(0.78, 0.42, 0.55, 1)
 
-[node name="House6Roof" type="ColorRect" parent="HouseRow1"]
-offset_left = 20.0
-offset_top = -10.0
-offset_right = 140.0
+[node name="House_30_R_Roof" type="ColorRect" parent="HousesLower"]
+offset_left = 90.0
+offset_top = -12.0
+offset_right = 230.0
 offset_bottom = 0.0
 color = Color(0.62, 0.32, 0.22, 1)
 
-[node name="House6Window" type="ColorRect" parent="HouseRow1"]
-offset_left = 65.0
+[node name="House_30_R_Window" type="ColorRect" parent="HousesLower"]
+offset_left = 140.0
 offset_top = 30.0
-offset_right = 85.0
-offset_bottom = 50.0
+offset_right = 170.0
+offset_bottom = 60.0
 color = Color(0.32, 0.55, 0.78, 0.85)
 
-[node name="House7Wall" type="ColorRect" parent="HouseRow1"]
-offset_left = 160.0
-offset_top = -10.0
-offset_right = 280.0
-offset_bottom = 100.0
-color = Color(0.95, 0.92, 0.85, 1)
+[node name="House_140_L" type="ColorRect" parent="HousesLower"]
+offset_left = -240.0
+offset_top = 80.0
+offset_right = -120.0
+offset_bottom = 180.0
+color = Color(0.85, 0.78, 0.62, 1)
 
-[node name="House7Roof" type="ColorRect" parent="HouseRow1"]
-offset_left = 150.0
-offset_top = -22.0
-offset_right = 290.0
-offset_bottom = -10.0
+[node name="House_140_L_Roof" type="ColorRect" parent="HousesLower"]
+offset_left = -250.0
+offset_top = 68.0
+offset_right = -110.0
+offset_bottom = 80.0
 color = Color(0.42, 0.32, 0.22, 1)
 
-[node name="House7Window" type="ColorRect" parent="HouseRow1"]
-offset_left = 200.0
-offset_top = 18.0
-offset_right = 220.0
-offset_bottom = 38.0
+[node name="House_140_L_Window" type="ColorRect" parent="HousesLower"]
+offset_left = -200.0
+offset_top = 110.0
+offset_right = -170.0
+offset_bottom = 140.0
 color = Color(0.32, 0.55, 0.78, 0.85)
 
-[node name="House7DoorL" type="ColorRect" parent="HouseRow1"]
-offset_left = 230.0
-offset_top = 60.0
-offset_right = 250.0
-offset_bottom = 100.0
-color = Color(0.42, 0.22, 0.18, 1)
-
-[node name="House8Wall" type="ColorRect" parent="HouseRow1"]
-offset_left = 310.0
-offset_top = 0.0
-offset_right = 410.0
-offset_bottom = 100.0
-color = Color(0.55, 0.78, 0.85, 1)
-
-[node name="House8Roof" type="ColorRect" parent="HouseRow1"]
-offset_left = 300.0
-offset_top = -10.0
-offset_right = 420.0
-offset_bottom = 0.0
-color = Color(0.62, 0.32, 0.22, 1)
-
-[node name="House9Wall" type="ColorRect" parent="HouseRow1"]
-offset_left = 440.0
-offset_top = -20.0
-offset_right = 540.0
-offset_bottom = 100.0
-color = Color(0.95, 0.85, 0.4, 1)
-
-[node name="House9Roof" type="ColorRect" parent="HouseRow1"]
-offset_left = 430.0
-offset_top = -32.0
-offset_right = 550.0
-offset_bottom = -20.0
-color = Color(0.42, 0.32, 0.22, 1)
-
-[node name="House10Wall" type="ColorRect" parent="HouseRow1"]
-offset_left = 570.0
-offset_top = 0.0
-offset_right = 660.0
-offset_bottom = 100.0
-color = Color(0.85, 0.55, 0.4, 1)
-
-[node name="House10Roof" type="ColorRect" parent="HouseRow1"]
-offset_left = 560.0
-offset_top = -10.0
-offset_right = 670.0
-offset_bottom = 0.0
-color = Color(0.62, 0.32, 0.22, 1)
-
-[node name="PowerLineL" type="ColorRect" parent="."]
-offset_left = -650.0
-offset_top = -50.0
-offset_right = -150.0
-offset_bottom = -48.0
+[node name="PowerLine_n900" type="ColorRect" parent="."]
+offset_left = -200.0
+offset_top = -900.0
+offset_right = 180.0
+offset_bottom = -898.0
 color = Color(0.18, 0.14, 0.12, 0.85)
 
-[node name="PowerLineR" type="ColorRect" parent="."]
-offset_left = 30.0
-offset_top = -50.0
-offset_right = 660.0
-offset_bottom = -48.0
+[node name="PowerLine_n750" type="ColorRect" parent="."]
+offset_left = -130.0
+offset_top = -740.0
+offset_right = 200.0
+offset_bottom = -738.0
 color = Color(0.18, 0.14, 0.12, 0.85)
 
-[node name="WaterTankTL" type="ColorRect" parent="."]
-offset_left = -380.0
-offset_top = -25.0
-offset_right = -350.0
-offset_bottom = 0.0
-color = Color(0.42, 0.62, 0.78, 1)
-
-[node name="WaterTankTR" type="ColorRect" parent="."]
-offset_left = 480.0
-offset_top = -45.0
-offset_right = 510.0
-offset_bottom = -20.0
-color = Color(0.42, 0.62, 0.78, 1)
-
-[node name="ZoneLabel" type="Label" parent="."]
+[node name="PowerLine_n600" type="ColorRect" parent="."]
 offset_left = -120.0
-offset_top = -250.0
+offset_top = -580.0
+offset_right = 220.0
+offset_bottom = -578.0
+color = Color(0.18, 0.14, 0.12, 0.85)
+
+[node name="PowerLine_n450" type="ColorRect" parent="."]
+offset_left = -130.0
+offset_top = -440.0
+offset_right = 240.0
+offset_bottom = -438.0
+color = Color(0.18, 0.14, 0.12, 0.85)
+
+[node name="PowerLine_n300" type="ColorRect" parent="."]
+offset_left = -120.0
+offset_top = -290.0
+offset_right = 220.0
+offset_bottom = -288.0
+color = Color(0.18, 0.14, 0.12, 0.85)
+
+[node name="PowerLine_n150" type="ColorRect" parent="."]
+offset_left = -120.0
+offset_top = -130.0
+offset_right = 200.0
+offset_bottom = -128.0
+color = Color(0.18, 0.14, 0.12, 0.85)
+
+[node name="WaterTankUpper" type="ColorRect" parent="."]
+offset_left = 230.0
+offset_top = -880.0
+offset_right = 260.0
+offset_bottom = -850.0
+color = Color(0.42, 0.62, 0.78, 1)
+
+[node name="WaterTankMid" type="ColorRect" parent="."]
+offset_left = -310.0
+offset_top = -700.0
+offset_right = -280.0
+offset_bottom = -670.0
+color = Color(0.42, 0.62, 0.78, 1)
+
+[node name="WaterTankLower" type="ColorRect" parent="."]
+offset_left = 240.0
+offset_top = -160.0
+offset_right = 270.0
+offset_bottom = -130.0
+color = Color(0.42, 0.62, 0.78, 1)
+
+[node name="ExitSign" type="Label" parent="."]
+offset_left = -120.0
+offset_top = 240.0
 offset_right = 120.0
-offset_bottom = -226.0
-text = "FAVELA DO MORRO"
+offset_bottom = 264.0
+text = "↓ COPACABANA"
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 14
 theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
 theme_override_constants/outline_size = 4
 
+[node name="ExitSignArrow" type="ColorRect" parent="."]
+offset_left = -8.0
+offset_top = 268.0
+offset_right = 8.0
+offset_bottom = 280.0
+color = Color(0.95, 0.85, 0.4, 0.7)
+
 [node name="Walls" type="Node2D" parent="."]
 
 [node name="Top" type="StaticBody2D" parent="Walls"]
-position = Vector2(0, -100)
+position = Vector2(0, -1108)
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Top"]
 shape = SubResource("WallH")
 
 [node name="Bottom" type="StaticBody2D" parent="Walls"]
-position = Vector2(0, 210)
+position = Vector2(0, 290)
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Bottom"]
 shape = SubResource("WallH")
 
 [node name="Left" type="StaticBody2D" parent="Walls"]
-position = Vector2(-748, 60)
+position = Vector2(-408, -400)
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Left"]
 shape = SubResource("WallV")
 
 [node name="Right" type="StaticBody2D" parent="Walls"]
-position = Vector2(708, 60)
+position = Vector2(408, -400)
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Right"]
 shape = SubResource("WallV")
 
 [node name="PlayerSpawn" type="Marker2D" parent="."]
-position = Vector2(-80, 130)
-
-[node name="TaxiStand" parent="." instance=ExtResource("1_taxi")]
-position = Vector2(600, 140)
+position = Vector2(-50, -540)
 
 [node name="TioZeDoor" parent="." instance=ExtResource("5_door")]
-position = Vector2(-80, 100)
+position = Vector2(-130, -560)
 prompt_text = "Entrer chez tio Zé"
-destination = Vector2(-14920, -5825)
+destination = Vector2(7200, -2925)
 
 [node name="ExitToCopa" parent="." instance=ExtResource("3_exit")]
-position = Vector2(0, 195)
+position = Vector2(0, 250)
 target_district = "copacabana"
 label_text = "↓ COPACABANA"
 
-[node name="HouseInterior" parent="." instance=ExtResource("4_house_int")]
-position = Vector2(80, -3000)
+[node name="CollisionShape2D" parent="ExitToCopa" index="0"]
+shape = SubResource("ExitWideShape")
 
 [node name="CornCart" parent="." instance=ExtResource("6_cart")]
-position = Vector2(40, 130)
+position = Vector2(-80, -540)
 
 [node name="CartHint" type="Label" parent="."]
-offset_left = -10.0
-offset_top = 100.0
-offset_right = 90.0
-offset_bottom = 116.0
+offset_left = -130.0
+offset_top = -570.0
+offset_right = -30.0
+offset_bottom = -554.0
 text = "Carrocinha de tio Zé"
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 9
@@ -445,39 +1040,91 @@ theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
 theme_override_constants/outline_size = 4
 
 [node name="KidA" parent="." instance=ExtResource("2_wander")]
-position = Vector2(-300, 145)
+position = Vector2(0, -700)
 color = Color(0.95, 0.85, 0.4, 1)
 size = Vector2(7, 12)
-path = Array[Vector2]([Vector2(-300, 145), Vector2(-200, 155), Vector2(-400, 150)])
+roam_zone = Rect2(-80, -100, 160, 200)
 speed = 32.0
+pause_at_waypoints = 0.4
+pause_random_jitter = 0.6
+look_at_player_distance = 50.0
 
 [node name="KidB" parent="." instance=ExtResource("2_wander")]
-position = Vector2(280, 155)
+position = Vector2(0, -300)
 color = Color(0.4, 0.85, 0.55, 1)
 size = Vector2(7, 12)
-path = Array[Vector2]([Vector2(280, 155), Vector2(380, 145), Vector2(180, 160)])
+roam_zone = Rect2(-80, -100, 160, 200)
 speed = 30.0
+pause_at_waypoints = 0.5
+pause_random_jitter = 0.6
+look_at_player_distance = 50.0
 
 [node name="LocalA" parent="." instance=ExtResource("2_wander")]
-position = Vector2(-450, 130)
+position = Vector2(0, -450)
 color = Color(0.85, 0.55, 0.4, 1)
 size = Vector2(10, 17)
-path = Array[Vector2]([Vector2(-450, 130), Vector2(-150, 130), Vector2(-450, 150)])
+roam_zone = Rect2(-100, -120, 200, 240)
 speed = 14.0
 pause_at_waypoints = 2.0
+pause_random_jitter = 1.2
+look_at_player_distance = 60.0
 
 [node name="LocalB" parent="." instance=ExtResource("2_wander")]
-position = Vector2(420, 145)
+position = Vector2(0, 50)
 color = Color(0.55, 0.42, 0.32, 1)
 size = Vector2(10, 17)
-path = Array[Vector2]([Vector2(420, 145), Vector2(550, 130), Vector2(300, 155)])
+roam_zone = Rect2(-90, -100, 180, 220)
 speed = 12.0
 pause_at_waypoints = 2.4
+pause_random_jitter = 1.4
+look_at_player_distance = 60.0
+
+[node name="LocalC" parent="." instance=ExtResource("2_wander")]
+position = Vector2(0, -100)
+color = Color(0.62, 0.42, 0.32, 1)
+size = Vector2(10, 17)
+stationary = true
+look_at_player_distance = 50.0
+active_phases = [2]
 
 [node name="DogStreet" parent="." instance=ExtResource("2_wander")]
-position = Vector2(-50, 170)
+position = Vector2(0, 200)
 color = Color(0.55, 0.42, 0.32, 1)
 size = Vector2(10, 8)
-path = Array[Vector2]([Vector2(-50, 170), Vector2(50, 175), Vector2(-100, 165)])
-speed = 18.0
-pause_at_waypoints = 1.8
+roam_zone = Rect2(-100, -60, 200, 120)
+speed = 22.0
+pause_at_waypoints = 0.6
+pause_random_jitter = 1.0
+
+[node name="VizinhaSpot" parent="." instance=ExtResource("7_reactive")]
+position = Vector2(-180, -150)
+npc_id = "vizinha"
+prompt = "Parler à la voisine"
+variants = [{
+"id": "thanked",
+"flag": "vizinha_quest_done",
+"speaker": "Vizinha",
+"text": "*joue de la guitare doucement, Beto endormi sur ses genoux* Sobrinho. Tu fais partie du morro maintenant. Si t'as besoin d'un toit la nuit, frappe ici. La porte est sans clé.",
+"choices": ["Obrigada, vizinha"]
+}, {
+"id": "found",
+"flag": "beto_found",
+"set_flag_after": "vizinha_quest_done",
+"actions": {"finish_quest": {"quest": "beto_lost", "objective": "tell_vizinha", "payout": 80}, "rep": {0: 3}},
+"speaker": "Vizinha",
+"text": "*Beto se jette dans ses bras, elle l'écrase contre sa poitrine, sanglote* Beto, meu bem... *te tend trois billets froissés, sans lever la tête* C'est tout ce que j'ai mis de côté. Prends. Prends, sobrinho. Tu m'as rendu ma vie.",
+"choices": ["Obrigado, vizinha"]
+}, {
+"id": "in_progress",
+"flag": "vizinha_quest_taken",
+"speaker": "Vizinha",
+"text": "*tord son tablier* T'as trouvé Beto, sobrinho ? Il aime traîner près des vendeurs de cocos sur le calçadão... il oublie l'heure, il oublie la maison, il oublie sa mère.",
+"choices": ["Je continue de chercher"]
+}, {
+"id": "default",
+"set_flag_after": "vizinha_quest_taken",
+"actions": {"accept_quest": "beto_lost"},
+"speaker": "Vizinha",
+"text": "*t'attrape le bras, paniquée, voix tremblante* Sobrinho ! Tu redescends à Copa ? Mon fils Beto, neuf ans, il est parti ce matin sans dire où. *montre l'escalier* Il porte un t-shirt jaune, des sandalias bleues. *baisse la voix* Si la PM le ramasse... s'il te plaît. Trouve-le-moi.",
+"choices": ["Je le cherche"]
+}]

@@ -26,6 +26,12 @@ signal dialogue_finished()
 #   {"return_cart": true}          → cart.drop_off(inventory)
 #   {"rep": {axis_int: delta}}     → ReputationSystem.modify(...)
 const PLACEHOLDER_DIALOGUES: Dictionary = {
+	# --- META : Run+ (joueur a déjà bouclé une voie au moins une fois) ---
+	"seu_joao_ng_plus_intro": {
+		"speaker": "Seu João",
+		"text": "*te regarde longuement, comme s'il cherchait à se rappeler* …Sobrinho. T'as les yeux du gamin qui rentre d'un long voyage. *secoue la tête, sourit triste* Bah, ignore-moi. Le matin se ressemble. Ton oncle Zé...",
+		"choices": ["…Tio ?"],
+	},
 	# --- ACTE 1 : L'héritage empoisonné ---
 	"seu_joao_heritage": {
 		"speaker": "Seu João",
@@ -56,6 +62,58 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 		"speaker": "Seu João",
 		"text": "*pose sa main sur ton épaule* La carrocinha est dehors, à côté de la maison. Charge-la, descends l'escalier vers Copacabana, vends du milho au calçadão. Le consortium veut 500 reais d'acompte cette semaine. Cinquante mille au Carnaval. Boa sorte, sobrinho. Et reviens dîner.",
 		"choices": ["Obrigado, tio"],
+	},
+	# --- Soirée 1 : Seu João félicite le 1er acompte (set_flag first_payment_done) ---
+	"seu_joao_evening_first_payment": {
+		"speaker": "Seu João",
+		"text": "*pose sa cachaça, te regarde longuement* Cinq cents reais. Ton oncle Zé, il a mis trente ans à pas pouvoir les rassembler, ces cinq cents. Toi, en une journée. *avale, voix éraillée* Le quartier va parler, sobrinho. Le consortium aussi. Quand ils voient un môme qui paye à temps, ils se demandent d'où vient l'argent. Sois discret. Et fais attention à Ramos — il a senti l'odeur fraîche d'un nouveau visage rentable.",
+		"choices": ["Ramos ?", "Et après ?", "Bonne nuit, tio"],
+		"on_choose": {
+			"0": {"next": "seu_joao_evening_ramos"},
+			"1": {"next": "seu_joao_evening_what_next"},
+		},
+	},
+	"seu_joao_evening_ramos": {
+		"speaker": "Seu João",
+		"text": "Capitão Ramos. Police militaire. Il traîne devant l'Academia le jour, au Bar do Policial le soir. Il aime bien les nouveaux qui montent — il appelle ça \"sa famille bleue\". Si tu lui rends un service, il te laissera respirer. Mais Tito du morro, lui, il aimera moins ça. Choisis tes amis, sobrinho. Pas tes deux côtés.",
+		"choices": ["Compris, tio"],
+	},
+	"seu_joao_evening_what_next": {
+		"speaker": "Seu João",
+		"text": "Après ? Tu retournes au calçadão demain matin, et tu poses 500 de plus. Et 500 de plus. Et 500 de plus. Cinquante mille avant le Carnaval, sobrinho. *rire amer* Ou tu choisis un parrain. Ramos, Tito, ou le padre de la chapelle. Tous les trois te trouveront avant que tu les trouves.",
+		"choices": ["D'accord, tio"],
+	},
+	# --- Soirée 2 : Seu João après le reveal du Concierge (flag tio_ze_revealed) ---
+	"seu_joao_evening_act2_reveal": {
+		"speaker": "Seu João",
+		"text": "*sa cachaça à mi-chemin de la bouche, suspendue* Tu l'as vu. *long silence* Zé n'est pas mort. Il est concierge au Palace, tu m'as bien entendu. Il a fait croire à sa noyade pour échapper au consortium. Il a laissé sa femme — ta mère — enterrer un cercueil vide. *boit cul sec* Maintenant tu sais. Tu fais ce que tu veux de cette information. Mais ne le dis pas à ta mère. Pas encore.",
+		"choices": ["Pourquoi pas ?", "Comment t'as su ?"],
+		"on_choose": {
+			"0": {"next": "seu_joao_evening_why_silent"},
+			"1": {"next": "seu_joao_evening_how_known"},
+		},
+	},
+	"seu_joao_evening_why_silent": {
+		"speaker": "Seu João",
+		"text": "Parce qu'elle a porté son deuil. Parce que vovó a tricoté un linceul invisible pendant huit ans. Parce que la vérité sans la paix, c'est juste de la cruauté. *te fixe* Quand tu seras Reinado au Sambódromo, alors tu pourras choisir le moment. Pas avant.",
+		"choices": ["…D'accord"],
+	},
+	"seu_joao_evening_how_known": {
+		"speaker": "Seu João",
+		"text": "*sourire fatigué* Le morro est une seule famille. Le palace embauche dans le morro. Quand mon vieil ami a vu \"un mort\" derrière la réception du Copacabana Palace, le matin même, le morro savait. Et il m'a fait jurer le silence. *hausse les épaules* Je tenais ce serment depuis huit ans. Toi, tu l'as cassé en regardant deux secondes son visage.",
+		"choices": ["Pardon, tio"],
+	},
+	# --- Soirée 3 : Seu João après le choix de voie en acte 3 ---
+	"seu_joao_evening_path_chosen": {
+		"speaker": "Seu João",
+		"text": "*hoche la tête, lentement* Donc c'est fait. T'as choisi ta voie. *boit* Ton oncle aurait choisi pareil. Ou pas. Ce sera ton règne, sobrinho. Pas le sien. *te tend un petit médaillon de bois sculpté* Ton grand-père l'a porté contre le Estado Novo. Zé l'a porté avant sa fausse mort. Maintenant tu le portes. Va au Carnaval la tête haute.",
+		"choices": ["Obrigado, tio"],
+	},
+	# --- Soirée 4 : la veille du Carnaval (acte 4) ---
+	"seu_joao_evening_carnaval_eve": {
+		"speaker": "Seu João",
+		"text": "*ne lève pas les yeux du sol qu'il balaye* Demain c'est la Sapucaí, sobrinho. Trois cent mille personnes vont chanter le nom du Reinado. Si c'est toi… *long silence* …ta mère sera dans la foule, en première ligne. Vovó écoutera la radio en tricotant. Et moi je serai à la fenêtre. *fait une pause* Zé aussi sera là, quelque part. Tu le verras peut-être pas. Mais lui, il te verra.",
+		"choices": ["Bonne nuit, tio"],
 	},
 	"consortium_intro": {
 		"speaker": "Dom Nilton (consortium)",
@@ -88,6 +146,12 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 		"speaker": "Dom Nilton (consortium)",
 		"text": "Pas mal, pas mal. Tu tiens la distance. Continue comme ça. On se reverra pour le reste. *un clin d'œil malaisant*",
 		"choices": ["D'accord"],
+	},
+	# --- ACTE 3 : Dom Nilton vient personnellement marquer le pivot ---
+	"consortium_act3_intro": {
+		"speaker": "Dom Nilton (consortium)",
+		"text": "*claque la porte de sa Maverick blanche, traverse l'avenida sans regarder les voitures* Sobrinho. Vingt-cinq mille reais en quelques semaines. Tu m'as surpris — sincèrement. *te plante une carte de visite dans la poche* Maintenant écoute-moi : la moitié restante, tu vas pas la sortir de ton milho. Trois portes s'ouvrent à toi à partir de ce soir. Tu peux te poser dans la maison bleue avec Capitão Ramos. Tu peux porter un sac pour Tito et faire la corrida du Carnaval. Ou tu peux serrer des mains à la chapelle avec le padre et te présenter Prefeito. *recule d'un pas* T'as le Carnaval pour clôturer. Choisis vite.",
+		"choices": ["Compris, Dom Nilton"],
 	},
 	"consortium_settled": {
 		"speaker": "Dom Nilton (consortium)",
@@ -178,6 +242,36 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 		"speaker": "Tito",
 		"text": "Beleza, parceiro. T'es un des nôtres maintenant. Si t'as besoin d'un coup de main dans le Morro, tu sais où taper.",
 		"choices": ["Valeu"],
+	},
+	# --- ACTE 2 : test de loyauté Tito (avant d'ouvrir la voie tráfico finale) ---
+	# Tito propose au joueur de défier le consortium en se posant comme protecteur
+	# de Dona Vânia, une cliente du consortium en bas du morro. Choix engageant :
+	# il faut soit casser avec le consortium publiquement, soit décliner et perdre
+	# un peu de crédit dans le morro.
+	"tito_act2_loyalty_offer": {
+		"speaker": "Tito",
+		"text": "*tape dans tes mains, à mi-voix* Sobrinho. Miguel m'a dit que t'as livré le sac sans broncher. Bien joué. *te fixe* Mais y'a une dernière chose avant que la maison te confie une corrida. Le consortium descend collecter chez Dona Vânia, en bas du morro. Va devant, dis-leur que Vânia, c'est nous qui s'en occupons maintenant. Pas un coup, pas de couteau — juste leur dire \"Tito a parlé pour Vânia\". Tu te poses contre Nilton publiquement. Y'a pas de demi-mesure.",
+		"choices": ["J'y vais — Tito a parlé", "Trop chaud", "Plus tard"],
+		"on_choose": {
+			"0": {"set_flag": "tito_loyalty_proven", "rep": {2: 8, 3: -3}},
+			"1": {"set_flag": "tito_loyalty_declined", "rep": {2: -3}},
+		},
+	},
+	"tito_act2_loyalty_done": {
+		"speaker": "Tito",
+		"text": "*te tape l'épaule, fort* T'as parlé à Nilton, j'ai eu le retour. Vânia a pleuré de soulagement et le consortium a perdu une cliente. *sort un billet froissé, te le glisse* Pour la veuve. Le morro te connaît maintenant, sobrinho. Quand la corrida arrive, c'est toi qui la mènes.",
+		"choices": ["Valeu, Tito"],
+		"on_choose": {
+			"0": {"earn": 200, "set_flag": "tito_loyalty_done_seen"},
+		},
+	},
+	"tito_act2_loyalty_declined": {
+		"speaker": "Tito",
+		"text": "*hausse les épaules, te tourne à moitié le dos* T'as choisi le confort, sobrinho. Tu reviendras quand t'auras compris où le morro tient debout. La corrida t'attendra peut-être. Peut-être pas.",
+		"choices": ["Plus tard, Tito"],
+		"on_choose": {
+			"0": {"set_flag": "tito_loyalty_decline_seen"},
+		},
 	},
 	"carlos_intro": {
 		"speaker": "Carlos",
@@ -398,6 +492,37 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 		"on_choose": {
 			"0": {"pay_bribe": 20, "rep": {1: 3, 0: -2}},
 			"1": {"rep": {0: 2, 1: -5}},
+		},
+	},
+	# Shakedown récurrent — acte 1. Le PM blasé, la rente du calçadão.
+	"cop_shakedown_recurring": {
+		"speaker": "PM",
+		"text": "*soupire, te reconnaît* Ah, c'est encore toi le neveu de Zé. Tu connais la chanson, freguês — la rente du calçadão.",
+		"choices": ["Payer R$ 50", "Refuser"],
+		"on_choose": {
+			"0": {"pay_bribe": 50, "rep": {1: 1}},
+			"1": {"rep": {0: 1, 1: -8}},
+		},
+	},
+	# Shakedown récurrent — acte 2. Le PM a entendu parler du joueur, le tarif monte.
+	"cop_shakedown_recurring_act2": {
+		"speaker": "PM",
+		"text": "*claque sa matraque dans sa main, sourit sans humour* Ah, le sobrinho qui paye à Nilton. Tu fais des entrées et des sorties maintenant, eh ? La rente s'ajuste à la prospérité, freguês.",
+		"choices": ["Payer R$ 80", "Refuser"],
+		"on_choose": {
+			"0": {"pay_bribe": 80, "rep": {1: 1}},
+			"1": {"rep": {0: 1, 1: -10}},
+		},
+	},
+	# Shakedown récurrent — acte 3+. Le PM sait que le joueur va choisir une voie.
+	# La rente devient un investissement de la PM dans un futur "ami".
+	"cop_shakedown_recurring_act3": {
+		"speaker": "PM",
+		"text": "*la voix très basse, presque amicale* Capitão Ramos m'a dit de pas te casser. Mais la rente c'est la rente, sobrinho. Et si tu choisis le bon côté, je redescends à 20.",
+		"choices": ["Payer R$ 150", "Refuser"],
+		"on_choose": {
+			"0": {"pay_bribe": 150, "rep": {1: 2}},
+			"1": {"rep": {0: 1, 1: -12}},
 		},
 	},
 	"customer_satisfied": {

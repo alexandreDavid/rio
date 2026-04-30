@@ -20,7 +20,26 @@ var chosen_endgame: int = Endgame.NONE
 # Ex. "met_ramos", "tio_ze_revealed", "ratted_on_tito".
 var flags: Dictionary = {}
 
+# Compteur de runs terminées (incrémenté par Epilogue.gd dans user://ng_plus.json).
+# Chargé au démarrage par MainBoot. Non sérialisé dans la save (vit dans le fichier méta).
+# >0 → la run actuelle est une Nouvelle Partie+, certaines lignes en tiennent compte.
+var ng_plus_count: int = 0
+# Liste textuelle des voies déjà closes ("prefeito", "policia", "trafico"). Permet aux
+# dialogues d'acknowledger qu'on a déjà été X dans une vie antérieure.
+var completed_paths: Array = []
+
 # --- Dette ---
+
+# Pivots narratifs déclenchés par paliers de dette payée. À chaque palier
+# atteint en acte ≥ 2, on pose un flag exploité par les ReactiveDialogueSpot
+# de la maison (mãe et vovó). Évalués en cascade : un saut large peut poser
+# plusieurs flags en une seule transaction.
+const ACT2_MILESTONES: Array = [
+	{"threshold": 5000,  "flag": "mae_letter_triggered"},
+	{"threshold": 10000, "flag": "mae_consortium_revisit_triggered"},
+	{"threshold": 15000, "flag": "mae_sick_triggered"},
+	{"threshold": 20000, "flag": "tio_ze_letter_triggered"},
+]
 
 func debt_remaining() -> int:
 	return max(DEBT_TOTAL - debt_paid, 0)
@@ -32,8 +51,18 @@ func pay_debt(amount: int) -> int:
 	if applied <= 0:
 		return 0
 	debt_paid += applied
+	if not has_flag("first_payment_done"):
+		set_flag("first_payment_done")
 	EventBus.debt_paid.emit(applied, debt_remaining())
 	_check_act_advance()
+	# Paliers acte 2 — évalués après _check_act_advance pour que current_act
+	# reflète bien le nouvel acte si on vient juste de basculer.
+	if current_act >= 2:
+		for m in ACT2_MILESTONES:
+			var flag: String = String(m.flag)
+			var threshold: int = int(m.threshold)
+			if debt_paid >= threshold and not has_flag(flag):
+				set_flag(flag)
 	return applied
 
 # --- Actes ---

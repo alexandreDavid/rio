@@ -290,24 +290,32 @@ flavor_text_broke = "Os trocos primeiro, depois a água."
 [node name="Tourist1" parent="." instance=ExtResource("3_wander")]
 position = Vector2(-100, 110)
 color = Color(0.95, 0.85, 0.4, 1)
-path = Array[Vector2]([Vector2(-100, 110), Vector2(80, 110), Vector2(-40, 140)])
+roam_zone = Rect2(-100, -20, 200, 40)
 speed = 22.0
+pause_random_jitter = 1.5
+look_at_player_distance = 70.0
 
 [node name="Tourist2" parent="." instance=ExtResource("3_wander")]
 position = Vector2(60, 150)
 color = Color(0.4, 0.65, 0.95, 1)
-path = Array[Vector2]([Vector2(60, 150), Vector2(-60, 150), Vector2(60, 110)])
+roam_zone = Rect2(-100, -20, 200, 40)
 speed = 18.0
+pause_random_jitter = 1.5
+look_at_player_distance = 70.0
 
 [node name="Tourist3" parent="." instance=ExtResource("3_wander")]
 position = Vector2(180, 130)
 color = Color(0.85, 0.4, 0.55, 1)
-path = Array[Vector2]([Vector2(180, 130), Vector2(220, 110), Vector2(150, 160)])
+roam_zone = Rect2(-100, -20, 200, 40)
 speed = 16.0
+pause_random_jitter = 1.5
+look_at_player_distance = 70.0
 
 [node name="GuideKid" parent="." instance=ExtResource("3_wander")]
 position = Vector2(0, 165)
 color = Color(0.4, 0.85, 0.55, 1)
 size = Vector2(8, 14)
-path = Array[Vector2]([Vector2(0, 165), Vector2(120, 165), Vector2(-120, 165)])
+roam_zone = Rect2(-150, -50, 300, 100)
 speed = 30.0
+pause_random_jitter = 0.5
+look_at_player_distance = 50.0

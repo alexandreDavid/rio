@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=13 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/props/TaxiStand.tscn" id="1_taxi"]
 [ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="2_wander"]
@@ -8,512 +8,1186 @@
 [ext_resource type="PackedScene" path="res://scenes/vehicles/Bike.tscn" id="6_bike"]
 [ext_resource type="PackedScene" path="res://scenes/vehicles/Car.tscn" id="7_car"]
 
-[sub_resource type="RectangleShape2D" id="WallH"]
-size = Vector2(1900, 16)
+[sub_resource type="RectangleShape2D" id="WallH_N"]
+size = Vector2(3000, 12)
+
+[sub_resource type="RectangleShape2D" id="WallH_S"]
+size = Vector2(1400, 12)
 
 [sub_resource type="RectangleShape2D" id="WallV"]
-size = Vector2(16, 480)
+size = Vector2(12, 1500)
+
+[sub_resource type="RectangleShape2D" id="WallV_AterroBay"]
+size = Vector2(12, 700)
+
+[sub_resource type="RectangleShape2D" id="WallV_BayMid"]
+size = Vector2(12, 50)
+
+[sub_resource type="RectangleShape2D" id="WallV_Morro"]
+size = Vector2(12, 250)
+
+[sub_resource type="RectangleShape2D" id="ExitWideShape"]
+size = Vector2(2900, 64)
 
 [node name="BotafogoFlamengoDistrict" type="Node2D"]
 
 [node name="Sky" type="ColorRect" parent="."]
-offset_left = -940.0
-offset_top = -260.0
-offset_right = 940.0
-offset_bottom = -110.0
+offset_left = -1500.0
+offset_top = -1100.0
+offset_right = 1500.0
+offset_bottom = -1000.0
 color = Color(0.62, 0.78, 0.92, 1)
 
 [node name="SkyHaze" type="ColorRect" parent="."]
-offset_left = -940.0
-offset_top = -130.0
-offset_right = 940.0
-offset_bottom = -110.0
+offset_left = -1500.0
+offset_top = -1010.0
+offset_right = 1500.0
+offset_bottom = -1000.0
 color = Color(0.85, 0.85, 0.78, 1)
 
-[node name="Bay" type="ColorRect" parent="."]
-offset_left = -940.0
-offset_top = -110.0
-offset_right = 940.0
-offset_bottom = -10.0
-color = Color(0.32, 0.5, 0.62, 1)
+[node name="CentroDistantSkyline" type="ColorRect" parent="."]
+offset_left = -1500.0
+offset_top = -1080.0
+offset_right = -1100.0
+offset_bottom = -1000.0
+color = Color(0.5, 0.55, 0.62, 0.85)
 
-[node name="BayHighlight" type="ColorRect" parent="."]
-offset_left = -940.0
-offset_top = -110.0
-offset_right = 940.0
-offset_bottom = -106.0
-color = Color(0.78, 0.88, 0.92, 0.55)
-
-[node name="WaveLineA" type="ColorRect" parent="."]
-offset_left = -700.0
-offset_top = -78.0
-offset_right = -580.0
-offset_bottom = -75.0
-color = Color(0.85, 0.92, 0.95, 0.5)
-
-[node name="WaveLineB" type="ColorRect" parent="."]
-offset_left = -200.0
-offset_top = -65.0
-offset_right = -80.0
-offset_bottom = -62.0
-color = Color(0.85, 0.92, 0.95, 0.5)
-
-[node name="WaveLineC" type="ColorRect" parent="."]
-offset_left = 380.0
-offset_top = -72.0
-offset_right = 500.0
-offset_bottom = -69.0
-color = Color(0.85, 0.92, 0.95, 0.5)
-
-[node name="ChristSilhouette" type="ColorRect" parent="."]
-offset_left = -650.0
-offset_top = -240.0
-offset_right = -642.0
-offset_bottom = -210.0
-color = Color(0.32, 0.35, 0.45, 0.85)
-
-[node name="ChristSilhouetteCross" type="ColorRect" parent="."]
-offset_left = -660.0
-offset_top = -228.0
-offset_right = -632.0
-offset_bottom = -222.0
-color = Color(0.32, 0.35, 0.45, 0.85)
+[node name="CentroSign" type="Label" parent="."]
+offset_left = -1490.0
+offset_top = -1090.0
+offset_right = -1280.0
+offset_bottom = -1070.0
+text = "← CENTRO (fermé)"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.85, 0.85, 0.78, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 3
 
 [node name="ChristMorro" type="ColorRect" parent="."]
-offset_left = -700.0
-offset_top = -210.0
-offset_right = -600.0
-offset_bottom = -110.0
+offset_left = -1300.0
+offset_top = -990.0
+offset_right = -1000.0
+offset_bottom = -700.0
 color = Color(0.22, 0.32, 0.32, 1)
 
-[node name="PaoAcucarMorro" type="ColorRect" parent="."]
-offset_left = 720.0
-offset_top = -200.0
-offset_right = 880.0
-offset_bottom = -10.0
-color = Color(0.22, 0.28, 0.38, 1)
+[node name="ChristMorroDark" type="ColorRect" parent="."]
+offset_left = -1260.0
+offset_top = -1010.0
+offset_right = -1080.0
+offset_bottom = -990.0
+color = Color(0.18, 0.28, 0.28, 1)
 
-[node name="PaoAcucarTop" type="ColorRect" parent="."]
-offset_left = 760.0
-offset_top = -240.0
-offset_right = 840.0
+[node name="ChristSilhouette" type="ColorRect" parent="."]
+offset_left = -1174.0
+offset_top = -1050.0
+offset_right = -1166.0
+offset_bottom = -1010.0
+color = Color(0.32, 0.35, 0.45, 0.9)
+
+[node name="ChristSilhouetteCross" type="ColorRect" parent="."]
+offset_left = -1184.0
+offset_top = -1036.0
+offset_right = -1156.0
+offset_bottom = -1030.0
+color = Color(0.32, 0.35, 0.45, 0.9)
+
+[node name="AterroPark" type="ColorRect" parent="."]
+offset_left = -1500.0
+offset_top = -1000.0
+offset_right = 900.0
 offset_bottom = -200.0
-color = Color(0.18, 0.22, 0.32, 1)
-
-[node name="PaoAcucarUrca" type="ColorRect" parent="."]
-offset_left = 600.0
-offset_top = -160.0
-offset_right = 720.0
-offset_bottom = -10.0
-color = Color(0.22, 0.28, 0.38, 1)
-
-[node name="PaoAcucarUrcaTop" type="ColorRect" parent="."]
-offset_left = 640.0
-offset_top = -190.0
-offset_right = 700.0
-offset_bottom = -160.0
-color = Color(0.2, 0.26, 0.34, 1)
-
-[node name="BondinhoCable" type="ColorRect" parent="."]
-offset_left = 678.0
-offset_top = -220.0
-offset_right = 682.0
-offset_bottom = -160.0
-color = Color(0.4, 0.4, 0.45, 1)
-
-[node name="BondinhoCableHigh" type="ColorRect" parent="."]
-offset_left = 678.0
-offset_top = -240.0
-offset_right = 798.0
-offset_bottom = -236.0
-color = Color(0.4, 0.4, 0.45, 1)
-
-[node name="BondinhoCabin" type="ColorRect" parent="."]
-offset_left = 720.0
-offset_top = -240.0
-offset_right = 750.0
-offset_bottom = -224.0
-color = Color(0.95, 0.85, 0.45, 1)
-
-[node name="DistantBoatA" type="ColorRect" parent="."]
-offset_left = -300.0
-offset_top = -90.0
-offset_right = -278.0
-offset_bottom = -84.0
-color = Color(0.95, 0.95, 0.92, 0.85)
-
-[node name="DistantBoatAMast" type="ColorRect" parent="."]
-offset_left = -292.0
-offset_top = -102.0
-offset_right = -288.0
-offset_bottom = -90.0
-color = Color(0.95, 0.95, 0.92, 0.85)
-
-[node name="DistantBoatB" type="ColorRect" parent="."]
-offset_left = 280.0
-offset_top = -82.0
-offset_right = 296.0
-offset_bottom = -78.0
-color = Color(0.95, 0.95, 0.92, 0.85)
-
-[node name="WaterfrontWall" type="ColorRect" parent="."]
-offset_left = -940.0
-offset_top = -10.0
-offset_right = 600.0
-offset_bottom = -2.0
-color = Color(0.42, 0.32, 0.28, 1)
-
-[node name="UrcaSlope" type="ColorRect" parent="."]
-offset_left = 600.0
-offset_top = -10.0
-offset_right = 880.0
-offset_bottom = 0.0
-color = Color(0.55, 0.42, 0.32, 1)
-
-[node name="BuildingsRow" type="ColorRect" parent="."]
-offset_left = -940.0
-offset_top = 0.0
-offset_right = 600.0
-offset_bottom = 30.0
-color = Color(0.78, 0.78, 0.78, 1)
-
-[node name="BuildingFlamengoA" type="ColorRect" parent="."]
-offset_left = -880.0
-offset_top = -45.0
-offset_right = -780.0
-offset_bottom = 30.0
-color = Color(0.85, 0.78, 0.62, 1)
-
-[node name="BuildingFlamengoARoof" type="ColorRect" parent="."]
-offset_left = -880.0
-offset_top = -50.0
-offset_right = -780.0
-offset_bottom = -45.0
-color = Color(0.65, 0.55, 0.42, 1)
-
-[node name="BuildingFlamengoB" type="ColorRect" parent="."]
-offset_left = -700.0
-offset_top = -52.0
-offset_right = -600.0
-offset_bottom = 30.0
-color = Color(0.92, 0.85, 0.62, 1)
-
-[node name="BuildingFlamengoBRoof" type="ColorRect" parent="."]
-offset_left = -700.0
-offset_top = -56.0
-offset_right = -600.0
-offset_bottom = -52.0
-color = Color(0.72, 0.62, 0.42, 1)
-
-[node name="BuildingFlamengoC" type="ColorRect" parent="."]
-offset_left = -520.0
-offset_top = -38.0
-offset_right = -420.0
-offset_bottom = 30.0
-color = Color(0.78, 0.85, 0.78, 1)
-
-[node name="BuildingFlamengoCRoof" type="ColorRect" parent="."]
-offset_left = -520.0
-offset_top = -42.0
-offset_right = -420.0
-offset_bottom = -38.0
-color = Color(0.55, 0.65, 0.55, 1)
-
-[node name="BuildingBotafogoA" type="ColorRect" parent="."]
-offset_left = -340.0
-offset_top = -55.0
-offset_right = -240.0
-offset_bottom = 30.0
-color = Color(0.95, 0.92, 0.85, 1)
-
-[node name="BuildingBotafogoARoof" type="ColorRect" parent="."]
-offset_left = -340.0
-offset_top = -60.0
-offset_right = -240.0
-offset_bottom = -55.0
-color = Color(0.75, 0.72, 0.65, 1)
-
-[node name="BuildingBotafogoB" type="ColorRect" parent="."]
-offset_left = -160.0
-offset_top = -48.0
-offset_right = -60.0
-offset_bottom = 30.0
-color = Color(0.85, 0.78, 0.85, 1)
-
-[node name="BuildingBotafogoBRoof" type="ColorRect" parent="."]
-offset_left = -160.0
-offset_top = -52.0
-offset_right = -60.0
-offset_bottom = -48.0
-color = Color(0.62, 0.55, 0.62, 1)
-
-[node name="BuildingBotafogoC" type="ColorRect" parent="."]
-offset_left = 20.0
-offset_top = -50.0
-offset_right = 120.0
-offset_bottom = 30.0
-color = Color(0.62, 0.78, 0.85, 1)
-
-[node name="BuildingBotafogoCRoof" type="ColorRect" parent="."]
-offset_left = 20.0
-offset_top = -54.0
-offset_right = 120.0
-offset_bottom = -50.0
-color = Color(0.42, 0.55, 0.62, 1)
-
-[node name="BuildingShoppingRio" type="ColorRect" parent="."]
-offset_left = 200.0
-offset_top = -60.0
-offset_right = 380.0
-offset_bottom = 30.0
-color = Color(0.55, 0.65, 0.78, 1)
-
-[node name="BuildingShoppingRioRoof" type="ColorRect" parent="."]
-offset_left = 200.0
-offset_top = -64.0
-offset_right = 380.0
-offset_bottom = -60.0
-color = Color(0.32, 0.42, 0.55, 1)
-
-[node name="ShoppingSign" type="Label" parent="."]
-offset_left = 220.0
-offset_top = -50.0
-offset_right = 360.0
-offset_bottom = -34.0
-text = "SHOPPING RIO"
-horizontal_alignment = 1
-theme_override_font_sizes/font_size = 9
-theme_override_colors/font_color = Color(0.95, 0.95, 0.85, 1)
-
-[node name="UrcaHouseA" type="ColorRect" parent="."]
-offset_left = 440.0
-offset_top = -44.0
-offset_right = 530.0
-offset_bottom = 30.0
-color = Color(0.95, 0.78, 0.62, 1)
-
-[node name="UrcaHouseARoof" type="ColorRect" parent="."]
-offset_left = 440.0
-offset_top = -48.0
-offset_right = 530.0
-offset_bottom = -44.0
-color = Color(0.85, 0.42, 0.32, 1)
-
-[node name="UrcaHouseB" type="ColorRect" parent="."]
-offset_left = 555.0
-offset_top = -38.0
-offset_right = 595.0
-offset_bottom = 30.0
-color = Color(0.85, 0.92, 0.85, 1)
-
-[node name="UrcaHouseBRoof" type="ColorRect" parent="."]
-offset_left = 555.0
-offset_top = -42.0
-offset_right = 595.0
-offset_bottom = -38.0
-color = Color(0.62, 0.72, 0.55, 1)
-
-[node name="Avenida" type="ColorRect" parent="."]
-offset_left = -940.0
-offset_top = 30.0
-offset_right = 600.0
-offset_bottom = 70.0
-color = Color(0.42, 0.4, 0.42, 1)
-
-[node name="AvenidaLine" type="ColorRect" parent="."]
-offset_left = -940.0
-offset_top = 50.0
-offset_right = 600.0
-offset_bottom = 52.0
-color = Color(0.95, 0.85, 0.4, 0.7)
-
-[node name="UrcaPath" type="ColorRect" parent="."]
-offset_left = 600.0
-offset_top = 30.0
-offset_right = 880.0
-offset_bottom = 70.0
-color = Color(0.62, 0.55, 0.5, 1)
-
-[node name="Promenade" type="ColorRect" parent="."]
-offset_left = -940.0
-offset_top = 70.0
-offset_right = 600.0
-offset_bottom = 100.0
-color = Color(0.85, 0.82, 0.78, 1)
-
-[node name="PromenadeStripe" type="ColorRect" parent="."]
-offset_left = -940.0
-offset_top = 84.0
-offset_right = 600.0
-offset_bottom = 86.0
-color = Color(0.65, 0.62, 0.58, 0.7)
-
-[node name="GrassPark" type="ColorRect" parent="."]
-offset_left = -940.0
-offset_top = 100.0
-offset_right = -300.0
-offset_bottom = 200.0
 color = Color(0.42, 0.65, 0.4, 1)
 
-[node name="ParkPath" type="ColorRect" parent="."]
-offset_left = -940.0
-offset_top = 130.0
-offset_right = -300.0
-offset_bottom = 150.0
-color = Color(0.85, 0.78, 0.62, 0.85)
+[node name="AterroParkPattern" type="ColorRect" parent="."]
+offset_left = -1500.0
+offset_top = -700.0
+offset_right = 900.0
+offset_bottom = -696.0
+color = Color(0.36, 0.58, 0.36, 0.5)
 
-[node name="ParkBench1" type="ColorRect" parent="."]
-offset_left = -800.0
-offset_top = 160.0
-offset_right = -750.0
-offset_bottom = 168.0
-color = Color(0.55, 0.42, 0.32, 1)
+[node name="AterroParkPatternB" type="ColorRect" parent="."]
+offset_left = -1500.0
+offset_top = -450.0
+offset_right = 900.0
+offset_bottom = -446.0
+color = Color(0.36, 0.58, 0.36, 0.5)
 
-[node name="ParkBench2" type="ColorRect" parent="."]
-offset_left = -500.0
-offset_top = 110.0
-offset_right = -450.0
-offset_bottom = 118.0
-color = Color(0.55, 0.42, 0.32, 1)
+[node name="AterroBayWaterEast" type="ColorRect" parent="."]
+offset_left = 900.0
+offset_top = -1000.0
+offset_right = 1500.0
+offset_bottom = -200.0
+color = Color(0.32, 0.5, 0.62, 1)
 
-[node name="PalmA" type="ColorRect" parent="."]
-offset_left = -700.0
-offset_top = 120.0
-offset_right = -694.0
-offset_bottom = 170.0
-color = Color(0.4, 0.3, 0.22, 1)
+[node name="AterroBayHighlight" type="ColorRect" parent="."]
+offset_left = 900.0
+offset_top = -1000.0
+offset_right = 1500.0
+offset_bottom = -996.0
+color = Color(0.78, 0.88, 0.92, 0.55)
 
-[node name="PalmATop" type="ColorRect" parent="."]
-offset_left = -720.0
-offset_top = 100.0
-offset_right = -670.0
-offset_bottom = 120.0
-color = Color(0.32, 0.55, 0.32, 1)
+[node name="AterroBayWaveA" type="ColorRect" parent="."]
+offset_left = 1000.0
+offset_top = -900.0
+offset_right = 1100.0
+offset_bottom = -897.0
+color = Color(0.85, 0.92, 0.95, 0.5)
 
-[node name="PalmB" type="ColorRect" parent="."]
-offset_left = -400.0
-offset_top = 110.0
-offset_right = -394.0
-offset_bottom = 160.0
-color = Color(0.4, 0.3, 0.22, 1)
+[node name="AterroBayWaveB" type="ColorRect" parent="."]
+offset_left = 1200.0
+offset_top = -700.0
+offset_right = 1320.0
+offset_bottom = -697.0
+color = Color(0.85, 0.92, 0.95, 0.5)
 
-[node name="PalmBTop" type="ColorRect" parent="."]
-offset_left = -420.0
-offset_top = 90.0
-offset_right = -370.0
-offset_bottom = 110.0
-color = Color(0.32, 0.55, 0.32, 1)
+[node name="AterroBayWaveC" type="ColorRect" parent="."]
+offset_left = 1080.0
+offset_top = -500.0
+offset_right = 1200.0
+offset_bottom = -497.0
+color = Color(0.85, 0.92, 0.95, 0.5)
 
-[node name="BotafogoBeach" type="ColorRect" parent="."]
-offset_left = -300.0
-offset_top = 100.0
-offset_right = 600.0
-offset_bottom = 200.0
-color = Color(0.92, 0.85, 0.7, 1)
+[node name="AterroBayBoatA" type="ColorRect" parent="."]
+offset_left = 1140.0
+offset_top = -800.0
+offset_right = 1162.0
+offset_bottom = -794.0
+color = Color(0.95, 0.95, 0.92, 0.85)
 
-[node name="BotafogoBeachLine" type="ColorRect" parent="."]
-offset_left = -300.0
-offset_top = 196.0
-offset_right = 600.0
-offset_bottom = 200.0
-color = Color(0.95, 0.95, 0.95, 0.6)
+[node name="AterroBayBoatAMast" type="ColorRect" parent="."]
+offset_left = 1148.0
+offset_top = -812.0
+offset_right = 1152.0
+offset_bottom = -800.0
+color = Color(0.95, 0.95, 0.92, 0.85)
 
-[node name="UrcaRocks" type="ColorRect" parent="."]
-offset_left = 600.0
-offset_top = 100.0
-offset_right = 880.0
-offset_bottom = 200.0
-color = Color(0.55, 0.5, 0.45, 1)
+[node name="AterroBayBoatB" type="ColorRect" parent="."]
+offset_left = 1280.0
+offset_top = -550.0
+offset_right = 1296.0
+offset_bottom = -546.0
+color = Color(0.95, 0.95, 0.92, 0.85)
 
-[node name="UrcaPath2" type="ColorRect" parent="."]
-offset_left = 600.0
-offset_top = 130.0
-offset_right = 880.0
-offset_bottom = 150.0
-color = Color(0.62, 0.55, 0.5, 1)
+[node name="AterroBayBoatC" type="ColorRect" parent="."]
+offset_left = 1380.0
+offset_top = -380.0
+offset_right = 1400.0
+offset_bottom = -376.0
+color = Color(0.95, 0.95, 0.92, 0.85)
 
-[node name="UrcaWallSea" type="ColorRect" parent="."]
-offset_left = 600.0
-offset_top = 100.0
-offset_right = 604.0
-offset_bottom = 200.0
+[node name="AterroBayShoreLine" type="ColorRect" parent="."]
+offset_left = 894.0
+offset_top = -1000.0
+offset_right = 902.0
+offset_bottom = -200.0
 color = Color(0.42, 0.32, 0.28, 1)
 
-[node name="ZoneLabelFlamengo" type="Label" parent="."]
-offset_left = -880.0
-offset_top = -10.0
-offset_right = -640.0
-offset_bottom = 10.0
-text = "FLAMENGO"
+[node name="AterroJoggingPath" type="ColorRect" parent="."]
+offset_left = -1500.0
+offset_top = -880.0
+offset_right = 900.0
+offset_bottom = -860.0
+color = Color(0.85, 0.78, 0.62, 0.85)
+
+[node name="AterroJoggingPathStripe" type="ColorRect" parent="."]
+offset_left = -1500.0
+offset_top = -871.0
+offset_right = 900.0
+offset_bottom = -869.0
+color = Color(0.95, 0.92, 0.78, 0.5)
+
+[node name="AterroJoggingPathV" type="ColorRect" parent="."]
+offset_left = -10.0
+offset_top = -1000.0
+offset_right = 10.0
+offset_bottom = -200.0
+color = Color(0.85, 0.78, 0.62, 0.85)
+
+[node name="AterroPalmA" type="ColorRect" parent="."]
+offset_left = -1100.0
+offset_top = -670.0
+offset_right = -1094.0
+offset_bottom = -620.0
+color = Color(0.4, 0.3, 0.22, 1)
+
+[node name="AterroPalmATop" type="ColorRect" parent="."]
+offset_left = -1120.0
+offset_top = -690.0
+offset_right = -1070.0
+offset_bottom = -670.0
+color = Color(0.32, 0.55, 0.32, 1)
+
+[node name="AterroPalmB" type="ColorRect" parent="."]
+offset_left = -700.0
+offset_top = -700.0
+offset_right = -694.0
+offset_bottom = -650.0
+color = Color(0.4, 0.3, 0.22, 1)
+
+[node name="AterroPalmBTop" type="ColorRect" parent="."]
+offset_left = -720.0
+offset_top = -720.0
+offset_right = -670.0
+offset_bottom = -700.0
+color = Color(0.32, 0.55, 0.32, 1)
+
+[node name="AterroPalmC" type="ColorRect" parent="."]
+offset_left = -300.0
+offset_top = -660.0
+offset_right = -294.0
+offset_bottom = -610.0
+color = Color(0.4, 0.3, 0.22, 1)
+
+[node name="AterroPalmCTop" type="ColorRect" parent="."]
+offset_left = -320.0
+offset_top = -680.0
+offset_right = -270.0
+offset_bottom = -660.0
+color = Color(0.32, 0.55, 0.32, 1)
+
+[node name="AterroPalmD" type="ColorRect" parent="."]
+offset_left = 200.0
+offset_top = -710.0
+offset_right = 206.0
+offset_bottom = -660.0
+color = Color(0.4, 0.3, 0.22, 1)
+
+[node name="AterroPalmDTop" type="ColorRect" parent="."]
+offset_left = 180.0
+offset_top = -730.0
+offset_right = 230.0
+offset_bottom = -710.0
+color = Color(0.32, 0.55, 0.32, 1)
+
+[node name="AterroPalmE" type="ColorRect" parent="."]
+offset_left = 600.0
+offset_top = -680.0
+offset_right = 606.0
+offset_bottom = -630.0
+color = Color(0.4, 0.3, 0.22, 1)
+
+[node name="AterroPalmETop" type="ColorRect" parent="."]
+offset_left = 580.0
+offset_top = -700.0
+offset_right = 630.0
+offset_bottom = -680.0
+color = Color(0.32, 0.55, 0.32, 1)
+
+[node name="AterroPalmF" type="ColorRect" parent="."]
+offset_left = -900.0
+offset_top = -360.0
+offset_right = -894.0
+offset_bottom = -310.0
+color = Color(0.4, 0.3, 0.22, 1)
+
+[node name="AterroPalmFTop" type="ColorRect" parent="."]
+offset_left = -920.0
+offset_top = -380.0
+offset_right = -870.0
+offset_bottom = -360.0
+color = Color(0.32, 0.55, 0.32, 1)
+
+[node name="AterroPalmG" type="ColorRect" parent="."]
+offset_left = 500.0
+offset_top = -340.0
+offset_right = 506.0
+offset_bottom = -290.0
+color = Color(0.4, 0.3, 0.22, 1)
+
+[node name="AterroPalmGTop" type="ColorRect" parent="."]
+offset_left = 480.0
+offset_top = -360.0
+offset_right = 530.0
+offset_bottom = -340.0
+color = Color(0.32, 0.55, 0.32, 1)
+
+[node name="AterroBenchA" type="ColorRect" parent="."]
+offset_left = -1200.0
+offset_top = -750.0
+offset_right = -1150.0
+offset_bottom = -742.0
+color = Color(0.55, 0.42, 0.32, 1)
+
+[node name="AterroBenchB" type="ColorRect" parent="."]
+offset_left = -500.0
+offset_top = -780.0
+offset_right = -450.0
+offset_bottom = -772.0
+color = Color(0.55, 0.42, 0.32, 1)
+
+[node name="AterroBenchC" type="ColorRect" parent="."]
+offset_left = 100.0
+offset_top = -560.0
+offset_right = 150.0
+offset_bottom = -552.0
+color = Color(0.55, 0.42, 0.32, 1)
+
+[node name="AterroBenchD" type="ColorRect" parent="."]
+offset_left = -700.0
+offset_top = -300.0
+offset_right = -650.0
+offset_bottom = -292.0
+color = Color(0.55, 0.42, 0.32, 1)
+
+[node name="ZoneLabelAterro" type="Label" parent="."]
+offset_left = -1100.0
+offset_top = -480.0
+offset_right = -700.0
+offset_bottom = -460.0
+text = "ATERRO DO FLAMENGO"
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 14
-theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
+theme_override_colors/font_color = Color(0.4, 0.85, 0.55, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
 theme_override_constants/outline_size = 4
 
+[node name="BotafogoBayWater" type="ColorRect" parent="."]
+offset_left = 200.0
+offset_top = -200.0
+offset_right = 1500.0
+offset_bottom = -150.0
+color = Color(0.32, 0.5, 0.62, 1)
+
+[node name="BotafogoBayHighlight" type="ColorRect" parent="."]
+offset_left = 200.0
+offset_top = -200.0
+offset_right = 1500.0
+offset_bottom = -196.0
+color = Color(0.78, 0.88, 0.92, 0.55)
+
+[node name="BotafogoBayWaveA" type="ColorRect" parent="."]
+offset_left = 200.0
+offset_top = -180.0
+offset_right = 320.0
+offset_bottom = -177.0
+color = Color(0.85, 0.92, 0.95, 0.5)
+
+[node name="BotafogoBayWaveB" type="ColorRect" parent="."]
+offset_left = 600.0
+offset_top = -170.0
+offset_right = 720.0
+offset_bottom = -167.0
+color = Color(0.85, 0.92, 0.95, 0.5)
+
+[node name="BotafogoBayWaveC" type="ColorRect" parent="."]
+offset_left = 900.0
+offset_top = -180.0
+offset_right = 1020.0
+offset_bottom = -177.0
+color = Color(0.85, 0.92, 0.95, 0.5)
+
+[node name="BotafogoBayBoat" type="ColorRect" parent="."]
+offset_left = 350.0
+offset_top = -190.0
+offset_right = 366.0
+offset_bottom = -184.0
+color = Color(0.95, 0.95, 0.92, 0.85)
+
+[node name="BotafogoBayShoreLine" type="ColorRect" parent="."]
+offset_left = 200.0
+offset_top = -204.0
+offset_right = 1500.0
+offset_bottom = -200.0
+color = Color(0.42, 0.32, 0.28, 1)
+
+[node name="BotafogoBayShoreLineSouth" type="ColorRect" parent="."]
+offset_left = 200.0
+offset_top = -150.0
+offset_right = 700.0
+offset_bottom = -148.0
+color = Color(0.42, 0.32, 0.28, 1)
+
+[node name="MorroDaUrca" type="ColorRect" parent="."]
+offset_left = 1100.0
+offset_top = -380.0
+offset_right = 1380.0
+offset_bottom = -150.0
+color = Color(0.22, 0.28, 0.36, 1)
+
+[node name="MorroDaUrcaTop" type="ColorRect" parent="."]
+offset_left = 1140.0
+offset_top = -410.0
+offset_right = 1340.0
+offset_bottom = -380.0
+color = Color(0.2, 0.26, 0.34, 1)
+
+[node name="PaoAcucarMorro" type="ColorRect" parent="."]
+offset_left = 1200.0
+offset_top = -460.0
+offset_right = 1500.0
+offset_bottom = -150.0
+color = Color(0.24, 0.3, 0.4, 1)
+
+[node name="PaoAcucarMorroTop" type="ColorRect" parent="."]
+offset_left = 1260.0
+offset_top = -490.0
+offset_right = 1460.0
+offset_bottom = -460.0
+color = Color(0.18, 0.22, 0.32, 1)
+
+[node name="PaoAcucarPeak" type="ColorRect" parent="."]
+offset_left = 1320.0
+offset_top = -510.0
+offset_right = 1400.0
+offset_bottom = -490.0
+color = Color(0.22, 0.26, 0.34, 1)
+
+[node name="BondinhoCableLow" type="ColorRect" parent="."]
+offset_left = 1255.0
+offset_top = -410.0
+offset_right = 1340.0
+offset_bottom = -407.0
+color = Color(0.4, 0.4, 0.45, 1)
+
+[node name="BondinhoCableHigh" type="ColorRect" parent="."]
+offset_left = 1280.0
+offset_top = -490.0
+offset_right = 1380.0
+offset_bottom = -487.0
+color = Color(0.4, 0.4, 0.45, 1)
+
+[node name="BondinhoCabin" type="ColorRect" parent="."]
+offset_left = 1296.0
+offset_top = -448.0
+offset_right = 1322.0
+offset_bottom = -434.0
+color = Color(0.95, 0.85, 0.45, 1)
+
+[node name="UrcaPraiaSand" type="ColorRect" parent="."]
+offset_left = 100.0
+offset_top = -150.0
+offset_right = 700.0
+offset_bottom = -100.0
+color = Color(0.92, 0.85, 0.7, 1)
+
+[node name="UrcaPraiaSandLine" type="ColorRect" parent="."]
+offset_left = 100.0
+offset_top = -104.0
+offset_right = 700.0
+offset_bottom = -100.0
+color = Color(0.95, 0.95, 0.95, 0.45)
+
+[node name="BotafogoPraiaSand" type="ColorRect" parent="."]
+offset_left = -1500.0
+offset_top = -150.0
+offset_right = -100.0
+offset_bottom = -100.0
+color = Color(0.92, 0.85, 0.7, 1)
+
+[node name="BotafogoPraiaSandLine" type="ColorRect" parent="."]
+offset_left = -1500.0
+offset_top = -104.0
+offset_right = -100.0
+offset_bottom = -100.0
+color = Color(0.95, 0.95, 0.95, 0.45)
+
+[node name="BotafogoPraiaSandFoam" type="ColorRect" parent="."]
+offset_left = -1500.0
+offset_top = -150.0
+offset_right = -100.0
+offset_bottom = -148.0
+color = Color(0.95, 0.95, 0.95, 0.6)
+
+[node name="AterroSouthFringeWest" type="ColorRect" parent="."]
+offset_left = -1500.0
+offset_top = -200.0
+offset_right = 200.0
+offset_bottom = -150.0
+color = Color(0.42, 0.65, 0.4, 1)
+
+[node name="AterroSouthFringeMidPath" type="ColorRect" parent="."]
+offset_left = -10.0
+offset_top = -200.0
+offset_right = 10.0
+offset_bottom = -150.0
+color = Color(0.85, 0.78, 0.62, 0.85)
+
+[node name="CentralPraiaConnector" type="ColorRect" parent="."]
+offset_left = -100.0
+offset_top = -150.0
+offset_right = 100.0
+offset_bottom = -100.0
+color = Color(0.92, 0.85, 0.7, 1)
+
+[node name="CentralPraiaConnectorFoam" type="ColorRect" parent="."]
+offset_left = -100.0
+offset_top = -150.0
+offset_right = 100.0
+offset_bottom = -148.0
+color = Color(0.95, 0.95, 0.95, 0.6)
+
+[node name="BotafogoAvenida" type="ColorRect" parent="."]
+offset_left = -1500.0
+offset_top = -100.0
+offset_right = -100.0
+offset_bottom = -60.0
+color = Color(0.42, 0.4, 0.42, 1)
+
+[node name="BotafogoAvenidaLine" type="ColorRect" parent="."]
+offset_left = -1500.0
+offset_top = -82.0
+offset_right = -100.0
+offset_bottom = -80.0
+color = Color(0.95, 0.85, 0.4, 0.7)
+
+[node name="UrcaAvenida" type="ColorRect" parent="."]
+offset_left = 100.0
+offset_top = -100.0
+offset_right = 1100.0
+offset_bottom = -60.0
+color = Color(0.42, 0.4, 0.42, 1)
+
+[node name="UrcaAvenidaLine" type="ColorRect" parent="."]
+offset_left = 100.0
+offset_top = -82.0
+offset_right = 1100.0
+offset_bottom = -80.0
+color = Color(0.95, 0.85, 0.4, 0.7)
+
+[node name="CentralAvenidaJunction" type="ColorRect" parent="."]
+offset_left = -100.0
+offset_top = -100.0
+offset_right = 100.0
+offset_bottom = -60.0
+color = Color(0.42, 0.4, 0.42, 1)
+
+[node name="BotafogoSidewalk" type="ColorRect" parent="."]
+offset_left = -1500.0
+offset_top = -60.0
+offset_right = -100.0
+offset_bottom = -30.0
+color = Color(0.82, 0.8, 0.76, 1)
+
+[node name="UrcaSidewalk" type="ColorRect" parent="."]
+offset_left = 100.0
+offset_top = -60.0
+offset_right = 1100.0
+offset_bottom = -30.0
+color = Color(0.82, 0.8, 0.76, 1)
+
+[node name="CentralSidewalkJunction" type="ColorRect" parent="."]
+offset_left = -100.0
+offset_top = -60.0
+offset_right = 100.0
+offset_bottom = -30.0
+color = Color(0.82, 0.8, 0.76, 1)
+
+[node name="BotafogoBlockGround" type="ColorRect" parent="."]
+offset_left = -1500.0
+offset_top = -30.0
+offset_right = -100.0
+offset_bottom = 200.0
+color = Color(0.78, 0.78, 0.78, 1)
+
+[node name="UrcaBlockGround" type="ColorRect" parent="."]
+offset_left = 100.0
+offset_top = -30.0
+offset_right = 1100.0
+offset_bottom = 200.0
+color = Color(0.78, 0.78, 0.78, 1)
+
+[node name="CentralRoadBifurcationDown" type="ColorRect" parent="."]
+offset_left = -100.0
+offset_top = -30.0
+offset_right = 100.0
+offset_bottom = 200.0
+color = Color(0.45, 0.42, 0.42, 1)
+
+[node name="CentralRoadCenterLine" type="ColorRect" parent="."]
+offset_left = -2.0
+offset_top = -30.0
+offset_right = 2.0
+offset_bottom = 200.0
+color = Color(0.95, 0.85, 0.4, 0.6)
+
+[node name="BotafogoBuildingA" type="ColorRect" parent="."]
+offset_left = -1440.0
+offset_top = -30.0
+offset_right = -1320.0
+offset_bottom = 80.0
+color = Color(0.85, 0.78, 0.62, 1)
+
+[node name="BotafogoBuildingARoof" type="ColorRect" parent="."]
+offset_left = -1440.0
+offset_top = -36.0
+offset_right = -1320.0
+offset_bottom = -30.0
+color = Color(0.65, 0.55, 0.42, 1)
+
+[node name="BotafogoBuildingB" type="ColorRect" parent="."]
+offset_left = -1240.0
+offset_top = -30.0
+offset_right = -1140.0
+offset_bottom = 100.0
+color = Color(0.92, 0.85, 0.62, 1)
+
+[node name="BotafogoBuildingBRoof" type="ColorRect" parent="."]
+offset_left = -1240.0
+offset_top = -36.0
+offset_right = -1140.0
+offset_bottom = -30.0
+color = Color(0.72, 0.62, 0.42, 1)
+
+[node name="BotafogoBuildingC" type="ColorRect" parent="."]
+offset_left = -1060.0
+offset_top = -30.0
+offset_right = -940.0
+offset_bottom = 70.0
+color = Color(0.78, 0.85, 0.78, 1)
+
+[node name="BotafogoBuildingCRoof" type="ColorRect" parent="."]
+offset_left = -1060.0
+offset_top = -36.0
+offset_right = -940.0
+offset_bottom = -30.0
+color = Color(0.55, 0.65, 0.55, 1)
+
+[node name="BotafogoBuildingD" type="ColorRect" parent="."]
+offset_left = -860.0
+offset_top = -30.0
+offset_right = -740.0
+offset_bottom = 90.0
+color = Color(0.95, 0.92, 0.85, 1)
+
+[node name="BotafogoBuildingDRoof" type="ColorRect" parent="."]
+offset_left = -860.0
+offset_top = -36.0
+offset_right = -740.0
+offset_bottom = -30.0
+color = Color(0.75, 0.72, 0.65, 1)
+
+[node name="BotafogoBuildingE" type="ColorRect" parent="."]
+offset_left = -660.0
+offset_top = -30.0
+offset_right = -540.0
+offset_bottom = 75.0
+color = Color(0.85, 0.78, 0.85, 1)
+
+[node name="BotafogoBuildingERoof" type="ColorRect" parent="."]
+offset_left = -660.0
+offset_top = -36.0
+offset_right = -540.0
+offset_bottom = -30.0
+color = Color(0.62, 0.55, 0.62, 1)
+
+[node name="BotafogoBuildingF" type="ColorRect" parent="."]
+offset_left = -460.0
+offset_top = -30.0
+offset_right = -340.0
+offset_bottom = 95.0
+color = Color(0.62, 0.78, 0.85, 1)
+
+[node name="BotafogoBuildingFRoof" type="ColorRect" parent="."]
+offset_left = -460.0
+offset_top = -36.0
+offset_right = -340.0
+offset_bottom = -30.0
+color = Color(0.42, 0.55, 0.62, 1)
+
+[node name="BotafogoBuildingG" type="ColorRect" parent="."]
+offset_left = -260.0
+offset_top = -30.0
+offset_right = -150.0
+offset_bottom = 80.0
+color = Color(0.95, 0.78, 0.62, 1)
+
+[node name="BotafogoBuildingGRoof" type="ColorRect" parent="."]
+offset_left = -260.0
+offset_top = -36.0
+offset_right = -150.0
+offset_bottom = -30.0
+color = Color(0.85, 0.42, 0.32, 1)
+
+[node name="BotafogoBuildingH" type="ColorRect" parent="."]
+offset_left = -1300.0
+offset_top = 110.0
+offset_right = -1180.0
+offset_bottom = 200.0
+color = Color(0.92, 0.78, 0.62, 1)
+
+[node name="BotafogoBuildingHRoof" type="ColorRect" parent="."]
+offset_left = -1300.0
+offset_top = 104.0
+offset_right = -1180.0
+offset_bottom = 110.0
+color = Color(0.65, 0.5, 0.32, 1)
+
+[node name="BotafogoBuildingI" type="ColorRect" parent="."]
+offset_left = -1000.0
+offset_top = 110.0
+offset_right = -880.0
+offset_bottom = 200.0
+color = Color(0.78, 0.92, 0.85, 1)
+
+[node name="BotafogoBuildingIRoof" type="ColorRect" parent="."]
+offset_left = -1000.0
+offset_top = 104.0
+offset_right = -880.0
+offset_bottom = 110.0
+color = Color(0.55, 0.7, 0.62, 1)
+
+[node name="BotafogoBuildingJ" type="ColorRect" parent="."]
+offset_left = -700.0
+offset_top = 110.0
+offset_right = -580.0
+offset_bottom = 200.0
+color = Color(0.85, 0.92, 0.62, 1)
+
+[node name="BotafogoBuildingJRoof" type="ColorRect" parent="."]
+offset_left = -700.0
+offset_top = 104.0
+offset_right = -580.0
+offset_bottom = 110.0
+color = Color(0.62, 0.7, 0.4, 1)
+
+[node name="BotafogoBuildingK" type="ColorRect" parent="."]
+offset_left = -400.0
+offset_top = 110.0
+offset_right = -280.0
+offset_bottom = 200.0
+color = Color(0.85, 0.55, 0.65, 1)
+
+[node name="BotafogoBuildingKRoof" type="ColorRect" parent="."]
+offset_left = -400.0
+offset_top = 104.0
+offset_right = -280.0
+offset_bottom = 110.0
+color = Color(0.62, 0.4, 0.45, 1)
+
+[node name="BotafogoStreetH" type="ColorRect" parent="."]
+offset_left = -1500.0
+offset_top = 80.0
+offset_right = -100.0
+offset_bottom = 100.0
+color = Color(0.5, 0.48, 0.5, 1)
+
+[node name="BotafogoStreetHLine" type="ColorRect" parent="."]
+offset_left = -1500.0
+offset_top = 89.0
+offset_right = -100.0
+offset_bottom = 91.0
+color = Color(0.95, 0.85, 0.4, 0.55)
+
+[node name="UrcaBuildingA" type="ColorRect" parent="."]
+offset_left = 160.0
+offset_top = -30.0
+offset_right = 280.0
+offset_bottom = 80.0
+color = Color(0.85, 0.78, 0.62, 1)
+
+[node name="UrcaBuildingARoof" type="ColorRect" parent="."]
+offset_left = 160.0
+offset_top = -36.0
+offset_right = 280.0
+offset_bottom = -30.0
+color = Color(0.65, 0.55, 0.42, 1)
+
+[node name="UrcaBuildingB" type="ColorRect" parent="."]
+offset_left = 360.0
+offset_top = -30.0
+offset_right = 480.0
+offset_bottom = 95.0
+color = Color(0.95, 0.78, 0.62, 1)
+
+[node name="UrcaBuildingBRoof" type="ColorRect" parent="."]
+offset_left = 360.0
+offset_top = -36.0
+offset_right = 480.0
+offset_bottom = -30.0
+color = Color(0.85, 0.42, 0.32, 1)
+
+[node name="BondinhoStation" type="ColorRect" parent="."]
+offset_left = 540.0
+offset_top = -30.0
+offset_right = 700.0
+offset_bottom = 100.0
+color = Color(0.85, 0.78, 0.7, 1)
+
+[node name="BondinhoStationRoof" type="ColorRect" parent="."]
+offset_left = 540.0
+offset_top = -42.0
+offset_right = 700.0
+offset_bottom = -30.0
+color = Color(0.55, 0.32, 0.28, 1)
+
+[node name="BondinhoStationLabel" type="Label" parent="."]
+offset_left = 540.0
+offset_top = -22.0
+offset_right = 700.0
+offset_bottom = -2.0
+text = "BONDINHO ★ URCA"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.32, 0.22, 0.18, 1)
+theme_override_colors/font_outline_color = Color(0.95, 0.92, 0.85, 0.8)
+theme_override_constants/outline_size = 3
+
+[node name="UrcaBuildingC" type="ColorRect" parent="."]
+offset_left = 760.0
+offset_top = -30.0
+offset_right = 880.0
+offset_bottom = 80.0
+color = Color(0.78, 0.85, 0.78, 1)
+
+[node name="UrcaBuildingCRoof" type="ColorRect" parent="."]
+offset_left = 760.0
+offset_top = -36.0
+offset_right = 880.0
+offset_bottom = -30.0
+color = Color(0.55, 0.65, 0.55, 1)
+
+[node name="UrcaBuildingD" type="ColorRect" parent="."]
+offset_left = 940.0
+offset_top = -30.0
+offset_right = 1060.0
+offset_bottom = 90.0
+color = Color(0.62, 0.78, 0.85, 1)
+
+[node name="UrcaBuildingDRoof" type="ColorRect" parent="."]
+offset_left = 940.0
+offset_top = -36.0
+offset_right = 1060.0
+offset_bottom = -30.0
+color = Color(0.42, 0.55, 0.62, 1)
+
+[node name="UrcaSlope" type="ColorRect" parent="."]
+offset_left = 1100.0
+offset_top = -100.0
+offset_right = 1500.0
+offset_bottom = -60.0
+color = Color(0.55, 0.42, 0.32, 1)
+
+[node name="UrcaSlopePath" type="ColorRect" parent="."]
+offset_left = 1100.0
+offset_top = -90.0
+offset_right = 1500.0
+offset_bottom = -70.0
+color = Color(0.62, 0.55, 0.5, 1)
+
+[node name="UrcaSlopeRocks" type="ColorRect" parent="."]
+offset_left = 1100.0
+offset_top = -60.0
+offset_right = 1500.0
+offset_bottom = 200.0
+color = Color(0.45, 0.4, 0.36, 1)
+
+[node name="UrcaSlopeRocksDetail" type="ColorRect" parent="."]
+offset_left = 1180.0
+offset_top = 0.0
+offset_right = 1240.0
+offset_bottom = 60.0
+color = Color(0.55, 0.5, 0.42, 1)
+
+[node name="UrcaSlopeRocksDetailB" type="ColorRect" parent="."]
+offset_left = 1320.0
+offset_top = 80.0
+offset_right = 1380.0
+offset_bottom = 140.0
+color = Color(0.55, 0.5, 0.42, 1)
+
 [node name="ZoneLabelBotafogo" type="Label" parent="."]
-offset_left = -180.0
-offset_top = -10.0
-offset_right = 180.0
-offset_bottom = 10.0
+offset_left = -900.0
+offset_top = -180.0
+offset_right = -500.0
+offset_bottom = -160.0
 text = "BOTAFOGO"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 18
 theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
 theme_override_constants/outline_size = 4
 
 [node name="ZoneLabelUrca" type="Label" parent="."]
-offset_left = 580.0
-offset_top = -10.0
-offset_right = 760.0
-offset_bottom = 10.0
+offset_left = 250.0
+offset_top = -180.0
+offset_right = 650.0
+offset_bottom = -160.0
 text = "URCA"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 18
 theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
 theme_override_constants/outline_size = 4
 
+[node name="BifurcationSignPost" type="ColorRect" parent="."]
+offset_left = -2.0
+offset_top = 50.0
+offset_right = 2.0
+offset_bottom = 100.0
+color = Color(0.32, 0.28, 0.22, 1)
+
+[node name="BifurcationSignNorth" type="ColorRect" parent="."]
+offset_left = -50.0
+offset_top = 30.0
+offset_right = 50.0
+offset_bottom = 50.0
+color = Color(0.42, 0.65, 0.4, 1)
+
+[node name="BifurcationSignNorthText" type="Label" parent="."]
+offset_left = -50.0
+offset_top = 30.0
+offset_right = 50.0
+offset_bottom = 50.0
+text = "↑ ATERRO"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.98, 0.98, 0.92, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 3
+
+[node name="BifurcationSignWest" type="ColorRect" parent="."]
+offset_left = -120.0
+offset_top = 60.0
+offset_right = -10.0
+offset_bottom = 80.0
+color = Color(0.95, 0.78, 0.4, 1)
+
+[node name="BifurcationSignWestText" type="Label" parent="."]
+offset_left = -120.0
+offset_top = 60.0
+offset_right = -10.0
+offset_bottom = 80.0
+text = "← BOTAFOGO"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.18, 0.14, 0.1, 1)
+
+[node name="BifurcationSignEast" type="ColorRect" parent="."]
+offset_left = 10.0
+offset_top = 60.0
+offset_right = 120.0
+offset_bottom = 80.0
+color = Color(0.4, 0.65, 0.95, 1)
+
+[node name="BifurcationSignEastText" type="Label" parent="."]
+offset_left = 10.0
+offset_top = 60.0
+offset_right = 120.0
+offset_bottom = 80.0
+text = "URCA →"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.98, 0.98, 0.92, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 3
+
+[node name="ApproachRoad" type="ColorRect" parent="."]
+offset_left = -100.0
+offset_top = 200.0
+offset_right = 100.0
+offset_bottom = 380.0
+color = Color(0.45, 0.42, 0.42, 1)
+
+[node name="ApproachRoadCenterLine" type="ColorRect" parent="."]
+offset_left = -2.0
+offset_top = 200.0
+offset_right = 2.0
+offset_bottom = 380.0
+color = Color(0.95, 0.85, 0.4, 0.6)
+
+[node name="ApproachSidewalkW" type="ColorRect" parent="."]
+offset_left = -120.0
+offset_top = 200.0
+offset_right = -100.0
+offset_bottom = 380.0
+color = Color(0.82, 0.8, 0.76, 1)
+
+[node name="ApproachSidewalkE" type="ColorRect" parent="."]
+offset_left = 100.0
+offset_top = 200.0
+offset_right = 120.0
+offset_bottom = 380.0
+color = Color(0.82, 0.8, 0.76, 1)
+
+[node name="ApproachLandWest" type="ColorRect" parent="."]
+offset_left = -1500.0
+offset_top = 200.0
+offset_right = -120.0
+offset_bottom = 380.0
+color = Color(0.62, 0.6, 0.58, 1)
+
+[node name="ApproachLandEast" type="ColorRect" parent="."]
+offset_left = 120.0
+offset_top = 200.0
+offset_right = 1500.0
+offset_bottom = 380.0
+color = Color(0.62, 0.6, 0.58, 1)
+
+[node name="ShoppingRioSul" type="ColorRect" parent="."]
+offset_left = 160.0
+offset_top = 220.0
+offset_right = 540.0
+offset_bottom = 360.0
+color = Color(0.55, 0.65, 0.78, 1)
+
+[node name="ShoppingRioSulRoof" type="ColorRect" parent="."]
+offset_left = 160.0
+offset_top = 212.0
+offset_right = 540.0
+offset_bottom = 220.0
+color = Color(0.32, 0.42, 0.55, 1)
+
+[node name="ShoppingRioSulSign" type="ColorRect" parent="."]
+offset_left = 200.0
+offset_top = 198.0
+offset_right = 500.0
+offset_bottom = 212.0
+color = Color(0.95, 0.55, 0.18, 1)
+
+[node name="ShoppingRioSulSignText" type="Label" parent="."]
+offset_left = 200.0
+offset_top = 196.0
+offset_right = 500.0
+offset_bottom = 212.0
+text = "RIO SUL ★ SHOPPING"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.98, 0.98, 0.92, 1)
+theme_override_colors/font_outline_color = Color(0.32, 0.18, 0.05, 1)
+theme_override_constants/outline_size = 3
+
+[node name="ShoppingWindowA" type="ColorRect" parent="."]
+offset_left = 200.0
+offset_top = 250.0
+offset_right = 240.0
+offset_bottom = 290.0
+color = Color(0.85, 0.92, 0.95, 0.85)
+
+[node name="ShoppingWindowB" type="ColorRect" parent="."]
+offset_left = 270.0
+offset_top = 250.0
+offset_right = 310.0
+offset_bottom = 290.0
+color = Color(0.85, 0.92, 0.95, 0.85)
+
+[node name="ShoppingWindowC" type="ColorRect" parent="."]
+offset_left = 340.0
+offset_top = 250.0
+offset_right = 380.0
+offset_bottom = 290.0
+color = Color(0.85, 0.92, 0.95, 0.85)
+
+[node name="ShoppingWindowD" type="ColorRect" parent="."]
+offset_left = 410.0
+offset_top = 250.0
+offset_right = 450.0
+offset_bottom = 290.0
+color = Color(0.85, 0.92, 0.95, 0.85)
+
+[node name="ShoppingWindowE" type="ColorRect" parent="."]
+offset_left = 480.0
+offset_top = 250.0
+offset_right = 520.0
+offset_bottom = 290.0
+color = Color(0.85, 0.92, 0.95, 0.85)
+
+[node name="ShoppingEntrance" type="ColorRect" parent="."]
+offset_left = 335.0
+offset_top = 320.0
+offset_right = 365.0
+offset_bottom = 360.0
+color = Color(0.18, 0.22, 0.28, 1)
+
+[node name="TunnelArchOuter" type="ColorRect" parent="."]
+offset_left = -100.0
+offset_top = 320.0
+offset_right = 100.0
+offset_bottom = 380.0
+color = Color(0.32, 0.28, 0.26, 1)
+
+[node name="TunnelArchInner" type="ColorRect" parent="."]
+offset_left = -90.0
+offset_top = 330.0
+offset_right = 90.0
+offset_bottom = 380.0
+color = Color(0.08, 0.08, 0.1, 1)
+
+[node name="TunnelKeystone" type="ColorRect" parent="."]
+offset_left = -12.0
+offset_top = 318.0
+offset_right = 12.0
+offset_bottom = 330.0
+color = Color(0.45, 0.4, 0.36, 1)
+
+[node name="TunnelLabel" type="Label" parent="."]
+offset_left = -100.0
+offset_top = 302.0
+offset_right = 100.0
+offset_bottom = 320.0
+text = "TÚNEL NOVO ↓"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.95, 0.92, 0.78, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 3
+
 [node name="Walls" type="Node2D" parent="."]
 
-[node name="Top" type="StaticBody2D" parent="Walls"]
-position = Vector2(0, -8)
+[node name="North" type="StaticBody2D" parent="Walls"]
+position = Vector2(0, -1106)
 
-[node name="Shape" type="CollisionShape2D" parent="Walls/Top"]
-shape = SubResource("WallH")
+[node name="Shape" type="CollisionShape2D" parent="Walls/North"]
+shape = SubResource("WallH_N")
 
-[node name="Bottom" type="StaticBody2D" parent="Walls"]
-position = Vector2(0, 200)
+[node name="SouthWest" type="StaticBody2D" parent="Walls"]
+position = Vector2(-800, 386)
 
-[node name="Shape" type="CollisionShape2D" parent="Walls/Bottom"]
-shape = SubResource("WallH")
+[node name="Shape" type="CollisionShape2D" parent="Walls/SouthWest"]
+shape = SubResource("WallH_S")
 
-[node name="Left" type="StaticBody2D" parent="Walls"]
-position = Vector2(-948, 96)
+[node name="SouthEast" type="StaticBody2D" parent="Walls"]
+position = Vector2(800, 386)
 
-[node name="Shape" type="CollisionShape2D" parent="Walls/Left"]
+[node name="Shape" type="CollisionShape2D" parent="Walls/SouthEast"]
+shape = SubResource("WallH_S")
+
+[node name="WestSide" type="StaticBody2D" parent="Walls"]
+position = Vector2(-1506, -350)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/WestSide"]
 shape = SubResource("WallV")
 
-[node name="Right" type="StaticBody2D" parent="Walls"]
-position = Vector2(908, 96)
+[node name="EastSide" type="StaticBody2D" parent="Walls"]
+position = Vector2(1506, -350)
 
-[node name="Shape" type="CollisionShape2D" parent="Walls/Right"]
+[node name="Shape" type="CollisionShape2D" parent="Walls/EastSide"]
 shape = SubResource("WallV")
+
+[node name="AterroBayWestEdge" type="StaticBody2D" parent="Walls"]
+position = Vector2(906, -600)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/AterroBayWestEdge"]
+shape = SubResource("WallV_AterroBay")
+
+[node name="BotafogoBayWestEdge" type="StaticBody2D" parent="Walls"]
+position = Vector2(206, -175)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/BotafogoBayWestEdge"]
+shape = SubResource("WallV_BayMid")
+
+[node name="MorroNorthEdge" type="StaticBody2D" parent="Walls"]
+position = Vector2(1100, -275)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/MorroNorthEdge"]
+shape = SubResource("WallV_Morro")
 
 [node name="PlayerSpawn" type="Marker2D" parent="."]
-position = Vector2(800, 130)
-
-[node name="TaxiStand" parent="." instance=ExtResource("1_taxi")]
-position = Vector2(-700, 50)
+position = Vector2(0, 250)
 
 [node name="ExitToCopa" parent="." instance=ExtResource("5_exit")]
-position = Vector2(880, 130)
+position = Vector2(0, 365)
 target_district = "copacabana"
-label_text = "→ TUNNEL COPA"
+label_text = "↓ TÚNEL → COPA"
 
-[node name="ViewpointFlamengoBay" parent="." instance=ExtResource("3_view")]
-position = Vector2(-700, 60)
+[node name="CollisionShape2D" parent="ExitToCopa" index="0"]
+shape = SubResource("ExitWideShape")
+
+[node name="TaxiStand" parent="." instance=ExtResource("1_taxi")]
+position = Vector2(-700, -45)
+
+[node name="ViewpointAterro" parent="." instance=ExtResource("3_view")]
+position = Vector2(-400, -600)
 viewpoint_id = "flamengo_aterro_bay"
 prompt_first = "Voir l'Aterro"
 flavor_speaker = "Sobrinho"
@@ -521,7 +1195,7 @@ flavor_text = "L'Aterro do Flamengo s'étend, vert et infini, entre les immeuble
 money_reward = 80
 
 [node name="ViewpointBotafogoBay" parent="." instance=ExtResource("3_view")]
-position = Vector2(0, 60)
+position = Vector2(-400, -130)
 viewpoint_id = "botafogo_enseada"
 prompt_first = "Photographier la baie"
 flavor_speaker = "Sobrinho"
@@ -529,7 +1203,7 @@ flavor_text = "L'enseada de Botafogo, courbée comme un croissant, encadrée par
 money_reward = 90
 
 [node name="ViewpointUrca" parent="." instance=ExtResource("3_view")]
-position = Vector2(720, 80)
+position = Vector2(620, -130)
 viewpoint_id = "urca_paoacucar"
 prompt_first = "Regarder le bondinho"
 flavor_speaker = "Sobrinho"
@@ -537,7 +1211,7 @@ flavor_text = "La station du bondinho. Les cabines bondées montent au pão d'a�
 money_reward = 70
 
 [node name="JuiceVendor" parent="." instance=ExtResource("4_vendor")]
-position = Vector2(-200, 90)
+position = Vector2(-300, -45)
 vendor_id = "botafogo_suco"
 item_label = "Suco de açaí"
 price = 12
@@ -545,133 +1219,178 @@ stamina_recover = 45.0
 flavor_text_offer = "Suco de açaí natural, freguês — energia pura !"
 
 [node name="UrcaCocoVendor" parent="." instance=ExtResource("4_vendor")]
-position = Vector2(620, 130)
+position = Vector2(820, -45)
 vendor_id = "urca_coco"
 item_label = "Coco gelado"
 price = 8
 stamina_recover = 35.0
 flavor_text_offer = "Coquinho fresco da Urca, freguês."
 
-[node name="ShoppingFlamengoVendor" parent="." instance=ExtResource("4_vendor")]
-position = Vector2(280, 50)
+[node name="ParkPamonhaVendor" parent="." instance=ExtResource("4_vendor")]
+position = Vector2(-200, -550)
 vendor_id = "flamengo_pamonha"
 item_label = "Pamonha doce"
 price = 6
 stamina_recover = 28.0
-flavor_text_offer = "Pamonha doce de Minas, fregueês. A bom preço, comme il dit."
+flavor_text_offer = "Pamonha doce de Minas, freguês. A bom preço, comme il dit."
 
 [node name="JoggerA" parent="." instance=ExtResource("2_wander")]
-position = Vector2(-800, 85)
+position = Vector2(-1300, -870)
 color = Color(0.4, 0.85, 0.55, 1)
 size = Vector2(9, 16)
-path = Array[Vector2]([Vector2(-800, 85), Vector2(580, 85), Vector2(-800, 85)])
+path = Array[Vector2]([Vector2(-1300, -870), Vector2(800, -870), Vector2(-1300, -870)])
 speed = 58.0
 pause_at_waypoints = 0.2
+pause_random_jitter = 0.4
+active_phases = [0]
 
 [node name="JoggerB" parent="." instance=ExtResource("2_wander")]
-position = Vector2(400, 85)
+position = Vector2(500, -870)
 color = Color(0.95, 0.55, 0.4, 1)
 size = Vector2(9, 16)
-path = Array[Vector2]([Vector2(400, 85), Vector2(-700, 85), Vector2(400, 85)])
+path = Array[Vector2]([Vector2(500, -870), Vector2(-1100, -870), Vector2(500, -870)])
 speed = 50.0
 pause_at_waypoints = 0.2
+pause_random_jitter = 0.4
+active_phases = [0]
 
-[node name="OfficeWorkerA" parent="." instance=ExtResource("2_wander")]
-position = Vector2(280, 50)
-color = Color(0.18, 0.18, 0.32, 1)
-size = Vector2(10, 18)
-path = Array[Vector2]([Vector2(280, 50), Vector2(120, 50), Vector2(280, 70)])
-speed = 28.0
-pause_at_waypoints = 1.4
-hat = true
-hat_color = Color(0.18, 0.18, 0.22, 1)
-
-[node name="OfficeWorkerB" parent="." instance=ExtResource("2_wander")]
-position = Vector2(-400, 50)
-color = Color(0.32, 0.32, 0.4, 1)
-size = Vector2(10, 18)
-path = Array[Vector2]([Vector2(-400, 50), Vector2(-200, 50), Vector2(-400, 70)])
-speed = 26.0
-pause_at_waypoints = 1.6
+[node name="JoggerC" parent="." instance=ExtResource("2_wander")]
+position = Vector2(0, -500)
+color = Color(0.4, 0.65, 0.95, 1)
+size = Vector2(9, 16)
+path = Array[Vector2]([Vector2(0, -500), Vector2(0, -950), Vector2(0, -500)])
+speed = 54.0
+pause_at_waypoints = 0.2
+pause_random_jitter = 0.4
+active_phases = [0]
 
 [node name="ParkPicnicA" parent="." instance=ExtResource("2_wander")]
-position = Vector2(-650, 145)
+position = Vector2(-1000, -650)
 color = Color(0.95, 0.85, 0.4, 1)
 size = Vector2(11, 14)
-path = Array[Vector2]([Vector2(-650, 145), Vector2(-630, 155), Vector2(-660, 140)])
-speed = 6.0
-pause_at_waypoints = 6.0
+stationary = true
 bob_strength = 0.4
+look_at_player_distance = 50.0
 
 [node name="ParkPicnicB" parent="." instance=ExtResource("2_wander")]
-position = Vector2(-450, 165)
+position = Vector2(-200, -480)
 color = Color(0.85, 0.4, 0.55, 1)
 size = Vector2(11, 14)
-path = Array[Vector2]([Vector2(-450, 165), Vector2(-430, 175), Vector2(-460, 160)])
-speed = 6.0
-pause_at_waypoints = 6.0
+stationary = true
 bob_strength = 0.4
+look_at_player_distance = 50.0
+
+[node name="ParkPicnicC" parent="." instance=ExtResource("2_wander")]
+position = Vector2(400, -550)
+color = Color(0.55, 0.85, 0.45, 1)
+size = Vector2(11, 14)
+stationary = true
+bob_strength = 0.4
+look_at_player_distance = 50.0
 
 [node name="ChildrenPark" parent="." instance=ExtResource("2_wander")]
-position = Vector2(-550, 130)
+position = Vector2(-700, -550)
 color = Color(0.4, 0.85, 0.55, 1)
 size = Vector2(7, 12)
-path = Array[Vector2]([Vector2(-550, 130), Vector2(-450, 150), Vector2(-650, 140), Vector2(-500, 130)])
+roam_zone = Rect2(-150, -50, 300, 100)
 speed = 36.0
 pause_at_waypoints = 0.4
+pause_random_jitter = 0.5
+look_at_player_distance = 50.0
 
 [node name="DogWalkerPark" parent="." instance=ExtResource("2_wander")]
-position = Vector2(-720, 140)
+position = Vector2(-1100, -350)
 color = Color(0.55, 0.42, 0.32, 1)
 size = Vector2(10, 17)
-path = Array[Vector2]([Vector2(-720, 140), Vector2(-500, 140), Vector2(-720, 130)])
+roam_zone = Rect2(-100, -50, 600, 100)
 speed = 18.0
 pause_at_waypoints = 1.8
+pause_random_jitter = 0.8
 
 [node name="BeachWalker" parent="." instance=ExtResource("2_wander")]
-position = Vector2(0, 140)
+position = Vector2(-700, -125)
 color = Color(0.95, 0.65, 0.55, 1)
 size = Vector2(10, 17)
-path = Array[Vector2]([Vector2(0, 140), Vector2(400, 150), Vector2(-200, 130)])
+roam_zone = Rect2(-500, -25, 1000, 50)
 speed = 22.0
 pause_at_waypoints = 2.2
+pause_random_jitter = 1.0
+look_at_player_distance = 60.0
 
-[node name="ChildSwimming" parent="." instance=ExtResource("2_wander")]
-position = Vector2(200, 165)
+[node name="BeachChildSwim" parent="." instance=ExtResource("2_wander")]
+position = Vector2(300, -130)
 color = Color(0.4, 0.65, 0.95, 1)
 size = Vector2(7, 12)
-path = Array[Vector2]([Vector2(200, 165), Vector2(280, 180), Vector2(150, 170)])
-speed = 30.0
+roam_zone = Rect2(-150, -20, 300, 60)
+speed = 28.0
 pause_at_waypoints = 1.0
+pause_random_jitter = 0.6
+active_phases = [0, 1]
+
+[node name="BotafogoOffice" parent="." instance=ExtResource("2_wander")]
+position = Vector2(-700, -45)
+color = Color(0.18, 0.18, 0.32, 1)
+size = Vector2(10, 18)
+roam_zone = Rect2(-200, -10, 400, 20)
+speed = 28.0
+pause_at_waypoints = 1.4
+pause_random_jitter = 0.6
+hat = true
+hat_color = Color(0.18, 0.18, 0.22, 1)
+active_phases = [0, 1]
+
+[node name="BotafogoResident" parent="." instance=ExtResource("2_wander")]
+position = Vector2(-1000, 90)
+color = Color(0.62, 0.42, 0.32, 1)
+size = Vector2(10, 17)
+roam_zone = Rect2(-300, -30, 600, 60)
+speed = 22.0
+pause_at_waypoints = 2.0
+pause_random_jitter = 1.0
+look_at_player_distance = 60.0
 
 [node name="UrcaTouristA" parent="." instance=ExtResource("2_wander")]
-position = Vector2(680, 130)
+position = Vector2(550, -45)
 color = Color(0.95, 0.85, 0.4, 1)
 size = Vector2(10, 18)
-path = Array[Vector2]([Vector2(680, 130), Vector2(740, 150), Vector2(620, 130)])
+roam_zone = Rect2(-100, -20, 200, 40)
 speed = 14.0
 pause_at_waypoints = 3.5
+pause_random_jitter = 1.5
 hat = true
 hat_color = Color(0.92, 0.85, 0.55, 1)
+look_at_player_distance = 70.0
 
 [node name="UrcaTouristB" parent="." instance=ExtResource("2_wander")]
-position = Vector2(800, 140)
+position = Vector2(820, -45)
 color = Color(0.4, 0.65, 0.95, 1)
 size = Vector2(10, 18)
-path = Array[Vector2]([Vector2(800, 140), Vector2(840, 130), Vector2(760, 150)])
+roam_zone = Rect2(-100, -20, 200, 40)
 speed = 12.0
 pause_at_waypoints = 4.0
+pause_random_jitter = 1.5
 hat = true
 hat_color = Color(0.95, 0.95, 0.85, 1)
+look_at_player_distance = 70.0
+
+[node name="ShoppingShopper" parent="." instance=ExtResource("2_wander")]
+position = Vector2(350, 295)
+color = Color(0.95, 0.55, 0.55, 1)
+size = Vector2(10, 17)
+roam_zone = Rect2(-150, -15, 300, 30)
+speed = 16.0
+pause_at_waypoints = 2.0
+pause_random_jitter = 0.8
+look_at_player_distance = 50.0
 
 [node name="Bike" parent="." instance=ExtResource("6_bike")]
-position = Vector2(-700, 100)
+position = Vector2(-500, -45)
 
 [node name="BikeLabel" type="Label" parent="."]
-offset_left = -740.0
-offset_top = 70.0
-offset_right = -660.0
-offset_bottom = 88.0
+offset_left = -540.0
+offset_top = -78.0
+offset_right = -460.0
+offset_bottom = -60.0
 text = "🚲 Vélo"
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 12
@@ -681,13 +1400,13 @@ theme_override_constants/outline_size = 4
 z_index = 1
 
 [node name="Car" parent="." instance=ExtResource("7_car")]
-position = Vector2(-100, 50)
+position = Vector2(-200, -45)
 
 [node name="CarLabel" type="Label" parent="."]
-offset_left = -140.0
-offset_top = 16.0
-offset_right = -60.0
-offset_bottom = 34.0
+offset_left = -240.0
+offset_top = -78.0
+offset_right = -160.0
+offset_bottom = -60.0
 text = "🚗 Voiture"
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 12

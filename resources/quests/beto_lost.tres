@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_find"]
+script = ExtResource("2_obj")
+id = "find_beto"
+description = "Trouver Beto sur le calçadão (côté est, vendeurs de coco)"
+optional = false
+
+[sub_resource type="Resource" id="obj_return"]
+script = ExtResource("2_obj")
+id = "tell_vizinha"
+description = "Rapporter à la voisine du morro"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "beto_lost"
+display_name = "O Beto sumiu"
+description = "Une voisine du morro a perdu son fils Beto, neuf ans, t-shirt jaune. Il aurait filé sur le calçadão. Trouve-le avant que la PM le ramasse."
+journal_text = "Chercher Beto au calçadão, puis revenir voir la voisine."
+giver_npc_id = "vizinha"
+ink_knot = "spot_vizinha_default"
+objectives = Array[Resource]([SubResource("obj_find"), SubResource("obj_return")])
+money_reward = 80
+reputation_rewards = {0: 3}
+required_reputation = {}
+required_act = 0
