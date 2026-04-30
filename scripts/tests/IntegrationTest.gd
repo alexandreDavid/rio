@@ -92,6 +92,7 @@ func _ready() -> void:
 	_test_wanderer_greeting_logic()
 	await _test_wanderer_full_init()
 	await _test_wanderer_render_toggle()
+	await _test_wanderer_pokemon_pixel_sheet()
 	await _test_wanderer_4dir_facing()
 	await _test_npc_quest_indicator()
 	await _test_district_exit_geometry()
@@ -1358,6 +1359,40 @@ func _exit_world_rect(exit_node: Node) -> Rect2:
 		return Rect2()
 	var pos: Vector2 = (exit_node as Node2D).global_position
 	return Rect2(pos - size / 2.0, size)
+
+func _test_wanderer_pokemon_pixel_sheet() -> void:
+	_section("AmbientWanderer — sheet pixel-art procédurale 16×24")
+	var script: GDScript = load("res://scripts/world/AmbientWanderer.gd")
+	var consts: Dictionary = script.get_script_constant_map()
+	var px_w: int = int(consts.get("PX_CELL_W", 0))
+	var px_h: int = int(consts.get("PX_CELL_H", 0))
+	_assert(px_w == 16, "PX_CELL_W = 16")
+	_assert(px_h == 24, "PX_CELL_H = 24")
+	if not bool(consts.get("RENDER_DEFAULT", false)) or not bool(consts.get("RENDER_POKEMON_PIXEL", false)):
+		# Mode désactivé : pas la peine de tester l'instantiation Sprite2D.
+		return
+	var packed: PackedScene = load("res://scenes/props/AmbientWanderer.tscn") as PackedScene
+	if packed == null:
+		_assert(false, "AmbientWanderer.tscn charge")
+		return
+	var w: Node = packed.instantiate()
+	add_child(w)
+	await get_tree().process_frame
+	# Le Sprite2D procédural doit exister sous le wanderer.
+	var spr: Node = w.find_child("PokemonSprite", true, false)
+	_assert(spr != null, "PokemonSprite Sprite2D créé à _ready")
+	if spr is Sprite2D:
+		var s: Sprite2D = spr as Sprite2D
+		_assert(s.texture != null, "PokemonSprite a une texture")
+		if s.texture is ImageTexture:
+			var sz: Vector2i = (s.texture as ImageTexture).get_size()
+			_assert(sz.x == px_w * 3 and sz.y == px_h * 3,
+				"Texture 48×72 (3×3 cellules de %dx%d)" % [px_w, px_h])
+		_assert(s.region_enabled, "region_enabled = true")
+		_assert(s.region_rect.size == Vector2(px_w, px_h),
+			"region_rect taille = %dx%d" % [px_w, px_h])
+	w.queue_free()
+	await get_tree().process_frame
 
 func _test_wanderer_render_toggle() -> void:
 	_section("AmbientWanderer — toggle global RENDER_DEFAULT")
