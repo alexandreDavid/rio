@@ -1,7 +1,7 @@
 class_name AmbientWanderer
 extends Node2D
 
-# Passant ambiant — style "premiers jeux Pokemon" (Gen 1/2). NPCs majoritairement
+# Passant ambiant — décoratif minimal. NPCs majoritairement
 # immobiles, qui font occasionnellement un demi-tour aléatoire pour donner un
 # signe de vie. Pas de salutations spontanées, pas de réaction au passage du
 # joueur (l'interaction est explicite — touche A sur eux pour leur parler).
@@ -11,11 +11,11 @@ extends Node2D
 #  - `static` (path vide ET roam_zone vide ET stationary=true) : reste sur place
 #    avec retournement aléatoire toutes les 3-8s.
 #
-# Style global toggle : POKEMON_STYLE_DEFAULT (en-tête). Quand vrai, désactive
+# Style global toggle : DECORATIVE_STYLE (en-tête). Quand vrai, désactive
 # bulle de salutation, look-at-player, séparation, et atténue le bob — les
-# wanderers sont quasi-décoratifs comme dans les premiers Pokemon.
+# wanderers sont quasi-décoratifs style figurants statiques.
 # Phase de la journée : `active_phases` (vide = toujours actif).
-const POKEMON_STYLE_DEFAULT: bool = true
+const DECORATIVE_STYLE: bool = true
 
 # Toggle global de rendu. Mis à false, tous les AmbientWanderer du jeu sont
 # cachés et n'occupent aucun CPU. Les .tscn ne sont pas modifiés — les
@@ -25,11 +25,11 @@ const POKEMON_STYLE_DEFAULT: bool = true
 const RENDER_DEFAULT: bool = true
 
 # Mode de rendu :
-#   POKEMON_PIXEL : sprite procédural pixel-art 16×24 généré au runtime, 3×3
+#   PIXEL_ART : sprite procédural pixel-art 16×24 généré au runtime, 3×3
 #                   sheet (3 directions × 3 frames), tinté par color/skin/hair.
-#                   Style Pokemon Gen 1 avec chunky pixels.
+#                   Style chunky pixels.
 #   COLORRECT     : composition ColorRect historique (head/body/arms/legs).
-const RENDER_POKEMON_PIXEL: bool = true
+const RENDER_PIXEL_ART: bool = true
 
 @export var color: Color = Color(0.85, 0.55, 0.4, 1)
 @export var skin_color: Color = Color(0.92, 0.78, 0.62, 1)
@@ -93,7 +93,7 @@ var _facing: int = 1  # 1 = right, -1 = left (legacy)
 var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
 var _spawn_position: Vector2 = Vector2.ZERO  # ancre pour roam_zone
 
-# Direction 4-axes style Pokemon. UP montre l'arrière de la tête (couleur cheveux),
+# Direction 4-axes. UP montre l'arrière de la tête (couleur cheveux),
 # DOWN/LEFT/RIGHT montrent le visage (couleur peau).
 const DIR_DOWN: int = 0
 const DIR_UP: int = 1
@@ -101,10 +101,10 @@ const DIR_RIGHT: int = 2
 const DIR_LEFT: int = 3
 var _facing_4: int = DIR_DOWN
 
-# Retournement aléatoire style Pokemon — un NPC stationnaire change son facing
+# Retournement aléatoire — un NPC stationnaire change son facing
 # de temps en temps pour montrer qu'il est vivant sans être réactif.
-const POKEMON_TURN_INTERVAL_MIN: float = 3.0
-const POKEMON_TURN_INTERVAL_MAX: float = 8.0
+const IDLE_TURN_INTERVAL_MIN: float = 3.0
+const IDLE_TURN_INTERVAL_MAX: float = 8.0
 var _next_turn_at: float = 0.0
 
 # État de la salutation en cours (visuelle uniquement, ne bloque pas la marche).
@@ -146,20 +146,20 @@ func _ready() -> void:
 		visible = false
 		set_process(false)
 		return
-	# Mode Pokemon : neutralise les comportements réactifs (look_at + bulle +
+	# Mode décoratif : neutralise les comportements réactifs (look_at + bulle +
 	# bob trop visible). Les wanderers deviennent décoratifs, on parle aux
-	# NPCs scriptés via la touche A — comme dans les premiers Pokemon.
-	if POKEMON_STYLE_DEFAULT:
+	# NPCs scriptés via la touche A — style figurants statiques.
+	if DECORATIVE_STYLE:
 		look_at_player_distance = 0.0
 		bob_strength = min(bob_strength, 0.3)
 	# Choix du moteur de rendu :
-	#  - POKEMON_PIXEL : sprite procédural 16×24, masque la composition ColorRect
+	#  - PIXEL_ART : sprite procédural 16×24, masque la composition ColorRect
 	#  - sinon : composition ColorRect historique
-	if RENDER_POKEMON_PIXEL:
-		_setup_pokemon_pixel_sprite()
+	if RENDER_PIXEL_ART:
+		_setup_pixel_sprite()
 	else:
 		_layout_sprite()
-	if not POKEMON_STYLE_DEFAULT:
+	if not DECORATIVE_STYLE:
 		_setup_greeting_bubble()
 	# Initialise la cible selon le mode.
 	if _uses_roam_zone():
@@ -169,17 +169,17 @@ func _ready() -> void:
 			path = [Vector2(-30, 0), Vector2(30, 0)]
 		_local_target = path[_current]
 	else:
-		_schedule_next_pokemon_turn()
+		_schedule_next_idle_turn()
 	# Phase awareness : abonne-toi si filtre actif.
 	if not active_phases.is_empty():
 		EventBus.time_of_day_changed.connect(_on_phase_changed)
 		_apply_phase_visibility(TimeOfDay.current_phase)
 	_registry.append(self)
 
-# --- Génération procédurale du sprite pokemon-style ---
+# --- Génération procédurale du sprite procédural ---
 # Préload pour s'assurer que la factory est résolue au parse-time (pas
 # besoin d'attendre que Godot génère le .uid de classe).
-const _PokemonSpriteFactoryRef = preload("res://scripts/world/PokemonSpriteFactory.gd")
+const _CharacterSpriteFactoryRef = preload("res://scripts/world/CharacterSpriteFactory.gd")
 
 # Une feuille 3×3 cellules (16×24 px chacune) générée à _ready à partir des
 # couleurs (color, skin_color, hair_color) du wanderer. Pas d'asset binaire :
@@ -195,11 +195,11 @@ const PX_DIR_RIGHT: int = 2
 # Cache : clé = "<color>|<skin>|<hair>|<hat>|<hat_color>", valeur = ImageTexture.
 static var _sprite_cache: Dictionary = {}
 
-# Sprite2D dynamique créé à _ready quand RENDER_POKEMON_PIXEL est actif.
-var _pokemon_sprite: Sprite2D = null
-var _pokemon_walk_frame: int = 0  # 0=idle, 1=stepL, 2=stepR
+# Sprite2D dynamique créé à _ready quand RENDER_PIXEL_ART est actif.
+var _pixel_sprite: Sprite2D = null
+var _walk_frame_idx: int = 0  # 0=idle, 1=stepL, 2=stepR
 
-func _build_pokemon_sprite_sheet() -> ImageTexture:
+func _build_sprite_sheet() -> ImageTexture:
 	var key: String = "%s|%s|%s|%s|%s" % [color, skin_color, hair_color, hat, hat_color]
 	if _sprite_cache.has(key):
 		return _sprite_cache[key]
@@ -209,14 +209,14 @@ func _build_pokemon_sprite_sheet() -> ImageTexture:
 	img.fill(Color(0, 0, 0, 0))
 	for dir in 3:
 		for frame in 3:
-			_draw_pokemon_cell(img, frame * PX_CELL_W, dir * PX_CELL_H, dir, frame)
+			_draw_sprite_cell(img, frame * PX_CELL_W, dir * PX_CELL_H, dir, frame)
 	var tex: ImageTexture = ImageTexture.create_from_image(img)
 	_sprite_cache[key] = tex
 	return tex
 
 # Dessine une cellule de 16×24 px à l'offset (ox, oy) pour la direction `dir`
 # (0=DOWN, 1=UP, 2=RIGHT) et le frame `frame` (0=idle, 1=stepL, 2=stepR).
-func _draw_pokemon_cell(img: Image, ox: int, oy: int, dir: int, frame: int) -> void:
+func _draw_sprite_cell(img: Image, ox: int, oy: int, dir: int, frame: int) -> void:
 	var skin: Color = skin_color
 	var hair: Color = hair_color
 	var shirt: Color = color
@@ -283,11 +283,11 @@ func _px_fill_rect(img: Image, x: int, y: int, w: int, h: int, c: Color) -> void
 				img.set_pixel(xx, yy, c)
 
 # Programme le prochain demi-tour aléatoire pour un NPC stationnaire.
-func _schedule_next_pokemon_turn() -> void:
+func _schedule_next_idle_turn() -> void:
 	var now: float = Time.get_ticks_msec() / 1000.0
-	_next_turn_at = now + _rng.randf_range(POKEMON_TURN_INTERVAL_MIN, POKEMON_TURN_INTERVAL_MAX)
+	_next_turn_at = now + _rng.randf_range(IDLE_TURN_INTERVAL_MIN, IDLE_TURN_INTERVAL_MAX)
 
-# Applique l'orientation 4-axes au sprite. En mode POKEMON_PIXEL, met aussi
+# Applique l'orientation 4-axes au sprite. En mode PIXEL_ART, met aussi
 # à jour le region_rect de la sheet procédurale. En mode COLORRECT, change
 # les couleurs de la composition (UP = back of head colorée en cheveux).
 func _apply_facing_4(dir: int) -> void:
@@ -324,8 +324,8 @@ func _apply_facing_4(dir: int) -> void:
 				hair.visible = hair_color.a > 0.0
 			_facing = -1
 	# Mise à jour de la sheet procédurale si elle est active.
-	if _pokemon_sprite != null:
-		_apply_pokemon_region(dir, _pokemon_walk_frame)
+	if _pixel_sprite != null:
+		_apply_sprite_region(dir, _walk_frame_idx)
 
 # Direction la plus saillante d'un vecteur (utile pour walk-by-velocity).
 func _direction_from_vector(v: Vector2) -> int:
@@ -357,9 +357,9 @@ func _exit_tree() -> void:
 # Crée un Sprite2D avec la sheet 3×3 procédurale et masque les ColorRects de
 # la composition historique. Le sprite est ancré sur la position du wanderer
 # (pieds en bas), scaledd 2× pour matcher la hauteur typique de NPC (48 px).
-# Utilise PokemonSpriteFactory si une config est piochée — sinon retombe sur
+# Utilise CharacterSpriteFactory si une config est piochée — sinon retombe sur
 # le générateur historique en couleurs uniformes.
-func _setup_pokemon_pixel_sprite() -> void:
+func _setup_pixel_sprite() -> void:
 	# Masque tout ce qui appartient à la composition ColorRect.
 	for n in [body, head, hair, hat_rect, leg_l, leg_r, arm_l, arm_r]:
 		if n != null:
@@ -369,37 +369,37 @@ func _setup_pokemon_pixel_sprite() -> void:
 		shadow.size = Vector2(size.x * 1.4, size.y * 0.18)
 		shadow.position = Vector2(-shadow.size.x / 2.0, size.y / 2.0 - shadow.size.y * 0.4)
 		shadow.color = Color(0, 0, 0, 0.32)
-	_pokemon_sprite = Sprite2D.new()
-	_pokemon_sprite.name = "PokemonSprite"
+	_pixel_sprite = Sprite2D.new()
+	_pixel_sprite.name = "PixelSprite"
 	# Pioche une config style chibi cohérente via la factory paramétrique.
 	# Seed = hash du nom du wanderer pour stabilité entre runs (un même
 	# "JoggerA" garde toujours la même apparence).
 	var seed_value: int = name.hash() if name != "" else int(_spawn_position.x * 31.0 + _spawn_position.y)
-	var config: Dictionary = _PokemonSpriteFactoryRef.random_config(seed_value)
-	_pokemon_sprite.texture = _PokemonSpriteFactoryRef.build_sheet(config)
-	_pokemon_sprite.region_enabled = true
-	_pokemon_sprite.region_rect = Rect2(0, 0, PX_CELL_W, PX_CELL_H)
+	var config: Dictionary = _CharacterSpriteFactoryRef.random_config(seed_value)
+	_pixel_sprite.texture = _CharacterSpriteFactoryRef.build_sheet(config)
+	_pixel_sprite.region_enabled = true
+	_pixel_sprite.region_rect = Rect2(0, 0, PX_CELL_W, PX_CELL_H)
 	# Scale pour atteindre une hauteur ~ size.y (utilise la même target que
 	# le rendu ColorRect pour cohérence). 16x24 → 2× = 32x48 par défaut.
 	var target_h: float = max(size.y, 18.0)
 	var scale_factor: float = target_h / PX_CELL_H * 2.0
-	_pokemon_sprite.scale = Vector2(scale_factor, scale_factor)
+	_pixel_sprite.scale = Vector2(scale_factor, scale_factor)
 	# Ancre par les pieds : le sprite est dessiné centré, on le remonte de
 	# moitié pour que le bas des pieds corresponde à position.y du wanderer.
-	_pokemon_sprite.position = Vector2(0, -target_h * 0.4)
+	_pixel_sprite.position = Vector2(0, -target_h * 0.4)
 	# On ajoute le sprite SOUS la node `sprite` (Node2D) qui gère scale.x pour
 	# le flip LEFT — comme ça _apply_facing_4(LEFT) flippe naturellement.
 	if sprite:
-		sprite.add_child(_pokemon_sprite)
+		sprite.add_child(_pixel_sprite)
 	else:
-		add_child(_pokemon_sprite)
+		add_child(_pixel_sprite)
 	# Pose la cellule initiale (DOWN, idle).
-	_apply_pokemon_region(DIR_DOWN, 0)
+	_apply_sprite_region(DIR_DOWN, 0)
 
 # Met à jour le region_rect du Sprite2D selon direction + frame de marche.
 # Si LEFT, on utilise la même row que RIGHT mais on flippe via sprite.scale.x.
-func _apply_pokemon_region(dir: int, frame: int) -> void:
-	if _pokemon_sprite == null:
+func _apply_sprite_region(dir: int, frame: int) -> void:
+	if _pixel_sprite == null:
 		return
 	var row: int = PX_DIR_DOWN
 	match dir:
@@ -408,7 +408,7 @@ func _apply_pokemon_region(dir: int, frame: int) -> void:
 		DIR_RIGHT: row = PX_DIR_RIGHT
 		DIR_LEFT:  row = PX_DIR_RIGHT  # mirroir horizontal au niveau du parent
 	var col: int = clamp(frame, 0, 2)
-	_pokemon_sprite.region_rect = Rect2(col * PX_CELL_W, row * PX_CELL_H, PX_CELL_W, PX_CELL_H)
+	_pixel_sprite.region_rect = Rect2(col * PX_CELL_W, row * PX_CELL_H, PX_CELL_W, PX_CELL_H)
 
 func _uses_roam_zone() -> bool:
 	return roam_zone.size.x > 0.0 and roam_zone.size.y > 0.0
@@ -490,10 +490,10 @@ func _process(delta: float) -> void:
 	if sprite:
 		sprite.position.y = sin(_bob_t) * bob_strength
 
-	# Mode Pokemon : court-circuite tous les comportements réactifs et
+	# Mode décoratif : court-circuite tous les comportements réactifs et
 	# applique juste le retournement aléatoire si stationnaire.
-	if POKEMON_STYLE_DEFAULT:
-		_pokemon_process()
+	if DECORATIVE_STYLE:
+		_decorative_process()
 		return
 
 	# Animation de fade de la bulle de salutation, indépendante du look state
@@ -578,14 +578,14 @@ func _check_look_at_player() -> bool:
 		sprite.scale.x = _facing
 	return true
 
-# Boucle simplifiée style Pokemon Gen 1/2 :
+# Boucle simplifiée décoratif :
 #   - stationnaire → idle pose + retournement aléatoire toutes les 3-8 s
 #   - path → marche entre waypoints sans interaction (pause à chaque end)
 #   - roam_zone → marche aléatoire dans la zone (pause variable)
 # Pas de bulle, pas de look-at-player, pas de séparation entre wanderers. Le
 # joueur peut leur passer dessus s'il veut, ils ne se figent pas. C'est la
 # touche A sur eux (via NPC scripté) qui déclenche le dialogue, pas la proximité.
-func _pokemon_process() -> void:
+func _decorative_process() -> void:
 	# Stationnaire : idle pose + retournement 4-directions occasionnel.
 	if stationary:
 		_idle_pose()
@@ -600,7 +600,7 @@ func _pokemon_process() -> void:
 				while new_dir == _facing_4:
 					new_dir = _rng.randi() % 4
 				_apply_facing_4(new_dir)
-			_schedule_next_pokemon_turn()
+			_schedule_next_idle_turn()
 		return
 
 	# En pause entre waypoints / cibles.
@@ -623,25 +623,25 @@ func _pokemon_process() -> void:
 	_apply_facing_4(_direction_from_vector(to_target))
 	_walk_t += get_process_delta_time() * (speed / 18.0)
 	_walk_pose()
-	# Cycle pokemon classique sur 4 phases : idle → stepL → idle → stepR.
+	# Cycle de marche classique sur 4 phases : idle → stepL → idle → stepR.
 	# Mappe sur les 3 frames de la sheet (col 0=idle, 1=stepL, 2=stepR).
 	var phase: int = int(_walk_t * 6.0) % 4
-	var pokemon_frame: int = 0
+	var walk_frame: int = 0
 	if phase == 1:
-		pokemon_frame = 1
+		walk_frame = 1
 	elif phase == 3:
-		pokemon_frame = 2
-	_set_walk_frame(pokemon_frame)
+		walk_frame = 2
+	_set_walk_frame(walk_frame)
 
 # Met à jour le frame de marche affiché par le sprite procédural.
 # No-op si le sprite procédural n'est pas actif.
 func _set_walk_frame(frame: int) -> void:
-	if _pokemon_sprite == null:
+	if _pixel_sprite == null:
 		return
-	if _pokemon_walk_frame == frame:
+	if _walk_frame_idx == frame:
 		return
-	_pokemon_walk_frame = frame
-	_apply_pokemon_region(_facing_4, frame)
+	_walk_frame_idx = frame
+	_apply_sprite_region(_facing_4, frame)
 
 # Met à jour l'alpha de la bulle : fade-in 0.2s, hold, fade-out 0.2s, dans la
 # fenêtre [_greeting_started_at, _greeting_until]. Hors fenêtre = invisible.

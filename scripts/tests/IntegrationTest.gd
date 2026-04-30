@@ -92,8 +92,8 @@ func _ready() -> void:
 	_test_wanderer_greeting_logic()
 	await _test_wanderer_full_init()
 	await _test_wanderer_render_toggle()
-	await _test_pokemon_sprite_factory()
-	await _test_wanderer_pokemon_pixel_sheet()
+	await _test_sprite_factory()
+	await _test_wanderer_pixel_sheet()
 	await _test_wanderer_4dir_facing()
 	await _test_npc_procedural_sprite()
 	_test_home_visit_clears_on_favela_entry()
@@ -1003,7 +1003,7 @@ func _test_wanderer_full_init() -> void:
 	_assert(consts.get("BOW_PHRASES", []).size() > 0, "BOW_PHRASES non-vide")
 	_assert(consts.get("SALUTE_PHRASES", []).size() > 0, "SALUTE_PHRASES non-vide")
 	# Instanciation complète via scène : vérifie que _ready() ne crash pas et
-	# que la bulle existe ou est absente selon le mode global POKEMON_STYLE_DEFAULT.
+	# que la bulle existe ou est absente selon le mode global DECORATIVE_STYLE.
 	var packed: PackedScene = load("res://scenes/props/AmbientWanderer.tscn") as PackedScene
 	_assert(packed != null, "AmbientWanderer.tscn charge")
 	if packed == null:
@@ -1012,9 +1012,9 @@ func _test_wanderer_full_init() -> void:
 	add_child(w)
 	await get_tree().process_frame
 	var bubble: Node = w.get_node_or_null("GreetingBubble")
-	var pokemon_mode: bool = bool(consts.get("POKEMON_STYLE_DEFAULT", false))
-	if pokemon_mode:
-		_assert(bubble == null, "Pokemon mode : pas de bulle de salutation créée")
+	var decorative_mode: bool = bool(consts.get("DECORATIVE_STYLE", false))
+	if decorative_mode:
+		_assert(bubble == null, "Mode décoratif : pas de bulle de salutation créée")
 	else:
 		_assert(bubble != null, "GreetingBubble créée à _ready")
 		_assert(bubble is Label, "GreetingBubble est une Label")
@@ -1363,10 +1363,10 @@ func _exit_world_rect(exit_node: Node) -> Rect2:
 	var pos: Vector2 = (exit_node as Node2D).global_position
 	return Rect2(pos - size / 2.0, size)
 
-func _test_pokemon_sprite_factory() -> void:
-	_section("PokemonSpriteFactory — palettes + configs reproductibles + cache")
-	var factory: GDScript = load("res://scripts/world/PokemonSpriteFactory.gd")
-	_assert(factory != null, "PokemonSpriteFactory.gd charge")
+func _test_sprite_factory() -> void:
+	_section("CharacterSpriteFactory — palettes + configs reproductibles + cache")
+	var factory: GDScript = load("res://scripts/world/CharacterSpriteFactory.gd")
+	_assert(factory != null, "CharacterSpriteFactory.gd charge")
 	if factory == null:
 		return
 	# Palettes non vides — minimum requis pour avoir de la variété.
@@ -1396,7 +1396,7 @@ func _test_pokemon_sprite_factory() -> void:
 		var sz: Vector2 = t1.get_size()
 		_assert(int(sz.x) == 48 and int(sz.y) == 72, "Texture 48×72 (3 dirs × 3 frames de 16×24)")
 
-func _test_wanderer_pokemon_pixel_sheet() -> void:
+func _test_wanderer_pixel_sheet() -> void:
 	_section("AmbientWanderer — sheet pixel-art procédurale 16×24")
 	var script: GDScript = load("res://scripts/world/AmbientWanderer.gd")
 	var consts: Dictionary = script.get_script_constant_map()
@@ -1404,7 +1404,7 @@ func _test_wanderer_pokemon_pixel_sheet() -> void:
 	var px_h: int = int(consts.get("PX_CELL_H", 0))
 	_assert(px_w == 16, "PX_CELL_W = 16")
 	_assert(px_h == 24, "PX_CELL_H = 24")
-	if not bool(consts.get("RENDER_DEFAULT", false)) or not bool(consts.get("RENDER_POKEMON_PIXEL", false)):
+	if not bool(consts.get("RENDER_DEFAULT", false)) or not bool(consts.get("RENDER_PIXEL_ART", false)):
 		# Mode désactivé : pas la peine de tester l'instantiation Sprite2D.
 		return
 	var packed: PackedScene = load("res://scenes/props/AmbientWanderer.tscn") as PackedScene
@@ -1415,11 +1415,11 @@ func _test_wanderer_pokemon_pixel_sheet() -> void:
 	add_child(w)
 	await get_tree().process_frame
 	# Le Sprite2D procédural doit exister sous le wanderer.
-	var spr: Node = w.find_child("PokemonSprite", true, false)
-	_assert(spr != null, "PokemonSprite Sprite2D créé à _ready")
+	var spr: Node = w.find_child("PixelSprite", true, false)
+	_assert(spr != null, "PixelSprite Sprite2D créé à _ready")
 	if spr is Sprite2D:
 		var s: Sprite2D = spr as Sprite2D
-		_assert(s.texture != null, "PokemonSprite a une texture")
+		_assert(s.texture != null, "PixelSprite a une texture")
 		if s.texture is ImageTexture:
 			var sz: Vector2i = (s.texture as ImageTexture).get_size()
 			_assert(sz.x == px_w * 3 and sz.y == px_h * 3,
@@ -1451,7 +1451,7 @@ func _test_wanderer_render_toggle() -> void:
 	await get_tree().process_frame
 
 func _test_wanderer_4dir_facing() -> void:
-	_section("AmbientWanderer — facing 4 directions (style Pokemon Gen 1)")
+	_section("AmbientWanderer — facing 4 directions (4 directions)")
 	var script: GDScript = load("res://scripts/world/AmbientWanderer.gd")
 	_assert(script != null, "AmbientWanderer.gd charge")
 	if script == null:
@@ -1462,7 +1462,7 @@ func _test_wanderer_4dir_facing() -> void:
 	_assert(w._direction_from_vector(Vector2(-10, 1)) == w.DIR_LEFT, "vecteur gauche → DIR_LEFT")
 	_assert(w._direction_from_vector(Vector2(1, 10)) == w.DIR_DOWN, "vecteur bas → DIR_DOWN")
 	_assert(w._direction_from_vector(Vector2(1, -10)) == w.DIR_UP, "vecteur haut → DIR_UP")
-	# Pioche aléatoire dans le retournement Pokemon : la nouvelle direction doit
+	# Pioche aléatoire dans le retournement aléatoire : la nouvelle direction doit
 	# être différente de la courante (loop while new == current).
 	w.free()
 	# Test "scene-instantié" : applique une direction et vérifie le sprite.
@@ -1522,8 +1522,8 @@ func _test_home_visit_clears_on_favela_entry() -> void:
 	CampaignManager.flags.clear()
 
 func _test_npc_procedural_sprite() -> void:
-	_section("NPC — sprite procédural via PokemonSpriteFactory")
-	var factory: GDScript = load("res://scripts/world/PokemonSpriteFactory.gd")
+	_section("NPC — sprite procédural via CharacterSpriteFactory")
+	var factory: GDScript = load("res://scripts/world/CharacterSpriteFactory.gd")
 	# config_for_npc retourne un Dictionary non-vide pour les NPCs majeurs.
 	for npc_id in ["seu_joao", "ramos", "tito", "padre", "carlos", "concierge", "contessa"]:
 		var cfg: Dictionary = factory.config_for_npc(npc_id)
@@ -1554,7 +1554,7 @@ func _test_npc_procedural_sprite() -> void:
 	await get_tree().process_frame
 
 func _test_npc_quest_indicator() -> void:
-	_section("NPC — indicateur de quête style Pokemon ('!' au-dessus de la tête)")
+	_section("NPC — indicateur de quête $$ ('!' au-dessus de la tête)")
 	# Instancie un NPC scénarisé existant (Otavio choisi : c'est un giver simple).
 	var packed: PackedScene = load("res://scenes/npcs/Otavio.tscn") as PackedScene
 	_assert(packed != null, "Otavio.tscn charge")

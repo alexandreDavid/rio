@@ -1,8 +1,9 @@
-class_name PokemonSpriteFactory
+class_name CharacterSpriteFactory
 
-# Génère des sprites pixel-art procéduraux pour les personnages décoratifs.
-# Chaque sprite est une feuille 3 directions × 3 frames (16×24 px / cellule),
-# composée à partir d'un Dictionary de config :
+# Génère des sprites pixel-art procéduraux pour les personnages du jeu
+# (NPCs scriptés + figurants décoratifs). Chaque sprite est une feuille
+# 3 directions × 3 frames (16×24 px / cellule), composée à partir d'un
+# Dictionary de config :
 #
 #   {
 #     "skin": Color,          # teint de peau (3 options dans la palette)
