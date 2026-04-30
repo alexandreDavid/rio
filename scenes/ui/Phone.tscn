@@ -51,6 +51,7 @@ corner_radius_bottom_left = 16
 
 [node name="Phone" type="CanvasLayer"]
 layer = 6
+process_mode = 3
 script = ExtResource("1_phone")
 
 [node name="Backdrop" type="ColorRect" parent="."]
