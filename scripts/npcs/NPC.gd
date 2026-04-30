@@ -112,14 +112,42 @@ func _qi_player_nearby() -> bool:
 		return false
 	return global_position.distance_to(GameManager.player.global_position) <= QI_VISIBLE_DISTANCE
 
+# Si vrai, tous les NPCs utilisent le sprite procédural pixel-art généré par
+# PokemonSpriteFactory (config explicite par id, fallback aléatoire stable).
+# Cohérence visuelle : même style que les wanderers.
+const USE_PROCEDURAL_NPC_SPRITES: bool = true
+
 func _setup_visual_polish() -> void:
 	# Repère le sprite principal pour le scale-punch d'interaction.
 	_sprite = get_node_or_null("Sprite2D")
-	# Si un sprite individuel existe pour ce NPC, on l'utilise à la place de la région d'atlas.
-	_try_load_individual_sprite()
+	# Mode procédural : génère le sprite via la factory.
+	if USE_PROCEDURAL_NPC_SPRITES and _sprite is Sprite2D and data and data.id != "":
+		_setup_procedural_sprite()
+	else:
+		# Sinon : tente de charger un PNG individuel (fallback historique).
+		_try_load_individual_sprite()
 	if _sprite is Node2D:
 		_sprite_base_scale = (_sprite as Node2D).scale
 	_spawn_shadow()
+
+# Génère et applique un sprite pixel-art via PokemonSpriteFactory. Le NPC
+# affiche par défaut sa cellule DOWN/idle (1ère colonne, 1ère ligne).
+const PROCEDURAL_CELL_W: int = 16
+const PROCEDURAL_CELL_H: int = 24
+
+func _setup_procedural_sprite() -> void:
+	var spr: Sprite2D = _sprite as Sprite2D
+	var factory: GDScript = preload("res://scripts/world/PokemonSpriteFactory.gd")
+	var config: Dictionary = factory.config_for_npc(data.id)
+	var sheet: ImageTexture = factory.build_sheet(config)
+	spr.texture = sheet
+	spr.region_enabled = true
+	spr.region_rect = Rect2(0, 0, PROCEDURAL_CELL_W, PROCEDURAL_CELL_H)
+	# Scale pour matcher SPRITE_TARGET_HEIGHT (48 px) : 24 px source × 2 = 48.
+	var s: float = SPRITE_TARGET_HEIGHT / float(PROCEDURAL_CELL_H)
+	spr.scale = Vector2(s, s)
+	# Désactive le filtrage pour garder le pixel chunky (pixel-perfect look).
+	spr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 
 # Helper static : charge un sprite individuel (idle ou walk-sheet 3×3) depuis
 # assets/sprites/npcs/<id>.png ou <id>_walk.png et l'applique au Sprite2D fourni.

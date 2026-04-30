@@ -95,6 +95,7 @@ func _ready() -> void:
 	await _test_pokemon_sprite_factory()
 	await _test_wanderer_pokemon_pixel_sheet()
 	await _test_wanderer_4dir_facing()
+	await _test_npc_procedural_sprite()
 	await _test_npc_quest_indicator()
 	await _test_district_exit_geometry()
 	await _test_district_walk_to_exit()
@@ -1487,6 +1488,38 @@ func _test_wanderer_4dir_facing() -> void:
 	if sprite_node:
 		_assert(sprite_node.scale.x < 0.0, "LEFT : sprite.scale.x < 0 (flip)")
 	w2.queue_free()
+	await get_tree().process_frame
+
+func _test_npc_procedural_sprite() -> void:
+	_section("NPC — sprite procédural via PokemonSpriteFactory")
+	var factory: GDScript = load("res://scripts/world/PokemonSpriteFactory.gd")
+	# config_for_npc retourne un Dictionary non-vide pour les NPCs majeurs.
+	for npc_id in ["seu_joao", "ramos", "tito", "padre", "carlos", "concierge", "contessa"]:
+		var cfg: Dictionary = factory.config_for_npc(npc_id)
+		_assert(not cfg.is_empty(), "config_for_npc('%s') non-vide" % npc_id)
+		for k in ["skin", "hair_color", "hair_style", "shirt_color"]:
+			_assert(cfg.has(k), "config '%s' a la clé '%s'" % [npc_id, k])
+	# Pour un id inconnu, fallback aléatoire reproductible.
+	var fallback1: Dictionary = factory.config_for_npc("unknown_npc_xyz")
+	var fallback2: Dictionary = factory.config_for_npc("unknown_npc_xyz")
+	_assert(fallback1 == fallback2, "Fallback aléatoire reproductible (même id → même config)")
+	# Charge un NPC scénarisé et vérifie que son Sprite2D a une texture procédurale.
+	var packed: PackedScene = load("res://scenes/npcs/SeuJoao.tscn") as PackedScene
+	if packed == null:
+		_assert(false, "SeuJoao.tscn charge")
+		return
+	var npc: Node = packed.instantiate()
+	add_child(npc)
+	await get_tree().process_frame
+	var sprite_node: Node = npc.get_node_or_null("Sprite2D")
+	_assert(sprite_node != null and sprite_node is Sprite2D, "NPC a un Sprite2D")
+	if sprite_node is Sprite2D:
+		var s: Sprite2D = sprite_node as Sprite2D
+		_assert(s.texture is ImageTexture, "Sprite2D.texture est une ImageTexture (procédurale)")
+		_assert(s.region_enabled, "region_enabled = true")
+		_assert(s.region_rect.size == Vector2(16, 24), "region_rect = 16×24 (cellule DOWN/idle)")
+		_assert(s.texture_filter == CanvasItem.TEXTURE_FILTER_NEAREST, "Filtrage NEAREST (pixel-perfect)")
+	npc.queue_free()
 	await get_tree().process_frame
 
 func _test_npc_quest_indicator() -> void:

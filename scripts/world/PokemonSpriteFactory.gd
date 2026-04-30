@@ -92,6 +92,331 @@ const COLS: int = 3   # idle, stepL, stepR
 # Cache global ImageTexture par config-hash.
 static var _cache: Dictionary = {}
 
+# Configs explicites des NPCs scriptés majeurs. Chaque entrée fait que le
+# personnage soit reconnaissable visuellement (Tito en chemise rouge favela,
+# Ramos en uniforme PM, Contessa en long blond élégant, etc.). Pour tout
+# NPC absent, on retombe sur random_config basé sur le hash de l'id.
+const NAMED_NPC_CONFIGS: Dictionary = {
+	# --- Famille / proches ---
+	"seu_joao": {
+		"skin": Color(0.86, 0.70, 0.55, 1.0),          # médium-clair, ridé
+		"hair_color": Color(0.65, 0.62, 0.58, 1.0),    # gris
+		"hair_style": "short",
+		"shirt_color": Color(0.62, 0.42, 0.32, 1.0),   # marron usé
+		"shirt_pattern": "solid",
+		"pants_color": Color(0.30, 0.25, 0.20, 1.0),   # marron foncé
+		"hat_style": "none",
+		"hat_color": Color(0.42, 0.32, 0.22, 1.0),
+	},
+	"vovo": {
+		"skin": Color(0.86, 0.70, 0.55, 1.0),
+		"hair_color": Color(0.85, 0.85, 0.85, 1.0),    # blanc cheveux âgés
+		"hair_style": "bun",
+		"shirt_color": Color(0.42, 0.32, 0.42, 1.0),   # mauve sombre
+		"shirt_pattern": "solid",
+		"pants_color": Color(0.30, 0.25, 0.20, 1.0),
+		"hat_style": "scarf",
+		"hat_color": Color(0.55, 0.42, 0.55, 1.0),
+	},
+	"mae": {
+		"skin": Color(0.86, 0.70, 0.55, 1.0),
+		"hair_color": Color(0.32, 0.20, 0.12, 1.0),
+		"hair_style": "long",
+		"shirt_color": Color(0.95, 0.85, 0.40, 1.0),   # tablier jaune
+		"shirt_pattern": "stripe_h",
+		"pants_color": Color(0.42, 0.32, 0.22, 1.0),
+		"hat_style": "none",
+		"hat_color": Color(0.42, 0.32, 0.22, 1.0),
+	},
+	# --- Autorité ---
+	"ramos": {
+		"skin": Color(0.86, 0.70, 0.55, 1.0),
+		"hair_color": Color(0.10, 0.08, 0.06, 1.0),
+		"hair_style": "short",
+		"shirt_color": Color(0.30, 0.42, 0.65, 1.0),   # bleu PM
+		"shirt_pattern": "solid",
+		"pants_color": Color(0.18, 0.22, 0.42, 1.0),
+		"hat_style": "cap",
+		"hat_color": Color(0.18, 0.22, 0.42, 1.0),
+	},
+	"pm": {
+		"skin": Color(0.86, 0.70, 0.55, 1.0),
+		"hair_color": Color(0.10, 0.08, 0.06, 1.0),
+		"hair_style": "short",
+		"shirt_color": Color(0.30, 0.42, 0.65, 1.0),
+		"shirt_pattern": "solid",
+		"pants_color": Color(0.18, 0.22, 0.42, 1.0),
+		"hat_style": "cap",
+		"hat_color": Color(0.18, 0.22, 0.42, 1.0),
+	},
+	"policier": {
+		"skin": Color(0.65, 0.48, 0.32, 1.0),
+		"hair_color": Color(0.10, 0.08, 0.06, 1.0),
+		"hair_style": "short",
+		"shirt_color": Color(0.30, 0.42, 0.65, 1.0),
+		"shirt_pattern": "solid",
+		"pants_color": Color(0.18, 0.22, 0.42, 1.0),
+		"hat_style": "cap",
+		"hat_color": Color(0.18, 0.22, 0.42, 1.0),
+	},
+	# --- Tráfico / favela ---
+	"tito": {
+		"skin": Color(0.42, 0.28, 0.18, 1.0),          # foncé
+		"hair_color": Color(0.10, 0.08, 0.06, 1.0),
+		"hair_style": "short",
+		"shirt_color": Color(0.85, 0.32, 0.22, 1.0),   # rouge bandana favela
+		"shirt_pattern": "solid",
+		"pants_color": Color(0.22, 0.30, 0.45, 1.0),   # jean
+		"hat_style": "scarf",
+		"hat_color": Color(0.85, 0.32, 0.22, 1.0),
+	},
+	"miguel": {
+		"skin": Color(0.42, 0.28, 0.18, 1.0),
+		"hair_color": Color(0.10, 0.08, 0.06, 1.0),
+		"hair_style": "spiky",
+		"shirt_color": Color(0.85, 0.78, 0.62, 1.0),   # beige discret
+		"shirt_pattern": "pocket",
+		"pants_color": Color(0.22, 0.30, 0.45, 1.0),
+		"hat_style": "cap",
+		"hat_color": Color(0.42, 0.32, 0.22, 1.0),
+	},
+	# --- Consortium / luxe ---
+	"consortium": {
+		"skin": Color(0.86, 0.70, 0.55, 1.0),
+		"hair_color": Color(0.55, 0.38, 0.22, 1.0),
+		"hair_style": "short",
+		"shirt_color": Color(0.95, 0.95, 0.92, 1.0),   # chemise blanche costume
+		"shirt_pattern": "solid",
+		"pants_color": Color(0.18, 0.18, 0.22, 1.0),
+		"hat_style": "fedora",
+		"hat_color": Color(0.18, 0.18, 0.22, 1.0),
+	},
+	"jorge": {
+		"skin": Color(0.42, 0.28, 0.18, 1.0),
+		"hair_color": Color(0.10, 0.08, 0.06, 1.0),
+		"hair_style": "bald",
+		"shirt_color": Color(0.18, 0.18, 0.22, 1.0),
+		"shirt_pattern": "solid",
+		"pants_color": Color(0.18, 0.18, 0.22, 1.0),
+		"hat_style": "none",
+		"hat_color": Color(0.18, 0.18, 0.22, 1.0),
+	},
+	# --- Commerce / quartier ---
+	"carlos": {
+		"skin": Color(0.65, 0.48, 0.32, 1.0),
+		"hair_color": Color(0.32, 0.20, 0.12, 1.0),
+		"hair_style": "short",
+		"shirt_color": Color(0.85, 0.78, 0.62, 1.0),   # tablier beige café
+		"shirt_pattern": "solid",
+		"pants_color": Color(0.22, 0.30, 0.45, 1.0),
+		"hat_style": "none",
+		"hat_color": Color(0.42, 0.32, 0.22, 1.0),
+	},
+	"padeiro": {
+		"skin": Color(0.86, 0.70, 0.55, 1.0),
+		"hair_color": Color(0.78, 0.32, 0.12, 1.0),    # roux
+		"hair_style": "medium",
+		"shirt_color": Color(0.95, 0.95, 0.92, 1.0),   # blanc boulanger
+		"shirt_pattern": "stripe_h",
+		"pants_color": Color(0.50, 0.45, 0.40, 1.0),   # gris
+		"hat_style": "scarf",
+		"hat_color": Color(0.95, 0.95, 0.92, 1.0),
+	},
+	"chef_restaurant": {
+		"skin": Color(0.95, 0.82, 0.68, 1.0),
+		"hair_color": Color(0.10, 0.08, 0.06, 1.0),
+		"hair_style": "short",
+		"shirt_color": Color(0.95, 0.95, 0.92, 1.0),
+		"shirt_pattern": "solid",
+		"pants_color": Color(0.18, 0.18, 0.22, 1.0),
+		"hat_style": "scarf",                          # toque-like
+		"hat_color": Color(0.95, 0.95, 0.92, 1.0),
+	},
+	"farmaceutico": {
+		"skin": Color(0.95, 0.82, 0.68, 1.0),
+		"hair_color": Color(0.55, 0.38, 0.22, 1.0),
+		"hair_style": "long",
+		"shirt_color": Color(0.95, 0.95, 0.92, 1.0),
+		"shirt_pattern": "solid",
+		"pants_color": Color(0.18, 0.22, 0.42, 1.0),
+		"hat_style": "none",
+		"hat_color": Color(0.42, 0.32, 0.22, 1.0),
+	},
+	"vendeuse_boutique": {
+		"skin": Color(0.86, 0.70, 0.55, 1.0),
+		"hair_color": Color(0.32, 0.20, 0.12, 1.0),
+		"hair_style": "long",
+		"shirt_color": Color(0.78, 0.42, 0.55, 1.0),   # rose élégant
+		"shirt_pattern": "solid",
+		"pants_color": Color(0.55, 0.22, 0.42, 1.0),
+		"hat_style": "none",
+		"hat_color": Color(0.85, 0.55, 0.40, 1.0),
+	},
+	"otavio": {
+		"skin": Color(0.95, 0.82, 0.68, 1.0),
+		"hair_color": Color(0.10, 0.08, 0.06, 1.0),
+		"hair_style": "short",
+		"shirt_color": Color(0.55, 0.32, 0.18, 1.0),   # uniforme bordeaux palace
+		"shirt_pattern": "solid",
+		"pants_color": Color(0.18, 0.14, 0.10, 1.0),
+		"hat_style": "cap",
+		"hat_color": Color(0.55, 0.32, 0.18, 1.0),
+	},
+	"concierge": {
+		# C'est tio Zé en disguise — même couleurs que seu_joao mais en uniforme.
+		"skin": Color(0.86, 0.70, 0.55, 1.0),
+		"hair_color": Color(0.65, 0.62, 0.58, 1.0),    # gris
+		"hair_style": "short",
+		"shirt_color": Color(0.55, 0.32, 0.18, 1.0),   # uniforme palace
+		"shirt_pattern": "solid",
+		"pants_color": Color(0.18, 0.14, 0.10, 1.0),
+		"hat_style": "cap",
+		"hat_color": Color(0.55, 0.32, 0.18, 1.0),
+	},
+	"bar_patrao": {
+		"skin": Color(0.65, 0.48, 0.32, 1.0),
+		"hair_color": Color(0.10, 0.08, 0.06, 1.0),
+		"hair_style": "short",
+		"shirt_color": Color(0.95, 0.95, 0.92, 1.0),
+		"shirt_pattern": "solid",
+		"pants_color": Color(0.30, 0.25, 0.20, 1.0),
+		"hat_style": "none",
+		"hat_color": Color(0.42, 0.32, 0.22, 1.0),
+	},
+	"ze_bar": {
+		"skin": Color(0.65, 0.48, 0.32, 1.0),
+		"hair_color": Color(0.10, 0.08, 0.06, 1.0),
+		"hair_style": "short",
+		"shirt_color": Color(0.95, 0.95, 0.92, 1.0),
+		"shirt_pattern": "solid",
+		"pants_color": Color(0.30, 0.25, 0.20, 1.0),
+		"hat_style": "none",
+		"hat_color": Color(0.42, 0.32, 0.22, 1.0),
+	},
+	# --- Religion / culture ---
+	"padre": {
+		"skin": Color(0.95, 0.82, 0.68, 1.0),
+		"hair_color": Color(0.65, 0.62, 0.58, 1.0),
+		"hair_style": "bald",
+		"shirt_color": Color(0.18, 0.18, 0.22, 1.0),   # robe noire
+		"shirt_pattern": "solid",
+		"pants_color": Color(0.18, 0.18, 0.22, 1.0),
+		"hat_style": "none",
+		"hat_color": Color(0.18, 0.18, 0.22, 1.0),
+	},
+	"musicien": {
+		"skin": Color(0.42, 0.28, 0.18, 1.0),
+		"hair_color": Color(0.10, 0.08, 0.06, 1.0),
+		"hair_style": "long",
+		"shirt_color": Color(0.85, 0.55, 0.40, 1.0),
+		"shirt_pattern": "stripe_h",
+		"pants_color": Color(0.22, 0.30, 0.45, 1.0),
+		"hat_style": "fedora",
+		"hat_color": Color(0.42, 0.32, 0.22, 1.0),
+	},
+	# --- Étrangers / luxe ---
+	"contessa": {
+		"skin": Color(0.95, 0.82, 0.68, 1.0),
+		"hair_color": Color(0.85, 0.70, 0.42, 1.0),    # blond
+		"hair_style": "long",
+		"shirt_color": Color(0.85, 0.32, 0.55, 1.0),   # rose élégant
+		"shirt_pattern": "solid",
+		"pants_color": Color(0.55, 0.22, 0.42, 1.0),
+		"hat_style": "none",
+		"hat_color": Color(0.95, 0.95, 0.92, 1.0),
+	},
+	"tourist_vip": {
+		"skin": Color(0.95, 0.82, 0.68, 1.0),
+		"hair_color": Color(0.85, 0.70, 0.42, 1.0),
+		"hair_style": "short",
+		"shirt_color": Color(0.40, 0.65, 0.95, 1.0),   # chemise hawaïenne bleue
+		"shirt_pattern": "stripe_h",
+		"pants_color": Color(0.85, 0.78, 0.62, 1.0),   # short clair
+		"hat_style": "cap",
+		"hat_color": Color(0.95, 0.95, 0.92, 1.0),
+	},
+	"customer_tourist": {
+		"skin": Color(0.95, 0.82, 0.68, 1.0),
+		"hair_color": Color(0.55, 0.38, 0.22, 1.0),
+		"hair_style": "short",
+		"shirt_color": Color(0.95, 0.85, 0.40, 1.0),
+		"shirt_pattern": "solid",
+		"pants_color": Color(0.85, 0.78, 0.62, 1.0),
+		"hat_style": "cap",
+		"hat_color": Color(0.95, 0.85, 0.40, 1.0),
+	},
+	"customer_local": {
+		"skin": Color(0.65, 0.48, 0.32, 1.0),
+		"hair_color": Color(0.10, 0.08, 0.06, 1.0),
+		"hair_style": "short",
+		"shirt_color": Color(0.55, 0.78, 0.55, 1.0),
+		"shirt_pattern": "solid",
+		"pants_color": Color(0.22, 0.30, 0.45, 1.0),
+		"hat_style": "none",
+		"hat_color": Color(0.42, 0.32, 0.22, 1.0),
+	},
+	"customer_kid": {
+		"skin": Color(0.86, 0.70, 0.55, 1.0),
+		"hair_color": Color(0.32, 0.20, 0.12, 1.0),
+		"hair_style": "spiky",
+		"shirt_color": Color(0.95, 0.85, 0.40, 1.0),
+		"shirt_pattern": "stripe_h",
+		"pants_color": Color(0.85, 0.78, 0.62, 1.0),
+		"hat_style": "none",
+		"hat_color": Color(0.85, 0.85, 0.40, 1.0),
+	},
+	# --- Pêche / mer ---
+	"pecheur": {
+		"skin": Color(0.65, 0.48, 0.32, 1.0),
+		"hair_color": Color(0.65, 0.62, 0.58, 1.0),
+		"hair_style": "short",
+		"shirt_color": Color(0.40, 0.65, 0.95, 1.0),
+		"shirt_pattern": "stripe_h",
+		"pants_color": Color(0.42, 0.32, 0.22, 1.0),
+		"hat_style": "scarf",
+		"hat_color": Color(0.42, 0.32, 0.22, 1.0),
+	},
+	"coconut_vendor": {
+		"skin": Color(0.42, 0.28, 0.18, 1.0),
+		"hair_color": Color(0.10, 0.08, 0.06, 1.0),
+		"hair_style": "short",
+		"shirt_color": Color(0.55, 0.78, 0.55, 1.0),
+		"shirt_pattern": "solid",
+		"pants_color": Color(0.85, 0.78, 0.62, 1.0),
+		"hat_style": "scarf",
+		"hat_color": Color(0.95, 0.95, 0.92, 1.0),
+	},
+	# --- Autres ---
+	"joggeur": {
+		"skin": Color(0.86, 0.70, 0.55, 1.0),
+		"hair_color": Color(0.32, 0.20, 0.12, 1.0),
+		"hair_style": "short",
+		"shirt_color": Color(0.55, 0.78, 0.55, 1.0),   # tank vert sport
+		"shirt_pattern": "solid",
+		"pants_color": Color(0.22, 0.30, 0.45, 1.0),
+		"hat_style": "none",
+		"hat_color": Color(0.85, 0.55, 0.40, 1.0),
+	},
+	"dona_irene": {
+		"skin": Color(0.95, 0.82, 0.68, 1.0),
+		"hair_color": Color(0.85, 0.85, 0.85, 1.0),
+		"hair_style": "bun",
+		"shirt_color": Color(0.78, 0.42, 0.55, 1.0),
+		"shirt_pattern": "solid",
+		"pants_color": Color(0.42, 0.32, 0.42, 1.0),
+		"hat_style": "scarf",
+		"hat_color": Color(0.85, 0.55, 0.40, 1.0),
+	},
+}
+
+# Renvoie la config explicite pour un NPC scénarisé connu, sinon une config
+# aléatoire stable (basée sur le hash de l'id) — toujours déterministe pour
+# qu'un NPC ait toujours la même apparence.
+static func config_for_npc(npc_id: String) -> Dictionary:
+	if NAMED_NPC_CONFIGS.has(npc_id):
+		return NAMED_NPC_CONFIGS[npc_id]
+	return random_config(npc_id.hash())
+
 # Tire une config aléatoire reproductible à partir d'une seed (typiquement
 # `node.name.hash()` pour stabilité entre runs). Garantit que le même NPC
 # garde la même apparence si on relance le jeu, sans avoir à sérialiser.
