@@ -167,6 +167,54 @@ position = Vector2(0, 105)
 prompt_text = "Sortir"
 is_exit = true
 destination = Vector2(-15050, -3440)
+intro_bump_door = true
+
+[node name="DoorFrame" type="ColorRect" parent="ExitDoor"]
+offset_left = -16.0
+offset_top = -22.0
+offset_right = 16.0
+offset_bottom = 6.0
+color = Color(0.28, 0.18, 0.12, 1)
+
+[node name="DoorPanel" type="ColorRect" parent="ExitDoor"]
+offset_left = -12.0
+offset_top = -18.0
+offset_right = 12.0
+offset_bottom = 4.0
+color = Color(0.55, 0.34, 0.20, 1)
+
+[node name="DoorPanelLine" type="ColorRect" parent="ExitDoor"]
+offset_left = -12.0
+offset_top = -6.0
+offset_right = 12.0
+offset_bottom = -4.0
+color = Color(0.32, 0.20, 0.12, 1)
+
+[node name="DoorKnob" type="ColorRect" parent="ExitDoor"]
+offset_left = 6.0
+offset_top = -10.0
+offset_right = 9.0
+offset_bottom = -7.0
+color = Color(0.92, 0.78, 0.32, 1)
+
+[node name="DoorMat" type="ColorRect" parent="ExitDoor"]
+offset_left = -18.0
+offset_top = 6.0
+offset_right = 18.0
+offset_bottom = 12.0
+color = Color(0.42, 0.30, 0.22, 1)
+
+[node name="ExitArrow" type="Label" parent="ExitDoor"]
+offset_left = -32.0
+offset_top = -42.0
+offset_right = 32.0
+offset_bottom = -22.0
+text = "↓ Sortir"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 3
 
 [node name="SpawnPoint" type="Marker2D" parent="."]
 position = Vector2(0, 75)
@@ -252,6 +300,12 @@ variants = [{
 "text": "*essuie une larme du dos de la main* T'as vendu ton premier milho aujourd'hui. *te touche la joue* Bom rapaz. Le calçadão mâche les hommes faibles, mais il se souvient des honnêtes. Reviens dîner.",
 "choices": ["Sim, mãe"]
 }, {
+"id": "intro_worried",
+"not_flag": "intro_bump_seen",
+"speaker": "Mãe",
+"text": "*essuie ses mains à son tablier, regard qui glisse vers la porte* Sobrinho... ton tio Zé n'est pas rentré hier soir. Ni avant-hier. *baisse la voix* Trois matins que sa cachaça reste fermée. *pose la louche, te touche le bras* Va voir dehors, mon fils. Demande à Seu João — il sait peut-être quelque chose. Mais reviens vite.",
+"choices": ["J'y vais, mãe"]
+}, {
 "id": "default",
 "speaker": "Mãe",
 "text": "*remue la moqueca, ne te regarde pas* Mange avant de partir, sobrinho. La rue est dure ce matin. Et n'oublie pas le jantar — j'ai mis le couvert pour trois, comme avant. Comme si Zé allait rentrer.",
@@ -307,6 +361,12 @@ variants = [{
 "flag": "first_sale_done",
 "speaker": "Vovó",
 "text": "*ferme un œil pour t'examiner* Tu sens l'huile de milho et la transpiration honnête. *tape une maille* C'est l'odeur des hommes qui nourrissent leur maison. Continue.",
+"choices": ["Sim, vovó"]
+}, {
+"id": "intro_worried",
+"not_flag": "intro_bump_seen",
+"speaker": "Vovó",
+"text": "*pose son tricot, fixe la porte sans cligner* Mon Zé. *long silence* Il a dit qu'il allait au calçadão. Il n'est pas revenu. Quatre matins. *reprend une maille très lentement* Va dehors, sobrinho. Le morro a une langue. Quelqu'un sait quelque chose. Et ramène-moi des nouvelles, même mauvaises.",
 "choices": ["Sim, vovó"]
 }, {
 "id": "default",

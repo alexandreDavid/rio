@@ -38,6 +38,7 @@ CutsceneRunner="*res://scripts/core/CutsceneRunner.gd"
 DistrictManager="*res://scripts/core/DistrictManager.gd"
 NarrativeJournal="*res://scripts/core/NarrativeJournal.gd"
 RandomEventManager="*res://scripts/core/RandomEventManager.gd"
+DebugConsole="*res://scripts/debug/DebugConsole.gd"
 
 [display]
 

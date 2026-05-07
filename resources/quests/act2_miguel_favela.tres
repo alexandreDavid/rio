@@ -22,3 +22,5 @@ money_reward = 600
 reputation_rewards = {2: 5, 0: -3}
 required_reputation = {}
 required_act = 2
+quest_type = 1
+prerequisite_quest_ids = Array[String](["act2_padre_orfanato"])

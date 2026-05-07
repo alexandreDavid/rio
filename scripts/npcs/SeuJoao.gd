@@ -12,11 +12,30 @@ const QUEST_CARNAVAL: String = "act4_carnaval_desfile"
 func _ready() -> void:
 	# Appel explicite : en Godot 4, override de _ready n'appelle PAS super automatiquement.
 	super._ready()
+	_apply_visibility()
+	# Au chargement d'une save, les flags arrivent APRÈS _ready — on re-évalue
+	# pour ne pas rester caché à tort si la save indique que l'héritage est
+	# déjà entamé.
+	if SaveSystem.has_signal("save_loaded"):
+		SaveSystem.save_loaded.connect(_apply_visibility)
+
+func _apply_visibility() -> void:
+	# Source fiable : l'état de la quête (auto-persisté). Heritage active ou
+	# complétée = le joueur a vu Seu João au moins une fois → visible.
+	var heritage_started: bool = QuestManager.is_active("act1_heritage") \
+			or QuestManager.is_completed("act1_heritage") \
+			or CampaignManager.has_flag("intro_bump_seen") \
+			or CampaignManager.has_flag("intro_seen") \
+			or CampaignManager.has_flag("act1_started")
+	visible = heritage_started
+	if interactable:
+		interactable.enabled = heritage_started
 
 func _on_interacted(_by: Node) -> void:
 	if data == null:
 		push_warning("SeuJoao: data is null")
 		return
+	await _approach_player_if_far()
 	var knot: String = _pick_knot()
 	DialogueBridge.start_dialogue(data.id, knot)
 

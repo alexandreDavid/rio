@@ -49,6 +49,13 @@ corner_radius_top_right = 16
 corner_radius_bottom_right = 16
 corner_radius_bottom_left = 16
 
+[sub_resource type="StyleBoxFlat" id="AppButtonStyleCronica"]
+bg_color = Color(0.95, 0.6, 0.4, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
 [node name="Phone" type="CanvasLayer"]
 layer = 6
 process_mode = 3
@@ -188,6 +195,16 @@ theme_override_styles/pressed = SubResource("AppButtonStyleMissions")
 theme_override_font_sizes/font_size = 24
 theme_override_colors/font_color = Color(0.12, 0.18, 0.22, 1)
 
+[node name="Cronica" type="Button" parent="Frame/Screens/Home/Grid"]
+custom_minimum_size = Vector2(150, 150)
+text = "📜
+Crônica"
+theme_override_styles/normal = SubResource("AppButtonStyleCronica")
+theme_override_styles/hover = SubResource("AppButtonStyleCronica")
+theme_override_styles/pressed = SubResource("AppButtonStyleCronica")
+theme_override_font_sizes/font_size = 24
+theme_override_colors/font_color = Color(0.22, 0.12, 0.08, 1)
+
 [node name="Taxi" type="Control" parent="Frame/Screens"]
 visible = false
 anchor_right = 1.0
@@ -242,6 +259,38 @@ offset_bottom = 480.0
 [node name="Box" type="VBoxContainer" parent="Frame/Screens/Stats/Scroll"]
 custom_minimum_size = Vector2(360, 0)
 theme_override_constants/separation = 8
+
+[node name="Cronica" type="Control" parent="Frame/Screens"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Header" type="Label" parent="Frame/Screens/Cronica"]
+offset_top = 8.0
+offset_right = 368.0
+offset_bottom = 36.0
+text = "📜 Crônica"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.95, 0.6, 0.4, 1)
+
+[node name="Counter" type="Label" parent="Frame/Screens/Cronica"]
+offset_top = 36.0
+offset_right = 368.0
+offset_bottom = 56.0
+text = ""
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.7, 0.7, 0.75, 1)
+
+[node name="Scroll" type="ScrollContainer" parent="Frame/Screens/Cronica"]
+offset_top = 64.0
+offset_right = 368.0
+offset_bottom = 480.0
+
+[node name="Box" type="VBoxContainer" parent="Frame/Screens/Cronica/Scroll"]
+custom_minimum_size = Vector2(360, 0)
+theme_override_constants/separation = 4
 
 [node name="HomeIndicator" type="ColorRect" parent="Frame"]
 anchor_left = 0.5

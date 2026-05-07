@@ -30,10 +30,27 @@ func _ready() -> void:
 	var cam: Camera2D = get_node_or_null("Camera2D")
 	if cam:
 		cam.make_current()
+	# Boutons tactiles (mobile-first).
+	var action_btn: Button = get_node_or_null("UI/ActionButton") as Button
+	if action_btn:
+		action_btn.pressed.connect(_on_action_pressed)
+	var quit_btn: CanvasLayer = get_node_or_null("MinigameQuitButton")
+	if quit_btn and quit_btn.has_signal("quit_pressed"):
+		quit_btn.quit_pressed.connect(_end_game)
 	_time_left = duration
 	if status_label:
-		status_label.text = "Tape E vite pour remplir la barre !"
+		status_label.text = "Tape vite le bouton SOULEVER pour remplir la barre !"
 	_update_labels()
+
+func _on_action_pressed() -> void:
+	if _ended:
+		return
+	_value += PRESS_GAIN
+	if _value >= BAR_MAX:
+		_reps += 1
+		_value = 0.0
+		if status_label:
+			status_label.text = "REP ! (%d)" % _reps
 
 func _process(delta: float) -> void:
 	if _ended:
@@ -43,13 +60,9 @@ func _process(delta: float) -> void:
 		_end_game()
 		return
 	_value = max(0.0, _value - DECAY_PER_SECOND * delta)
+	# Action "interact" (clavier desktop ou bouton 📱 mobile) : gain identique au tap.
 	if Input.is_action_just_pressed("interact"):
-		_value += PRESS_GAIN
-		if _value >= BAR_MAX:
-			_reps += 1
-			_value = 0.0
-			if status_label:
-				status_label.text = "REP ! (%d)" % _reps
+		_on_action_pressed()
 	_update_labels()
 
 func _unhandled_input(event: InputEvent) -> void:

@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene format=3 uid="uid://j4p5nnsq7pj"]
 
 [ext_resource type="PackedScene" path="res://scenes/props/TaxiStand.tscn" id="1_taxi"]
 [ext_resource type="PackedScene" path="res://scenes/props/BasketCourt.tscn" id="2_court"]
@@ -12,256 +12,249 @@ size = Vector2(700, 16)
 [sub_resource type="RectangleShape2D" id="WallV"]
 size = Vector2(16, 360)
 
-[node name="AterroFlamengoDistrict" type="Node2D"]
+[node name="AterroFlamengoDistrict" type="Node2D" unique_id=1701233644]
 
-[node name="SkyDay" type="ColorRect" parent="."]
+[node name="SkyDay" type="ColorRect" parent="." unique_id=911205143]
 offset_left = -360.0
 offset_top = -260.0
 offset_right = 360.0
 offset_bottom = -120.0
 color = Color(0.55, 0.78, 0.92, 1)
 
-[node name="BayWater" type="ColorRect" parent="."]
+[node name="BayWater" type="ColorRect" parent="." unique_id=438488610]
 offset_left = -360.0
 offset_top = -120.0
 offset_right = 360.0
 offset_bottom = -60.0
 color = Color(0.32, 0.5, 0.62, 1)
 
-[node name="WaterLine1" type="ColorRect" parent="."]
+[node name="WaterLine1" type="ColorRect" parent="." unique_id=49545627]
 offset_left = -300.0
 offset_top = -100.0
 offset_right = -200.0
 offset_bottom = -98.0
 color = Color(0.8, 0.88, 0.92, 0.6)
 
-[node name="WaterLine2" type="ColorRect" parent="."]
+[node name="WaterLine2" type="ColorRect" parent="." unique_id=1811084947]
 offset_left = -120.0
 offset_top = -85.0
-offset_right = 0.0
 offset_bottom = -83.0
 color = Color(0.8, 0.88, 0.92, 0.6)
 
-[node name="WaterLine3" type="ColorRect" parent="."]
+[node name="WaterLine3" type="ColorRect" parent="." unique_id=1169978690]
 offset_left = 120.0
 offset_top = -95.0
 offset_right = 220.0
 offset_bottom = -93.0
 color = Color(0.8, 0.88, 0.92, 0.6)
 
-[node name="MorroSilhouette" type="ColorRect" parent="."]
+[node name="MorroSilhouette" type="ColorRect" parent="." unique_id=1546858179]
 offset_left = 220.0
 offset_top = -160.0
 offset_right = 290.0
 offset_bottom = -120.0
 color = Color(0.22, 0.28, 0.38, 1)
 
-[node name="MorroSilhouette2" type="ColorRect" parent="."]
+[node name="MorroSilhouette2" type="ColorRect" parent="." unique_id=1634453391]
 offset_left = 290.0
 offset_top = -140.0
 offset_right = 340.0
 offset_bottom = -120.0
 color = Color(0.22, 0.28, 0.38, 1)
 
-[node name="GrassBack" type="ColorRect" parent="."]
+[node name="GrassBack" type="ColorRect" parent="." unique_id=209279479]
 offset_left = -340.0
 offset_top = -60.0
 offset_right = 340.0
-offset_bottom = 0.0
 color = Color(0.4, 0.62, 0.38, 1)
 
-[node name="PalmTrunk" type="ColorRect" parent="."]
+[node name="PalmTrunk" type="ColorRect" parent="." unique_id=44671888]
 offset_left = -280.0
 offset_top = -60.0
 offset_right = -274.0
 offset_bottom = -10.0
 color = Color(0.4, 0.3, 0.22, 1)
 
-[node name="PalmTop" type="ColorRect" parent="."]
+[node name="PalmTop" type="ColorRect" parent="." unique_id=883067373]
 offset_left = -300.0
 offset_top = -90.0
 offset_right = -250.0
 offset_bottom = -60.0
 color = Color(0.32, 0.55, 0.32, 1)
 
-[node name="PalmTrunk2" type="ColorRect" parent="."]
+[node name="PalmTrunk2" type="ColorRect" parent="." unique_id=2122673016]
 offset_left = 240.0
 offset_top = -50.0
 offset_right = 246.0
 offset_bottom = -10.0
 color = Color(0.4, 0.3, 0.22, 1)
 
-[node name="PalmTop2" type="ColorRect" parent="."]
+[node name="PalmTop2" type="ColorRect" parent="." unique_id=283484622]
 offset_left = 220.0
 offset_top = -75.0
 offset_right = 270.0
 offset_bottom = -50.0
 color = Color(0.32, 0.55, 0.32, 1)
 
-[node name="JoggingPath" type="ColorRect" parent="."]
+[node name="JoggingPath" type="ColorRect" parent="." unique_id=1975969628]
 offset_left = -340.0
-offset_top = 0.0
 offset_right = 340.0
 offset_bottom = 30.0
 color = Color(0.85, 0.78, 0.62, 1)
 
-[node name="GrassFront" type="ColorRect" parent="."]
+[node name="GrassFront" type="ColorRect" parent="." unique_id=1410690516]
 offset_left = -340.0
 offset_top = 30.0
 offset_right = 340.0
 offset_bottom = 100.0
 color = Color(0.42, 0.65, 0.4, 1)
 
-[node name="CourtAsphalt" type="ColorRect" parent="."]
+[node name="CourtAsphalt" type="ColorRect" parent="." unique_id=446892276]
 offset_left = -340.0
 offset_top = 100.0
 offset_right = 340.0
 offset_bottom = 180.0
 color = Color(0.55, 0.45, 0.42, 1)
 
-[node name="CourtLine" type="ColorRect" parent="."]
+[node name="CourtLine" type="ColorRect" parent="." unique_id=201109002]
 offset_left = -340.0
 offset_top = 138.0
 offset_right = 340.0
 offset_bottom = 142.0
 color = Color(0.95, 0.92, 0.85, 0.7)
 
-[node name="Sign" type="Label" parent="."]
+[node name="Sign" type="Label" parent="." unique_id=1433666069]
 offset_left = -120.0
 offset_top = 56.0
 offset_right = 120.0
 offset_bottom = 80.0
+theme_override_colors/font_color = Color(0.95, 0.92, 0.85, 1)
+theme_override_font_sizes/font_size = 13
 text = "ATERRO DO FLAMENGO"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 13
-theme_override_colors/font_color = Color(0.95, 0.92, 0.85, 1)
 
-[node name="Walls" type="Node2D" parent="."]
+[node name="Walls" type="Node2D" parent="." unique_id=864842494]
 
-[node name="Top" type="StaticBody2D" parent="Walls"]
+[node name="Top" type="StaticBody2D" parent="Walls" unique_id=1715274634]
 position = Vector2(0, -8)
 
-[node name="Shape" type="CollisionShape2D" parent="Walls/Top"]
+[node name="Shape" type="CollisionShape2D" parent="Walls/Top" unique_id=1657230089]
 shape = SubResource("WallH")
 
-[node name="Bottom" type="StaticBody2D" parent="Walls"]
+[node name="Bottom" type="StaticBody2D" parent="Walls" unique_id=1223879947]
 position = Vector2(0, 188)
 
-[node name="Shape" type="CollisionShape2D" parent="Walls/Bottom"]
+[node name="Shape" type="CollisionShape2D" parent="Walls/Bottom" unique_id=1969274317]
 shape = SubResource("WallH")
 
-[node name="Left" type="StaticBody2D" parent="Walls"]
+[node name="Left" type="StaticBody2D" parent="Walls" unique_id=480922568]
 position = Vector2(-348, 90)
 
-[node name="Shape" type="CollisionShape2D" parent="Walls/Left"]
+[node name="Shape" type="CollisionShape2D" parent="Walls/Left" unique_id=1386824274]
 shape = SubResource("WallV")
 
-[node name="Right" type="StaticBody2D" parent="Walls"]
+[node name="Right" type="StaticBody2D" parent="Walls" unique_id=521337032]
 position = Vector2(348, 90)
 
-[node name="Shape" type="CollisionShape2D" parent="Walls/Right"]
+[node name="Shape" type="CollisionShape2D" parent="Walls/Right" unique_id=143809053]
 shape = SubResource("WallV")
 
-[node name="PlayerSpawn" type="Marker2D" parent="."]
+[node name="PlayerSpawn" type="Marker2D" parent="." unique_id=560981175]
 position = Vector2(-220, 60)
 
-[node name="TaxiStand" parent="." instance=ExtResource("1_taxi")]
+[node name="TaxiStand" parent="." unique_id=1433059591 instance=ExtResource("1_taxi")]
 position = Vector2(-260, 50)
 
-[node name="BasketCourt" parent="." instance=ExtResource("2_court")]
+[node name="BasketCourt" parent="." unique_id=1080631588 instance=ExtResource("2_court")]
 position = Vector2(140, 140)
 
-[node name="DistantSailA" type="ColorRect" parent="."]
+[node name="DistantSailA" type="ColorRect" parent="." unique_id=1533239773]
 offset_left = -160.0
 offset_top = -100.0
 offset_right = -148.0
 offset_bottom = -82.0
 color = Color(0.95, 0.95, 0.92, 0.9)
 
-[node name="DistantSailAMast" type="ColorRect" parent="."]
+[node name="DistantSailAMast" type="ColorRect" parent="." unique_id=1638102515]
 offset_left = -154.0
 offset_top = -120.0
 offset_right = -152.0
 offset_bottom = -100.0
 color = Color(0.95, 0.95, 0.92, 0.9)
 
-[node name="DistantSailB" type="ColorRect" parent="."]
+[node name="DistantSailB" type="ColorRect" parent="." unique_id=1637767630]
 offset_left = 100.0
 offset_top = -90.0
 offset_right = 108.0
 offset_bottom = -78.0
 color = Color(0.95, 0.95, 0.92, 0.85)
 
-[node name="WaterfrontWall" type="ColorRect" parent="."]
+[node name="WaterfrontWall" type="ColorRect" parent="." unique_id=508345606]
 offset_left = -340.0
 offset_top = -64.0
 offset_right = 340.0
 offset_bottom = -60.0
 color = Color(0.42, 0.32, 0.28, 1)
 
-[node name="ChessTable" type="ColorRect" parent="."]
+[node name="ChessTable" type="ColorRect" parent="." unique_id=693152325]
 offset_left = -240.0
 offset_top = 50.0
 offset_right = -210.0
 offset_bottom = 64.0
 color = Color(0.55, 0.42, 0.32, 1)
 
-[node name="ChessTableTop" type="ColorRect" parent="."]
+[node name="ChessTableTop" type="ColorRect" parent="." unique_id=567907656]
 offset_left = -240.0
 offset_top = 46.0
 offset_right = -210.0
 offset_bottom = 50.0
 color = Color(0.92, 0.85, 0.7, 1)
 
-[node name="StreetLampPole" type="ColorRect" parent="."]
+[node name="StreetLampPole" type="ColorRect" parent="." unique_id=79601018]
 offset_left = -42.0
 offset_top = 30.0
 offset_right = -38.0
 offset_bottom = 100.0
 color = Color(0.55, 0.5, 0.45, 1)
 
-[node name="StreetLampHead" type="ColorRect" parent="."]
+[node name="StreetLampHead" type="ColorRect" parent="." unique_id=1010130369]
 offset_left = -50.0
 offset_top = 26.0
 offset_right = -30.0
 offset_bottom = 34.0
 color = Color(0.95, 0.92, 0.7, 0.85)
 
-[node name="ScoreboardSign" type="Label" parent="."]
+[node name="ScoreboardSign" type="Label" parent="." unique_id=411978743]
 offset_left = 60.0
 offset_top = 110.0
 offset_right = 220.0
 offset_bottom = 132.0
+theme_override_colors/font_color = Color(0.18, 0.22, 0.28, 1)
+theme_override_font_sizes/font_size = 11
 text = "Quadra do bairro · 3×3"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 11
-theme_override_colors/font_color = Color(0.18, 0.22, 0.28, 1)
 
-[node name="ViewpointWaterfront" parent="." instance=ExtResource("4_view")]
+[node name="ViewpointWaterfront" parent="." unique_id=49782738 instance=ExtResource("4_view")]
 position = Vector2(-100, -30)
 viewpoint_id = "aterro_baia"
 prompt_first = "Regarder la baie"
-flavor_speaker = "Sobrinho"
 flavor_text = "Le ponton court vers la baie, les voiliers s'inclinent au vent, en face Niterói brille comme une autre ville. Tu pourrais rester assis là toute la journée."
 money_reward = 60
 
-[node name="ViewpointPlay" parent="." instance=ExtResource("4_view")]
+[node name="ViewpointPlay" parent="." unique_id=1989892708 instance=ExtResource("4_view")]
 position = Vector2(-160, 130)
 viewpoint_id = "aterro_pista"
 prompt_first = "Voir les skaters"
-flavor_speaker = "Sobrinho"
 flavor_text = "Les gamins enchaînent les figures sur la pista de skate, les rollers font des cercles autour, un saxophoniste joue au loin. Le dimanche aterro, c'est un théâtre à ciel ouvert."
-money_reward = 50
 
-[node name="GuaravitaVendor" parent="." instance=ExtResource("5_vendor")]
+[node name="GuaravitaVendor" parent="." unique_id=1514838536 instance=ExtResource("5_vendor")]
 position = Vector2(-220, 60)
 vendor_id = "aterro_guarana"
 item_label = "Guaraná natural"
 price = 7
-stamina_recover = 30.0
 flavor_text_offer = "Guaraná batido com gelo, energia natural da Amazônia !"
 
-[node name="SkaterA" parent="." instance=ExtResource("3_wander")]
+[node name="SkaterA" parent="." unique_id=1178446299 instance=ExtResource("3_wander")]
 position = Vector2(-160, 130)
 color = Color(0.85, 0.4, 0.55, 1)
 size = Vector2(10, 16)
@@ -271,7 +264,7 @@ pause_at_waypoints = 0.4
 pause_random_jitter = 0.6
 look_at_player_distance = 50.0
 
-[node name="SkaterB" parent="." instance=ExtResource("3_wander")]
+[node name="SkaterB" parent="." unique_id=506911040 instance=ExtResource("3_wander")]
 position = Vector2(-100, 150)
 color = Color(0.4, 0.85, 0.55, 1)
 size = Vector2(10, 16)
@@ -281,7 +274,7 @@ pause_at_waypoints = 0.4
 pause_random_jitter = 0.6
 look_at_player_distance = 50.0
 
-[node name="JoggerSundayA" parent="." instance=ExtResource("3_wander")]
+[node name="JoggerSundayA" parent="." unique_id=1544508837 instance=ExtResource("3_wander")]
 position = Vector2(-200, 15)
 color = Color(0.95, 0.85, 0.4, 1)
 size = Vector2(9, 16)
@@ -289,9 +282,9 @@ path = Array[Vector2]([Vector2(-200, 15), Vector2(200, 15), Vector2(-200, 15)])
 speed = 55.0
 pause_at_waypoints = 0.2
 pause_random_jitter = 0.4
-active_phases = [0]
+active_phases = Array[int]([0])
 
-[node name="JoggerSundayB" parent="." instance=ExtResource("3_wander")]
+[node name="JoggerSundayB" parent="." unique_id=228077146 instance=ExtResource("3_wander")]
 position = Vector2(150, 15)
 color = Color(0.4, 0.65, 0.95, 1)
 size = Vector2(9, 16)
@@ -299,9 +292,9 @@ path = Array[Vector2]([Vector2(150, 15), Vector2(-150, 15), Vector2(150, 15)])
 speed = 48.0
 pause_at_waypoints = 0.2
 pause_random_jitter = 0.4
-active_phases = [0]
+active_phases = Array[int]([0])
 
-[node name="StrollerA" parent="." instance=ExtResource("3_wander")]
+[node name="StrollerA" parent="." unique_id=173530589 instance=ExtResource("3_wander")]
 position = Vector2(80, 70)
 color = Color(0.95, 0.55, 0.4, 1)
 roam_zone = Rect2(-100, -30, 200, 60)
@@ -309,7 +302,7 @@ speed = 18.0
 pause_random_jitter = 0.6
 look_at_player_distance = 50.0
 
-[node name="StrollerB" parent="." instance=ExtResource("3_wander")]
+[node name="StrollerB" parent="." unique_id=173255935 instance=ExtResource("3_wander")]
 position = Vector2(180, 50)
 color = Color(0.4, 0.65, 0.95, 1)
 roam_zone = Rect2(-100, -30, 200, 60)

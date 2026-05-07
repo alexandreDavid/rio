@@ -53,13 +53,41 @@ var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
 @onready var score_label: Label = $UI/Score
 @onready var combo_label: Label = $UI/Combo
 
+var _lane_buttons: Array[Button] = []
+
 func _ready() -> void:
 	EventBus.minigame_started.emit("dj_paoacucar")
 	var cam: Camera2D = get_node_or_null("Camera2D")
 	if cam:
 		cam.make_current()
+	# Boutons tactiles 4 lanes (mobile-first ; les touches A/S/D/F restent en bonus dev).
+	for i in range(4):
+		var btn: Button = get_node_or_null("UI/Lane%dButton" % i) as Button
+		_lane_buttons.append(btn)
+		if btn:
+			btn.pivot_offset = btn.size * 0.5
+			var lane_idx: int = i
+			btn.pressed.connect(func(): hit_lane(lane_idx))
+	var quit_btn: CanvasLayer = get_node_or_null("MinigameQuitButton")
+	if quit_btn and quit_btn.has_signal("quit_pressed"):
+		quit_btn.quit_pressed.connect(_end_game)
 	_rng.randomize()
 	_generate_pattern()
+
+# Animation "punch" : le bouton de la lane scale up brièvement quand le joueur
+# tape. Donne un feedback tactile clair.
+func _punch_lane_button(lane: int) -> void:
+	if lane < 0 or lane >= _lane_buttons.size():
+		return
+	var btn: Button = _lane_buttons[lane]
+	if btn == null:
+		return
+	# pivot_offset déjà calé en _ready ; recalibre au cas où la taille a changé.
+	btn.pivot_offset = btn.size * 0.5
+	var t: Tween = create_tween()
+	t.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	t.tween_property(btn, "scale", Vector2(1.18, 1.18), 0.06)
+	t.tween_property(btn, "scale", Vector2(1.0, 1.0), 0.14)
 
 func _generate_pattern() -> void:
 	# Une note toutes les 0.55 à 0.95 s, lane aléatoire mais évite la même 2 fois de suite.
@@ -111,13 +139,14 @@ func _unhandled_input(event: InputEvent) -> void:
 	var key: int = event.keycode
 	for i in range(4):
 		if key == LANE_KEYS[i] or key == LANE_KEYS_ALT[i]:
-			_hit_lane(i)
+			hit_lane(i)  # passe par la version publique → animation punch
 			return
 
 # Appelable depuis un bouton mobile aussi.
 func hit_lane(lane: int) -> void:
 	if _ended:
 		return
+	_punch_lane_button(lane)
 	_hit_lane(lane)
 
 func _hit_lane(lane: int) -> void:

@@ -14,9 +14,21 @@ const QUEST_PHARMA: String = "pharmacy_tito"
 const OBJ_PHARMA: String = "deliver_medicine"
 const QUEST_MIGUEL: String = "act2_miguel_favela"
 
+func _ready() -> void:
+	super._ready()
+	# Si le joueur a balancé Tito à Ramos, il disparaît du morro (caché et non
+	# interactif). Géré ici plutôt que via NPCScheduler pour ne pas téléporter
+	# Tito en coordonnées Copa globales — il vit dans FavelaDoMorro.tscn.
+	if CampaignManager.has_flag("ratted_on_tito"):
+		visible = false
+		if interactable:
+			interactable.enabled = false
+		set_process(false)
+
 func _on_interacted(_by: Node) -> void:
 	if data == null:
 		return
+	await _approach_player_if_far()
 	var knot: String = data.ink_knot  # "tito_playing" par défaut
 	# Livraison du médicament en priorité si la quête est active et pas encore livrée.
 	if QuestManager.is_active(QUEST_PHARMA):
@@ -55,4 +67,6 @@ func _on_interacted(_by: Node) -> void:
 		var objs: Dictionary = QuestManager.get_objectives_state(QUEST_FAVOR)
 		if not objs.get(OBJ_FAVOR, false):
 			knot = "tito_favor_ask"
+	elif QuestManager.is_available(QUEST_FAVOR):
+		knot = "tito_meet"
 	DialogueBridge.start_dialogue(data.id, knot)

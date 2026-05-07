@@ -76,12 +76,44 @@ var _next_pattern_t: float = 0.0
 @onready var score_label: Label = $UI/Score
 @onready var combo_label: Label = $UI/Combo
 
+var _lane_buttons: Array[Button] = []
+
 func _ready() -> void:
 	EventBus.minigame_started.emit("carnaval_samba")
 	var cam: Camera2D = get_node_or_null("Camera2D")
 	if cam:
 		cam.make_current()
-	_set_status("Suis le rythme du bloc — A S D F (ou ← ↓ ↑ →)")
+	# Boutons tactiles 4 lanes (mobile-first ; A/S/D/F restent en bonus dev).
+	for i in range(4):
+		var btn: Button = get_node_or_null("UI/Lane%dButton" % i) as Button
+		_lane_buttons.append(btn)
+		if btn:
+			btn.pivot_offset = btn.size * 0.5
+			var lane_idx: int = i
+			btn.pressed.connect(func(): hit_lane(lane_idx))
+	var quit_btn: CanvasLayer = get_node_or_null("MinigameQuitButton")
+	if quit_btn and quit_btn.has_signal("quit_pressed"):
+		quit_btn.quit_pressed.connect(_end_game)
+	_set_status("Suis le rythme du bloc — touche les boutons colorés")
+
+# Appelable depuis un bouton mobile.
+func hit_lane(lane: int) -> void:
+	if _ended:
+		return
+	_punch_lane_button(lane)
+	_resolve_lane_press(lane)
+
+func _punch_lane_button(lane: int) -> void:
+	if lane < 0 or lane >= _lane_buttons.size():
+		return
+	var btn: Button = _lane_buttons[lane]
+	if btn == null:
+		return
+	btn.pivot_offset = btn.size * 0.5
+	var t: Tween = create_tween()
+	t.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	t.tween_property(btn, "scale", Vector2(1.18, 1.18), 0.06)
+	t.tween_property(btn, "scale", Vector2(1.0, 1.0), 0.14)
 
 func _process(delta: float) -> void:
 	if _ended:
@@ -152,7 +184,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			break
 	if lane < 0:
 		return
-	_resolve_lane_press(lane)
+	hit_lane(lane)  # passe par la version publique → animation punch
 
 func _resolve_lane_press(lane: int) -> void:
 	var elapsed: float = DURATION - _time_left

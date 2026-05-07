@@ -61,7 +61,31 @@ func meets_requirements(quest_id: String) -> bool:
 		var threshold: int = quest.required_reputation[axis_key]
 		if ReputationSystem.get_value(int(axis_key)) < threshold:
 			return false
+	for prereq_id in quest.prerequisite_quest_ids:
+		if not is_completed(prereq_id):
+			return false
 	return true
+
+# Une quête principale (MAIN) est-elle complétée ? Pratique pour CampaignManager.
+func is_main_quest_completed(quest_id: String) -> bool:
+	var quest: Quest = _quests.get(quest_id)
+	if quest == null:
+		return false
+	if quest.quest_type != Quest.QuestType.MAIN:
+		return false
+	return is_completed(quest_id)
+
+# Liste les prérequis encore non complétés pour quest_id. Utilisé par DialogueBridge
+# pour expliquer pourquoi une acceptation a échoué et pour les outils de debug.
+func missing_prerequisites(quest_id: String) -> Array[String]:
+	var out: Array[String] = []
+	var quest: Quest = _quests.get(quest_id)
+	if quest == null:
+		return out
+	for prereq_id in quest.prerequisite_quest_ids:
+		if not is_completed(prereq_id):
+			out.append(prereq_id)
+	return out
 
 func is_available(quest_id: String) -> bool:
 	return get_state(quest_id) == State.AVAILABLE and meets_requirements(quest_id)

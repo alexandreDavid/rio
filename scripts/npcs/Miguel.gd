@@ -12,6 +12,7 @@ const QUEST_TRIBUTO: String = "act4_trafico_tributo"
 func _on_interacted(_by: Node) -> void:
 	if data == null:
 		return
+	await _approach_player_if_far()
 	var knot: String = data.ink_knot  # "miguel_intro"
 	# Acte 4 : règne du Patrão.
 	if CampaignManager.current_act >= 4 and CampaignManager.chosen_endgame == CampaignManager.Endgame.TRAFICO:

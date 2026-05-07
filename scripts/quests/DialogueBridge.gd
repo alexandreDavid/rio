@@ -1718,8 +1718,11 @@ func choose(choice_index: int) -> void:
 	var action = on_choose.get(str(choice_index), null)
 	if action != null and action.has("next"):
 		# Effets latéraux applicables avant de chaîner sur le knot suivant.
-		if action.has("accept_quest"):
-			QuestManager.accept(action.accept_quest)
+		# Si l'acceptation échoue (prereq manquant), on saute aussi les autres side effects
+		# pour ne pas laisser un état partiel — et on bascule vers un knot de refus.
+		if action.has("accept_quest") and not _try_accept(action.accept_quest):
+			_show_locked_message(action.accept_quest)
+			return
 		if action.has("set_flag"):
 			set_flag(String(action.set_flag))
 		if action.has("rep"):
@@ -1756,7 +1759,9 @@ func _apply_placeholder_action(action: Dictionary) -> void:
 		inv = GameManager.player.get_node_or_null("Inventory") as Inventory
 
 	if action.has("accept_quest"):
-		QuestManager.accept(action.accept_quest)
+		if not _try_accept(action.accept_quest):
+			_show_locked_message(action.accept_quest)
+			return
 		if action.has("rep"):
 			for axis_key in action.rep:
 				ReputationSystem.modify(int(axis_key), action.rep[axis_key])
@@ -1775,14 +1780,29 @@ func _apply_placeholder_action(action: Dictionary) -> void:
 		if cart and cart.is_carrying():
 			cart.drop_off(inv)
 		return
-	if action.has("pay_bribe"):
-		if inv and inv.spend_money(action.pay_bribe):
-			for axis_key in action.get("rep", {}):
+	# IMPORTANT : ordre des checks composés. set_endgame > finish_quest > pay_bribe.
+	# Les actions narratives combinent souvent plusieurs effets dans une même
+	# action (ex. padre_act3_close = set_endgame + finish_quest + rep,
+	# tito_favor_ask = finish_quest + pay_bribe + rep). Les blocs « les plus
+	# englobants » doivent être traités d'abord pour gérer leurs sous-effets.
+	if action.has("set_endgame"):
+		# Finale acte 3 : la voie est scellée, dette purgée, écran de fin déclenché.
+		# Englobe finish_quest (paie le payout, complète l'objectif) + rep.
+		var path: int = _endgame_path_for_string(String(action.set_endgame))
+		if action.has("finish_quest"):
+			var info: Dictionary = action.finish_quest
+			if inv and info.get("payout", 0) > 0:
+				inv.add_money(info.payout)
+			QuestManager.complete_objective(info.quest, info.objective)
+		if action.has("rep"):
+			for axis_key in action.rep:
 				ReputationSystem.modify(int(axis_key), action.rep[axis_key])
+		CampaignManager.complete_endgame(path)
 		return
 	if action.has("finish_quest"):
+		# finish_quest avant pay_bribe : les bribe-pour-finir-une-quête
+		# (ex. tito_favor_ask) doivent dépenser l'argent ET compléter la quête.
 		var info: Dictionary = action.finish_quest
-		# Pot-de-vin requis en préalable : si le joueur n'a pas l'argent, on annule.
 		if action.has("pay_bribe"):
 			if inv == null or not inv.spend_money(int(action.pay_bribe)):
 				push_warning("[DialogueBridge] pay_bribe %d failed — quest not completed" % int(action.pay_bribe))
@@ -1792,6 +1812,12 @@ func _apply_placeholder_action(action: Dictionary) -> void:
 		QuestManager.complete_objective(info.quest, info.objective)
 		if action.has("rep"):
 			for axis_key in action.rep:
+				ReputationSystem.modify(int(axis_key), action.rep[axis_key])
+		return
+	if action.has("pay_bribe"):
+		# Bribe pure (sans finish_quest) : ex. flic qui demande de l'argent.
+		if inv and inv.spend_money(action.pay_bribe):
+			for axis_key in action.get("rep", {}):
 				ReputationSystem.modify(int(axis_key), action.rep[axis_key])
 		return
 	if action.has("pay_debt"):
@@ -1805,26 +1831,40 @@ func _apply_placeholder_action(action: Dictionary) -> void:
 			for axis_key in action.rep:
 				ReputationSystem.modify(int(axis_key), action.rep[axis_key])
 		return
-	if action.has("set_endgame"):
-		# Finale acte 3 : la voie est scellée, dette purgée, écran de fin déclenché.
-		# Paiement et finish_quest restent dispo dans la même action pour cumuler les effets.
-		var path: int = _endgame_path_for_string(String(action.set_endgame))
-		if action.has("finish_quest"):
-			var info: Dictionary = action.finish_quest
-			if inv and info.get("payout", 0) > 0:
-				inv.add_money(info.payout)
-			QuestManager.complete_objective(info.quest, info.objective)
-		if action.has("rep"):
-			for axis_key in action.rep:
-				ReputationSystem.modify(int(axis_key), action.rep[axis_key])
-		CampaignManager.complete_endgame(path)
-		return
 	if action.has("set_flag"):
 		set_flag(String(action.set_flag))
 		return
 	if action.has("rep"):
 		for axis_key in action.rep:
 			ReputationSystem.modify(int(axis_key), action.rep[axis_key])
+
+# Tente d'accepter une quête. Si refus (prereq, acte, réputation), log un warning
+# clair et retourne false pour que l'appelant puisse jouer un knot de remplacement.
+func _try_accept(quest_id: String) -> bool:
+	if QuestManager.accept(quest_id):
+		return true
+	var missing: Array[String] = QuestManager.missing_prerequisites(quest_id)
+	if missing.is_empty():
+		push_warning("[DialogueBridge] accept '%s' refusé (acte/réputation insuffisants)" % quest_id)
+	else:
+		push_warning("[DialogueBridge] accept '%s' refusé — prereqs manquants : %s" % [quest_id, ", ".join(missing)])
+	return false
+
+# Affiche un message générique de refus puis termine le dialogue. Évite que le joueur
+# reste coincé sur un knot dont l'action principale a échoué silencieusement.
+func _show_locked_message(quest_id: String) -> void:
+	var missing: Array[String] = QuestManager.missing_prerequisites(quest_id)
+	var hint: String = ""
+	if not missing.is_empty():
+		var pretty: Array[String] = []
+		for pid in missing:
+			var pq: Quest = QuestManager.get_quest(pid)
+			pretty.append(pq.display_name if pq != null and pq.display_name != "" else pid)
+		hint = " — d'abord : %s" % ", ".join(pretty)
+	line_shown.emit("", "Pas encore le bon moment%s." % hint)
+	choices_presented.emit(["D'accord"])
+	# Vide le knot actif pour que le prochain `choose()` retombe sur end_dialogue.
+	_active_knot = ""
 
 func _on_ink_line(speaker: String, text: String) -> void:
 	line_shown.emit(speaker, text)

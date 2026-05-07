@@ -41,6 +41,14 @@ const ACT2_MILESTONES: Array = [
 	{"threshold": 20000, "flag": "tio_ze_letter_triggered"},
 ]
 
+func _ready() -> void:
+	# Une quête de pivot complétée peut être la dernière condition manquante
+	# pour franchir un acte — on revérifie à chaque complétion.
+	EventBus.quest_completed.connect(_on_quest_completed)
+
+func _on_quest_completed(_quest_id: String) -> void:
+	_check_act_advance()
+
 func debt_remaining() -> int:
 	return max(DEBT_TOTAL - debt_paid, 0)
 
@@ -67,7 +75,21 @@ func pay_debt(amount: int) -> int:
 
 # --- Actes ---
 
+# Quêtes principales qui doivent être complétées pour franchir un acte (en plus du seuil de dette).
+# Le gating narratif force le joueur à suivre la trame, pas seulement à farmer.
+# Acte 2 est linéaire : intro (cutscene) → ramos → padre → miguel. Le pivot vers
+# l'acte 3 attend la fin de la chaîne complète (act2_miguel_favela).
+const ACT_PIVOT_QUESTS: Dictionary = {
+	2: ["act1_heritage", "act1_meet_ramos", "act1_meet_tito"],  # acompte + 2 mentors
+	3: ["act2_intro", "act2_ramos_operacao", "act2_padre_orfanato", "act2_miguel_favela"],
+}
+
 func can_advance_to_act(n: int) -> bool:
+	if not ACT_PIVOT_QUESTS.has(n):
+		return false
+	for pivot_id in ACT_PIVOT_QUESTS[n]:
+		if not QuestManager.is_completed(pivot_id):
+			return false
 	if n == 2:
 		return current_act == 1 and debt_paid >= ACT1_THRESHOLD
 	if n == 3:

@@ -14,6 +14,7 @@ var _score_player: int = 0
 var _score_opponent: int = 0
 var _ended: bool = false
 var _waiting_for_serve: bool = false
+var _serve_button: Button = null
 
 func _ready() -> void:
 	print("")
@@ -27,6 +28,14 @@ func _ready() -> void:
 		score_label = get_node_or_null("UI/Score") as Label
 	if status_label == null:
 		status_label = get_node_or_null("UI/Status") as Label
+
+	# Boutons tactiles (mobile-first ; les touches clavier restent en bonus dev).
+	_serve_button = get_node_or_null("UI/ServeButton") as Button
+	if _serve_button:
+		_serve_button.pressed.connect(_launch_serve)
+	var quit_btn: CanvasLayer = get_node_or_null("MinigameQuitButton")
+	if quit_btn and quit_btn.has_signal("quit_pressed"):
+		quit_btn.quit_pressed.connect(_end_match)
 
 	# Groupe ground forcé (syntaxe tscn pas fiable)
 	var ground: Node = get_node_or_null("Ground")
@@ -70,13 +79,17 @@ func _serve() -> void:
 	ball.freeze_ball()
 	_waiting_for_serve = true
 	if status_label:
-		status_label.text = "Espace pour servir"
-	print("[VolleyMatch] service positionné à %s — attente Espace" % pos)
+		status_label.text = "Touchez SERVIR pour le service"
+	if _serve_button:
+		_serve_button.visible = true
+	print("[VolleyMatch] service positionné à %s — attente du joueur" % pos)
 
 func _launch_serve() -> void:
 	if not _waiting_for_serve or ball == null:
 		return
 	_waiting_for_serve = false
+	if _serve_button:
+		_serve_button.visible = false
 	ball.unfreeze_ball()
 	if status_label:
 		status_label.text = ""

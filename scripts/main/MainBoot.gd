@@ -169,6 +169,12 @@ func _on_district_changed(district_id: String) -> void:
 	# Premier shakedown : ré-évalue à chaque changement de district (cas où le
 	# joueur arrive sur le calçadão avec la charrette + de l'argent en poche).
 	_try_first_shakedown()
+	# Pivot acte 2 différé : si la bascule a eu lieu hors de Copa (ex. skip
+	# debug Cmd+2 dans la maison), la cutscene reveal a été reportée → on
+	# la relance à l'arrivée à Copa.
+	if district_id == "copacabana" and CampaignManager.current_act >= 2 \
+			and not CampaignManager.has_flag("act2_reveal_played"):
+		Act2RevealCutscene.run()
 	# Pivot acte 3 différé : si le joueur n'était pas à Copa au moment de la
 	# bascule, on rejoue dès qu'il y arrive.
 	if district_id == "copacabana" and CampaignManager.current_act >= 3 \
@@ -232,15 +238,49 @@ func _load_ng_plus_meta() -> void:
 		CampaignManager.set_flag("is_ng_plus")
 
 func _play_intro_cutscene() -> void:
-	# Laisse 2 frames pour que Player et NPCs finissent leur _ready,
-	# puis joue la cinématique d'introduction.
+	# Le joueur démarre dans la maison du tio Zé, mais Seu João n'y est pas
+	# (cf. ouverture narrative). La cinématique d'introduction se déclenche
+	# désormais quand le joueur sort de la maison la 1re fois — voir
+	# IntroBumpTrigger / IntroSeuJoaoBump. Plus de cinématique automatique au
+	# démarrage : on laisse juste passer 2 frames pour que tout soit prêt.
 	await get_tree().process_frame
 	await get_tree().process_frame
-	IntroSeuJoao.run()
 
 func _attempt_load() -> void:
 	if not SaveSystem.load_game():
 		push_warning("[MainBoot] Save présente mais impossible à charger")
+		return
+	# Sécurité : si une save a été faite pendant une cutscene/dialogue (joueur
+	# frozen via set_physics_process(false)), s'assurer qu'au reload le joueur
+	# est bien actif. Sinon il reste figé sans aucun event pour le réveiller.
+	await get_tree().process_frame
+	if GameManager.player:
+		GameManager.player.set_physics_process(true)
+		GameManager.player.set_process_unhandled_input(true)
+	# Recovery : saves antérieures au fix d'ordre dans _apply_placeholder_action
+	# (set_endgame avant finish_quest) peuvent avoir act3_*_eleicao complétée
+	# sans que chosen_endgame soit posé → joueur coincé Acte 3 alors que la
+	# voie est techniquement scellée. On rattrape automatiquement.
+	_recover_stuck_endgame()
+
+func _recover_stuck_endgame() -> void:
+	if CampaignManager.chosen_endgame != CampaignManager.Endgame.NONE:
+		return
+	if QuestManager.is_completed("act3_prefeito_eleicao"):
+		print("[MainBoot] recovery : act3_prefeito_eleicao complétée sans endgame → seal PREFEITO")
+		CampaignManager.complete_endgame(CampaignManager.Endgame.PREFEITO)
+		SaveSystem.save_game()
+		return
+	if QuestManager.is_completed("act3_trafico_corrida"):
+		print("[MainBoot] recovery : act3_trafico_corrida complétée sans endgame → seal TRAFICO")
+		CampaignManager.complete_endgame(CampaignManager.Endgame.TRAFICO)
+		SaveSystem.save_game()
+		return
+	if QuestManager.is_completed("act3_policia_madrugada"):
+		print("[MainBoot] recovery : act3_policia_madrugada complétée sans endgame → seal POLICIA")
+		CampaignManager.complete_endgame(CampaignManager.Endgame.POLICIA)
+		SaveSystem.save_game()
+		return
 
 func _register_quests() -> void:
 	for path in QUEST_RESOURCES:

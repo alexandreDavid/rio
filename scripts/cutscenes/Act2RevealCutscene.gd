@@ -6,13 +6,20 @@ class_name Act2RevealCutscene
 # Joue une seule fois (flag act2_reveal_played).
 
 const APPROACH_OFFSET_X: float = -90.0  # le Concierge s'arrête à 90px à la gauche du joueur
-const URGENT_WALK_SPEED: float = 110.0  # plus rapide que la marche normale (urgence)
+const TELEPORT_OFFSET_X: float = -260.0 # téléport initial : à 260px à gauche du joueur
+const URGENT_WALK_SPEED: float = 180.0  # plus rapide (urgence) — sur la dernière distance après téléport
 const SUSPENSE_PAUSE: float = 0.6       # le Concierge fixe le joueur avant de parler
 
 static func run() -> void:
 	if CampaignManager.has_flag("act2_reveal_played"):
 		return
 	if GameManager.player == null:
+		return
+	# La scène n'a de sens que sur le calçadão de Copa : le Concierge marche
+	# du Palace vers le joueur. Si on est dans la favela / un intérieur / un
+	# autre district (ex: skip debug Cmd+2 dans la maison), on défère —
+	# MainBoot.on_district_changed la rejouera dès le retour à Copa.
+	if DistrictManager.current() != "copacabana":
 		return
 	# Si un dialogue est actif (ex: paiement consortium qui a déclenché l'acte 2),
 	# on attend qu'il se termine avant de démarrer la cutscene.
@@ -27,6 +34,12 @@ static func run() -> void:
 		return  # NPC absent (par ex. déjà révélé via flag tio_ze_revealed)
 
 	await CutsceneRunner.play(func():
+		# Téléport le Concierge à 260px à gauche du joueur (hors champ proche),
+		# puis fait juste les derniers 170px à pied — évite 60s de freeze quand
+		# le Concierge devrait traverser la moitié de la map.
+		var concierge: Node2D = NPCScheduler.get_npc("concierge")
+		if concierge:
+			concierge.global_position = player.global_position + Vector2(TELEPORT_OFFSET_X, 0)
 		var target: Vector2 = player.global_position + Vector2(APPROACH_OFFSET_X, 0)
 		await CutsceneRunner.walk_npc_to("concierge", target, URGENT_WALK_SPEED)
 		# Le Concierge se tourne face au joueur et marque une pause de suspense.

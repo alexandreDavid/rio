@@ -1,16 +1,19 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=9 format=3]
 
-[ext_resource type="PackedScene" path="res://scenes/props/TaxiStand.tscn" id="1_taxi"]
-[ext_resource type="PackedScene" path="res://scenes/props/DjBooth.tscn" id="2_dj"]
-[ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="3_wander"]
-[ext_resource type="PackedScene" path="res://scenes/props/Viewpoint.tscn" id="4_view"]
-[ext_resource type="PackedScene" path="res://scenes/props/StreetVendor.tscn" id="5_vendor"]
+[ext_resource type="PackedScene" path="res://scenes/props/DjBooth.tscn" id="1_dj"]
+[ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="2_wander"]
+[ext_resource type="PackedScene" path="res://scenes/props/Viewpoint.tscn" id="3_view"]
+[ext_resource type="PackedScene" path="res://scenes/props/StreetVendor.tscn" id="4_vendor"]
+[ext_resource type="PackedScene" path="res://scenes/props/DistrictExit.tscn" id="5_exit"]
 
 [sub_resource type="RectangleShape2D" id="WallH"]
 size = Vector2(700, 16)
 
 [sub_resource type="RectangleShape2D" id="WallV"]
 size = Vector2(16, 360)
+
+[sub_resource type="RectangleShape2D" id="ExitWideShape"]
+size = Vector2(600, 64)
 
 [node name="PaoAcucarDistrict" type="Node2D"]
 
@@ -35,12 +38,40 @@ offset_right = 30.0
 offset_bottom = -20.0
 color = Color(0.98, 0.85, 0.45, 1)
 
+[node name="SunReflectionWater" type="ColorRect" parent="."]
+offset_left = -340.0
+offset_top = -10.0
+offset_right = 340.0
+offset_bottom = -2.0
+color = Color(0.95, 0.65, 0.4, 0.5)
+
+[node name="LowCloud1" type="ColorRect" parent="."]
+offset_left = -260.0
+offset_top = -120.0
+offset_right = -160.0
+offset_bottom = -110.0
+color = Color(0.92, 0.78, 0.62, 0.7)
+
+[node name="LowCloud2" type="ColorRect" parent="."]
+offset_left = 100.0
+offset_top = -130.0
+offset_right = 220.0
+offset_bottom = -118.0
+color = Color(0.92, 0.78, 0.62, 0.7)
+
 [node name="MountainBg" type="ColorRect" parent="."]
 offset_left = -360.0
 offset_top = -50.0
 offset_right = 360.0
 offset_bottom = 0.0
 color = Color(0.18, 0.15, 0.25, 1)
+
+[node name="MountainPeakL" type="ColorRect" parent="."]
+offset_left = -300.0
+offset_top = -90.0
+offset_right = -180.0
+offset_bottom = 0.0
+color = Color(0.16, 0.13, 0.22, 1)
 
 [node name="MountainPeakR" type="ColorRect" parent="."]
 offset_left = 200.0
@@ -49,12 +80,26 @@ offset_right = 320.0
 offset_bottom = 0.0
 color = Color(0.16, 0.13, 0.22, 1)
 
-[node name="MountainPeakL" type="ColorRect" parent="."]
-offset_left = -300.0
-offset_top = -90.0
-offset_right = -180.0
+[node name="MountainSugarLoaf" type="ColorRect" parent="."]
+offset_left = 240.0
+offset_top = -180.0
+offset_right = 320.0
 offset_bottom = 0.0
+color = Color(0.18, 0.15, 0.25, 1)
+
+[node name="MountainSugarLoafTop" type="ColorRect" parent="."]
+offset_left = 250.0
+offset_top = -210.0
+offset_right = 310.0
+offset_bottom = -180.0
 color = Color(0.16, 0.13, 0.22, 1)
+
+[node name="BeachLineFar" type="ColorRect" parent="."]
+offset_left = -340.0
+offset_top = -10.0
+offset_right = 240.0
+offset_bottom = -2.0
+color = Color(0.95, 0.78, 0.55, 0.6)
 
 [node name="Bondinho" type="ColorRect" parent="."]
 offset_left = 60.0
@@ -69,6 +114,20 @@ offset_top = -260.0
 offset_right = 86.0
 offset_bottom = -160.0
 color = Color(0.4, 0.4, 0.45, 1)
+
+[node name="BondinhoCableSecond" type="ColorRect" parent="."]
+offset_left = -100.0
+offset_top = -260.0
+offset_right = -94.0
+offset_bottom = -120.0
+color = Color(0.4, 0.4, 0.45, 1)
+
+[node name="BondinhoCabin2" type="ColorRect" parent="."]
+offset_left = -120.0
+offset_top = -180.0
+offset_right = -70.0
+offset_bottom = -150.0
+color = Color(0.55, 0.78, 0.95, 1)
 
 [node name="Platform" type="ColorRect" parent="."]
 offset_left = -340.0
@@ -89,6 +148,41 @@ offset_left = -340.0
 offset_top = -8.0
 offset_right = 340.0
 offset_bottom = 0.0
+color = Color(0.55, 0.45, 0.5, 1)
+
+[node name="ParapetRailL" type="ColorRect" parent="."]
+offset_left = -340.0
+offset_top = -16.0
+offset_right = -300.0
+offset_bottom = -10.0
+color = Color(0.55, 0.45, 0.5, 1)
+
+[node name="ParapetRailR" type="ColorRect" parent="."]
+offset_left = 300.0
+offset_top = -16.0
+offset_right = 340.0
+offset_bottom = -10.0
+color = Color(0.55, 0.45, 0.5, 1)
+
+[node name="ParapetPostL1" type="ColorRect" parent="."]
+offset_left = -260.0
+offset_top = -16.0
+offset_right = -256.0
+offset_bottom = -2.0
+color = Color(0.55, 0.45, 0.5, 1)
+
+[node name="ParapetPostL2" type="ColorRect" parent="."]
+offset_left = -180.0
+offset_top = -16.0
+offset_right = -176.0
+offset_bottom = -2.0
+color = Color(0.55, 0.45, 0.5, 1)
+
+[node name="ParapetPostR1" type="ColorRect" parent="."]
+offset_left = 230.0
+offset_top = -16.0
+offset_right = 234.0
+offset_bottom = -2.0
 color = Color(0.55, 0.45, 0.5, 1)
 
 [node name="DanceLight1" type="ColorRect" parent="."]
@@ -158,104 +252,30 @@ shape = SubResource("WallV")
 [node name="PlayerSpawn" type="Marker2D" parent="."]
 position = Vector2(-220, 100)
 
-[node name="TaxiStand" parent="." instance=ExtResource("1_taxi")]
-position = Vector2(-260, 130)
+[node name="ExitToBotafogo" parent="." instance=ExtResource("5_exit")]
+position = Vector2(0, 156)
+target_district = "botafogo_flamengo"
+label_text = "🚠 ↓ Redescendre"
 
-[node name="DjBooth" parent="." instance=ExtResource("2_dj")]
+[node name="CollisionShape2D" parent="ExitToBotafogo" index="0"]
+shape = SubResource("ExitWideShape")
+
+[node name="ExitBoothSign" type="Label" parent="."]
+offset_left = -100.0
+offset_top = 132.0
+offset_right = 100.0
+offset_bottom = 152.0
+text = "🚠 Estação"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 3
+
+[node name="DjBooth" parent="." instance=ExtResource("1_dj")]
 position = Vector2(180, 80)
 
-[node name="BondinhoCableSecond" type="ColorRect" parent="."]
-offset_left = -100.0
-offset_top = -260.0
-offset_right = -94.0
-offset_bottom = -120.0
-color = Color(0.4, 0.4, 0.45, 1)
-
-[node name="BondinhoCabin2" type="ColorRect" parent="."]
-offset_left = -120.0
-offset_top = -180.0
-offset_right = -70.0
-offset_bottom = -150.0
-color = Color(0.55, 0.78, 0.95, 1)
-
-[node name="SunReflectionWater" type="ColorRect" parent="."]
-offset_left = -340.0
-offset_top = -10.0
-offset_right = 340.0
-offset_bottom = -2.0
-color = Color(0.95, 0.65, 0.4, 0.5)
-
-[node name="LowCloud1" type="ColorRect" parent="."]
-offset_left = -260.0
-offset_top = -120.0
-offset_right = -160.0
-offset_bottom = -110.0
-color = Color(0.92, 0.78, 0.62, 0.7)
-
-[node name="LowCloud2" type="ColorRect" parent="."]
-offset_left = 100.0
-offset_top = -130.0
-offset_right = 220.0
-offset_bottom = -118.0
-color = Color(0.92, 0.78, 0.62, 0.7)
-
-[node name="MountainSugarLoaf" type="ColorRect" parent="."]
-offset_left = 240.0
-offset_top = -180.0
-offset_right = 320.0
-offset_bottom = 0.0
-color = Color(0.18, 0.15, 0.25, 1)
-
-[node name="MountainSugarLoafTop" type="ColorRect" parent="."]
-offset_left = 250.0
-offset_top = -210.0
-offset_right = 310.0
-offset_bottom = -180.0
-color = Color(0.16, 0.13, 0.22, 1)
-
-[node name="BeachLineFar" type="ColorRect" parent="."]
-offset_left = -340.0
-offset_top = -10.0
-offset_right = 240.0
-offset_bottom = -2.0
-color = Color(0.95, 0.78, 0.55, 0.6)
-
-[node name="ParapetRailL" type="ColorRect" parent="."]
-offset_left = -340.0
-offset_top = -16.0
-offset_right = -300.0
-offset_bottom = -10.0
-color = Color(0.55, 0.45, 0.5, 1)
-
-[node name="ParapetRailR" type="ColorRect" parent="."]
-offset_left = 300.0
-offset_top = -16.0
-offset_right = 340.0
-offset_bottom = -10.0
-color = Color(0.55, 0.45, 0.5, 1)
-
-[node name="ParapetPostL1" type="ColorRect" parent="."]
-offset_left = -260.0
-offset_top = -16.0
-offset_right = -256.0
-offset_bottom = -2.0
-color = Color(0.55, 0.45, 0.5, 1)
-
-[node name="ParapetPostL2" type="ColorRect" parent="."]
-offset_left = -180.0
-offset_top = -16.0
-offset_right = -176.0
-offset_bottom = -2.0
-color = Color(0.55, 0.45, 0.5, 1)
-
-[node name="ParapetPostR1" type="ColorRect" parent="."]
-offset_left = 230.0
-offset_top = -16.0
-offset_right = 234.0
-offset_bottom = -2.0
-color = Color(0.55, 0.45, 0.5, 1)
-
-[node name="ViewpointSunset" parent="." instance=ExtResource("4_view")]
+[node name="ViewpointSunset" parent="." instance=ExtResource("3_view")]
 position = Vector2(-160, 30)
 viewpoint_id = "paoacucar_sunset"
 prompt_first = "Photographier le coucher"
@@ -263,7 +283,7 @@ flavor_speaker = "Sobrinho"
 flavor_text = "Le ciel se teinte de mangue, le soleil tombe derrière le pão de açúcar voisin. Pour cinq minutes, Rio appartient à ceux qui regardent."
 money_reward = 100
 
-[node name="ViewpointBondinho" parent="." instance=ExtResource("4_view")]
+[node name="ViewpointBondinho" parent="." instance=ExtResource("3_view")]
 position = Vector2(80, 30)
 viewpoint_id = "paoacucar_bondinho"
 prompt_first = "Regarder le bondinho"
@@ -271,7 +291,7 @@ flavor_speaker = "Sobrinho"
 flavor_text = "Les téléphériques se croisent en silence, suspendus entre Urca et le sommet. Une cabine descend, l'autre remonte ; rien entre les deux que de l'air doré."
 money_reward = 60
 
-[node name="AcaiVendor" parent="." instance=ExtResource("5_vendor")]
+[node name="AcaiVendor" parent="." instance=ExtResource("4_vendor")]
 position = Vector2(-220, 80)
 vendor_id = "paoacucar_acai"
 item_label = "Açaí na tigela"
@@ -279,7 +299,7 @@ price = 12
 stamina_recover = 45.0
 flavor_text_offer = "Açaí com granola e mel, freguês. Bota energia pra próxima subida !"
 
-[node name="Tourist1" parent="." instance=ExtResource("3_wander")]
+[node name="Tourist1" parent="." instance=ExtResource("2_wander")]
 position = Vector2(-100, 100)
 color = Color(0.95, 0.85, 0.4, 1)
 roam_zone = Rect2(-100, -20, 200, 40)
@@ -287,7 +307,7 @@ speed = 22.0
 pause_random_jitter = 1.5
 look_at_player_distance = 70.0
 
-[node name="Tourist2" parent="." instance=ExtResource("3_wander")]
+[node name="Tourist2" parent="." instance=ExtResource("2_wander")]
 position = Vector2(80, 110)
 color = Color(0.4, 0.85, 0.55, 1)
 roam_zone = Rect2(-100, -20, 200, 40)
@@ -295,7 +315,7 @@ speed = 18.0
 pause_random_jitter = 1.5
 look_at_player_distance = 70.0
 
-[node name="DancerL" parent="." instance=ExtResource("3_wander")]
+[node name="DancerL" parent="." instance=ExtResource("2_wander")]
 position = Vector2(120, 130)
 color = Color(0.85, 0.3, 0.5, 1)
 size = Vector2(11, 19)
@@ -305,7 +325,7 @@ pause_at_waypoints = 0.4
 pause_random_jitter = 0.6
 look_at_player_distance = 50.0
 
-[node name="DancerR" parent="." instance=ExtResource("3_wander")]
+[node name="DancerR" parent="." instance=ExtResource("2_wander")]
 position = Vector2(220, 140)
 color = Color(0.4, 0.65, 0.95, 1)
 size = Vector2(11, 19)
@@ -315,7 +335,7 @@ pause_at_waypoints = 0.4
 pause_random_jitter = 0.6
 look_at_player_distance = 50.0
 
-[node name="PhotoTourist" parent="." instance=ExtResource("3_wander")]
+[node name="PhotoTourist" parent="." instance=ExtResource("2_wander")]
 position = Vector2(-160, 60)
 color = Color(0.95, 0.55, 0.4, 1)
 stationary = true

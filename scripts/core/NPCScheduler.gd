@@ -29,13 +29,16 @@ const DEFAULT_SCHEDULE: Dictionary = {
 	# seu_joao vit désormais dans la maison du morro (HouseInterior, hors monde joué).
 	# Pas de règle ici pour ne pas le téléporter sur le calçadão au démarrage.
 	"miguel": [
-		{"act": 2, "pos": Vector2(200, -220)},  # s'installe dans la favela en acte 2
-		{"pos": Vector2(866, 96)},
+		# Acte 2 : Miguel s'installe DANS le district FavelaDoMorro (instancié à
+		# (-15000, -2900)). Position locale (50, 100) → global = (-14950, -2800).
+		# Évite que Miguel reste dans la zone du trigger ExitToFavela à Copa
+		# (-258..-162 sur l'axe Y) qui le rendrait inatteignable.
+		{"act": 2, "pos": Vector2(-14950, -2800)},
+		{"pos": Vector2(866, 96)},  # Acte 1 : Av. Atlântica
 	],
-	"tito": [
-		{"flag": "ratted_on_tito", "pos": Vector2(9999, -9999)},  # hors map s'il s'est fait balancer
-		{"pos": Vector2(180, -270)},
-	],
+	# tito vit dans FavelaDoMorro.tscn — pas de règle ici pour ne pas le téléporter
+	# en coordonnées globales Copa au démarrage. Le flag "ratted_on_tito" (qui le
+	# faisait disparaître hors map) est géré directement dans Tito.gd via visible/enabled.
 	"concierge": [
 		{"flag": "tio_ze_revealed", "pos": Vector2(9999, -9999)},  # disparaît quand on découvre que c'est Zé
 		{"pos": Vector2(1700, 96)},
@@ -95,6 +98,10 @@ func get_npc(npc_id: String) -> Node2D:
 	return null
 
 const WALK_SPEED: float = 80.0  # px/s pour l'animation de marche du scheduler
+# Au-delà de cette distance, on téléporte au lieu d'animer — sinon un NPC qui
+# change de district (Miguel passant de Copa à FavelaDoMorro = ~16 000 px)
+# mettrait 3 min à pied à arriver.
+const ANIMATE_MAX_DISTANCE: float = 600.0
 
 func reposition(npc_id: String, animate: bool = false) -> void:
 	var node: Node2D = _registered.get(npc_id)
@@ -106,8 +113,8 @@ func reposition(npc_id: String, animate: bool = false) -> void:
 		return
 	var pos: Vector2 = compute_position(npc_id)
 	var dist: float = node.global_position.distance_to(pos)
-	# Animation de marche uniquement si demandé ET distance significative ET NPC supporte play_walk.
-	if animate and dist > 8.0 and node.has_method("play_walk"):
+	# Animation de marche uniquement si demandé ET distance modérée ET NPC supporte play_walk.
+	if animate and dist > 8.0 and dist <= ANIMATE_MAX_DISTANCE and node.has_method("play_walk"):
 		_animate_walk(node, pos)
 	else:
 		node.global_position = pos

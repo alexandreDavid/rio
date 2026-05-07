@@ -13,6 +13,7 @@ const QUEST_PURGA: String = "act4_policia_purga"
 func _on_interacted(_by: Node) -> void:
 	if data == null:
 		return
+	await _approach_player_if_far()
 	var knot: String = data.ink_knot  # "ramos_intro"
 	# Acte 4 : règne du Chefe.
 	if CampaignManager.current_act >= 4 and CampaignManager.chosen_endgame == CampaignManager.Endgame.POLICIA:

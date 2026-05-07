@@ -7,6 +7,7 @@ extends Control
 # changement d'état.
 
 @onready var label: Label = $Panel/Label
+@onready var panel: Panel = $Panel
 
 func _ready() -> void:
 	# Écoute tous les signaux qui peuvent changer l'objectif courant.
@@ -54,6 +55,8 @@ func _refresh() -> void:
 	var text: String = _compute_hint()
 	if label:
 		label.text = text
+	if panel:
+		panel.visible = text != ""
 
 # Récupère le portefeuille du joueur (0 si indisponible).
 func _player_money() -> int:
@@ -82,8 +85,12 @@ func _compute_hint() -> String:
 	var is_evening: bool = TimeOfDay.current_phase == TimeOfDay.Phase.EVENING
 
 	# --- Acte 1 : démarrage ---
-	# Tio Zé n'a pas encore parlé : aller le voir dans la maison.
+	# Avant le bump cutscene : tio Zé n'est pas encore dans la maison. Mãe et
+	# vovó attendent des nouvelles. Le joueur doit sortir pour déclencher
+	# l'événement (Seu João débarque par la porte).
 	if not CampaignManager.has_flag("act1_started"):
+		if not CampaignManager.has_flag("intro_bump_seen"):
+			return "🎯 Sors de la maison — Seu João arrive avec des nouvelles"
 		return "🎯 Parle à tio Zé"
 
 	# --- Soir : la famille attend pour le jantar ---
@@ -100,6 +107,12 @@ func _compute_hint() -> String:
 		# Retour à la favela après le premier acompte → revoir la famille.
 		if CampaignManager.has_flag("should_visit_home") and not CampaignManager.has_flag("home_visit_done"):
 			return "🎯 Monte voir tio Zé et la famille"
+		# Acte 1 : Tito habite ici. Si la rencontre est dispo/active, pointe vers lui.
+		if act == 1 and not QuestManager.is_completed("act1_meet_tito"):
+			if QuestManager.is_active("act1_meet_tito"):
+				return "🎯 Tito attend son service — fais-lui confiance"
+			if QuestManager.is_available("act1_meet_tito"):
+				return "🎯 Trouve Tito — il joue plus haut dans le morro"
 		return "🎯 ↓ Descends l'escalier vers Copacabana"
 
 	# --- Acte 1 sur Copacabana ---
@@ -119,14 +132,27 @@ func _compute_hint() -> String:
 			if carrying:
 				return "🎯 Sers les clients du calçadão (R$ %d / %d)" % [money, still_to_pay]
 			return "🎯 Continue de gagner R$ — il manque %d pour l'acompte" % (still_to_pay - money)
+		# Acompte payé : pousser vers les deux mentors (pivots du passage à l'acte 2).
+		var ramos_done: bool = QuestManager.is_completed("act1_meet_ramos")
+		var tito_done: bool = QuestManager.is_completed("act1_meet_tito")
+		if not ramos_done and not tito_done:
+			return "🎯 Acte 1 continue — rencontre Ramos (Bar do Policial) et Tito (↑ Morro)"
+		if not ramos_done:
+			return "🎯 Va voir Capitão Ramos — Bar do Policial (côté Atlântica)"
+		if not tito_done:
+			return "🎯 Monte au Morro rencontrer Tito"
 
-	# --- Acte 2 ---
+	# --- Acte 2 (chaîne linéaire ramos → padre → miguel) ---
 	if act == 2:
 		# Juste après bascule en acte 2 : retour favela pour digérer le moment.
 		if CampaignManager.has_flag("should_visit_home") and not CampaignManager.has_flag("home_visit_done"):
 			if district == "favela_morro":
 				return "🎯 Monte voir tio Zé et la famille"
 			return "🎯 Retourne voir ta famille à la favela"
+		# La chaîne MAIN guide ; le seuil de dette est complémentaire.
+		var act2_chain_hint: String = _next_main_hint_act2()
+		if act2_chain_hint != "":
+			return act2_chain_hint
 		if debt_paid < CampaignManager.ACT2_THRESHOLD:
 			var still: int = CampaignManager.ACT2_THRESHOLD - debt_paid
 			return "🎯 Continue de payer la dette (%s R$ avant l'acte 3)" % still
@@ -146,6 +172,41 @@ func _compute_hint() -> String:
 		return "🎯 Mène ton règne — défilé du Carnaval au Sambódromo"
 
 	# Fallback
+	return ""
+
+# Hint pour la chaîne linéaire d'acte 2 : ramos_operacao → padre_orfanato → miguel_favela.
+# Renvoie la prochaine étape selon la quête active (priorité) puis disponible.
+func _next_main_hint_act2() -> String:
+	# 1. Quête active : pousse vers son giver pour la conclure.
+	for qid_active in ["act2_ramos_operacao", "act2_padre_orfanato", "act2_miguel_favela"]:
+		if QuestManager.is_active(qid_active):
+			return _hint_for_active_act2(qid_active)
+	# 2. Sinon, prochaine disponible.
+	for qid_avail in ["act2_intro", "act2_ramos_operacao", "act2_padre_orfanato", "act2_miguel_favela"]:
+		if QuestManager.is_available(qid_avail):
+			return _hint_for_offer_act2(qid_avail)
+	return ""
+
+func _hint_for_active_act2(qid: String) -> String:
+	match qid:
+		"act2_ramos_operacao":
+			return "🎯 Operação Carnaval : tranche pour Ramos (Bar do Policial)"
+		"act2_padre_orfanato":
+			return "🎯 Pétition Orfanato : trois signatures à recueillir"
+		"act2_miguel_favela":
+			return "🎯 Convoi de Miguel : descends le sac côté Forte"
+	return ""
+
+func _hint_for_offer_act2(qid: String) -> String:
+	match qid:
+		"act2_intro":
+			return "🎯 Va voir le Concierge au Copacabana Palace"
+		"act2_ramos_operacao":
+			return "🎯 Va voir Ramos — Bar do Policial / poste de police"
+		"act2_padre_orfanato":
+			return "🎯 Va voir le Padre — chapelle Nossa Senhora"
+		"act2_miguel_favela":
+			return "🎯 Monte au Morro voir Miguel"
 	return ""
 
 # Détecte la voie engagée à partir de l'état des quêtes intermédiaires/finales.

@@ -35,6 +35,27 @@ offset_right = 360.0
 offset_bottom = -60.0
 color = Color(0.32, 0.48, 0.6, 1)
 
+[node name="BayHighlight" type="ColorRect" parent="."]
+offset_left = -360.0
+offset_top = -100.0
+offset_right = 360.0
+offset_bottom = -97.0
+color = Color(0.78, 0.88, 0.92, 0.55)
+
+[node name="BayWaveA" type="ColorRect" parent="."]
+offset_left = -200.0
+offset_top = -85.0
+offset_right = -100.0
+offset_bottom = -82.0
+color = Color(0.85, 0.92, 0.95, 0.5)
+
+[node name="BayWaveB" type="ColorRect" parent="."]
+offset_left = 80.0
+offset_top = -75.0
+offset_right = 200.0
+offset_bottom = -72.0
+color = Color(0.85, 0.92, 0.95, 0.5)
+
 [node name="PaoAcucarSilhouette" type="ColorRect" parent="."]
 offset_left = 220.0
 offset_top = -160.0
@@ -48,6 +69,27 @@ offset_top = -130.0
 offset_right = 340.0
 offset_bottom = -100.0
 color = Color(0.22, 0.28, 0.38, 1)
+
+[node name="NiteroiSilhouette" type="ColorRect" parent="."]
+offset_left = -340.0
+offset_top = -150.0
+offset_right = -240.0
+offset_bottom = -100.0
+color = Color(0.32, 0.36, 0.45, 0.85)
+
+[node name="NiteroiSkylineA" type="ColorRect" parent="."]
+offset_left = -320.0
+offset_top = -180.0
+offset_right = -300.0
+offset_bottom = -150.0
+color = Color(0.30, 0.34, 0.42, 0.85)
+
+[node name="NiteroiSkylineB" type="ColorRect" parent="."]
+offset_left = -270.0
+offset_top = -200.0
+offset_right = -250.0
+offset_bottom = -150.0
+color = Color(0.30, 0.34, 0.42, 0.85)
 
 [node name="Terminal" type="ColorRect" parent="."]
 offset_left = -260.0
@@ -168,83 +210,6 @@ offset_right = 340.0
 offset_bottom = 100.0
 color = Color(0.95, 0.82, 0.3, 1)
 
-[node name="Sign" type="Label" parent="."]
-offset_left = -120.0
-offset_top = 110.0
-offset_right = 120.0
-offset_bottom = 134.0
-text = "AEROPORTO SANTOS DUMONT"
-horizontal_alignment = 1
-theme_override_font_sizes/font_size = 13
-theme_override_colors/font_color = Color(0.95, 0.92, 0.85, 1)
-
-[node name="Walls" type="Node2D" parent="."]
-
-[node name="Top" type="StaticBody2D" parent="Walls"]
-position = Vector2(0, -8)
-
-[node name="Shape" type="CollisionShape2D" parent="Walls/Top"]
-shape = SubResource("WallH")
-
-[node name="Bottom" type="StaticBody2D" parent="Walls"]
-position = Vector2(0, 188)
-
-[node name="Shape" type="CollisionShape2D" parent="Walls/Bottom"]
-shape = SubResource("WallH")
-
-[node name="Left" type="StaticBody2D" parent="Walls"]
-position = Vector2(-348, 90)
-
-[node name="Shape" type="CollisionShape2D" parent="Walls/Left"]
-shape = SubResource("WallV")
-
-[node name="Right" type="StaticBody2D" parent="Walls"]
-position = Vector2(348, 90)
-
-[node name="Shape" type="CollisionShape2D" parent="Walls/Right"]
-shape = SubResource("WallV")
-
-[node name="PlayerSpawn" type="Marker2D" parent="."]
-position = Vector2(-220, 140)
-
-[node name="TaxiStand" parent="." instance=ExtResource("1_taxi")]
-position = Vector2(-260, 160)
-
-[node name="DonSalvatore" parent="." instance=ExtResource("2_salvatore")]
-position = Vector2(80, 130)
-
-[node name="DepartureBoard" type="ColorRect" parent="."]
-offset_left = -240.0
-offset_top = 100.0
-offset_right = -120.0
-offset_bottom = 124.0
-color = Color(0.18, 0.22, 0.28, 1)
-
-[node name="DepartureBoardLine" type="Label" parent="."]
-offset_left = -236.0
-offset_top = 100.0
-offset_right = -124.0
-offset_bottom = 124.0
-text = "GIG·08:30·EMBARQUE"
-horizontal_alignment = 1
-vertical_alignment = 1
-theme_override_font_sizes/font_size = 9
-theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
-
-[node name="LuggageCart" type="ColorRect" parent="."]
-offset_left = 200.0
-offset_top = 96.0
-offset_right = 240.0
-offset_bottom = 116.0
-color = Color(0.55, 0.45, 0.42, 1)
-
-[node name="LuggageStack" type="ColorRect" parent="."]
-offset_left = 204.0
-offset_top = 80.0
-offset_right = 232.0
-offset_bottom = 96.0
-color = Color(0.42, 0.32, 0.28, 1)
-
 [node name="ApronGroundLine1" type="ColorRect" parent="."]
 offset_left = -340.0
 offset_top = 60.0
@@ -289,6 +254,83 @@ offset_top = -68.0
 offset_right = 332.0
 offset_bottom = -56.0
 color = Color(0.95, 0.5, 0.18, 0.85)
+
+[node name="DepartureBoard" type="ColorRect" parent="."]
+offset_left = -240.0
+offset_top = 100.0
+offset_right = -120.0
+offset_bottom = 124.0
+color = Color(0.18, 0.22, 0.28, 1)
+
+[node name="DepartureBoardLine" type="Label" parent="."]
+offset_left = -236.0
+offset_top = 100.0
+offset_right = -124.0
+offset_bottom = 124.0
+text = "GIG·08:30·EMBARQUE"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 9
+theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
+
+[node name="LuggageCart" type="ColorRect" parent="."]
+offset_left = 200.0
+offset_top = 96.0
+offset_right = 240.0
+offset_bottom = 116.0
+color = Color(0.55, 0.45, 0.42, 1)
+
+[node name="LuggageStack" type="ColorRect" parent="."]
+offset_left = 204.0
+offset_top = 80.0
+offset_right = 232.0
+offset_bottom = 96.0
+color = Color(0.42, 0.32, 0.28, 1)
+
+[node name="Sign" type="Label" parent="."]
+offset_left = -120.0
+offset_top = 110.0
+offset_right = 120.0
+offset_bottom = 134.0
+text = "AEROPORTO SANTOS DUMONT"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.95, 0.92, 0.85, 1)
+
+[node name="Walls" type="Node2D" parent="."]
+
+[node name="Top" type="StaticBody2D" parent="Walls"]
+position = Vector2(0, -8)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Top"]
+shape = SubResource("WallH")
+
+[node name="Bottom" type="StaticBody2D" parent="Walls"]
+position = Vector2(0, 188)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Bottom"]
+shape = SubResource("WallH")
+
+[node name="Left" type="StaticBody2D" parent="Walls"]
+position = Vector2(-348, 90)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Left"]
+shape = SubResource("WallV")
+
+[node name="Right" type="StaticBody2D" parent="Walls"]
+position = Vector2(348, 90)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Right"]
+shape = SubResource("WallV")
+
+[node name="PlayerSpawn" type="Marker2D" parent="."]
+position = Vector2(-220, 140)
+
+[node name="TaxiStand" parent="." instance=ExtResource("1_taxi")]
+position = Vector2(-260, 160)
+
+[node name="DonSalvatore" parent="." instance=ExtResource("2_salvatore")]
+position = Vector2(80, 130)
 
 [node name="ViewpointTarmac" parent="." instance=ExtResource("4_view")]
 position = Vector2(140, 60)

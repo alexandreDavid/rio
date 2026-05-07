@@ -1,7 +1,8 @@
 extends Control
 
 # Gère l'overlay de contrôles mobile : bouton E qui envoie l'action "interact",
-# joystick auto-géré. Masque les contrôles pendant les dialogues.
+# joystick auto-géré. Masque les contrôles pendant les dialogues et les mini-jeux
+# (chaque mini-jeu offre ses propres boutons à l'écran, le 📱 deviendrait redondant).
 
 @onready var interact_button: Button = $InteractButton
 @onready var joystick: VirtualJoystick = $Joystick
@@ -11,6 +12,8 @@ func _ready() -> void:
 		interact_button.pressed.connect(_on_interact_pressed)
 	EventBus.dialogue_started.connect(_on_dialogue_started)
 	EventBus.dialogue_ended.connect(_on_dialogue_ended)
+	EventBus.minigame_started.connect(_on_minigame_started)
+	EventBus.minigame_ended.connect(_on_minigame_ended)
 
 func _on_interact_pressed() -> void:
 	var ev: InputEventAction = InputEventAction.new()
@@ -22,4 +25,10 @@ func _on_dialogue_started(_npc_id: String) -> void:
 	visible = false
 
 func _on_dialogue_ended(_npc_id: String) -> void:
+	visible = true
+
+func _on_minigame_started(_minigame_id: String) -> void:
+	visible = false
+
+func _on_minigame_ended(_minigame_id: String, _result: Dictionary) -> void:
 	visible = true

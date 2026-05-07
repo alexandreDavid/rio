@@ -1,6 +1,7 @@
 extends NPC
 
 # Contessa Bianchi : escort acte 1 + gala acte 2 + date privée (side, après gala).
+# Pendant escort_contessa, elle suit physiquement le joueur (start_following).
 
 const QUEST: String = "escort_contessa"
 const OBJ_BAR: String = "escort_to_bar"
@@ -11,9 +12,27 @@ const QUEST_DATE: String = "contessa_date"
 # Seuil de charisme en dessous duquel elle refuse d'être vue avec le joueur.
 const CHARISMA_THRESHOLD: int = 10
 
+func _ready() -> void:
+	super._ready()
+	EventBus.quest_accepted.connect(_on_quest_event)
+	EventBus.quest_completed.connect(_on_quest_event)
+	EventBus.quest_failed.connect(_on_quest_event)
+	# Reprend l'escort si la quête était déjà active au chargement de la save.
+	_sync_follow_state()
+
+func _on_quest_event(_quest_id: String) -> void:
+	_sync_follow_state()
+
+func _sync_follow_state() -> void:
+	if QuestManager.is_active(QUEST):
+		start_following()
+	else:
+		stop_following()
+
 func _on_interacted(_by: Node) -> void:
 	if data == null:
 		return
+	await _approach_player_if_far()
 	var knot: String = data.ink_knot  # contessa_intro
 	# Side quest : date privée après le gala (priorité haute si proposée/active).
 	if QuestManager.is_active(QUEST_DATE):

@@ -22,10 +22,16 @@ const DISTRICTS: Dictionary = {
 		"fare": 15,
 		"node_name": "CorcovadoDistrict",
 	},
+	# Aterro / Santos Dumont sont fusionnés dans la même scène que Botafogo
+	# (BotafogoFlamengoDistrict) — taxi-rates conservés, spawn distinct.
+	# Pão de Açúcar reste un district séparé (sommet du morro), accessible
+	# uniquement par bondinho au sud-est de Botafogo. taxi_available=false
+	# pour le retirer de la liste taxi.
 	"pao_acucar": {
 		"label": "Pão de Açúcar — pôr do sol (bondinho)",
 		"fare": 25,
 		"node_name": "PaoAcucarDistrict",
+		"taxi_available": false,
 	},
 	"lagoa": {
 		"label": "Lagoa Rodrigo de Freitas",
@@ -45,7 +51,8 @@ const DISTRICTS: Dictionary = {
 	"aterro_flamengo": {
 		"label": "Aterro do Flamengo — basquete",
 		"fare": 14,
-		"node_name": "AterroFlamengoDistrict",
+		"node_name": "BotafogoFlamengoDistrict",
+		"spawn_marker": "PlayerSpawnAterro",
 	},
 	"cagarras": {
 		"label": "Posto 6 — Ilhas Cagarras (SUP)",
@@ -92,6 +99,7 @@ const WALK_ENTRIES: Dictionary = {
 	},
 	"botafogo_flamengo": {
 		"copacabana": Vector2(0, 250),  # sortie nord du Túnel Novo — nord de ExitToCopa (365)
+		"pao_acucar": Vector2(880, 30),  # retour du bondinho au sud-est, près de la borne
 	},
 	"favela_morro": {
 		"copacabana": Vector2(0, 150),    # arrivée depuis le bas — nord de ExitToCopa (250) à 70 px
@@ -126,11 +134,16 @@ func get_fare(district_id: String) -> int:
 	return int(DISTRICTS.get(district_id, {}).get("fare", 0))
 
 # Liste des destinations disponibles depuis la position courante (toutes sauf la courante).
+# Filtre les districts marqués taxi_available=false (ex. Pão de Açúcar accessible
+# uniquement via le bondinho).
 func available_destinations() -> Array:
 	var out: Array = []
 	for id in DISTRICTS:
-		if id != _current:
-			out.append(id)
+		if id == _current:
+			continue
+		if not DISTRICTS[id].get("taxi_available", true):
+			continue
+		out.append(id)
 	return out
 
 func travel_to(district_id: String) -> bool:
@@ -218,7 +231,13 @@ func _resolve_spawn(district_id: String) -> Vector2:
 	if district_node == null:
 		push_warning("[DistrictManager] district '%s' n'est pas dans la scène" % node_name)
 		return COPACABANA_RETURN_POS
-	var spawn: Node2D = district_node.get_node_or_null("PlayerSpawn") as Node2D
+	# Permet à plusieurs district_ids de partager une seule scène (cf. fusion
+	# Botafogo+Aterro+PaoAcucar+SantosDumont) — chaque id pointe vers son propre
+	# Marker2D nommé. Fallback : "PlayerSpawn" générique.
+	var marker_name: String = DISTRICTS[district_id].get("spawn_marker", "PlayerSpawn")
+	var spawn: Node2D = district_node.get_node_or_null(marker_name) as Node2D
+	if spawn == null and marker_name != "PlayerSpawn":
+		spawn = district_node.get_node_or_null("PlayerSpawn") as Node2D
 	if spawn:
 		return spawn.global_position
 	return district_node.global_position if district_node is Node2D else COPACABANA_RETURN_POS

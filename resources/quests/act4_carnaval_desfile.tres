@@ -22,3 +22,5 @@ money_reward = 5000
 reputation_rewards = {0: 5, 4: 5, 3: 3}
 required_reputation = {}
 required_act = 4
+quest_type = 1
+prerequisite_quest_ids = Array[String]([])

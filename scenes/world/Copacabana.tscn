@@ -10,11 +10,10 @@
 [ext_resource type="PackedScene" path="res://scenes/props/MissionBoard.tscn" id="44_mission_board"]
 [ext_resource type="PackedScene" path="res://scenes/props/TaxiStand.tscn" id="45_taxi_stand"]
 [ext_resource type="PackedScene" path="res://scenes/districts/Corcovado.tscn" id="46_corcovado"]
-[ext_resource type="PackedScene" path="res://scenes/districts/PaoAcucar.tscn" id="47_paoacucar"]
 [ext_resource type="PackedScene" path="res://scenes/districts/Lagoa.tscn" id="48_lagoa"]
 [ext_resource type="PackedScene" path="res://scenes/districts/Maracana.tscn" id="49_maracana"]
-[ext_resource type="PackedScene" path="res://scenes/districts/SantosDumont.tscn" id="50_santos"]
-[ext_resource type="PackedScene" path="res://scenes/districts/AterroFlamengo.tscn" id="51_aterro"]
+[ext_resource type="PackedScene" path="res://scenes/districts/PaoAcucar.tscn" id="50_paoacucar"]
+[ext_resource type="PackedScene" path="res://scenes/districts/SantosDumont.tscn" id="51_santos"]
 [ext_resource type="PackedScene" path="res://scenes/districts/Cagarras.tscn" id="52_cagarras"]
 [ext_resource type="PackedScene" path="res://scenes/districts/Sambodromo.tscn" id="53_sambodromo"]
 [ext_resource type="PackedScene" path="res://scenes/vehicles/Bike.tscn" id="54_bike"]
@@ -57,7 +56,6 @@
 [ext_resource type="PackedScene" path="res://scenes/npcs/ChefRestaurant.tscn" id="19_chef"]
 [ext_resource type="PackedScene" path="res://scenes/npcs/VendeuseBoutique.tscn" id="20_vendeuse"]
 [ext_resource type="PackedScene" path="res://scenes/npcs/Policier.tscn" id="21_policier"]
-[ext_resource type="PackedScene" path="res://scenes/npcs/Tito.tscn" id="22_tito"]
 [ext_resource type="PackedScene" path="res://scenes/props/FishingSpot.tscn" id="23_fishing"]
 [ext_resource type="PackedScene" path="res://scenes/npcs/Jorge.tscn" id="24_jorge"]
 [ext_resource type="Script" path="res://scripts/world/TrafficSpawner.gd" id="25_traffic"]
@@ -219,9 +217,6 @@ position = Vector2(480, 132)
 [node name="Policier" parent="." instance=ExtResource("21_policier")]
 position = Vector2(1200, -100)
 
-[node name="Tito" parent="." instance=ExtResource("22_tito")]
-position = Vector2(180, -270)
-
 [node name="FishingSpot" parent="." instance=ExtResource("23_fishing")]
 position = Vector2(280, 260)
 
@@ -314,19 +309,16 @@ position = Vector2(1700, 30)
 [node name="CorcovadoDistrict" parent="." instance=ExtResource("46_corcovado")]
 position = Vector2(-3500, -2900)
 
-[node name="PaoAcucarDistrict" parent="." instance=ExtResource("47_paoacucar")]
-position = Vector2(-4500, -2900)
-
 [node name="LagoaDistrict" parent="." instance=ExtResource("48_lagoa")]
 position = Vector2(-5500, -2900)
 
 [node name="MaracanaDistrict" parent="." instance=ExtResource("49_maracana")]
 position = Vector2(-6500, -2900)
 
-[node name="SantosDumontDistrict" parent="." instance=ExtResource("50_santos")]
+[node name="PaoAcucarDistrict" parent="." instance=ExtResource("50_paoacucar")]
 position = Vector2(-7500, -2900)
 
-[node name="AterroFlamengoDistrict" parent="." instance=ExtResource("51_aterro")]
+[node name="SantosDumontDistrict" parent="." instance=ExtResource("51_santos")]
 position = Vector2(-8500, -2900)
 
 [node name="CagarrasDistrict" parent="." instance=ExtResource("52_cagarras")]

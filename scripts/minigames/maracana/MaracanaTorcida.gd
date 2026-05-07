@@ -47,15 +47,30 @@ var _current_spawn: float = 0.0
 @onready var timer_label: Label = $UI/Timer
 @onready var score_label: Label = $UI/Score
 @onready var combo_label: Label = $UI/Combo
+@onready var action_button: Button = $UI/ActionButton
 
 func _ready() -> void:
 	EventBus.minigame_started.emit("maracana_torcida")
 	var cam: Camera2D = get_node_or_null("Camera2D")
 	if cam:
 		cam.make_current()
+	# Bouton tactile unique : reflète l'ordre courant. Tape = équivalent à la
+	# bonne touche (sur mobile, discriminer 5 touches n'a pas de sens).
+	if action_button:
+		action_button.pressed.connect(_on_action_pressed)
+	var quit_btn: CanvasLayer = get_node_or_null("MinigameQuitButton")
+	if quit_btn and quit_btn.has_signal("quit_pressed"):
+		quit_btn.quit_pressed.connect(_end_game)
 	_clear_prompt()
 	if status_label:
 		status_label.text = "Suis les ordres de la torcida !"
+
+# Tap mobile sur le gros bouton = comme si la bonne touche du prompt courant
+# avait été pressée. Hors PROMPTING, no-op.
+func _on_action_pressed() -> void:
+	if _ended or _state != State.PROMPTING or _current_idx < 0:
+		return
+	_score_correct_press()
 
 func _process(delta: float) -> void:
 	if _ended:
@@ -103,13 +118,19 @@ func _unhandled_input(event: InputEvent) -> void:
 			break
 	if pressed_idx < 0:
 		return
-	var elapsed: float = DURATION - _time_left
 	if pressed_idx != _current_idx:
-		# Mauvaise touche → miss.
+		# Mauvaise touche → miss (clavier seulement ; le bouton mobile est unique).
+		var elapsed: float = DURATION - _time_left
 		_misses += 1
 		_set_status("MAUVAISE TOUCHE")
 		_to_waiting(elapsed)
 		return
+	_score_correct_press()
+
+# Logique de presse correcte sur le prompt courant. Appelée depuis le bouton
+# mobile (presse unique) ou depuis le clavier (après vérif que la bonne touche).
+func _score_correct_press() -> void:
+	var elapsed: float = DURATION - _time_left
 	var time_since: float = elapsed - _current_spawn
 	if time_since <= PERFECT_WINDOW:
 		_score += POINTS_PERFECT
@@ -128,12 +149,18 @@ func _show_prompt(cmd: Dictionary) -> void:
 		prompt_label.visible = true
 	if prompt_bar_root:
 		prompt_bar_root.visible = true
+	if action_button:
+		action_button.text = cmd.label
+		action_button.modulate = cmd.color
+		action_button.visible = true
 
 func _clear_prompt() -> void:
 	if prompt_label:
 		prompt_label.visible = false
 	if prompt_bar_root:
 		prompt_bar_root.visible = false
+	if action_button:
+		action_button.visible = false
 
 func _update_prompt_bar(elapsed: float) -> void:
 	if _state != State.PROMPTING or prompt_bar == null:

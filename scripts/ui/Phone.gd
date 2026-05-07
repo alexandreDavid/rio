@@ -27,9 +27,12 @@ const REP_AXIS_COLORS: Dictionary = {
 @onready var home_screen: Control = $Frame/Screens/Home
 @onready var taxi_screen: Control = $Frame/Screens/Taxi
 @onready var stats_screen: Control = $Frame/Screens/Stats
+@onready var cronica_screen: Control = $Frame/Screens/Cronica
 @onready var taxi_list: VBoxContainer = $Frame/Screens/Taxi/Scroll/Box
 @onready var taxi_status: Label = $Frame/Screens/Taxi/Status
 @onready var stats_box: VBoxContainer = $Frame/Screens/Stats/Scroll/Box
+@onready var cronica_box: VBoxContainer = $Frame/Screens/Cronica/Scroll/Box
+@onready var cronica_counter: Label = $Frame/Screens/Cronica/Counter
 @onready var back_button: Button = $Frame/BackButton
 @onready var close_button: Button = $Frame/CloseButton
 
@@ -38,6 +41,7 @@ const REP_AXIS_COLORS: Dictionary = {
 @onready var app_stats: Button = $Frame/Screens/Home/Grid/Stats
 @onready var app_journal: Button = $Frame/Screens/Home/Grid/Journal
 @onready var app_missions: Button = $Frame/Screens/Home/Grid/Missions
+@onready var app_cronica: Button = $Frame/Screens/Home/Grid/Cronica
 
 func _ready() -> void:
 	visible = false
@@ -50,6 +54,8 @@ func _ready() -> void:
 		app_journal.pressed.connect(_open_journal)
 	if app_missions:
 		app_missions.pressed.connect(_open_missions)
+	if app_cronica:
+		app_cronica.pressed.connect(func(): _show_screen("cronica"))
 	if back_button:
 		back_button.pressed.connect(func(): _show_screen("home"))
 	if close_button:
@@ -80,6 +86,12 @@ func open() -> void:
 	_show_screen("home")
 	get_tree().paused = true
 
+# Ouvre directement sur l'app Crônica (raccourci HUD K).
+func open_cronica() -> void:
+	visible = true
+	_show_screen("cronica")
+	get_tree().paused = true
+
 func close() -> void:
 	visible = false
 	get_tree().paused = false
@@ -92,12 +104,15 @@ func _show_screen(name: String) -> void:
 	home_screen.visible = (name == "home")
 	taxi_screen.visible = (name == "taxi")
 	stats_screen.visible = (name == "stats")
+	cronica_screen.visible = (name == "cronica")
 	if back_button:
 		back_button.visible = (name != "home")
 	if name == "taxi":
 		_refresh_taxi()
 	elif name == "stats":
 		_refresh_stats()
+	elif name == "cronica":
+		_refresh_cronica()
 
 # ------------------------------------------------------------------
 # Taxi app
@@ -225,6 +240,164 @@ func _get_stamina() -> Stamina:
 	if GameManager.player == null:
 		return null
 	return GameManager.player.get_node_or_null("Stamina") as Stamina
+
+# ------------------------------------------------------------------
+# Crônica app — vue panoramique de toutes les quêtes (.tres)
+# ------------------------------------------------------------------
+
+# Statut affiché par quête. Ordre = priorité de tri à statut donné.
+const _CRONICA_STATUS_COMPLETED: int = 0
+const _CRONICA_STATUS_ACTIVE: int = 1
+const _CRONICA_STATUS_AVAILABLE: int = 2
+const _CRONICA_STATUS_LOCKED: int = 3
+
+func _refresh_cronica() -> void:
+	if cronica_box == null:
+		return
+	for child in cronica_box.get_children():
+		child.queue_free()
+
+	# Catégorise et ordonne. Les SIDE verrouillées sont cachées (préserve la
+	# découverte) ; les MAIN verrouillées s'affichent (la trame est délibérée).
+	var main_lines: Array[Dictionary] = []
+	var side_lines: Array[Dictionary] = []
+	var main_total: int = 0
+	var side_total: int = 0
+	var main_done: int = 0
+	var side_done: int = 0
+	for q in QuestManager._quests.values():
+		if not (q is Quest):
+			continue
+		var quest: Quest = q
+		var status: int = _cronica_status(quest.id)
+		var is_main: bool = quest.quest_type == Quest.QuestType.MAIN
+		if is_main:
+			main_total += 1
+			if status == _CRONICA_STATUS_COMPLETED:
+				main_done += 1
+			main_lines.append({"quest": quest, "status": status})
+		else:
+			side_total += 1
+			if status == _CRONICA_STATUS_COMPLETED:
+				side_done += 1
+			if status != _CRONICA_STATUS_LOCKED:
+				side_lines.append({"quest": quest, "status": status})
+
+	if cronica_counter:
+		cronica_counter.text = "%d/%d história  ·  %d/%d atividades" % [
+				main_done, main_total, side_done, side_total]
+
+	main_lines.sort_custom(_cronica_sort)
+	side_lines.sort_custom(_cronica_sort)
+
+	if not main_lines.is_empty():
+		_add_cronica_section("HISTÓRIA", Color(1.0, 0.9, 0.55, 1))
+		for line in main_lines:
+			_add_cronica_line(line.quest, line.status)
+	if not side_lines.is_empty():
+		if not main_lines.is_empty():
+			var sep: HSeparator = HSeparator.new()
+			cronica_box.add_child(sep)
+		_add_cronica_section("ATIVIDADES", Color(0.65, 0.85, 1.0, 1))
+		for line in side_lines:
+			_add_cronica_line(line.quest, line.status)
+	if main_lines.is_empty() and side_lines.is_empty():
+		var empty: Label = Label.new()
+		empty.text = "Nenhuma missão registrée"
+		empty.add_theme_color_override("font_color", Color(0.7, 0.7, 0.75, 1))
+		empty.add_theme_font_size_override("font_size", 13)
+		cronica_box.add_child(empty)
+
+func _cronica_status(quest_id: String) -> int:
+	if QuestManager.is_completed(quest_id):
+		return _CRONICA_STATUS_COMPLETED
+	if QuestManager.is_active(quest_id):
+		return _CRONICA_STATUS_ACTIVE
+	if QuestManager.is_available(quest_id):
+		return _CRONICA_STATUS_AVAILABLE
+	return _CRONICA_STATUS_LOCKED
+
+func _cronica_sort(a: Dictionary, b: Dictionary) -> bool:
+	# Active d'abord, puis available, puis completed, puis locked. À statut
+	# égal, tri par display_name pour stabilité.
+	var order: Array[int] = [_CRONICA_STATUS_ACTIVE, _CRONICA_STATUS_AVAILABLE,
+			_CRONICA_STATUS_COMPLETED, _CRONICA_STATUS_LOCKED]
+	var ai: int = order.find(a.status)
+	var bi: int = order.find(b.status)
+	if ai != bi:
+		return ai < bi
+	return (a.quest as Quest).display_name < (b.quest as Quest).display_name
+
+func _add_cronica_section(title: String, color: Color) -> void:
+	var label: Label = Label.new()
+	label.text = title
+	label.add_theme_color_override("font_color", color)
+	label.add_theme_font_size_override("font_size", 13)
+	cronica_box.add_child(label)
+
+func _add_cronica_line(quest: Quest, status: int) -> void:
+	var row: VBoxContainer = VBoxContainer.new()
+	row.add_theme_constant_override("separation", 1)
+	# Première ligne : icône + nom.
+	var head: Label = Label.new()
+	head.text = "%s %s" % [_cronica_icon(status), quest.display_name]
+	head.add_theme_font_size_override("font_size", 15)
+	head.add_theme_color_override("font_color", _cronica_color(status))
+	head.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	row.add_child(head)
+	# Sous-ligne : prereqs manquants (cas verrouillé) ou objectif courant (cas actif).
+	var sub_text: String = ""
+	if status == _CRONICA_STATUS_LOCKED:
+		sub_text = _cronica_locked_hint(quest)
+	elif status == _CRONICA_STATUS_ACTIVE:
+		sub_text = _cronica_active_hint(quest)
+	if sub_text != "":
+		var sub: Label = Label.new()
+		sub.text = "  " + sub_text
+		sub.add_theme_font_size_override("font_size", 12)
+		sub.add_theme_color_override("font_color", Color(0.7, 0.7, 0.75, 1))
+		sub.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		row.add_child(sub)
+	cronica_box.add_child(row)
+
+func _cronica_icon(status: int) -> String:
+	match status:
+		_CRONICA_STATUS_COMPLETED: return "✓"
+		_CRONICA_STATUS_ACTIVE:    return "▶"
+		_CRONICA_STATUS_AVAILABLE: return "✦"
+		_CRONICA_STATUS_LOCKED:    return "🔒"
+	return "·"
+
+func _cronica_color(status: int) -> Color:
+	match status:
+		_CRONICA_STATUS_COMPLETED: return Color(0.55, 0.85, 0.55, 1)
+		_CRONICA_STATUS_ACTIVE:    return Color(1.0, 0.9, 0.55, 1)
+		_CRONICA_STATUS_AVAILABLE: return Color(0.85, 0.95, 1.0, 1)
+		_CRONICA_STATUS_LOCKED:    return Color(0.55, 0.55, 0.6, 1)
+	return Color.WHITE
+
+func _cronica_locked_hint(quest: Quest) -> String:
+	# Acte trop tôt prime sur les prereqs, c'est plus parlant.
+	if quest.required_act > 0 and CampaignManager.current_act < quest.required_act:
+		return "Acte %d requis" % quest.required_act
+	var missing: Array[String] = QuestManager.missing_prerequisites(quest.id)
+	if missing.is_empty():
+		return ""
+	var pretty: Array[String] = []
+	for pid in missing:
+		var pq: Quest = QuestManager.get_quest(pid)
+		pretty.append(pq.display_name if pq != null and pq.display_name != "" else pid)
+	return "D'abord : %s" % ", ".join(pretty)
+
+func _cronica_active_hint(quest: Quest) -> String:
+	# Premier objectif non complété (le journal détaillé reste dans QuestLog).
+	var state: Dictionary = QuestManager.get_objectives_state(quest.id)
+	for obj in quest.objectives:
+		if obj.optional:
+			continue
+		if not state.get(obj.id, false):
+			return obj.description
+	return ""
 
 # ------------------------------------------------------------------
 # Apps externes (réutilisent les UIs existantes)

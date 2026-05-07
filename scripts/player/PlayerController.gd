@@ -26,9 +26,22 @@ func _ready() -> void:
 	EventBus.interaction_unavailable.connect(_on_interaction_unavailable)
 	EventBus.dialogue_started.connect(_on_dialogue_started)
 	EventBus.dialogue_ended.connect(_on_dialogue_ended)
+	# Sécurité : si une save a été faite pendant un freeze (cutscene ou
+	# dialogue interrompu), au reload on s'assure que le joueur est éveillé.
+	if SaveSystem.has_signal("save_loaded"):
+		SaveSystem.save_loaded.connect(_on_save_loaded)
 	if camera:
 		camera.make_current()
 	print("[Player] spawned at ", global_position, " — camera current=", camera != null)
+
+func _on_save_loaded() -> void:
+	# Si aucun dialogue/cutscene n'est actif au reload, on force l'éveil pour
+	# parer aux saves faites pendant un freeze.
+	if not DialogueBridge.is_active() and not CutsceneRunner.is_running():
+		print("[Player] save_loaded → ensure unfrozen")
+		set_physics_process(true)
+		set_process_unhandled_input(true)
+		velocity = Vector2.ZERO
 
 func _exit_tree() -> void:
 	GameManager.unregister_player()

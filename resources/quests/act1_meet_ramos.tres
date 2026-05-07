@@ -22,3 +22,5 @@ money_reward = 100
 reputation_rewards = {1: 5, 0: 2}
 required_reputation = {}
 required_act = 1
+quest_type = 1
+prerequisite_quest_ids = Array[String](["act1_heritage"])

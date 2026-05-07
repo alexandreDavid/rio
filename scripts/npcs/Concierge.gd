@@ -11,6 +11,7 @@ const QUEST_ACT2: String = "act2_intro"
 func _on_interacted(_by: Node) -> void:
 	if data == null:
 		return
+	await _approach_player_if_far()
 	var knot: String = data.ink_knot  # concierge_intro par défaut
 	# Acte 2 : la révélation prime sur tout le reste.
 	if QuestManager.is_active(QUEST_ACT2):

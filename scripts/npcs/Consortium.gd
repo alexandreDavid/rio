@@ -9,6 +9,7 @@ const OBJ_DELIVER: String = "deliver_to_consortium"
 func _on_interacted(_by: Node) -> void:
 	if data == null:
 		return
+	await _approach_player_if_far()
 	var knot: String
 	# Side quest aéroport : prend la priorité tant qu'elle est en cours.
 	if QuestManager.is_active(QUEST_AIRPORT):

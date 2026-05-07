@@ -958,18 +958,23 @@ func _spawn_favela_cluster(parent: Node, zone: Rect2, house_count: int, seed_val
 	var rng: RandomNumberGenerator = RandomNumberGenerator.new()
 	rng.seed = seed_val
 	# Trie par y pour que les plus hauts sur la colline dessinent en premier (derrière)
-	var positions: Array = []
+	var entries: Array = []
 	for i in house_count:
-		positions.append(Vector2(
-			rng.randf_range(zone.position.x, zone.position.x + zone.size.x - 26),
-			rng.randf_range(zone.position.y, zone.position.y + zone.size.y - 30)
-		))
-	positions.sort_custom(func(a, b): return a.y < b.y)
-	for pos in positions:
-		var w: float = rng.randf_range(18, 28)
-		var h: float = rng.randf_range(18, 26)
-		var color: Color = FAVELA_COLORS[rng.randi() % FAVELA_COLORS.size()]
-		_spawn_favela_house(parent, pos, Vector2(w, h), color)
+		var w: float = rng.randf_range(20, 30)
+		var h: float = rng.randf_range(20, 28)
+		entries.append({
+			"pos": Vector2(
+				rng.randf_range(zone.position.x, zone.position.x + zone.size.x - w),
+				rng.randf_range(zone.position.y, zone.position.y + zone.size.y - h)
+			),
+			"size": Vector2(w, h),
+			"color": FAVELA_COLORS[rng.randi() % FAVELA_COLORS.size()],
+			"roof_kind": rng.randi() % 4,  # 0 antenne, 1 château d'eau, 2 panneau solaire, 3 rien
+			"door_side": rng.randf() < 0.5,
+		})
+	entries.sort_custom(func(a, b): return a.pos.y < b.pos.y)
+	for e in entries:
+		_spawn_favela_house(parent, e.pos, e.size, e.color, e.roof_kind, e.door_side)
 	# Petite étiquette en haut
 	var label: Label = Label.new()
 	label.text = label_text
@@ -978,33 +983,134 @@ func _spawn_favela_cluster(parent: Node, zone: Rect2, house_count: int, seed_val
 	label.add_theme_font_size_override("font_size", 10)
 	parent.add_child(label)
 
-func _spawn_favela_house(parent: Node, pos: Vector2, size: Vector2, color: Color) -> void:
-	# Mur principal
+# Maison de favela : décor pur. Aucun StaticBody2D — les favelas dans Copa
+# servent uniquement de style et de repère pour l'entrée vers le district
+# FavelaDoMorro. Le joueur doit pouvoir traverser la zone librement.
+func _spawn_favela_house(parent: Node, pos: Vector2, size: Vector2, color: Color, roof_kind: int = 3, door_left: bool = false) -> void:
+	var node: Node2D = Node2D.new()
+	node.position = pos + size * 0.5
+	parent.add_child(node)
+
+	# Ombre portée (effet de relief sur la colline)
+	var shadow: ColorRect = ColorRect.new()
+	shadow.offset_left = -size.x * 0.5 + 2
+	shadow.offset_top = -size.y * 0.5 + 2
+	shadow.offset_right = size.x * 0.5 + 3
+	shadow.offset_bottom = size.y * 0.5 + 3
+	shadow.color = Color(0, 0, 0, 0.30)
+	node.add_child(shadow)
+
+	# Mur principal (brique peinte)
 	var wall: ColorRect = ColorRect.new()
-	wall.offset_left = pos.x
-	wall.offset_top = pos.y
-	wall.offset_right = pos.x + size.x
-	wall.offset_bottom = pos.y + size.y
+	wall.offset_left = -size.x * 0.5
+	wall.offset_top = -size.y * 0.5
+	wall.offset_right = size.x * 0.5
+	wall.offset_bottom = size.y * 0.5
 	wall.color = color
-	parent.add_child(wall)
-	# Bande toit plus foncée
+	node.add_child(wall)
+
+	# Bande verticale plus claire à gauche (lumière du matin venant de l'est)
+	var highlight: ColorRect = ColorRect.new()
+	highlight.offset_left = -size.x * 0.5
+	highlight.offset_top = -size.y * 0.5 + 3
+	highlight.offset_right = -size.x * 0.5 + 2
+	highlight.offset_bottom = size.y * 0.5 - 4
+	highlight.color = Color(min(color.r + 0.12, 1.0), min(color.g + 0.12, 1.0), min(color.b + 0.12, 1.0), 0.9)
+	node.add_child(highlight)
+
+	# Fondation béton (bande basse plus sombre)
+	var foundation: ColorRect = ColorRect.new()
+	foundation.offset_left = -size.x * 0.5
+	foundation.offset_top = size.y * 0.5 - 3
+	foundation.offset_right = size.x * 0.5
+	foundation.offset_bottom = size.y * 0.5
+	foundation.color = Color(color.r * 0.45, color.g * 0.45, color.b * 0.45, 1)
+	node.add_child(foundation)
+
+	# Bande toit (briques apparentes plus foncées)
 	var roof: ColorRect = ColorRect.new()
-	roof.offset_left = pos.x - 1
-	roof.offset_top = pos.y - 3
-	roof.offset_right = pos.x + size.x + 1
-	roof.offset_bottom = pos.y + 2
-	roof.color = Color(color.r * 0.55, color.g * 0.55, color.b * 0.55, 1)
-	parent.add_child(roof)
-	# Fenêtre sombre
+	roof.offset_left = -size.x * 0.5 - 1
+	roof.offset_top = -size.y * 0.5 - 3
+	roof.offset_right = size.x * 0.5 + 1
+	roof.offset_bottom = -size.y * 0.5 + 2
+	roof.color = Color(color.r * 0.40, color.g * 0.40, color.b * 0.40, 1)
+	node.add_child(roof)
+
+	# Porte (en bas, verticale, côté tirage aléatoire)
+	var door: ColorRect = ColorRect.new()
+	var dx: float = -size.x * 0.5 + 4 if door_left else size.x * 0.5 - 9
+	door.offset_left = dx
+	door.offset_top = size.y * 0.5 - 9
+	door.offset_right = dx + 5
+	door.offset_bottom = size.y * 0.5 - 1
+	door.color = Color(0.20, 0.13, 0.08, 1)
+	node.add_child(door)
+
+	# Fenêtre (côté opposé à la porte)
 	var win: ColorRect = ColorRect.new()
-	var wx: float = pos.x + size.x * 0.55
-	var wy: float = pos.y + size.y * 0.35
-	win.offset_left = wx
-	win.offset_top = wy
-	win.offset_right = wx + 4
-	win.offset_bottom = wy + 5
-	win.color = Color(0.15, 0.2, 0.28, 1)
-	parent.add_child(win)
+	var winx: float = size.x * 0.5 - 9 if door_left else -size.x * 0.5 + 4
+	win.offset_left = winx
+	win.offset_top = -1
+	win.offset_right = winx + 5
+	win.offset_bottom = 4
+	win.color = Color(0.12, 0.18, 0.28, 1)
+	node.add_child(win)
+
+	# Décor de toit aléatoire — typique des favelas cariocas
+	match roof_kind:
+		0:
+			# Antenne TV (mât + bras horizontal)
+			var mast: ColorRect = ColorRect.new()
+			mast.offset_left = -1
+			mast.offset_top = -size.y * 0.5 - 14
+			mast.offset_right = 1
+			mast.offset_bottom = -size.y * 0.5 - 3
+			mast.color = Color(0.22, 0.20, 0.18, 1)
+			node.add_child(mast)
+			var arm: ColorRect = ColorRect.new()
+			arm.offset_left = -5
+			arm.offset_top = -size.y * 0.5 - 12
+			arm.offset_right = 5
+			arm.offset_bottom = -size.y * 0.5 - 11
+			arm.color = Color(0.22, 0.20, 0.18, 1)
+			node.add_child(arm)
+		1:
+			# Caixa d'água (cylindre bleu sur le toit, omniprésent à Rio)
+			var tank: ColorRect = ColorRect.new()
+			tank.offset_left = size.x * 0.5 - 8
+			tank.offset_top = -size.y * 0.5 - 8
+			tank.offset_right = size.x * 0.5 - 1
+			tank.offset_bottom = -size.y * 0.5 - 2
+			tank.color = Color(0.25, 0.45, 0.70, 1)
+			node.add_child(tank)
+			var lid: ColorRect = ColorRect.new()
+			lid.offset_left = size.x * 0.5 - 8
+			lid.offset_top = -size.y * 0.5 - 9
+			lid.offset_right = size.x * 0.5 - 1
+			lid.offset_bottom = -size.y * 0.5 - 7
+			lid.color = Color(0.18, 0.32, 0.50, 1)
+			node.add_child(lid)
+		2:
+			# Linge à sécher : fil + 3 vêtements
+			var line: ColorRect = ColorRect.new()
+			line.offset_left = -size.x * 0.5 + 2
+			line.offset_top = -size.y * 0.5 - 5
+			line.offset_right = size.x * 0.5 - 2
+			line.offset_bottom = -size.y * 0.5 - 4
+			line.color = Color(0.30, 0.28, 0.25, 1)
+			node.add_child(line)
+			var laundry_colors: Array = [Color(0.95, 0.85, 0.45, 1), Color(0.85, 0.35, 0.42, 1), Color(0.40, 0.65, 0.85, 1)]
+			for k in 3:
+				var cloth: ColorRect = ColorRect.new()
+				var cx: float = -size.x * 0.5 + 4 + k * (size.x - 12) / 2.0
+				cloth.offset_left = cx
+				cloth.offset_top = -size.y * 0.5 - 4
+				cloth.offset_right = cx + 3
+				cloth.offset_bottom = -size.y * 0.5
+				cloth.color = laundry_colors[k]
+				node.add_child(cloth)
+		_:
+			pass
 
 func _spawn_postos() -> void:
 	var container: Node2D = Node2D.new()

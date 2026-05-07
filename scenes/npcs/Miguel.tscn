@@ -8,6 +8,7 @@
 script = ExtResource("3_script")
 data = ExtResource("2_data")
 modulate = Color(0.7, 0.5, 0.4, 1)
+z_index = 5
 
 [node name="Sprite2D" parent="."]
 region_rect = Rect2(316, 280, 155, 198)

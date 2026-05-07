@@ -32,9 +32,16 @@ func _ready() -> void:
 	var cam: Camera2D = get_node_or_null("Camera2D")
 	if cam:
 		cam.make_current()
+	# Boutons tactiles (mobile-first).
+	var action_btn: Button = get_node_or_null("UI/ActionButton") as Button
+	if action_btn:
+		action_btn.pressed.connect(_attempt_catch)
+	var quit_btn: CanvasLayer = get_node_or_null("MinigameQuitButton")
+	if quit_btn and quit_btn.has_signal("quit_pressed"):
+		quit_btn.quit_pressed.connect(_end_game)
 	_update_score()
 	if status_label:
-		status_label.text = "Pêche ! E quand la barre est dans le vert"
+		status_label.text = "Touche LANCER quand la barre est dans le vert"
 	await get_tree().create_timer(1.2).timeout
 	_next_round()
 

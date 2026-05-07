@@ -32,6 +32,26 @@ var _has_walk_sheet: bool = false
 var _facing: int = Direction.DOWN
 var _walk_tween: Tween = null
 
+# Approche du joueur à l'interaction : un NPC inerte fait un pas dans la direction
+# du joueur si la distance dépasse APPROACH_TRIGGER_DIST. Donne du vivant aux échanges.
+const APPROACH_TRIGGER_DIST: float = 70.0
+const APPROACH_STOP_DIST: float = 36.0
+const APPROACH_SPEED: float = 130.0
+var _approach_tween: Tween = null
+
+# Mode escort/follow : NPC suit le joueur. Activé par les quêtes d'escorte
+# (Contessa, TouristVIP, DonSalvatore). Le NPC marche à FOLLOW_SPEED jusqu'à
+# FOLLOW_DISTANCE du joueur, puis s'arrête. Utilise move_and_slide pour les murs.
+# Cross-district : à district_changed, le NPC se téléporte près du joueur dans
+# le nouveau district (offset latéral). Sinon il resterait coincé dans l'ancien.
+const FOLLOW_DEFAULT_DISTANCE: float = 56.0
+const FOLLOW_SPEED: float = 90.0
+const FOLLOW_STOP_HYSTERESIS: float = 12.0  # évite le jitter à la limite
+const FOLLOW_TELEPORT_OFFSET: Vector2 = Vector2(-48.0, 8.0)
+var _following: bool = false
+var _follow_distance: float = FOLLOW_DEFAULT_DISTANCE
+var _follow_district_listener_connected: bool = false
+
 func _ready() -> void:
 	# Fallback si @export n'a pas résolu (hérédité de scène + script override).
 	if interactable == null:
@@ -309,10 +329,111 @@ func _exit_tree() -> void:
 	if data and data.id != "":
 		NPCScheduler.unregister(data.id)
 
+# --- Approche du joueur à l'interaction ---
+
+# Direction dominante (DOWN/UP/LEFT/RIGHT) du NPC vers le joueur.
+func _dir_toward_player() -> int:
+	if GameManager.player == null:
+		return Direction.DOWN
+	var to_p: Vector2 = GameManager.player.global_position - global_position
+	if abs(to_p.x) > abs(to_p.y):
+		return Direction.RIGHT if to_p.x > 0 else Direction.LEFT
+	return Direction.DOWN if to_p.y > 0 else Direction.UP
+
+# Si le joueur est loin, le NPC fait un pas vers lui (s'arrête à APPROACH_STOP_DIST)
+# avec animation walk-sheet. Awaitable depuis les sous-classes :
+#     await _approach_player_if_far()
+#     DialogueBridge.start_dialogue(...)
+func _approach_player_if_far() -> void:
+	if _following:
+		return  # Déjà collé en mode escort.
+	if GameManager.player == null:
+		return
+	var to_p: Vector2 = GameManager.player.global_position - global_position
+	var dist: float = to_p.length()
+	if dist <= APPROACH_TRIGGER_DIST:
+		face(_dir_toward_player())
+		return
+	var step: float = dist - APPROACH_STOP_DIST
+	if step <= 0.0:
+		return
+	var target: Vector2 = global_position + to_p.normalized() * step
+	play_walk(_dir_toward_player())
+	if _approach_tween and _approach_tween.is_valid():
+		_approach_tween.kill()
+	_approach_tween = create_tween()
+	_approach_tween.tween_property(self, "global_position", target, step / APPROACH_SPEED)
+	await _approach_tween.finished
+	stop_walk()
+	face(_dir_toward_player())
+
+# --- Mode escort/follow ---
+
+# Démarre le mode escort : le NPC suit le joueur jusqu'à `distance` pixels.
+# Utilisé par les quêtes escort_contessa, tourist_vip_tour, consortium_airport_pickup.
+func start_following(distance: float = FOLLOW_DEFAULT_DISTANCE) -> void:
+	_following = true
+	_follow_distance = distance
+	if not _follow_district_listener_connected:
+		DistrictManager.district_changed.connect(_on_follow_district_changed)
+		_follow_district_listener_connected = true
+
+func stop_following() -> void:
+	_following = false
+	velocity = Vector2.ZERO
+	stop_walk()
+	if _follow_district_listener_connected:
+		DistrictManager.district_changed.disconnect(_on_follow_district_changed)
+		_follow_district_listener_connected = false
+
+# Téléporte le NPC près du joueur quand le joueur change de district. Sans ça,
+# le NPC resterait dans l'ancien district et la quête d'escort serait cassée.
+func _on_follow_district_changed(_district_id: String) -> void:
+	if not _following or GameManager.player == null:
+		return
+	# Petit délai pour laisser le joueur arriver / les caméras se caler.
+	await get_tree().process_frame
+	if not is_instance_valid(self) or GameManager.player == null:
+		return
+	global_position = GameManager.player.global_position + FOLLOW_TELEPORT_OFFSET
+	velocity = Vector2.ZERO
+	stop_walk()
+	face(_dir_toward_player())
+
+func _physics_process(_delta: float) -> void:
+	if not _following:
+		return
+	if GameManager.player == null:
+		return
+	if DialogueBridge.is_active():
+		# Pendant un dialogue, le NPC reste planté.
+		if velocity != Vector2.ZERO:
+			velocity = Vector2.ZERO
+			stop_walk()
+		return
+	var to_p: Vector2 = GameManager.player.global_position - global_position
+	var dist: float = to_p.length()
+	# Hystéresis : on s'arrête à follow_distance, on repart à follow_distance + threshold.
+	if dist <= _follow_distance:
+		if velocity != Vector2.ZERO:
+			velocity = Vector2.ZERO
+			stop_walk()
+			face(_dir_toward_player())
+		return
+	if dist <= _follow_distance + FOLLOW_STOP_HYSTERESIS and velocity == Vector2.ZERO:
+		return
+	var dir_vec: Vector2 = to_p.normalized()
+	velocity = dir_vec * FOLLOW_SPEED
+	move_and_slide()
+	var dir: int = _dir_toward_player()
+	if _walk_tween == null or not _walk_tween.is_valid() or dir != _facing:
+		play_walk(dir)
+
 func _on_interacted(_by: Node) -> void:
 	print("[NPC:%s] _on_interacted" % name)
 	_punch_scale()
 	if data == null or data.ink_knot == "":
 		push_warning("NPC %s: no data or ink_knot" % name)
 		return
+	await _approach_player_if_far()
 	DialogueBridge.start_dialogue(data.id, data.ink_knot)

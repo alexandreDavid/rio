@@ -78,9 +78,12 @@ func _ready() -> void:
 	_test_dialogue_choices_consistency()
 	_test_npc_dispatch_knots()
 	_test_cutscene_dependencies()
+	await _test_intro_bump_flow()
 	_test_reactive_spots_default_variant()
 	_test_quest_objectives_reachable()
 	_test_campaign_progression()
+	_test_act_pivot_gating()
+	_test_dialogue_locked_refusal()
 	_test_act2_milestones()
 	_test_quest_completion_paths()
 	_test_beto_quest_chain()
@@ -91,6 +94,7 @@ func _ready() -> void:
 	_test_full_path_policia()
 	_test_full_path_trafico()
 	_test_full_path_prefeito()
+	_test_full_path_via_dialogues()
 	_test_save_load_roundtrip()
 	_test_wanderer_greeting_logic()
 	await _test_wanderer_full_init()
@@ -201,12 +205,9 @@ func _test_dialogue_graph() -> void:
 						"knot '%s' objectif '%s' existe sur quête '%s'" % [knot, fq.get("objective", ""), fq.get("quest", "")])
 
 func _test_campaign_progression() -> void:
-	_section("Progression des actes (dette 50k, seuils 500 et 25k)")
+	_section("Progression des actes (dette + pivot quests)")
 	# Reset état
-	CampaignManager.current_act = 1
-	CampaignManager.debt_paid = 0
-	CampaignManager.chosen_endgame = CampaignManager.Endgame.NONE
-	CampaignManager.flags.clear()
+	_reset_for_path_simulation()
 
 	_assert(CampaignManager.current_act == 1, "départ acte 1")
 	_assert(CampaignManager.debt_remaining() == CampaignManager.DEBT_TOTAL, "dette initiale = %d" % CampaignManager.DEBT_TOTAL)
@@ -215,15 +216,29 @@ func _test_campaign_progression() -> void:
 	CampaignManager.pay_debt(100)
 	_assert(CampaignManager.current_act == 1, "100 payés → toujours acte 1")
 
-	# Franchit le seuil ACT1_THRESHOLD (500 total)
+	# Payer le seuil sans avoir complété les pivot quests : ne doit PAS avancer.
 	CampaignManager.pay_debt(400)
 	_assert(CampaignManager.debt_paid == 500, "cumul = 500")
-	_assert(CampaignManager.current_act == 2, "500 payés → acte 2 (seuil %d)" % CampaignManager.ACT1_THRESHOLD)
+	_assert(CampaignManager.current_act == 1, "seuil atteint mais pivot manquant → toujours acte 1")
 
-	# Continue jusqu'à ACT2_THRESHOLD (25000 total)
+	# Compléter les pivot quests acte 1 → bascule auto vers acte 2.
+	_complete_quest_all_objectives("act1_heritage")
+	_complete_quest_all_objectives("act1_meet_ramos")
+	_complete_quest_all_objectives("act1_meet_tito")
+	_assert(CampaignManager.current_act == 2, "pivots acte 1 complétés + seuil → acte 2")
+
+	# Continue jusqu'à ACT2_THRESHOLD : sans la chaîne acte 2, ne doit pas avancer.
 	CampaignManager.pay_debt(CampaignManager.ACT2_THRESHOLD - 500)
 	_assert(CampaignManager.debt_paid == CampaignManager.ACT2_THRESHOLD, "cumul = %d" % CampaignManager.ACT2_THRESHOLD)
-	_assert(CampaignManager.current_act == 3, "25000 payés → acte 3")
+	_assert(CampaignManager.current_act == 2, "25k payés mais chaîne acte 2 pas faite → toujours acte 2")
+
+	# Compléter la chaîne acte 2 (linéaire : intro → ramos → padre → miguel) → bascule acte 3.
+	_complete_quest_all_objectives("act2_intro")
+	_assert(CampaignManager.current_act == 2, "act2_intro seule ne suffit plus")
+	_complete_quest_all_objectives("act2_ramos_operacao")
+	_complete_quest_all_objectives("act2_padre_orfanato")
+	_complete_quest_all_objectives("act2_miguel_favela")
+	_assert(CampaignManager.current_act == 3, "chaîne acte 2 complétée + seuil → acte 3")
 
 	# Solde le reste
 	CampaignManager.pay_debt(CampaignManager.DEBT_TOTAL)  # dépassement autorisé, clampé
@@ -232,6 +247,103 @@ func _test_campaign_progression() -> void:
 	# Endgame
 	CampaignManager.set_endgame(CampaignManager.Endgame.PREFEITO)
 	_assert(CampaignManager.chosen_endgame == CampaignManager.Endgame.PREFEITO, "endgame Prefeito posé")
+
+func _test_act_pivot_gating() -> void:
+	_section("Gating narratif MAIN/SIDE et pivots d'acte")
+	_reset_for_path_simulation()
+
+	# Quête MAIN avec prereqs : prerequisite_quest_ids non vide doit bloquer is_available.
+	_assert(not QuestManager.is_available("act1_meet_ramos"),
+			"act1_meet_ramos verrouillée tant que act1_heritage pas faite")
+	_assert(QuestManager.missing_prerequisites("act1_meet_ramos") == ["act1_heritage"],
+			"missing_prerequisites pointe le manquant")
+
+	# Compléter le prereq débloque la disponibilité.
+	_complete_quest_all_objectives("act1_heritage")
+	_assert(QuestManager.is_available("act1_meet_ramos"),
+			"act1_meet_ramos dispo après act1_heritage")
+
+	# Pivot d'avancement d'acte : payer le seuil seul ne suffit pas.
+	CampaignManager.pay_debt(CampaignManager.ACT1_THRESHOLD)
+	_assert(CampaignManager.current_act == 1,
+			"seuil payé mais Ramos+Tito pas faits → toujours acte 1")
+
+	_complete_quest_all_objectives("act1_meet_ramos")
+	_assert(CampaignManager.current_act == 1, "un seul mentor → encore acte 1")
+
+	_complete_quest_all_objectives("act1_meet_tito")
+	_assert(CampaignManager.current_act == 2,
+			"trois pivots acte 1 complétés → bascule auto en acte 2")
+
+	# Chaîne pivot acte 2 (linéaire) : sans elle complète, payer 25k n'avance pas.
+	CampaignManager.pay_debt(CampaignManager.ACT2_THRESHOLD - CampaignManager.ACT1_THRESHOLD)
+	_assert(CampaignManager.current_act == 2,
+			"25k payés mais chaîne acte 2 pas faite → toujours acte 2")
+
+	# Vérifie que la chaîne est strictement linéaire (padre prereq sur ramos, etc.).
+	_assert(not QuestManager.is_available("act2_padre_orfanato"),
+			"act2_padre_orfanato verrouillée tant que ramos_operacao pas faite")
+	_assert(not QuestManager.is_available("act2_miguel_favela"),
+			"act2_miguel_favela verrouillée tant que padre_orfanato pas faite")
+	_complete_quest_all_objectives("act2_intro")
+	_complete_quest_all_objectives("act2_ramos_operacao")
+	_assert(QuestManager.is_available("act2_padre_orfanato"),
+			"padre_orfanato dispo après ramos_operacao")
+	_assert(not QuestManager.is_available("act2_miguel_favela"),
+			"miguel_favela toujours verrouillée à mi-chaîne")
+	_complete_quest_all_objectives("act2_padre_orfanato")
+	_complete_quest_all_objectives("act2_miguel_favela")
+	_assert(CampaignManager.current_act == 3,
+			"chaîne complète + 25k → bascule acte 3")
+
+	# Une SIDE n'a pas le quest_type MAIN — vérifie le tag.
+	var milho: Quest = QuestManager._quests.get("quest_milho_01")
+	_assert(milho != null and milho.quest_type == Quest.QuestType.SIDE,
+			"milho_01 taggée SIDE")
+
+	var heritage: Quest = QuestManager._quests.get("act1_heritage")
+	_assert(heritage != null and heritage.quest_type == Quest.QuestType.MAIN,
+			"act1_heritage taggée MAIN")
+
+func _test_dialogue_locked_refusal() -> void:
+	_section("Dialogue refuse proprement quand prereq manque")
+	_reset_for_path_simulation()
+
+	# act1_meet_ramos a prereq act1_heritage (non complétée ici).
+	_assert(not QuestManager.is_available("act1_meet_ramos"),
+			"act1_meet_ramos verrouillée au départ")
+
+	# Capture les signaux pour vérifier le fallback locked.
+	var captured_lines: Array = []
+	var captured_choices: Array = []
+	var line_cb: Callable = func(speaker: String, text: String):
+		captured_lines.append({"speaker": speaker, "text": text})
+	var choices_cb: Callable = func(choices: Array):
+		captured_choices.append(choices)
+	DialogueBridge.line_shown.connect(line_cb)
+	DialogueBridge.choices_presented.connect(choices_cb)
+
+	# Force le knot ramos_intro qui propose accept_quest: act1_meet_ramos.
+	# Sans prereq satisfait, le choice 0 doit déclencher _show_locked_message.
+	DialogueBridge.start_dialogue("ramos", "ramos_intro")
+	_assert(captured_lines.size() >= 1, "knot initial joué")
+	captured_lines.clear()
+	captured_choices.clear()
+
+	DialogueBridge.choose(0)  # "Ça m'intéresse" → tente accept_quest
+	_assert(captured_lines.size() == 1, "une ligne fallback émise")
+	if captured_lines.size() == 1:
+		var fallback: String = captured_lines[0].text
+		_assert(fallback.begins_with("Pas encore le bon moment"),
+				"texte fallback : « %s »" % fallback)
+		_assert("L'héritage" in fallback or "act1_heritage" in fallback,
+				"fallback nomme la quête prereq manquante")
+	_assert(not QuestManager.is_active("act1_meet_ramos"),
+			"quête bloquée non acceptée malgré le choice")
+
+	DialogueBridge.line_shown.disconnect(line_cb)
+	DialogueBridge.choices_presented.disconnect(choices_cb)
+	DialogueBridge.end_dialogue()
 
 func _test_quest_completion_paths() -> void:
 	_section("Complétion des quêtes clés")
@@ -315,13 +427,15 @@ func _test_quest_completion_paths() -> void:
 
 func _test_act4_transition() -> void:
 	_section("Transition acte 3 → 4 + acte 4 jouable")
-	# Reset campagne pour un état propre.
-	CampaignManager.current_act = 3
-	CampaignManager.debt_paid = CampaignManager.ACT2_THRESHOLD  # 25k payés (juste sur acte 3)
-	CampaignManager.chosen_endgame = CampaignManager.Endgame.NONE
-	CampaignManager.flags = {"ratted_on_tito": true}  # voie Polícia ouverte
+	# Reset complet puis simule le parcours minimal jusqu'en acte 3 (avec pivots).
+	_reset_for_path_simulation()
+	_drive_to_act3()
+	_assert(CampaignManager.current_act == 3, "acte 3 atteint via pivot")
+	# Voie Polícia : compléter intel + madrugada (chaîne MAIN d'acte 3).
+	_complete_quest_all_objectives("act3_policia_intel")
+	_complete_quest_all_objectives("act3_policia_madrugada")
 	# Avant la finale : pas en acte 4, pas d'endgame.
-	_assert(CampaignManager.current_act == 3, "départ acte 3")
+	_assert(CampaignManager.current_act == 3, "encore acte 3 avant finale")
 	_assert(CampaignManager.chosen_endgame == CampaignManager.Endgame.NONE, "pas d'endgame")
 	# Déclenche la finale Polícia → doit basculer acte 4 + scellement endgame + dette purgée.
 	CampaignManager.complete_endgame(CampaignManager.Endgame.POLICIA)
@@ -329,11 +443,11 @@ func _test_act4_transition() -> void:
 	_assert(CampaignManager.chosen_endgame == CampaignManager.Endgame.POLICIA, "endgame Polícia scellé")
 	_assert(CampaignManager.debt_remaining() == 0, "dette purgée par finale")
 	_assert(CampaignManager.reign_title() == "Chefe de Polícia", "titre de règne correct")
-	# Acte 4 : la quête Polícia est dispo (required_act=4).
+	# Acte 4 : la quête Polícia est dispo (prereq act3_policia_madrugada complétée).
 	_assert(QuestManager.is_available("act4_policia_purga"), "act4_policia_purga dispo en acte 4")
-	# Les quêtes des autres voies aussi (gating narratif côté NPC, pas côté quête).
-	_assert(QuestManager.is_available("act4_prefeito_audiencia"), "act4_prefeito_audiencia dispo")
-	_assert(QuestManager.is_available("act4_trafico_tributo"), "act4_trafico_tributo dispo")
+	# Les voies non engagées restent verrouillées par leurs prereqs (gating narratif).
+	_assert(not QuestManager.is_available("act4_prefeito_audiencia"), "voie Prefeito verrouillée (prereq)")
+	_assert(not QuestManager.is_available("act4_trafico_tributo"), "voie Tráfico verrouillée (prereq)")
 	# Acceptation et complétion d'une quête acte 4.
 	_assert(QuestManager.accept("act4_policia_purga"), "accept purga")
 	QuestManager.complete_objective("act4_policia_purga", "purge_morro")
@@ -730,16 +844,170 @@ func _reset_for_path_simulation() -> void:
 		ReputationSystem.set_value(i, 0)
 
 func _drive_to_act3() -> void:
-	# Bascule en deux temps : le _check_act_advance ne saute qu'un acte par appel.
-	# 500 R$ → acte 2, puis le complément → acte 3.
+	# Le gating narratif demande, en plus du seuil de dette, que les quêtes pivots
+	# soient complétées. Acte 2 = chaîne linéaire (intro → ramos → padre → miguel),
+	# il faut compléter toute la chaîne pour franchir vers l'acte 3.
+	_complete_quest_all_objectives("act1_heritage")
+	_complete_quest_all_objectives("act1_meet_ramos")
+	_complete_quest_all_objectives("act1_meet_tito")
 	CampaignManager.pay_debt(CampaignManager.ACT1_THRESHOLD)
+	_complete_quest_all_objectives("act2_intro")
+	_complete_quest_all_objectives("act2_ramos_operacao")
+	_complete_quest_all_objectives("act2_padre_orfanato")
+	_complete_quest_all_objectives("act2_miguel_favela")
 	CampaignManager.pay_debt(CampaignManager.ACT2_THRESHOLD - CampaignManager.ACT1_THRESHOLD)
+
+# Helper : accepte une quête puis complète tous ses objectifs non-optionnels.
+# Tolérant : si déjà acceptée/complétée, no-op partiel.
+func _complete_quest_all_objectives(quest_id: String) -> void:
+	if QuestManager.is_completed(quest_id):
+		return
+	if not QuestManager.is_active(quest_id):
+		QuestManager.accept(quest_id)
+	var q: Quest = QuestManager._quests.get(quest_id)
+	if q == null:
+		return
+	for obj in q.objectives:
+		if not obj.optional:
+			QuestManager.complete_objective(quest_id, obj.id)
 
 func _complete_carnaval_quest() -> void:
 	_assert(QuestManager.is_available("act4_carnaval_desfile"), "act4_carnaval_desfile dispo en acte 4")
 	_assert(QuestManager.accept("act4_carnaval_desfile"), "accept act4_carnaval_desfile")
 	QuestManager.complete_objective("act4_carnaval_desfile", "lead_samba")
 	_assert(QuestManager.is_completed("act4_carnaval_desfile"), "act4_carnaval_desfile complétée → épilogue prêt")
+
+# Helper : déroule un knot via DialogueBridge en simulant un joueur qui choisit
+# l'option `choice_index` à chaque step. Continue tant qu'il y a une "next"
+# dans on_choose. Retourne quand le dialogue est terminé.
+func _play_dialogue_choice(npc_id: String, knot: String, choice_index: int = 0) -> void:
+	DialogueBridge.start_dialogue(npc_id, knot)
+	# Boucle : tant que le dialogue chaîne sur next, on choisit l'option index.
+	# Quand un knot ne chaîne pas, choose() applique l'action et end_dialogue.
+	var safety: int = 12
+	while DialogueBridge.is_active() and safety > 0:
+		DialogueBridge.choose(choice_index)
+		safety -= 1
+
+# Helper : tout l'Acte 1 via DialogueBridge (couvre la chaîne action+bribe+
+# finish_quest qui est précisément ce que le bug pay_bribe-avant-finish_quest
+# cassait silencieusement). Utilise DialogueBridge.pay_debt (pas le raw
+# CampaignManager.pay_debt) pour que les objectifs heritage soient cochés.
+func _drive_act1_via_dialogues() -> void:
+	# 1. Heritage via dialogue (seu_joao_heritage → debt_who → accept).
+	_play_dialogue_choice("seu_joao", "seu_joao_heritage", 0)
+	_assert(QuestManager.is_active("act1_heritage"), "heritage active après dialogue")
+	# 2. Met flag consortium → complète meet_consortium (via _link_quest_on_flag).
+	DialogueBridge.set_flag("met_consortium")
+	# 3. Pay 500 R$ via DialogueBridge (qui complète earn_seed + first_payment).
+	DialogueBridge.pay_debt(CampaignManager.ACT1_THRESHOLD)
+	_assert(QuestManager.is_completed("act1_heritage"), "heritage complétée après dialog+flag+pay")
+	# 4. Ramos : intro (accept) puis report (bribe + finish_quest).
+	_play_dialogue_choice("ramos", "ramos_intro", 0)
+	_assert(QuestManager.is_active("act1_meet_ramos"), "ramos active après intro")
+	_play_dialogue_choice("ramos", "ramos_active", 0)
+	_assert(QuestManager.is_completed("act1_meet_ramos"), "ramos complétée via report+bribe")
+	# 5. Tito : meet (accept) puis favor (bribe + finish_quest).
+	_play_dialogue_choice("tito", "tito_meet", 0)
+	_assert(QuestManager.is_active("act1_meet_tito"), "tito active après meet")
+	_play_dialogue_choice("tito", "tito_favor_ask", 0)
+	_assert(QuestManager.is_completed("act1_meet_tito"), "tito complétée via favor+bribe")
+
+# Test bout-en-bout via dialogues (couvre les actions dialog combinant
+# pay_bribe + finish_quest, accept_quest + next, set_endgame + finish_quest).
+# Prouve que les 3 voies passent end-to-end via les knots du PLACEHOLDER_DIALOGUES.
+func _test_full_path_via_dialogues() -> void:
+	_section("Voies complètes via DialogueBridge — Polícia / Tráfico / Prefeito")
+	# Simule un joueur fauché → riche : on lui donne du cash pour éviter que
+	# pay_bribe échoue silencieusement et bloque la quête.
+	if GameManager.player == null:
+		# Crée un faux joueur avec inventaire pour les tests dialog.
+		var fake_player: CharacterBody2D = CharacterBody2D.new()
+		fake_player.name = "FakePlayer"
+		add_child(fake_player)
+		var fake_inv: Inventory = Inventory.new()
+		fake_inv.name = "Inventory"
+		fake_player.add_child(fake_inv)
+		GameManager.register_player(fake_player)
+	var inv: Inventory = GameManager.player.get_node_or_null("Inventory") as Inventory
+	if inv == null:
+		_assert(false, "Player inventory dispo")
+		return
+
+	# --- Voie POLÍCIA via dialogues ---
+	_reset_for_path_simulation()
+	inv.add_money(10000)
+	_drive_act1_via_dialogues()
+	_assert(CampaignManager.current_act == 2, "POLÍCIA : passage Acte 2 via dialogues")
+
+	# Acte 2 : drive via les helpers (les knots intermédiaires sont déjà couverts ailleurs).
+	_complete_quest_all_objectives("act2_intro")
+	_complete_quest_all_objectives("act2_ramos_operacao")
+	_complete_quest_all_objectives("act2_padre_orfanato")
+	_complete_quest_all_objectives("act2_miguel_favela")
+	CampaignManager.pay_debt(CampaignManager.ACT2_THRESHOLD - CampaignManager.ACT1_THRESHOLD)
+	_assert(CampaignManager.current_act == 3, "POLÍCIA : passage Acte 3")
+
+	# Acte 3 voie POLÍCIA : intel + madrugada via QuestManager direct (les knots
+	# de cette chaîne sont nombreux, l'objectif ici est de prouver la fin).
+	_complete_quest_all_objectives("act3_policia_intel")
+	_complete_quest_all_objectives("act3_policia_madrugada")
+	CampaignManager.complete_endgame(CampaignManager.Endgame.POLICIA)
+	_assert(CampaignManager.current_act == 4, "POLÍCIA : Acte 4 atteint")
+	_assert(CampaignManager.chosen_endgame == CampaignManager.Endgame.POLICIA, "POLÍCIA : endgame scellée")
+	_complete_quest_all_objectives("act4_policia_purga")
+	_complete_carnaval_quest()
+	_assert(QuestManager.is_completed("act4_carnaval_desfile"), "POLÍCIA : Carnaval finalisé — épilogue prêt")
+
+	# --- Voie TRÁFICO via dialogues ---
+	_reset_for_path_simulation()
+	inv.add_money(10000)
+	_drive_act1_via_dialogues()
+	_assert(CampaignManager.current_act == 2, "TRÁFICO : Acte 2 via dialogues")
+	_complete_quest_all_objectives("act2_intro")
+	_complete_quest_all_objectives("act2_ramos_operacao")
+	_complete_quest_all_objectives("act2_padre_orfanato")
+	_complete_quest_all_objectives("act2_miguel_favela")
+	CampaignManager.pay_debt(CampaignManager.ACT2_THRESHOLD - CampaignManager.ACT1_THRESHOLD)
+	_assert(CampaignManager.current_act == 3, "TRÁFICO : Acte 3")
+	_complete_quest_all_objectives("act3_trafico_pickup")
+	_complete_quest_all_objectives("act3_trafico_corrida")
+	CampaignManager.complete_endgame(CampaignManager.Endgame.TRAFICO)
+	_assert(CampaignManager.current_act == 4, "TRÁFICO : Acte 4 atteint")
+	_assert(CampaignManager.chosen_endgame == CampaignManager.Endgame.TRAFICO, "TRÁFICO : endgame scellée")
+	_complete_quest_all_objectives("act4_trafico_tributo")
+	_complete_carnaval_quest()
+	_assert(QuestManager.is_completed("act4_carnaval_desfile"), "TRÁFICO : Carnaval finalisé")
+
+	# --- Voie PREFEITO via dialogues ---
+	_reset_for_path_simulation()
+	inv.add_money(10000)
+	_drive_act1_via_dialogues()
+	_assert(CampaignManager.current_act == 2, "PREFEITO : Acte 2")
+	_complete_quest_all_objectives("act2_intro")
+	_complete_quest_all_objectives("act2_ramos_operacao")
+	_complete_quest_all_objectives("act2_padre_orfanato")
+	_complete_quest_all_objectives("act2_miguel_favela")
+	CampaignManager.pay_debt(CampaignManager.ACT2_THRESHOLD - CampaignManager.ACT1_THRESHOLD)
+	_assert(CampaignManager.current_act == 3, "PREFEITO : Acte 3")
+	# Endorsements + finale eleicao via dialogues : Carlos / Beatriz / Padeiro signent,
+	# puis Padre offre la coalition (set_endgame PREFEITO + finish_quest dans la même action).
+	_play_dialogue_choice("padre", "padre_act3_endorse_offer", 0)
+	_assert(QuestManager.is_active("act3_prefeito_endorsements"), "PREFEITO : endorsements active")
+	# Les signataires individuels ne sont pas dans des knots dédiés ici (carlos_act3_endorse, etc.) —
+	# on complète manuellement les objectifs + on retourne au Padre pour le sceau.
+	QuestManager.complete_objective("act3_prefeito_endorsements", "endorse_carlos")
+	QuestManager.complete_objective("act3_prefeito_endorsements", "endorse_padeiro")
+	QuestManager.complete_objective("act3_prefeito_endorsements", "endorse_padre")
+	_assert(QuestManager.is_completed("act3_prefeito_endorsements"), "PREFEITO : endorsements complétée")
+	# Padre offre eleicao + chaîne sur padre_act3_close (set_endgame + finish_quest).
+	_play_dialogue_choice("padre", "padre_act3_offer", 0)
+	_assert(CampaignManager.chosen_endgame == CampaignManager.Endgame.PREFEITO, "PREFEITO : endgame scellée via dialogue")
+	_assert(CampaignManager.current_act == 4, "PREFEITO : Acte 4 atteint via dialogue")
+	_assert(QuestManager.is_completed("act3_prefeito_eleicao"), "PREFEITO : eleicao complétée via finish_quest dans set_endgame")
+	_complete_quest_all_objectives("act4_prefeito_audiencia")
+	_complete_carnaval_quest()
+	_assert(QuestManager.is_completed("act4_carnaval_desfile"), "PREFEITO : Carnaval finalisé")
 
 func _test_full_path_policia() -> void:
 	_section("Voie complète — Polícia (Capitão Ramos)")
@@ -846,14 +1114,15 @@ func _test_save_load_roundtrip() -> void:
 
 func _test_act2_milestones() -> void:
 	_section("Paliers narratifs acte 2 (5k / 10k / 15k / 20k)")
-	# Reset propre.
-	CampaignManager.current_act = 1
-	CampaignManager.debt_paid = 0
-	CampaignManager.flags.clear()
+	# Reset propre + complétion des pivots acte 1 pour pouvoir basculer.
+	_reset_for_path_simulation()
+	_complete_quest_all_objectives("act1_heritage")
+	_complete_quest_all_objectives("act1_meet_ramos")
+	_complete_quest_all_objectives("act1_meet_tito")
 
 	# Acte 1 : aucun palier ne se pose (les milestones gatent sur act >= 2).
 	CampaignManager.pay_debt(500)
-	_assert(CampaignManager.current_act == 2, "500 R$ → acte 2")
+	_assert(CampaignManager.current_act == 2, "500 R$ + pivots → acte 2")
 	# Le 5k premier palier : on paye juste assez.
 	CampaignManager.pay_debt(4500)
 	_assert(CampaignManager.has_flag("mae_letter_triggered"), "5k payés → flag mae_letter_triggered")
@@ -1527,6 +1796,62 @@ func _test_wanderer_4dir_facing() -> void:
 		_assert(sprite_node.scale.x < 0.0, "LEFT : sprite.scale.x < 0 (flip)")
 	w2.queue_free()
 	await get_tree().process_frame
+
+func _test_intro_bump_flow() -> void:
+	_section("Cinématique bump : clic Sortir de la maison → Seu João débarque")
+	# Sauvegarde flags
+	var saved_flags: Dictionary = CampaignManager.flags.duplicate()
+	CampaignManager.flags.clear()
+
+	# Charge le monde Copacabana (instancie FavelaDoMorro, HouseInterior, Player…)
+	var packed: PackedScene = load("res://scenes/world/Copacabana.tscn") as PackedScene
+	_assert(packed != null, "Copacabana.tscn charge")
+	var world: Node = packed.instantiate()
+	add_child(world)
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+
+	var player: Node = world.get_node_or_null("Player")
+	_assert(player != null, "Player présent dans le monde")
+	var house: Node = world.get_node_or_null("TioZeHouseInterior")
+	_assert(house != null, "TioZeHouseInterior présent")
+	var exit_door: Node = house.get_node_or_null("ExitDoor") if house else null
+	_assert(exit_door != null, "ExitDoor présente dans HouseInterior")
+	var sj: Node = NPCScheduler.get_npc("seu_joao")
+	_assert(sj != null, "Seu João enregistré au scheduler")
+
+	# État initial : Seu João caché + ExitDoor a le hook intro_bump_door
+	if exit_door != null:
+		_assert(exit_door.get("intro_bump_door") == true, "ExitDoor.intro_bump_door activé")
+	if sj != null:
+		_assert(not (sj as Node2D).visible, "Seu João caché au démarrage (avant bump)")
+		var sj_inter: Node = sj.get_node_or_null("Interactable")
+		if sj_inter != null and "enabled" in sj_inter:
+			_assert(not sj_inter.enabled, "Seu João Interactable désactivé au démarrage")
+
+	GameManager.player = player
+
+	# Simule le clic Sortir : émet directement le signal interacted de la porte.
+	if exit_door != null:
+		var door_inter: Node = exit_door.get_node_or_null("Interactable")
+		_assert(door_inter != null, "ExitDoor a un Interactable")
+		if door_inter:
+			door_inter.interacted.emit(player)
+	# Attends quelques frames pour que la cutscene démarre (set position + visible)
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+
+	if sj != null:
+		_assert((sj as Node2D).visible, "Seu João rendu visible par la cinématique")
+	# Vérifie que le joueur n'a PAS été téléporté dehors (still inside la maison)
+	var player_pos: Vector2 = (player as Node2D).global_position
+	_assert(player_pos.x > 6000 and player_pos.x < 8000, "Joueur reste dans HouseInterior (pas téléporté)")
+
+	# Cleanup : skip le reste de la cutscene (dialogue bloque sur dialogue_finished en headless)
+	CampaignManager.set_flag("intro_bump_seen")
+	world.queue_free()
+	await get_tree().process_frame
+	CampaignManager.flags = saved_flags
 
 func _test_home_visit_clears_on_favela_entry() -> void:
 	_section("Visite famille — entrer en favela consomme should_visit_home")

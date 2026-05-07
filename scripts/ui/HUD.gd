@@ -27,6 +27,12 @@ const AXIS_COLORS: Dictionary = {
 
 var _active_interactables: Array[Node] = []
 
+# Toast doré "✦ Nouvelle quête : <nom>" pour MAIN qui devient is_available().
+# Le seed initial (deferred + post-load) garantit qu'on ne re-toaste pas les MAIN
+# déjà connues du joueur (cas chargement de save).
+var _signaled_main_ids: Dictionary = {}
+var _main_toast_seeded: bool = false
+
 func _ready() -> void:
 	EventBus.money_changed.connect(_on_money_changed)
 	EventBus.interaction_available.connect(_on_interaction_available)
@@ -39,9 +45,12 @@ func _ready() -> void:
 	EventBus.time_of_day_changed.connect(_on_phase_changed)
 	EventBus.debt_paid.connect(_on_debt_paid)
 	EventBus.act_changed.connect(_on_act_changed)
+	EventBus.quest_accepted.connect(_on_quest_change_check_main)
+	EventBus.quest_completed.connect(_on_quest_change_check_main)
 	SaveSystem.save_committed.connect(_on_save_committed)
 	SaveSystem.save_loaded.connect(_on_save_loaded)
 	DynamicMissionManager.mission_completed.connect(_on_dynamic_mission_completed)
+	call_deferred("_seed_main_signaled")
 	_refresh_day()
 	_refresh_debt()
 	if interaction_prompt:
@@ -62,16 +71,31 @@ func _unhandled_input(event: InputEvent) -> void:
 	if not (event is InputEventKey) or not event.pressed or event.echo:
 		return
 	var key: int = event.physical_keycode
+	# Raccourcis clavier = bonus dev / desktop. La cible est mobile (touch),
+	# donc toutes ces fonctions doivent rester accessibles via boutons à l'écran.
 	# P : ouvre / ferme le téléphone (bouton 📱 du HUD).
 	# C : raccourci historique vers la fiche perso → ouvre maintenant l'app Saúde du téléphone.
 	if key == KEY_P or key == KEY_C:
 		_toggle_phone()
+		get_viewport().set_input_as_handled()
+	# K : raccourci direct vers l'app Crônica (toggle). Sur mobile, passer par 📱 → 📜.
+	elif key == KEY_K:
+		_toggle_cronica()
 		get_viewport().set_input_as_handled()
 
 func _toggle_phone() -> void:
 	var phone: Node = get_tree().current_scene.get_node_or_null("Phone")
 	if phone and phone.has_method("toggle"):
 		phone.toggle()
+
+func _toggle_cronica() -> void:
+	var phone: Node = get_tree().current_scene.get_node_or_null("Phone")
+	if phone == null:
+		return
+	if phone.visible:
+		phone.close()
+	elif phone.has_method("open_cronica"):
+		phone.open_cronica()
 
 func _toggle_journal() -> void:
 	var journal: Node = get_tree().current_scene.get_node_or_null("JournalUI")
@@ -226,18 +250,134 @@ func _on_save_committed() -> void:
 
 func _on_save_loaded() -> void:
 	_flash_toast("Partie chargée")
+	# Re-seed : on ne veut pas toaster les MAIN déjà connues dans la save chargée.
+	_signaled_main_ids.clear()
+	_main_toast_seeded = false
+	call_deferred("_seed_main_signaled")
+
+# Marque comme "déjà connues" toutes les MAIN actuellement available/active/completed.
+# Appelé en deferred pour laisser MainBoot._register_quests() finir.
+func _seed_main_signaled() -> void:
+	for q in QuestManager._quests.values():
+		if not (q is Quest):
+			continue
+		var quest: Quest = q
+		if quest.quest_type != Quest.QuestType.MAIN:
+			continue
+		if QuestManager.is_available(quest.id) or QuestManager.is_active(quest.id) or QuestManager.is_completed(quest.id):
+			_signaled_main_ids[quest.id] = true
+	_main_toast_seeded = true
+
+func _on_quest_change_check_main(quest_id: String) -> void:
+	# Jalons narratifs : à chaque MAIN complétée, un toast doré dit explicitement
+	# le NPC suivant et son lieu. La trame est linéaire en acte 2+ donc il y a
+	# toujours une suite claire. Pré-marquer les MAIN suivantes comme déjà
+	# signalées empêche les "✦ Nouvelle quête" génériques d'écraser ce message.
+	if _main_toast_seeded and MAIN_NEXT_HINT.has(quest_id):
+		var hint: Dictionary = MAIN_NEXT_HINT[quest_id]
+		for next_id in hint.get("hide_signals", []):
+			_signaled_main_ids[next_id] = true
+		_flash_toast(hint.text, Color(0.95, 0.8, 0.4, 1), 3.5)
+	_check_new_main_available()
+
+# Mapping quest_id (juste complétée) → toast jalon avec NPC + lieu de la suite.
+# `hide_signals` = MAIN à pré-marquer comme déjà signalées pour empêcher les
+# toasts "✦" génériques d'écraser le message clair de jalon.
+const MAIN_NEXT_HINT: Dictionary = {
+	"act1_heritage": {
+		"text": "✓ Acompte payé — Rencontre Ramos (Bar do Policial) et Tito (Morro)",
+		"hide_signals": ["act1_meet_ramos", "act1_meet_tito"],
+	},
+	"act1_meet_ramos": {
+		"text": "✓ Ramos satisfait — Continue : Tito au cœur du Morro",
+		"hide_signals": [],
+	},
+	"act1_meet_tito": {
+		"text": "✓ Tito honoré — Continue : Capitão Ramos (Bar do Policial)",
+		"hide_signals": [],
+	},
+	"act2_intro": {
+		"text": "✓ Tio Zé démasqué — Va voir Ramos pour l'Operação Carnaval",
+		"hide_signals": ["act2_ramos_operacao"],
+	},
+	"act2_ramos_operacao": {
+		"text": "✓ Operação tranchée — Va voir le Padre à la chapelle",
+		"hide_signals": ["act2_padre_orfanato"],
+	},
+	"act2_padre_orfanato": {
+		"text": "✓ Orfanato sauvé — Monte au Morro voir Miguel",
+		"hide_signals": ["act2_miguel_favela"],
+	},
+	"act2_miguel_favela": {
+		"text": "✓ Convoi livré — Retourne au Copacabana Palace pour le pivot d'acte 3",
+		"hide_signals": [],
+	},
+	"act3_policia_intel": {
+		"text": "✓ Dossier monté — Retourne voir Ramos pour l'Operação Madrugada",
+		"hide_signals": ["act3_policia_madrugada"],
+	},
+	"act3_trafico_pickup": {
+		"text": "✓ Sac livré — Retourne voir Miguel pour la corrida",
+		"hide_signals": ["act3_trafico_corrida"],
+	},
+	"act3_prefeito_endorsements": {
+		"text": "✓ Coalition scellée — Retourne au Padre pour l'élection",
+		"hide_signals": ["act3_prefeito_eleicao"],
+	},
+	"act3_policia_madrugada": {
+		"text": "✓ Madrugada bouclée — La voie Polícia s'ouvre. Acte 4 : Purga",
+		"hide_signals": ["act4_policia_purga"],
+	},
+	"act3_trafico_corrida": {
+		"text": "✓ Corrida menée — La voie Tráfico s'ouvre. Acte 4 : Coleta do Patrão",
+		"hide_signals": ["act4_trafico_tributo"],
+	},
+	"act3_prefeito_eleicao": {
+		"text": "✓ Élection gagnée — La voie Prefeito s'ouvre. Acte 4 : Audiências",
+		"hide_signals": ["act4_prefeito_audiencia"],
+	},
+	"act4_policia_purga": {
+		"text": "✓ Purga consommée — Sambódromo : mène le Carnaval",
+		"hide_signals": ["act4_carnaval_desfile"],
+	},
+	"act4_trafico_tributo": {
+		"text": "✓ Tribut perçu — Sambódromo : mène le Carnaval",
+		"hide_signals": ["act4_carnaval_desfile"],
+	},
+	"act4_prefeito_audiencia": {
+		"text": "✓ Audiences données — Sambódromo : mène le Carnaval",
+		"hide_signals": ["act4_carnaval_desfile"],
+	},
+}
+
+# Toast doré pour chaque MAIN qui vient de devenir disponible (prereq satisfait
+# ou bascule d'acte). N'agit qu'après le seed initial.
+func _check_new_main_available() -> void:
+	if not _main_toast_seeded:
+		return
+	for q in QuestManager._quests.values():
+		if not (q is Quest):
+			continue
+		var quest: Quest = q
+		if quest.quest_type != Quest.QuestType.MAIN:
+			continue
+		if _signaled_main_ids.has(quest.id):
+			continue
+		if QuestManager.is_available(quest.id):
+			_signaled_main_ids[quest.id] = true
+			_flash_toast("✦ Nouvelle quête : %s" % quest.display_name, Color(1.0, 0.9, 0.55, 1))
 
 func _on_dynamic_mission_completed(category: int, money: int, rep: int) -> void:
 	var label: String = DynamicMissionManager.CATEGORY_LABELS.get(category, "")
 	_flash_toast("Mission %s : +R$ %d  ·  +%d %s" % [label, money, rep, label.to_upper()])
 
-func _flash_toast(text: String) -> void:
+func _flash_toast(text: String, color: Color = Color(0.7, 0.95, 0.7, 1), duration: float = 1.2) -> void:
 	if save_toast == null:
 		return
 	save_toast.text = text
 	save_toast.visible = true
-	save_toast.modulate = Color(0.7, 0.95, 0.7, 1)
+	save_toast.modulate = color
 	var tween: Tween = create_tween()
-	tween.tween_interval(1.2)
+	tween.tween_interval(duration)
 	tween.tween_property(save_toast, "modulate:a", 0.0, 0.4)
 	tween.tween_callback(func(): save_toast.visible = false)

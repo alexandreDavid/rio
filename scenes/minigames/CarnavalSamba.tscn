@@ -1,6 +1,35 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/minigames/carnaval/CarnavalSamba.gd" id="1_game"]
+[ext_resource type="PackedScene" path="res://scenes/ui/MinigameQuitButton.tscn" id="2_quit"]
+
+[sub_resource type="StyleBoxFlat" id="Lane0Style"]
+bg_color = Color(0.85, 0.3, 0.5, 0.85)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="Lane1Style"]
+bg_color = Color(0.4, 0.65, 0.95, 0.85)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="Lane2Style"]
+bg_color = Color(0.55, 0.95, 0.55, 0.85)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="Lane3Style"]
+bg_color = Color(0.95, 0.85, 0.4, 0.85)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
 
 [node name="CarnavalSamba" type="Node2D"]
 script = ExtResource("1_game")
@@ -257,10 +286,68 @@ anchor_right = 0.5
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = -480.0
-offset_top = -160.0
+offset_top = -240.0
 offset_right = 480.0
-offset_bottom = -100.0
-text = "Suis le rythme du bloc — A S D F (ou ← ↓ ↑ →)"
+offset_bottom = -200.0
+text = "Suis le rythme du bloc — touche les boutons colorés"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 24
 theme_override_colors/font_color = Color(1, 0.95, 0.8, 1)
+
+[node name="Lane0Button" type="Button" parent="UI"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 480.0
+offset_top = -180.0
+offset_right = 640.0
+offset_bottom = -20.0
+text = "●"
+theme_override_styles/normal = SubResource("Lane0Style")
+theme_override_styles/hover = SubResource("Lane0Style")
+theme_override_styles/pressed = SubResource("Lane0Style")
+theme_override_font_sizes/font_size = 56
+theme_override_colors/font_color = Color(0.98, 0.98, 0.95, 1)
+
+[node name="Lane1Button" type="Button" parent="UI"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 720.0
+offset_top = -180.0
+offset_right = 880.0
+offset_bottom = -20.0
+text = "●"
+theme_override_styles/normal = SubResource("Lane1Style")
+theme_override_styles/hover = SubResource("Lane1Style")
+theme_override_styles/pressed = SubResource("Lane1Style")
+theme_override_font_sizes/font_size = 56
+theme_override_colors/font_color = Color(0.98, 0.98, 0.95, 1)
+
+[node name="Lane2Button" type="Button" parent="UI"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 960.0
+offset_top = -180.0
+offset_right = 1120.0
+offset_bottom = -20.0
+text = "●"
+theme_override_styles/normal = SubResource("Lane2Style")
+theme_override_styles/hover = SubResource("Lane2Style")
+theme_override_styles/pressed = SubResource("Lane2Style")
+theme_override_font_sizes/font_size = 56
+theme_override_colors/font_color = Color(0.98, 0.98, 0.95, 1)
+
+[node name="Lane3Button" type="Button" parent="UI"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 1200.0
+offset_top = -180.0
+offset_right = 1360.0
+offset_bottom = -20.0
+text = "●"
+theme_override_styles/normal = SubResource("Lane3Style")
+theme_override_styles/hover = SubResource("Lane3Style")
+theme_override_styles/pressed = SubResource("Lane3Style")
+theme_override_font_sizes/font_size = 56
+theme_override_colors/font_color = Color(0.98, 0.98, 0.95, 1)
+
+[node name="MinigameQuitButton" parent="." instance=ExtResource("2_quit")]

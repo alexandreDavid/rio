@@ -14,6 +14,7 @@ const QUEST_AUDIENCIA: String = "act4_prefeito_audiencia"
 func _on_interacted(_by: Node) -> void:
 	if data == null:
 		return
+	await _approach_player_if_far()
 	var knot: String = data.ink_knot  # padre_intro
 	# Acte 4 : règne du Coronel.
 	if CampaignManager.current_act >= 4 and CampaignManager.chosen_endgame == CampaignManager.Endgame.PREFEITO:

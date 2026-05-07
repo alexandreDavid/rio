@@ -49,10 +49,20 @@ func _ready() -> void:
 	if continue_button:
 		continue_button.pressed.connect(_on_continue)
 	EventBus.quest_completed.connect(_on_quest_completed)
+	# Au chargement d'une save, si la run est terminée (Carnaval done) mais
+	# l'épilogue jamais vu (ex. fermeture pendant l'épilogue), on le re-déclenche.
+	SaveSystem.save_loaded.connect(_on_save_loaded)
+
+func _on_save_loaded() -> void:
+	if QuestManager.is_completed(QUEST_ID) and CampaignManager.chosen_endgame != CampaignManager.Endgame.NONE:
+		_show_epilogue()
 
 func _on_quest_completed(quest_id: String) -> void:
 	if quest_id != QUEST_ID:
 		return
+	_show_epilogue()
+
+func _show_epilogue() -> void:
 	var path: int = CampaignManager.chosen_endgame
 	if not EPILOGUES.has(path):
 		return

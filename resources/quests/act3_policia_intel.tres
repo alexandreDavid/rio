@@ -34,3 +34,5 @@ money_reward = 0
 reputation_rewards = {1: 5}
 required_reputation = {}
 required_act = 3
+quest_type = 1
+prerequisite_quest_ids = Array[String](["act2_intro"])

@@ -1,10 +1,12 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="2_wander"]
 [ext_resource type="PackedScene" path="res://scenes/props/DistrictExit.tscn" id="3_exit"]
 [ext_resource type="PackedScene" path="res://scenes/props/BuildingDoor.tscn" id="5_door"]
 [ext_resource type="PackedScene" path="res://scenes/props/CornCart.tscn" id="6_cart"]
 [ext_resource type="PackedScene" path="res://scenes/props/ReactiveDialogueSpot.tscn" id="7_reactive"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/Tito.tscn" id="8_tito"]
+[ext_resource type="Script" path="res://scripts/world/FavelaCollisionGenerator.gd" id="9_collisions"]
 
 [sub_resource type="RectangleShape2D" id="WallH"]
 size = Vector2(820, 16)
@@ -1008,6 +1010,9 @@ position = Vector2(408, -400)
 [node name="Shape" type="CollisionShape2D" parent="Walls/Right"]
 shape = SubResource("WallV")
 
+[node name="HouseCollisions" type="Node2D" parent="."]
+script = ExtResource("9_collisions")
+
 [node name="PlayerSpawn" type="Marker2D" parent="."]
 position = Vector2(-50, -540)
 
@@ -1078,6 +1083,9 @@ speed = 12.0
 pause_at_waypoints = 2.4
 pause_random_jitter = 1.4
 look_at_player_distance = 60.0
+
+[node name="Tito" parent="." instance=ExtResource("8_tito")]
+position = Vector2(60, -200)
 
 [node name="LocalC" parent="." instance=ExtResource("2_wander")]
 position = Vector2(0, -100)

@@ -1,9 +1,22 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scripts/minigames/volley/VolleyMatch.gd" id="1_match"]
 [ext_resource type="Script" path="res://scripts/minigames/volley/VolleyBall.gd" id="2_ball"]
 [ext_resource type="Script" path="res://scripts/minigames/volley/VolleyPlayer.gd" id="3_vp"]
 [ext_resource type="Script" path="res://scripts/minigames/volley/VolleyAI.gd" id="4_vai"]
+[ext_resource type="PackedScene" path="res://scenes/ui/MinigameQuitButton.tscn" id="5_quit"]
+
+[sub_resource type="StyleBoxFlat" id="ServeStyle"]
+bg_color = Color(0.2, 0.55, 0.85, 0.92)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.95, 0.92, 0.85, 0.6)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
 
 [sub_resource type="RectangleShape2D" id="GroundShape"]
 size = Vector2(500, 20)
@@ -147,4 +160,23 @@ offset_left = 16.0
 offset_top = -40.0
 offset_right = 600.0
 offset_bottom = -8.0
-text = "A/D : déplacement    Espace : frapper"
+text = "Joystick : déplacement    Bouton SERVIR pour le service"
+
+[node name="ServeButton" type="Button" parent="UI"]
+visible = false
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -110.0
+offset_top = -140.0
+offset_right = 110.0
+offset_bottom = -60.0
+text = "🏐 SERVIR"
+theme_override_styles/normal = SubResource("ServeStyle")
+theme_override_styles/hover = SubResource("ServeStyle")
+theme_override_styles/pressed = SubResource("ServeStyle")
+theme_override_font_sizes/font_size = 24
+theme_override_colors/font_color = Color(0.98, 0.98, 0.95, 1)
+
+[node name="MinigameQuitButton" parent="." instance=ExtResource("5_quit")]

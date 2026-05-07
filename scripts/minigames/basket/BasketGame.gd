@@ -45,7 +45,19 @@ func _ready() -> void:
 	var cam: Camera2D = get_node_or_null("Camera2D")
 	if cam:
 		cam.make_current()
-	_status("Espace pour tirer — vise le centre vert")
+	# Boutons tactiles (mobile-first ; ui_accept reste en bonus dev).
+	var action_btn: Button = get_node_or_null("UI/ActionButton") as Button
+	if action_btn:
+		action_btn.pressed.connect(_on_action_pressed)
+	var quit_btn: CanvasLayer = get_node_or_null("MinigameQuitButton")
+	if quit_btn and quit_btn.has_signal("quit_pressed"):
+		quit_btn.quit_pressed.connect(_end_game)
+	_status("Touche TIRER quand le curseur passe au centre vert")
+
+func _on_action_pressed() -> void:
+	if _state != State.READY:
+		return
+	_resolve_shot()
 
 func _process(delta: float) -> void:
 	if _state == State.ENDED:

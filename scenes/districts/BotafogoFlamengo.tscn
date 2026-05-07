@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3]
+[gd_scene load_steps=17 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/props/TaxiStand.tscn" id="1_taxi"]
 [ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="2_wander"]
@@ -7,18 +7,23 @@
 [ext_resource type="PackedScene" path="res://scenes/props/DistrictExit.tscn" id="5_exit"]
 [ext_resource type="PackedScene" path="res://scenes/vehicles/Bike.tscn" id="6_bike"]
 [ext_resource type="PackedScene" path="res://scenes/vehicles/Car.tscn" id="7_car"]
+[ext_resource type="PackedScene" path="res://scenes/props/BasketCourt.tscn" id="9_court"]
+[ext_resource type="PackedScene" path="res://scenes/props/BondinhoLauncher.tscn" id="10_bondinho"]
+[ext_resource type="PackedScene" path="res://scenes/props/VolleyNet.tscn" id="11_volley"]
+[ext_resource type="PackedScene" path="res://scenes/props/ExerciseStation.tscn" id="12_exercise"]
+[ext_resource type="PackedScene" path="res://scenes/props/DistrictEntrance.tscn" id="13_entrance"]
 
 [sub_resource type="RectangleShape2D" id="WallH_N"]
-size = Vector2(3000, 12)
+size = Vector2(3900, 12)
 
 [sub_resource type="RectangleShape2D" id="WallH_S"]
 size = Vector2(1400, 12)
 
 [sub_resource type="RectangleShape2D" id="WallV"]
-size = Vector2(12, 1500)
+size = Vector2(12, 3100)
 
 [sub_resource type="RectangleShape2D" id="WallV_AterroBay"]
-size = Vector2(12, 700)
+size = Vector2(12, 2200)
 
 [sub_resource type="RectangleShape2D" id="WallV_BayMid"]
 size = Vector2(12, 50)
@@ -33,33 +38,96 @@ size = Vector2(2900, 64)
 
 [node name="Sky" type="ColorRect" parent="."]
 offset_left = -1500.0
-offset_top = -1100.0
-offset_right = 1500.0
-offset_bottom = -1000.0
+offset_top = -2700.0
+offset_right = 2300.0
+offset_bottom = -1900.0
 color = Color(0.62, 0.78, 0.92, 1)
 
 [node name="SkyHaze" type="ColorRect" parent="."]
 offset_left = -1500.0
-offset_top = -1010.0
-offset_right = 1500.0
-offset_bottom = -1000.0
+offset_top = -1950.0
+offset_right = 2300.0
+offset_bottom = -1900.0
 color = Color(0.85, 0.85, 0.78, 1)
 
 [node name="CentroDistantSkyline" type="ColorRect" parent="."]
-offset_left = -1500.0
-offset_top = -1080.0
-offset_right = -1100.0
-offset_bottom = -1000.0
+offset_left = -1300.0
+offset_top = -2580.0
+offset_right = 700.0
+offset_bottom = -2400.0
 color = Color(0.5, 0.55, 0.62, 0.85)
 
+[node name="CentroBuildingA" type="ColorRect" parent="."]
+offset_left = -1100.0
+offset_top = -2620.0
+offset_right = -1040.0
+offset_bottom = -2400.0
+color = Color(0.45, 0.50, 0.58, 0.9)
+
+[node name="CentroBuildingB" type="ColorRect" parent="."]
+offset_left = -900.0
+offset_top = -2660.0
+offset_right = -840.0
+offset_bottom = -2400.0
+color = Color(0.42, 0.48, 0.56, 0.9)
+
+[node name="CentroBuildingC" type="ColorRect" parent="."]
+offset_left = -700.0
+offset_top = -2640.0
+offset_right = -640.0
+offset_bottom = -2400.0
+color = Color(0.50, 0.55, 0.62, 0.9)
+
+[node name="CentroBuildingD" type="ColorRect" parent="."]
+offset_left = -500.0
+offset_top = -2680.0
+offset_right = -440.0
+offset_bottom = -2400.0
+color = Color(0.40, 0.46, 0.54, 0.9)
+
+[node name="CentroBuildingE" type="ColorRect" parent="."]
+offset_left = -300.0
+offset_top = -2620.0
+offset_right = -240.0
+offset_bottom = -2400.0
+color = Color(0.48, 0.53, 0.60, 0.9)
+
+[node name="CentroBuildingF" type="ColorRect" parent="."]
+offset_left = -100.0
+offset_top = -2650.0
+offset_right = -40.0
+offset_bottom = -2400.0
+color = Color(0.44, 0.50, 0.58, 0.9)
+
+[node name="CentroBuildingG" type="ColorRect" parent="."]
+offset_left = 100.0
+offset_top = -2630.0
+offset_right = 160.0
+offset_bottom = -2400.0
+color = Color(0.46, 0.52, 0.60, 0.9)
+
+[node name="CentroBuildingH" type="ColorRect" parent="."]
+offset_left = 300.0
+offset_top = -2670.0
+offset_right = 360.0
+offset_bottom = -2400.0
+color = Color(0.42, 0.48, 0.56, 0.9)
+
+[node name="CentroBuildingI" type="ColorRect" parent="."]
+offset_left = 500.0
+offset_top = -2620.0
+offset_right = 560.0
+offset_bottom = -2400.0
+color = Color(0.48, 0.54, 0.62, 0.9)
+
 [node name="CentroSign" type="Label" parent="."]
-offset_left = -1490.0
-offset_top = -1090.0
-offset_right = -1280.0
-offset_bottom = -1070.0
-text = "← CENTRO (fermé)"
+offset_left = -700.0
+offset_top = -2700.0
+offset_right = 100.0
+offset_bottom = -2680.0
+text = "↑ CENTRO (fermé) — capitale histórica"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 11
+theme_override_font_sizes/font_size = 12
 theme_override_colors/font_color = Color(0.85, 0.85, 0.78, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
 theme_override_constants/outline_size = 3
@@ -94,7 +162,7 @@ color = Color(0.32, 0.35, 0.45, 0.9)
 
 [node name="AterroPark" type="ColorRect" parent="."]
 offset_left = -1500.0
-offset_top = -1000.0
+offset_top = -1900.0
 offset_right = 900.0
 offset_bottom = -200.0
 color = Color(0.42, 0.65, 0.4, 1)
@@ -115,17 +183,85 @@ color = Color(0.36, 0.58, 0.36, 0.5)
 
 [node name="AterroBayWaterEast" type="ColorRect" parent="."]
 offset_left = 900.0
-offset_top = -1000.0
-offset_right = 1500.0
+offset_top = -2200.0
+offset_right = 2300.0
 offset_bottom = -200.0
 color = Color(0.32, 0.5, 0.62, 1)
 
 [node name="AterroBayHighlight" type="ColorRect" parent="."]
 offset_left = 900.0
-offset_top = -1000.0
-offset_right = 1500.0
-offset_bottom = -996.0
+offset_top = -2200.0
+offset_right = 2300.0
+offset_bottom = -2196.0
 color = Color(0.78, 0.88, 0.92, 0.55)
+
+[node name="NiteroiSilhouette" type="ColorRect" parent="."]
+offset_left = 2050.0
+offset_top = -1100.0
+offset_right = 2280.0
+offset_bottom = -350.0
+color = Color(0.32, 0.36, 0.45, 0.85)
+
+[node name="NiteroiSkylineA" type="ColorRect" parent="."]
+offset_left = 2080.0
+offset_top = -1180.0
+offset_right = 2120.0
+offset_bottom = -1100.0
+color = Color(0.30, 0.34, 0.42, 0.85)
+
+[node name="NiteroiSkylineB" type="ColorRect" parent="."]
+offset_left = 2160.0
+offset_top = -1220.0
+offset_right = 2200.0
+offset_bottom = -1100.0
+color = Color(0.30, 0.34, 0.42, 0.85)
+
+[node name="NiteroiSkylineC" type="ColorRect" parent="."]
+offset_left = 2230.0
+offset_top = -1160.0
+offset_right = 2270.0
+offset_bottom = -1100.0
+color = Color(0.30, 0.34, 0.42, 0.85)
+
+[node name="NiteroiCristoMorro" type="ColorRect" parent="."]
+offset_left = 1980.0
+offset_top = -1280.0
+offset_right = 2050.0
+offset_bottom = -1100.0
+color = Color(0.28, 0.32, 0.40, 0.85)
+
+[node name="NiteroiPonteRioNiteroi" type="ColorRect" parent="."]
+offset_left = 1100.0
+offset_top = -1490.0
+offset_right = 2200.0
+offset_bottom = -1486.0
+color = Color(0.45, 0.45, 0.50, 0.7)
+
+[node name="NiteroiPonteSupportA" type="ColorRect" parent="."]
+offset_left = 1300.0
+offset_top = -1490.0
+offset_right = 1306.0
+offset_bottom = -1380.0
+color = Color(0.45, 0.45, 0.50, 0.7)
+
+[node name="NiteroiPonteSupportB" type="ColorRect" parent="."]
+offset_left = 1700.0
+offset_top = -1490.0
+offset_right = 1706.0
+offset_bottom = -1380.0
+color = Color(0.45, 0.45, 0.50, 0.7)
+
+[node name="NiteroiSign" type="Label" parent="."]
+offset_left = 2080.0
+offset_top = -1320.0
+offset_right = 2280.0
+offset_bottom = -1300.0
+text = "← NITERÓI"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.85, 0.85, 0.78, 0.9)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 3
 
 [node name="AterroBayWaveA" type="ColorRect" parent="."]
 offset_left = 1000.0
@@ -178,10 +314,177 @@ color = Color(0.95, 0.95, 0.92, 0.85)
 
 [node name="AterroBayShoreLine" type="ColorRect" parent="."]
 offset_left = 894.0
-offset_top = -1000.0
+offset_top = -1900.0
 offset_right = 902.0
 offset_bottom = -200.0
 color = Color(0.42, 0.32, 0.28, 1)
+
+[node name="FlamengoPraiaSand" type="ColorRect" parent="."]
+offset_left = 820.0
+offset_top = -1900.0
+offset_right = 894.0
+offset_bottom = -200.0
+color = Color(0.92, 0.85, 0.7, 1)
+
+[node name="FlamengoPraiaFoam" type="ColorRect" parent="."]
+offset_left = 884.0
+offset_top = -1900.0
+offset_right = 894.0
+offset_bottom = -200.0
+color = Color(0.95, 0.95, 0.95, 0.55)
+
+[node name="FlamengoPraiaSandLine" type="ColorRect" parent="."]
+offset_left = 820.0
+offset_top = -700.0
+offset_right = 894.0
+offset_bottom = -698.0
+color = Color(0.95, 0.95, 0.95, 0.4)
+
+[node name="FlamengoPraiaSandLineB" type="ColorRect" parent="."]
+offset_left = 820.0
+offset_top = -1300.0
+offset_right = 894.0
+offset_bottom = -1298.0
+color = Color(0.95, 0.95, 0.95, 0.4)
+
+[node name="FlamengoPraiaWalkwayBorder" type="ColorRect" parent="."]
+offset_left = 815.0
+offset_top = -1900.0
+offset_right = 820.0
+offset_bottom = -200.0
+color = Color(0.42, 0.32, 0.28, 0.7)
+
+[node name="FlamengoBeachAccessA" type="ColorRect" parent="."]
+offset_left = 760.0
+offset_top = -1700.0
+offset_right = 820.0
+offset_bottom = -1690.0
+color = Color(0.85, 0.78, 0.62, 0.85)
+
+[node name="FlamengoBeachAccessB" type="ColorRect" parent="."]
+offset_left = 760.0
+offset_top = -1100.0
+offset_right = 820.0
+offset_bottom = -1090.0
+color = Color(0.85, 0.78, 0.62, 0.85)
+
+[node name="FlamengoBeachAccessC" type="ColorRect" parent="."]
+offset_left = 760.0
+offset_top = -500.0
+offset_right = 820.0
+offset_bottom = -490.0
+color = Color(0.85, 0.78, 0.62, 0.85)
+
+[node name="FutebolFieldFlamengo" type="ColorRect" parent="."]
+offset_left = 600.0
+offset_top = -1620.0
+offset_right = 800.0
+offset_bottom = -1500.0
+color = Color(0.32, 0.55, 0.32, 1)
+
+[node name="FutebolFieldFlamengoLine" type="ColorRect" parent="."]
+offset_left = 600.0
+offset_top = -1562.0
+offset_right = 800.0
+offset_bottom = -1558.0
+color = Color(0.95, 0.95, 0.92, 0.6)
+
+[node name="FutebolFieldFlamengoCenter" type="ColorRect" parent="."]
+offset_left = 696.0
+offset_top = -1572.0
+offset_right = 704.0
+offset_bottom = -1548.0
+color = Color(0.95, 0.95, 0.92, 0.5)
+
+[node name="FutebolFieldFlamengoGoalN" type="ColorRect" parent="."]
+offset_left = 680.0
+offset_top = -1622.0
+offset_right = 720.0
+offset_bottom = -1618.0
+color = Color(0.95, 0.95, 0.92, 0.85)
+
+[node name="FutebolFieldFlamengoGoalS" type="ColorRect" parent="."]
+offset_left = 680.0
+offset_top = -1502.0
+offset_right = 720.0
+offset_bottom = -1498.0
+color = Color(0.95, 0.95, 0.92, 0.85)
+
+[node name="FutebolFieldFlamengoSign" type="Label" parent="."]
+offset_left = 600.0
+offset_top = -1450.0
+offset_right = 800.0
+offset_bottom = -1432.0
+text = "Campo society"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.18, 0.32, 0.18, 1)
+
+[node name="FlamengoBasketAsphalt" type="ColorRect" parent="."]
+offset_left = 600.0
+offset_top = -880.0
+offset_right = 800.0
+offset_bottom = -780.0
+color = Color(0.55, 0.45, 0.42, 1)
+
+[node name="FlamengoBasketLine" type="ColorRect" parent="."]
+offset_left = 600.0
+offset_top = -832.0
+offset_right = 800.0
+offset_bottom = -828.0
+color = Color(0.95, 0.92, 0.85, 0.7)
+
+[node name="ZoneLabelPraiaFlamengo" type="Label" parent="."]
+offset_left = 720.0
+offset_top = -1100.0
+offset_right = 880.0
+offset_bottom = -1080.0
+text = "PRAIA DO FLAMENGO →"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.85, 0.55, 0.32, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 3
+
+[node name="BotafogoBeachVolleySand" type="ColorRect" parent="."]
+offset_left = -800.0
+offset_top = -148.0
+offset_right = -650.0
+offset_bottom = -102.0
+color = Color(0.95, 0.88, 0.72, 1)
+
+[node name="BotafogoBeachVolleyLine" type="ColorRect" parent="."]
+offset_left = -800.0
+offset_top = -126.0
+offset_right = -650.0
+offset_bottom = -124.0
+color = Color(0.95, 0.95, 0.92, 0.7)
+
+[node name="BotafogoFutevoleiSand" type="ColorRect" parent="."]
+offset_left = -1180.0
+offset_top = -148.0
+offset_right = -1020.0
+offset_bottom = -102.0
+color = Color(0.95, 0.88, 0.72, 1)
+
+[node name="BotafogoFutevoleiLine" type="ColorRect" parent="."]
+offset_left = -1180.0
+offset_top = -126.0
+offset_right = -1020.0
+offset_bottom = -124.0
+color = Color(0.95, 0.95, 0.92, 0.7)
+
+[node name="ZoneLabelPraiaBotafogo" type="Label" parent="."]
+offset_left = -460.0
+offset_top = -180.0
+offset_right = -160.0
+offset_bottom = -160.0
+text = "PRAIA DE BOTAFOGO ↓"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.85, 0.55, 0.32, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 3
 
 [node name="AterroJoggingPath" type="ColorRect" parent="."]
 offset_left = -1500.0
@@ -199,10 +502,190 @@ color = Color(0.95, 0.92, 0.78, 0.5)
 
 [node name="AterroJoggingPathV" type="ColorRect" parent="."]
 offset_left = -10.0
-offset_top = -1000.0
+offset_top = -1900.0
 offset_right = 10.0
 offset_bottom = -200.0
 color = Color(0.85, 0.78, 0.62, 0.85)
+
+[node name="AterroJoggingPathH2" type="ColorRect" parent="."]
+offset_left = -1500.0
+offset_top = -1450.0
+offset_right = 900.0
+offset_bottom = -1430.0
+color = Color(0.85, 0.78, 0.62, 0.85)
+
+[node name="AterroJoggingPathH2Stripe" type="ColorRect" parent="."]
+offset_left = -1500.0
+offset_top = -1441.0
+offset_right = 900.0
+offset_bottom = -1439.0
+color = Color(0.95, 0.92, 0.78, 0.5)
+
+[node name="AterroParkPatternC" type="ColorRect" parent="."]
+offset_left = -1500.0
+offset_top = -1100.0
+offset_right = 900.0
+offset_bottom = -1096.0
+color = Color(0.36, 0.58, 0.36, 0.5)
+
+[node name="AterroParkPatternD" type="ColorRect" parent="."]
+offset_left = -1500.0
+offset_top = -1700.0
+offset_right = 900.0
+offset_bottom = -1696.0
+color = Color(0.36, 0.58, 0.36, 0.5)
+
+[node name="AterroPalmH" type="ColorRect" parent="."]
+offset_left = -1200.0
+offset_top = -1300.0
+offset_right = -1194.0
+offset_bottom = -1250.0
+color = Color(0.4, 0.3, 0.22, 1)
+
+[node name="AterroPalmHTop" type="ColorRect" parent="."]
+offset_left = -1220.0
+offset_top = -1320.0
+offset_right = -1170.0
+offset_bottom = -1300.0
+color = Color(0.32, 0.55, 0.32, 1)
+
+[node name="AterroPalmI" type="ColorRect" parent="."]
+offset_left = -500.0
+offset_top = -1350.0
+offset_right = -494.0
+offset_bottom = -1300.0
+color = Color(0.4, 0.3, 0.22, 1)
+
+[node name="AterroPalmITop" type="ColorRect" parent="."]
+offset_left = -520.0
+offset_top = -1370.0
+offset_right = -470.0
+offset_bottom = -1350.0
+color = Color(0.32, 0.55, 0.32, 1)
+
+[node name="AterroPalmJ" type="ColorRect" parent="."]
+offset_left = 400.0
+offset_top = -1280.0
+offset_right = 406.0
+offset_bottom = -1230.0
+color = Color(0.4, 0.3, 0.22, 1)
+
+[node name="AterroPalmJTop" type="ColorRect" parent="."]
+offset_left = 380.0
+offset_top = -1300.0
+offset_right = 430.0
+offset_bottom = -1280.0
+color = Color(0.32, 0.55, 0.32, 1)
+
+[node name="AterroPalmK" type="ColorRect" parent="."]
+offset_left = -800.0
+offset_top = -1620.0
+offset_right = -794.0
+offset_bottom = -1570.0
+color = Color(0.4, 0.3, 0.22, 1)
+
+[node name="AterroPalmKTop" type="ColorRect" parent="."]
+offset_left = -820.0
+offset_top = -1640.0
+offset_right = -770.0
+offset_bottom = -1620.0
+color = Color(0.32, 0.55, 0.32, 1)
+
+[node name="AterroPalmL" type="ColorRect" parent="."]
+offset_left = 200.0
+offset_top = -1700.0
+offset_right = 206.0
+offset_bottom = -1650.0
+color = Color(0.4, 0.3, 0.22, 1)
+
+[node name="AterroPalmLTop" type="ColorRect" parent="."]
+offset_left = 180.0
+offset_top = -1720.0
+offset_right = 230.0
+offset_bottom = -1700.0
+color = Color(0.32, 0.55, 0.32, 1)
+
+[node name="AterroBenchE" type="ColorRect" parent="."]
+offset_left = -300.0
+offset_top = -1180.0
+offset_right = -250.0
+offset_bottom = -1172.0
+color = Color(0.55, 0.42, 0.32, 1)
+
+[node name="AterroBenchF" type="ColorRect" parent="."]
+offset_left = 600.0
+offset_top = -1500.0
+offset_right = 650.0
+offset_bottom = -1492.0
+color = Color(0.55, 0.42, 0.32, 1)
+
+[node name="ZoneLabelFlamengo" type="Label" parent="."]
+offset_left = -700.0
+offset_top = -340.0
+offset_right = -300.0
+offset_bottom = -320.0
+text = "FLAMENGO"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.95, 0.85, 0.55, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 4
+
+[node name="BayBoatNorthA" type="ColorRect" parent="."]
+offset_left = 1500.0
+offset_top = -1700.0
+offset_right = 1530.0
+offset_bottom = -1693.0
+color = Color(0.95, 0.95, 0.92, 0.85)
+
+[node name="BayBoatNorthAMast" type="ColorRect" parent="."]
+offset_left = 1512.0
+offset_top = -1720.0
+offset_right = 1516.0
+offset_bottom = -1700.0
+color = Color(0.95, 0.95, 0.92, 0.85)
+
+[node name="BayBoatNorthB" type="ColorRect" parent="."]
+offset_left = 1800.0
+offset_top = -1850.0
+offset_right = 1828.0
+offset_bottom = -1844.0
+color = Color(0.95, 0.95, 0.92, 0.85)
+
+[node name="BayBoatNorthC" type="ColorRect" parent="."]
+offset_left = 1300.0
+offset_top = -1300.0
+offset_right = 1340.0
+offset_bottom = -1294.0
+color = Color(0.95, 0.95, 0.92, 0.85)
+
+[node name="BayBoatNorthCMast" type="ColorRect" parent="."]
+offset_left = 1316.0
+offset_top = -1320.0
+offset_right = 1320.0
+offset_bottom = -1300.0
+color = Color(0.95, 0.95, 0.92, 0.85)
+
+[node name="BayWaveNorthA" type="ColorRect" parent="."]
+offset_left = 1500.0
+offset_top = -1900.0
+offset_right = 1620.0
+offset_bottom = -1897.0
+color = Color(0.85, 0.92, 0.95, 0.5)
+
+[node name="BayWaveNorthB" type="ColorRect" parent="."]
+offset_left = 1780.0
+offset_top = -2000.0
+offset_right = 1900.0
+offset_bottom = -1997.0
+color = Color(0.85, 0.92, 0.95, 0.5)
+
+[node name="BayWaveNorthC" type="ColorRect" parent="."]
+offset_left = 1100.0
+offset_top = -1400.0
+offset_right = 1230.0
+offset_bottom = -1397.0
+color = Color(0.85, 0.92, 0.95, 0.5)
 
 [node name="AterroPalmA" type="ColorRect" parent="."]
 offset_left = -1100.0
@@ -1122,10 +1605,197 @@ theme_override_colors/font_color = Color(0.95, 0.92, 0.78, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
 theme_override_constants/outline_size = 3
 
+[node name="AirportTarmac" type="ColorRect" parent="."]
+offset_left = -200.0
+offset_top = -2150.0
+offset_right = 800.0
+offset_bottom = -1950.0
+color = Color(0.55, 0.5, 0.48, 1)
+
+[node name="AirportRunway" type="ColorRect" parent="."]
+offset_left = -150.0
+offset_top = -2070.0
+offset_right = 750.0
+offset_bottom = -2030.0
+color = Color(0.22, 0.22, 0.24, 1)
+
+[node name="AirportRunwayDash1" type="ColorRect" parent="."]
+offset_left = -120.0
+offset_top = -2052.0
+offset_right = -60.0
+offset_bottom = -2048.0
+color = Color(0.95, 0.95, 0.92, 1)
+
+[node name="AirportRunwayDash2" type="ColorRect" parent="."]
+offset_left = 0.0
+offset_top = -2052.0
+offset_right = 60.0
+offset_bottom = -2048.0
+color = Color(0.95, 0.95, 0.92, 1)
+
+[node name="AirportRunwayDash3" type="ColorRect" parent="."]
+offset_left = 120.0
+offset_top = -2052.0
+offset_right = 180.0
+offset_bottom = -2048.0
+color = Color(0.95, 0.95, 0.92, 1)
+
+[node name="AirportRunwayDash4" type="ColorRect" parent="."]
+offset_left = 240.0
+offset_top = -2052.0
+offset_right = 300.0
+offset_bottom = -2048.0
+color = Color(0.95, 0.95, 0.92, 1)
+
+[node name="AirportRunwayDash5" type="ColorRect" parent="."]
+offset_left = 360.0
+offset_top = -2052.0
+offset_right = 420.0
+offset_bottom = -2048.0
+color = Color(0.95, 0.95, 0.92, 1)
+
+[node name="AirportApronLine" type="ColorRect" parent="."]
+offset_left = -200.0
+offset_top = -2030.0
+offset_right = 800.0
+offset_bottom = -2028.0
+color = Color(0.95, 0.82, 0.3, 0.6)
+
+[node name="AirportTerminal" type="ColorRect" parent="."]
+offset_left = -180.0
+offset_top = -2020.0
+offset_right = 100.0
+offset_bottom = -1970.0
+color = Color(0.78, 0.78, 0.82, 1)
+
+[node name="AirportTerminalRoof" type="ColorRect" parent="."]
+offset_left = -190.0
+offset_top = -2026.0
+offset_right = 110.0
+offset_bottom = -2020.0
+color = Color(0.55, 0.55, 0.58, 1)
+
+[node name="AirportTerminalGlass" type="ColorRect" parent="."]
+offset_left = -160.0
+offset_top = -2010.0
+offset_right = 80.0
+offset_bottom = -1990.0
+color = Color(0.45, 0.62, 0.78, 0.8)
+
+[node name="AirportControlTower" type="ColorRect" parent="."]
+offset_left = 120.0
+offset_top = -2110.0
+offset_right = 140.0
+offset_bottom = -2020.0
+color = Color(0.7, 0.7, 0.72, 1)
+
+[node name="AirportControlTowerCab" type="ColorRect" parent="."]
+offset_left = 110.0
+offset_top = -2126.0
+offset_right = 150.0
+offset_bottom = -2106.0
+color = Color(0.4, 0.55, 0.7, 1)
+
+[node name="AirportPlaneFuselage" type="ColorRect" parent="."]
+offset_left = 200.0
+offset_top = -2058.0
+offset_right = 360.0
+offset_bottom = -2042.0
+color = Color(0.95, 0.95, 0.95, 1)
+
+[node name="AirportPlaneNose" type="ColorRect" parent="."]
+offset_left = 360.0
+offset_top = -2054.0
+offset_right = 378.0
+offset_bottom = -2046.0
+color = Color(0.85, 0.85, 0.85, 1)
+
+[node name="AirportPlaneTail" type="ColorRect" parent="."]
+offset_left = 192.0
+offset_top = -2072.0
+offset_right = 208.0
+offset_bottom = -2050.0
+color = Color(0.85, 0.4, 0.35, 1)
+
+[node name="AirportPlaneWing" type="ColorRect" parent="."]
+offset_left = 250.0
+offset_top = -2044.0
+offset_right = 310.0
+offset_bottom = -2032.0
+color = Color(0.78, 0.78, 0.78, 1)
+
+[node name="AirportHangar" type="ColorRect" parent="."]
+offset_left = 560.0
+offset_top = -2020.0
+offset_right = 770.0
+offset_bottom = -1970.0
+color = Color(0.62, 0.62, 0.65, 1)
+
+[node name="AirportHangarRoof" type="ColorRect" parent="."]
+offset_left = 555.0
+offset_top = -2028.0
+offset_right = 775.0
+offset_bottom = -2020.0
+color = Color(0.42, 0.42, 0.45, 1)
+
+[node name="AirportHangarLogo" type="Label" parent="."]
+offset_left = 600.0
+offset_top = -2005.0
+offset_right = 730.0
+offset_bottom = -1985.0
+text = "FAB"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
+
+[node name="AirportWindSock" type="ColorRect" parent="."]
+offset_left = 730.0
+offset_top = -2090.0
+offset_right = 734.0
+offset_bottom = -2040.0
+color = Color(0.55, 0.5, 0.45, 1)
+
+[node name="AirportWindSockBody" type="ColorRect" parent="."]
+offset_left = 734.0
+offset_top = -2085.0
+offset_right = 758.0
+offset_bottom = -2072.0
+color = Color(0.95, 0.5, 0.18, 0.85)
+
+[node name="AirportSign" type="Label" parent="."]
+offset_left = 100.0
+offset_top = -2146.0
+offset_right = 500.0
+offset_bottom = -2126.0
+text = "AEROPORTO SANTOS DUMONT"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.95, 0.92, 0.85, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 3
+
+[node name="AirportDepartureBoard" type="ColorRect" parent="."]
+offset_left = -50.0
+offset_top = -1966.0
+offset_right = 70.0
+offset_bottom = -1946.0
+color = Color(0.18, 0.22, 0.28, 1)
+
+[node name="AirportDepartureBoardText" type="Label" parent="."]
+offset_left = -50.0
+offset_top = -1966.0
+offset_right = 70.0
+offset_bottom = -1946.0
+text = "GIG·08:30·EMBARQUE"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 9
+theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
+
 [node name="Walls" type="Node2D" parent="."]
 
 [node name="North" type="StaticBody2D" parent="Walls"]
-position = Vector2(0, -1106)
+position = Vector2(400, -2706)
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/North"]
 shape = SubResource("WallH_N")
@@ -1143,19 +1813,19 @@ position = Vector2(800, 386)
 shape = SubResource("WallH_S")
 
 [node name="WestSide" type="StaticBody2D" parent="Walls"]
-position = Vector2(-1506, -350)
+position = Vector2(-1506, -1150)
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/WestSide"]
 shape = SubResource("WallV")
 
 [node name="EastSide" type="StaticBody2D" parent="Walls"]
-position = Vector2(1506, -350)
+position = Vector2(2306, -1150)
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/EastSide"]
 shape = SubResource("WallV")
 
 [node name="AterroBayWestEdge" type="StaticBody2D" parent="Walls"]
-position = Vector2(906, -600)
+position = Vector2(906, -1100)
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/AterroBayWestEdge"]
 shape = SubResource("WallV_AterroBay")
@@ -1174,6 +1844,12 @@ shape = SubResource("WallV_Morro")
 
 [node name="PlayerSpawn" type="Marker2D" parent="."]
 position = Vector2(0, 250)
+
+[node name="PlayerSpawnAterro" type="Marker2D" parent="."]
+position = Vector2(-200, -1100)
+
+[node name="PlayerSpawnFromBondinho" type="Marker2D" parent="."]
+position = Vector2(880, 30)
 
 [node name="ExitToCopa" parent="." instance=ExtResource("5_exit")]
 position = Vector2(0, 365)
@@ -1414,3 +2090,102 @@ theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
 theme_override_constants/outline_size = 4
 z_index = 1
+
+[node name="BasketCourt" parent="." instance=ExtResource("9_court")]
+position = Vector2(-700, -380)
+
+[node name="BasketCourtSign" type="Label" parent="."]
+offset_left = -780.0
+offset_top = -440.0
+offset_right = -620.0
+offset_bottom = -420.0
+text = "Quadra do bairro · 3×3"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.95, 0.92, 0.85, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 3
+
+[node name="BondinhoLauncher" parent="." instance=ExtResource("10_bondinho")]
+position = Vector2(880, -10)
+
+[node name="AirportEntrance" parent="." instance=ExtResource("13_entrance")]
+position = Vector2(-40, -1948)
+target_district = "santos_dumont"
+prompt_text = "Entrer dans l'aéroport"
+
+[node name="BasketCourtFlamengo" parent="." instance=ExtResource("9_court")]
+position = Vector2(700, -830)
+
+[node name="VolleyNetFlamengo" parent="." instance=ExtResource("11_volley")]
+position = Vector2(700, -1180)
+
+[node name="VolleyNetBotafogo" parent="." instance=ExtResource("11_volley")]
+position = Vector2(-725, -125)
+
+[node name="FutevoleiNetBotafogo" parent="." instance=ExtResource("11_volley")]
+position = Vector2(-1100, -125)
+
+[node name="ExerciseStationFlamengo" parent="." instance=ExtResource("12_exercise")]
+position = Vector2(700, -300)
+
+[node name="ExerciseStationBotafogo" parent="." instance=ExtResource("12_exercise")]
+position = Vector2(-300, -125)
+
+[node name="BeachWalkerFlamengoA" parent="." instance=ExtResource("2_wander")]
+position = Vector2(855, -800)
+color = Color(0.95, 0.65, 0.55, 1)
+size = Vector2(9, 16)
+path = Array[Vector2]([Vector2(855, -800), Vector2(855, -1800), Vector2(855, -800)])
+speed = 30.0
+pause_at_waypoints = 0.4
+pause_random_jitter = 0.4
+
+[node name="BeachWalkerFlamengoB" parent="." instance=ExtResource("2_wander")]
+position = Vector2(855, -1500)
+color = Color(0.4, 0.65, 0.95, 1)
+size = Vector2(8, 14)
+path = Array[Vector2]([Vector2(855, -1500), Vector2(855, -500), Vector2(855, -1500)])
+speed = 26.0
+pause_at_waypoints = 0.4
+pause_random_jitter = 0.4
+
+[node name="FootballerA" parent="." instance=ExtResource("2_wander")]
+position = Vector2(680, -1560)
+color = Color(0.85, 0.85, 0.4, 1)
+size = Vector2(9, 16)
+roam_zone = Rect2(-80, -50, 160, 100)
+speed = 50.0
+pause_at_waypoints = 0.3
+pause_random_jitter = 0.4
+look_at_player_distance = 50.0
+
+[node name="FootballerB" parent="." instance=ExtResource("2_wander")]
+position = Vector2(720, -1560)
+color = Color(0.4, 0.65, 0.95, 1)
+size = Vector2(9, 16)
+roam_zone = Rect2(-80, -50, 160, 100)
+speed = 48.0
+pause_at_waypoints = 0.3
+pause_random_jitter = 0.4
+look_at_player_distance = 50.0
+
+[node name="VolleyPlayerBotafogoA" parent="." instance=ExtResource("2_wander")]
+position = Vector2(-740, -130)
+color = Color(0.95, 0.55, 0.4, 1)
+size = Vector2(9, 16)
+roam_zone = Rect2(-50, -25, 100, 50)
+speed = 35.0
+pause_at_waypoints = 0.4
+pause_random_jitter = 0.5
+look_at_player_distance = 50.0
+
+[node name="VolleyPlayerBotafogoB" parent="." instance=ExtResource("2_wander")]
+position = Vector2(-700, -130)
+color = Color(0.4, 0.65, 0.85, 1)
+size = Vector2(9, 16)
+roam_zone = Rect2(-50, -25, 100, 50)
+speed = 32.0
+pause_at_waypoints = 0.4
+pause_random_jitter = 0.5
+look_at_player_distance = 50.0
