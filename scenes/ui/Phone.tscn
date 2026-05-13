@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/Phone.gd" id="1_phone"]
 
@@ -58,6 +58,13 @@ corner_radius_bottom_left = 16
 
 [sub_resource type="StyleBoxFlat" id="AppButtonStylePhotos"]
 bg_color = Color(0.55, 0.85, 0.95, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[sub_resource type="StyleBoxFlat" id="AppButtonStyleNoticias"]
+bg_color = Color(0.92, 0.92, 0.85, 1)
 corner_radius_top_left = 16
 corner_radius_top_right = 16
 corner_radius_bottom_right = 16
@@ -222,6 +229,16 @@ theme_override_styles/pressed = SubResource("AppButtonStylePhotos")
 theme_override_font_sizes/font_size = 24
 theme_override_colors/font_color = Color(0.08, 0.18, 0.22, 1)
 
+[node name="Noticias" type="Button" parent="Frame/Screens/Home/Grid"]
+custom_minimum_size = Vector2(150, 150)
+text = "📰
+Notícias"
+theme_override_styles/normal = SubResource("AppButtonStyleNoticias")
+theme_override_styles/hover = SubResource("AppButtonStyleNoticias")
+theme_override_styles/pressed = SubResource("AppButtonStyleNoticias")
+theme_override_font_sizes/font_size = 24
+theme_override_colors/font_color = Color(0.22, 0.18, 0.14, 1)
+
 [node name="Taxi" type="Control" parent="Frame/Screens"]
 visible = false
 anchor_right = 1.0
@@ -351,6 +368,38 @@ offset_bottom = 480.0
 [node name="Box" type="VBoxContainer" parent="Frame/Screens/Photos/Scroll"]
 custom_minimum_size = Vector2(360, 0)
 theme_override_constants/separation = 8
+
+[node name="Noticias" type="Control" parent="Frame/Screens"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Header" type="Label" parent="Frame/Screens/Noticias"]
+offset_top = 8.0
+offset_right = 368.0
+offset_bottom = 36.0
+text = "📰 Notícias"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.92, 0.92, 0.85, 1)
+
+[node name="Subheader" type="Label" parent="Frame/Screens/Noticias"]
+offset_top = 38.0
+offset_right = 368.0
+offset_bottom = 56.0
+text = "manchetes do bairro"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.6, 0.6, 0.65, 1)
+
+[node name="Scroll" type="ScrollContainer" parent="Frame/Screens/Noticias"]
+offset_top = 62.0
+offset_right = 368.0
+offset_bottom = 480.0
+
+[node name="Box" type="VBoxContainer" parent="Frame/Screens/Noticias/Scroll"]
+custom_minimum_size = Vector2(360, 0)
+theme_override_constants/separation = 10
 
 [node name="PhotoViewer" type="Control" parent="Frame"]
 visible = false

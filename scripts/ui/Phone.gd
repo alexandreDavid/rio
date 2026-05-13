@@ -29,6 +29,8 @@ const REP_AXIS_COLORS: Dictionary = {
 @onready var stats_screen: Control = $Frame/Screens/Stats
 @onready var cronica_screen: Control = $Frame/Screens/Cronica
 @onready var photos_screen: Control = $Frame/Screens/Photos
+@onready var noticias_screen: Control = $Frame/Screens/Noticias
+@onready var noticias_box: VBoxContainer = $Frame/Screens/Noticias/Scroll/Box
 @onready var taxi_list: VBoxContainer = $Frame/Screens/Taxi/Scroll/Box
 @onready var taxi_status: Label = $Frame/Screens/Taxi/Status
 @onready var stats_box: VBoxContainer = $Frame/Screens/Stats/Scroll/Box
@@ -51,6 +53,7 @@ const REP_AXIS_COLORS: Dictionary = {
 @onready var app_missions: Button = $Frame/Screens/Home/Grid/Missions
 @onready var app_cronica: Button = $Frame/Screens/Home/Grid/Cronica
 @onready var app_photos: Button = $Frame/Screens/Home/Grid/Photos
+@onready var app_noticias: Button = $Frame/Screens/Home/Grid/Noticias
 
 const PHOTOS_DIR: String = "user://photos"
 
@@ -69,6 +72,8 @@ func _ready() -> void:
 		app_cronica.pressed.connect(func(): _show_screen("cronica"))
 	if app_photos:
 		app_photos.pressed.connect(func(): _show_screen("photos"))
+	if app_noticias:
+		app_noticias.pressed.connect(func(): _show_screen("noticias"))
 	if back_button:
 		back_button.pressed.connect(func(): _show_screen("home"))
 	if close_button:
@@ -122,6 +127,8 @@ func _show_screen(name: String) -> void:
 	cronica_screen.visible = (name == "cronica")
 	if photos_screen:
 		photos_screen.visible = (name == "photos")
+	if noticias_screen:
+		noticias_screen.visible = (name == "noticias")
 	if back_button:
 		back_button.visible = (name != "home")
 	if name == "taxi":
@@ -132,6 +139,8 @@ func _show_screen(name: String) -> void:
 		_refresh_cronica()
 	elif name == "photos":
 		_refresh_photos()
+	elif name == "noticias":
+		_refresh_noticias()
 
 # ------------------------------------------------------------------
 # Taxi app
@@ -529,3 +538,128 @@ func _close_photo_viewer() -> void:
 		photo_viewer.visible = false
 	if viewer_image:
 		viewer_image.texture = null
+
+# ------------------------------------------------------------------
+# Notícias app — manchettes réactives selon l'état narratif courant.
+# ------------------------------------------------------------------
+
+const NEWS_COLOR_AMBIENT: Color = Color(0.85, 0.85, 0.80)
+const NEWS_COLOR_CIVIC: Color = Color(0.55, 0.95, 0.55)
+const NEWS_COLOR_POLICE: Color = Color(0.55, 0.78, 0.95)
+const NEWS_COLOR_WARN: Color = Color(0.95, 0.62, 0.45)
+const NEWS_COLOR_SOCIETY: Color = Color(0.85, 0.55, 0.95)
+const NEWS_COLOR_WIN: Color = Color(0.95, 0.85, 0.40)
+
+func _refresh_noticias() -> void:
+	if noticias_box == null:
+		return
+	for child in noticias_box.get_children():
+		child.queue_free()
+	var items: Array = _build_news_items()
+	for item in items:
+		noticias_box.add_child(_build_news_row(item))
+
+func _build_news_items() -> Array:
+	# Renvoie un tableau de Dictionaries {text, source, color}, du plus récent
+	# (haut) au plus contextuel (bas). Filtré sur l'état campagne/quêtes/dette.
+	var out: Array = []
+	var act: int = CampaignManager.current_act
+	var debt: int = CampaignManager.debt_remaining()
+	var day: int = TimeOfDay.day_count
+	var endgame: int = CampaignManager.chosen_endgame
+
+	# Manchettes endgame (acte 4 — règne).
+	if act >= 4:
+		match endgame:
+			CampaignManager.Endgame.PREFEITO:
+				out.append({"text": "Subprefeitura civica anunciada — Coronel do Bairro recebe a faixa", "source": "O Globo Rio", "color": NEWS_COLOR_WIN})
+			CampaignManager.Endgame.POLICIA:
+				out.append({"text": "Operação Madrugada encerra ciclo de violência — Chefe de Polícia condecorado", "source": "Jornal do Brasil", "color": NEWS_COLOR_WIN})
+			CampaignManager.Endgame.TRAFICO:
+				out.append({"text": "Hierarquia do Morro consolidada — novo Patrão silencia o bairro", "source": "Extra", "color": NEWS_COLOR_WIN})
+
+	# Pacto da Barra — pivot business.
+	if CampaignManager.has_flag("barra_pacto_sealed"):
+		out.append({"text": "Riserva Uno formaliza parceria de segurança privada — três condomínios alinhados", "source": "Veja Rio", "color": NEWS_COLOR_SOCIETY})
+
+	# Mendonça / commissaire — danger.
+	if CampaignManager.has_flag("commissaire_alerted"):
+		out.append({"text": "PM intensifica rondas na Barra após denúncia anônima de extorsão", "source": "Extra", "color": NEWS_COLOR_WARN})
+
+	# Endorsements — campagne politique en cours.
+	if QuestManager.is_active("act3_prefeito_endorsements") or QuestManager.is_completed("act3_prefeito_endorsements"):
+		out.append({"text": "Coalizão civica reúne padre, comerciantes e padaria histórica", "source": "O Globo Rio", "color": NEWS_COLOR_CIVIC})
+
+	# Pivot acte 2 — révélation Concierge.
+	if CampaignManager.has_flag("tio_ze_revealed"):
+		out.append({"text": "Concierge do Palace mantém perfil discreto — vizinhos surpreendem", "source": "Sociedade Rio", "color": NEWS_COLOR_SOCIETY})
+
+	# Operação Carnaval — Ramos / acte 2.
+	if QuestManager.is_completed("act2_ramos_operacao"):
+		out.append({"text": "PM divulga balanço de Operação Carnaval — silêncio sobre fontes", "source": "Jornal do Brasil", "color": NEWS_COLOR_POLICE})
+
+	# Orfanato — padre / acte 2.
+	if QuestManager.is_completed("act2_padre_orfanato"):
+		out.append({"text": "Paróquia salva orfanato em campanha relâmpago — agradecimentos públicos", "source": "Diário do Bairro", "color": NEWS_COLOR_CIVIC})
+
+	# Convoi favela — Miguel / acte 2.
+	if QuestManager.is_completed("act2_miguel_favela"):
+		out.append({"text": "Comboio de mantimentos chega ao Morro — voluntários anônimos", "source": "Extra", "color": NEWS_COLOR_SOCIETY})
+
+	# Crise dette élevée (joueur en retard).
+	if act >= 2 and debt > 30000:
+		out.append({"text": "Jovens cariocas enfrentam dívidas familiares herdadas — fenômeno cresce", "source": "Folha Rio", "color": NEWS_COLOR_WARN})
+	elif act >= 3 and debt > 0 and debt <= 5000:
+		out.append({"text": "Histórias de superação no calçadão — perseverança paga dívidas", "source": "Diário do Bairro", "color": NEWS_COLOR_CIVIC})
+
+	# Niterói — chaîne consortium boucle vers la baie.
+	if QuestManager.is_completed("bruno_carga"):
+		out.append({"text": "MAC Niemeyer prepara exposição de junho — curadoria recebe peça inédita", "source": "Veja Rio", "color": NEWS_COLOR_AMBIENT})
+
+	# Réputation extrême.
+	if ReputationSystem.get_value(ReputationSystem.Axis.POLICE) >= 50:
+		out.append({"text": "Comunidade elogia 'cidadão exemplar' anônimo — PM agradece", "source": "Jornal do Brasil", "color": NEWS_COLOR_POLICE})
+	if ReputationSystem.get_value(ReputationSystem.Axis.STREET) >= 50:
+		out.append({"text": "Lendas urbanas no Morro — sobrinho misterioso protege os pequenos", "source": "Extra", "color": NEWS_COLOR_SOCIETY})
+
+	# Carnaval — proche pendant acte 4.
+	if act >= 4:
+		out.append({"text": "Sambódromo afinado — ensaios técnicos liberam ingressos do bloco", "source": "O Globo Rio", "color": NEWS_COLOR_AMBIENT})
+	else:
+		out.append({"text": "Carnaval 2026 — preparativos começam nos blocos do bairro", "source": "O Globo Rio", "color": NEWS_COLOR_AMBIENT})
+
+	# Météo & vie de quartier — toujours présents pour donner du grain.
+	out.append({"text": "Posto 5 registra recorde de surfistas no fim de semana", "source": "Extra", "color": NEWS_COLOR_AMBIENT})
+	out.append({"text": "Tempo na praia : sol forte, 32°C, ventos leves de sul", "source": "Diário do Bairro", "color": NEWS_COLOR_AMBIENT})
+	if day >= 5:
+		out.append({"text": "Vendedores de milho assados disputam território no calçadão", "source": "Sociedade Rio", "color": NEWS_COLOR_AMBIENT})
+	return out
+
+func _build_news_row(item: Dictionary) -> Control:
+	var card: PanelContainer = PanelContainer.new()
+	var style: StyleBoxFlat = StyleBoxFlat.new()
+	style.bg_color = Color(0.16, 0.16, 0.18, 1)
+	style.corner_radius_top_left = 8
+	style.corner_radius_top_right = 8
+	style.corner_radius_bottom_right = 8
+	style.corner_radius_bottom_left = 8
+	style.content_margin_left = 10
+	style.content_margin_right = 10
+	style.content_margin_top = 8
+	style.content_margin_bottom = 8
+	card.add_theme_stylebox_override("panel", style)
+	var vbox: VBoxContainer = VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 4)
+	card.add_child(vbox)
+	var source: Label = Label.new()
+	source.text = item.get("source", "")
+	source.add_theme_font_size_override("font_size", 9)
+	source.add_theme_color_override("font_color", Color(0.6, 0.6, 0.65))
+	vbox.add_child(source)
+	var headline: Label = Label.new()
+	headline.text = item.get("text", "")
+	headline.add_theme_font_size_override("font_size", 12)
+	headline.add_theme_color_override("font_color", item.get("color", NEWS_COLOR_AMBIENT))
+	headline.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	vbox.add_child(headline)
+	return card
