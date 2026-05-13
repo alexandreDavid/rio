@@ -37,6 +37,7 @@
 [ext_resource type="PackedScene" path="res://scenes/props/ReactiveDialogueSpot.tscn" id="62_reactive"]
 [ext_resource type="PackedScene" path="res://scenes/props/RachaLauncher.tscn" id="63_racha"]
 [ext_resource type="PackedScene" path="res://scenes/districts/BarraDaTijuca.tscn" id="64_barra"]
+[ext_resource type="PackedScene" path="res://scenes/districts/Niteroi.tscn" id="65_niteroi"]
 [ext_resource type="PackedScene" path="res://scenes/npcs/SeuJoao.tscn" id="2_seu_joao"]
 [ext_resource type="PackedScene" path="res://scenes/props/CornCart.tscn" id="3_cart"]
 [ext_resource type="PackedScene" path="res://scenes/npcs/Customer.tscn" id="4_customer"]
@@ -511,6 +512,9 @@ position = Vector2(-15000, -2900)
 
 [node name="BarraDaTijucaDistrict" parent="." instance=ExtResource("64_barra")]
 position = Vector2(-16500, -2900)
+
+[node name="NiteroiDistrict" parent="." instance=ExtResource("65_niteroi")]
+position = Vector2(-18500, -2900)
 
 [node name="ExitToFavela" parent="." instance=ExtResource("58_exit")]
 position = Vector2(200, -210)

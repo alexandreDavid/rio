@@ -1,0 +1,524 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/props/TaxiStand.tscn" id="1_taxi"]
+[ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="2_wander"]
+[ext_resource type="PackedScene" path="res://scenes/props/Viewpoint.tscn" id="3_view"]
+[ext_resource type="PackedScene" path="res://scenes/props/DialogueSpot.tscn" id="4_spot"]
+
+[sub_resource type="RectangleShape2D" id="WallH"]
+size = Vector2(1600, 16)
+
+[sub_resource type="RectangleShape2D" id="WallV"]
+size = Vector2(16, 700)
+
+[node name="NiteroiDistrict" type="Node2D"]
+
+# Sky et baie de Guanabara vue depuis Niteroi
+[node name="Sky" type="ColorRect" parent="."]
+offset_left = -800.0
+offset_top = -300.0
+offset_right = 800.0
+offset_bottom = -180.0
+color = Color(0.65, 0.78, 0.88, 1)
+
+[node name="SkyHorizon" type="ColorRect" parent="."]
+offset_left = -800.0
+offset_top = -190.0
+offset_right = 800.0
+offset_bottom = -180.0
+color = Color(0.78, 0.82, 0.78, 1)
+
+# Silhouettes lointaines de Rio de l'autre côté de la baie
+[node name="RioCorcovado" type="ColorRect" parent="."]
+offset_left = -600.0
+offset_top = -240.0
+offset_right = -480.0
+offset_bottom = -180.0
+color = Color(0.32, 0.28, 0.38, 0.9)
+
+[node name="RioCorcovadoCristo" type="ColorRect" parent="."]
+offset_left = -546.0
+offset_top = -252.0
+offset_right = -542.0
+offset_bottom = -240.0
+color = Color(0.28, 0.24, 0.32, 0.9)
+
+[node name="RioCorcovadoCristoArms" type="ColorRect" parent="."]
+offset_left = -556.0
+offset_top = -246.0
+offset_right = -532.0
+offset_bottom = -243.0
+color = Color(0.28, 0.24, 0.32, 0.9)
+
+[node name="RioPaoAcucar" type="ColorRect" parent="."]
+offset_left = -360.0
+offset_top = -230.0
+offset_right = -260.0
+offset_bottom = -180.0
+color = Color(0.35, 0.32, 0.42, 0.9)
+
+[node name="RioPaoAcucarTop" type="ColorRect" parent="."]
+offset_left = -320.0
+offset_top = -240.0
+offset_right = -300.0
+offset_bottom = -230.0
+color = Color(0.32, 0.28, 0.38, 0.9)
+
+[node name="RioSkylineL" type="ColorRect" parent="."]
+offset_left = -800.0
+offset_top = -210.0
+offset_right = -600.0
+offset_bottom = -180.0
+color = Color(0.42, 0.42, 0.50, 0.7)
+
+[node name="RioSkylineR" type="ColorRect" parent="."]
+offset_left = 200.0
+offset_top = -210.0
+offset_right = 800.0
+offset_bottom = -180.0
+color = Color(0.42, 0.42, 0.50, 0.7)
+
+# Baie de Guanabara
+[node name="Bay" type="ColorRect" parent="."]
+offset_left = -800.0
+offset_top = -180.0
+offset_right = 800.0
+offset_bottom = -40.0
+color = Color(0.28, 0.45, 0.55, 1)
+
+[node name="BayHi" type="ColorRect" parent="."]
+offset_left = -800.0
+offset_top = -180.0
+offset_right = 800.0
+offset_bottom = -174.0
+color = Color(0.78, 0.88, 0.92, 0.55)
+
+[node name="BayWave1" type="ColorRect" parent="."]
+offset_left = -500.0
+offset_top = -130.0
+offset_right = -360.0
+offset_bottom = -127.0
+color = Color(0.85, 0.92, 0.95, 0.55)
+
+[node name="BayWave2" type="ColorRect" parent="."]
+offset_left = 200.0
+offset_top = -90.0
+offset_right = 340.0
+offset_bottom = -87.0
+color = Color(0.85, 0.92, 0.95, 0.55)
+
+[node name="FerryDistant" type="ColorRect" parent="."]
+offset_left = -50.0
+offset_top = -120.0
+offset_right = 30.0
+offset_bottom = -110.0
+color = Color(0.92, 0.92, 0.85, 0.9)
+
+[node name="FerryDistantMast" type="ColorRect" parent="."]
+offset_left = -14.0
+offset_top = -132.0
+offset_right = -10.0
+offset_bottom = -120.0
+color = Color(0.92, 0.92, 0.85, 0.9)
+
+# Promenade Caminho Niemeyer (bord de baie)
+[node name="Promenade" type="ColorRect" parent="."]
+offset_left = -800.0
+offset_top = -40.0
+offset_right = 800.0
+offset_bottom = 30.0
+color = Color(0.85, 0.85, 0.82, 1)
+
+[node name="PromenadeStripe" type="ColorRect" parent="."]
+offset_left = -800.0
+offset_top = -8.0
+offset_right = 800.0
+offset_bottom = -6.0
+color = Color(0.65, 0.62, 0.55, 0.7)
+
+# MAC Niemeyer (la soucoupe au-dessus de la promenade)
+[node name="MACPedestal" type="ColorRect" parent="."]
+offset_left = -20.0
+offset_top = -52.0
+offset_right = 20.0
+offset_bottom = -32.0
+color = Color(0.55, 0.55, 0.58, 1)
+
+[node name="MACColumn" type="ColorRect" parent="."]
+offset_left = -8.0
+offset_top = -80.0
+offset_right = 8.0
+offset_bottom = -52.0
+color = Color(0.62, 0.62, 0.65, 1)
+
+[node name="MACSaucerLower" type="ColorRect" parent="."]
+offset_left = -75.0
+offset_top = -98.0
+offset_right = 75.0
+offset_bottom = -80.0
+color = Color(0.92, 0.92, 0.88, 1)
+
+[node name="MACSaucerUpper" type="ColorRect" parent="."]
+offset_left = -55.0
+offset_top = -108.0
+offset_right = 55.0
+offset_bottom = -98.0
+color = Color(0.95, 0.95, 0.92, 1)
+
+[node name="MACSaucerDome" type="ColorRect" parent="."]
+offset_left = -25.0
+offset_top = -116.0
+offset_right = 25.0
+offset_bottom = -108.0
+color = Color(0.85, 0.85, 0.82, 1)
+
+[node name="MACSaucerWindow" type="ColorRect" parent="."]
+offset_left = -50.0
+offset_top = -94.0
+offset_right = 50.0
+offset_bottom = -88.0
+color = Color(0.42, 0.65, 0.85, 0.8)
+
+[node name="MACShadow" type="ColorRect" parent="."]
+offset_left = -80.0
+offset_top = -28.0
+offset_right = 80.0
+offset_bottom = -24.0
+color = Color(0, 0, 0, 0.25)
+
+[node name="MACLabel" type="Label" parent="."]
+offset_left = -80.0
+offset_top = -130.0
+offset_right = 80.0
+offset_bottom = -114.0
+text = "MAC Niemeyer"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.32, 0.32, 0.35, 1)
+theme_override_colors/font_outline_color = Color(0.95, 0.95, 0.92, 0.8)
+theme_override_constants/outline_size = 2
+
+# Ferry dock à droite (sud-est)
+[node name="DockPlanks" type="ColorRect" parent="."]
+offset_left = 300.0
+offset_top = -52.0
+offset_right = 500.0
+offset_bottom = -32.0
+color = Color(0.55, 0.42, 0.32, 1)
+
+[node name="DockPlank1" type="ColorRect" parent="."]
+offset_left = 300.0
+offset_top = -52.0
+offset_right = 500.0
+offset_bottom = -50.0
+color = Color(0.42, 0.32, 0.25, 0.9)
+
+[node name="DockPlank2" type="ColorRect" parent="."]
+offset_left = 300.0
+offset_top = -42.0
+offset_right = 500.0
+offset_bottom = -40.0
+color = Color(0.42, 0.32, 0.25, 0.9)
+
+[node name="DockBollardL" type="ColorRect" parent="."]
+offset_left = 310.0
+offset_top = -56.0
+offset_right = 318.0
+offset_bottom = -48.0
+color = Color(0.42, 0.32, 0.22, 1)
+
+[node name="DockBollardR" type="ColorRect" parent="."]
+offset_left = 482.0
+offset_top = -56.0
+offset_right = 490.0
+offset_bottom = -48.0
+color = Color(0.42, 0.32, 0.22, 1)
+
+[node name="FerryAtDock" type="ColorRect" parent="."]
+offset_left = 350.0
+offset_top = -100.0
+offset_right = 460.0
+offset_bottom = -52.0
+color = Color(0.92, 0.92, 0.85, 1)
+
+[node name="FerryAtDockHull" type="ColorRect" parent="."]
+offset_left = 350.0
+offset_top = -58.0
+offset_right = 460.0
+offset_bottom = -52.0
+color = Color(0.65, 0.42, 0.32, 1)
+
+[node name="FerryAtDockStripe" type="ColorRect" parent="."]
+offset_left = 350.0
+offset_top = -82.0
+offset_right = 460.0
+offset_bottom = -78.0
+color = Color(0.32, 0.55, 0.72, 1)
+
+[node name="FerryAtDockMast" type="ColorRect" parent="."]
+offset_left = 402.0
+offset_top = -130.0
+offset_right = 408.0
+offset_bottom = -100.0
+color = Color(0.42, 0.42, 0.42, 1)
+
+[node name="DockLabel" type="Label" parent="."]
+offset_left = 320.0
+offset_top = -68.0
+offset_right = 480.0
+offset_bottom = -52.0
+text = "Barcas Rio-Niterói"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 8
+theme_override_colors/font_color = Color(0.32, 0.32, 0.35, 1)
+theme_override_colors/font_outline_color = Color(0.95, 0.95, 0.92, 0.7)
+theme_override_constants/outline_size = 2
+
+# Square / plaza au sud — palmiers, bancs
+[node name="PlazaTile" type="ColorRect" parent="."]
+offset_left = -800.0
+offset_top = 30.0
+offset_right = 800.0
+offset_bottom = 200.0
+color = Color(0.78, 0.78, 0.75, 1)
+
+[node name="PlazaPattern1" type="ColorRect" parent="."]
+offset_left = -800.0
+offset_top = 80.0
+offset_right = 800.0
+offset_bottom = 84.0
+color = Color(0.65, 0.65, 0.62, 0.6)
+
+[node name="PlazaPattern2" type="ColorRect" parent="."]
+offset_left = -800.0
+offset_top = 130.0
+offset_right = 800.0
+offset_bottom = 134.0
+color = Color(0.65, 0.65, 0.62, 0.6)
+
+[node name="PalmA_Trunk" type="ColorRect" parent="."]
+offset_left = -500.0
+offset_top = 55.0
+offset_right = -494.0
+offset_bottom = 105.0
+color = Color(0.4, 0.3, 0.22, 1)
+
+[node name="PalmA_Top" type="ColorRect" parent="."]
+offset_left = -518.0
+offset_top = 35.0
+offset_right = -476.0
+offset_bottom = 55.0
+color = Color(0.32, 0.55, 0.32, 1)
+
+[node name="PalmB_Trunk" type="ColorRect" parent="."]
+offset_left = -100.0
+offset_top = 60.0
+offset_right = -94.0
+offset_bottom = 105.0
+color = Color(0.4, 0.3, 0.22, 1)
+
+[node name="PalmB_Top" type="ColorRect" parent="."]
+offset_left = -118.0
+offset_top = 40.0
+offset_right = -76.0
+offset_bottom = 60.0
+color = Color(0.32, 0.55, 0.32, 1)
+
+[node name="PalmC_Trunk" type="ColorRect" parent="."]
+offset_left = 600.0
+offset_top = 55.0
+offset_right = 606.0
+offset_bottom = 105.0
+color = Color(0.4, 0.3, 0.22, 1)
+
+[node name="PalmC_Top" type="ColorRect" parent="."]
+offset_left = 582.0
+offset_top = 35.0
+offset_right = 624.0
+offset_bottom = 55.0
+color = Color(0.32, 0.55, 0.32, 1)
+
+[node name="BenchA" type="ColorRect" parent="."]
+offset_left = -350.0
+offset_top = 100.0
+offset_right = -290.0
+offset_bottom = 112.0
+color = Color(0.55, 0.42, 0.32, 1)
+
+[node name="BenchALeg1" type="ColorRect" parent="."]
+offset_left = -348.0
+offset_top = 112.0
+offset_right = -344.0
+offset_bottom = 118.0
+color = Color(0.42, 0.32, 0.25, 1)
+
+[node name="BenchALeg2" type="ColorRect" parent="."]
+offset_left = -296.0
+offset_top = 112.0
+offset_right = -292.0
+offset_bottom = 118.0
+color = Color(0.42, 0.32, 0.25, 1)
+
+[node name="BenchB" type="ColorRect" parent="."]
+offset_left = 250.0
+offset_top = 100.0
+offset_right = 310.0
+offset_bottom = 112.0
+color = Color(0.55, 0.42, 0.32, 1)
+
+# Café au bord de la plaza
+[node name="CafeWall" type="ColorRect" parent="."]
+offset_left = -780.0
+offset_top = 60.0
+offset_right = -650.0
+offset_bottom = 140.0
+color = Color(0.95, 0.85, 0.62, 1)
+
+[node name="CafeRoof" type="ColorRect" parent="."]
+offset_left = -782.0
+offset_top = 56.0
+offset_right = -648.0
+offset_bottom = 62.0
+color = Color(0.55, 0.32, 0.22, 1)
+
+[node name="CafeAwning" type="ColorRect" parent="."]
+offset_left = -730.0
+offset_top = 138.0
+offset_right = -680.0
+offset_bottom = 152.0
+color = Color(0.32, 0.55, 0.32, 1)
+
+[node name="CafeLabel" type="Label" parent="."]
+offset_left = -780.0
+offset_top = 88.0
+offset_right = -650.0
+offset_bottom = 104.0
+text = "Café da Praça"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.42, 0.22, 0.18, 1)
+
+# Lampadaire central + halo nightlight
+[node name="LampPole" type="ColorRect" parent="."]
+offset_left = 2.0
+offset_top = 60.0
+offset_right = 6.0
+offset_bottom = 100.0
+color = Color(0.32, 0.30, 0.30, 1)
+
+[node name="LampHalo" type="ColorRect" parent="." groups=["nightlight"]]
+offset_left = -10.0
+offset_top = 50.0
+offset_right = 16.0
+offset_bottom = 70.0
+color = Color(1.0, 0.92, 0.55, 0.45)
+
+[node name="LampBulb" type="ColorRect" parent="." groups=["nightlight"]]
+offset_left = 0.0
+offset_top = 58.0
+offset_right = 8.0
+offset_bottom = 64.0
+color = Color(1.0, 0.95, 0.62, 1)
+
+# Walls
+[node name="Walls" type="Node2D" parent="."]
+
+[node name="Top" type="StaticBody2D" parent="Walls"]
+position = Vector2(0, -296)
+
+[node name="ShapeTopN" type="CollisionShape2D" parent="Walls/Top"]
+shape = SubResource("WallH")
+
+[node name="Bottom" type="StaticBody2D" parent="Walls"]
+position = Vector2(0, 200)
+
+[node name="ShapeBottomN" type="CollisionShape2D" parent="Walls/Bottom"]
+shape = SubResource("WallH")
+
+[node name="Left" type="StaticBody2D" parent="Walls"]
+position = Vector2(-808, -50)
+
+[node name="ShapeLeftN" type="CollisionShape2D" parent="Walls/Left"]
+shape = SubResource("WallV")
+
+[node name="Right" type="StaticBody2D" parent="Walls"]
+position = Vector2(808, -50)
+
+[node name="ShapeRightN" type="CollisionShape2D" parent="Walls/Right"]
+shape = SubResource("WallV")
+
+# Barrière nord pour empêcher le joueur de marcher dans la baie
+[node name="BayBarrier" type="StaticBody2D" parent="Walls"]
+position = Vector2(0, -36)
+
+[node name="ShapeBayBarrier" type="CollisionShape2D" parent="Walls/BayBarrier"]
+shape = SubResource("WallH")
+
+[node name="PlayerSpawn" type="Marker2D" parent="."]
+position = Vector2(400, 100)
+
+[node name="TaxiStand" parent="." instance=ExtResource("1_taxi")]
+position = Vector2(-650, 165)
+
+[node name="ViewpointMAC" parent="." instance=ExtResource("3_view")]
+position = Vector2(0, 50)
+viewpoint_id = "niteroi_mac"
+prompt_first = "Admirer le MAC Niemeyer"
+flavor_speaker = "Sobrinho"
+flavor_text = "Le MAC, le Musée d'Art Contemporain, signé Oscar Niemeyer en 1996. *renverse la tête en arrière* Une soucoupe blanche sur un pédestal, posée comme un objet trouvé sur la baie. Niemeyer disait que la beauté en architecture, c'est la simplicité de la courbe. *long silence* De l'autre côté, Rio se découpe — le Pão de Açúcar à gauche, le Corcovado à droite. Tu vois ta ville comme une carte postale."
+money_reward = 80
+
+[node name="ViewpointBay" parent="." instance=ExtResource("3_view")]
+position = Vector2(-400, -25)
+viewpoint_id = "niteroi_baia_view"
+prompt_first = "Regarder la baie de Guanabara"
+flavor_speaker = "Sobrinho"
+flavor_text = "La baie de Guanabara. Quatre cents kilomètres carrés d'eau salée prise entre Rio et Niterói. Les ferries traversent toutes les vingt minutes. *le vent vient du sud-est, frais* Quand tu vis à Rio, tu oublies que la ville est entourée d'eau. Ici tu t'en souviens."
+money_reward = 50
+
+# NPC Helena — curatrice d'art au MAC
+[node name="HelenaNPC" parent="." instance=ExtResource("2_wander")]
+position = Vector2(60, 75)
+color = Color(0.85, 0.42, 0.62, 1)
+size = Vector2(10, 17)
+stationary = true
+bob_strength = 0.3
+look_at_player_distance = 50.0
+
+[node name="HelenaSpot" parent="." instance=ExtResource("4_spot")]
+position = Vector2(60, 75)
+npc_id = "helena_curator"
+prompt = "Parler à Helena"
+speaker = "Helena"
+text = "*pose son catalogue* La pièce du mois ? *fait un signe vers le MAC* « Esquecimento » d'Adriana Varejão. Sang séché sur faïence portugaise. *te regarde* Vous venez d'où ? Du calçadão, d'accord. *léger sourire* Ici on a les mêmes vagues que vous, mais on a aussi le silence. C'est la grosse différence."
+
+# Quelques visiteurs ambient
+[node name="VisitorA" parent="." instance=ExtResource("2_wander")]
+position = Vector2(-200, 90)
+color = Color(0.85, 0.78, 0.55, 1)
+size = Vector2(10, 17)
+roam_zone = Rect2(-200, -30, 400, 60)
+speed = 20.0
+pause_at_waypoints = 2.0
+look_at_player_distance = 50.0
+
+[node name="VisitorB" parent="." instance=ExtResource("2_wander")]
+position = Vector2(200, 130)
+color = Color(0.42, 0.65, 0.85, 1)
+size = Vector2(10, 17)
+roam_zone = Rect2(-200, -30, 400, 60)
+speed = 22.0
+pause_at_waypoints = 1.5
+look_at_player_distance = 50.0
+
+[node name="DistrictLabel" type="Label" parent="."]
+offset_left = -200.0
+offset_top = -290.0
+offset_right = 200.0
+offset_bottom = -270.0
+text = "NITERÓI"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 4

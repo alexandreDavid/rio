@@ -27,6 +27,7 @@ const DISTRICT_MUSIC: Dictionary = {
 	"favela_morro":       "res://assets/audio/music/favela.ogg",       # forró doux + radio lointaine
 	"zona_sul":           "res://assets/audio/music/ipanema.ogg",      # bossa lounge
 	"barra_tijuca":       "res://assets/audio/music/barra.ogg",        # funk carioca chic
+	"niteroi":            "res://assets/audio/music/niteroi.ogg",      # MPB contemplatif
 	"botafogo_flamengo":  "res://assets/audio/music/botafogo.ogg",     # groove urbain calme
 }
 

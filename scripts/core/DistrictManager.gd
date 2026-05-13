@@ -79,6 +79,11 @@ const DISTRICTS: Dictionary = {
 		"fare": 18,
 		"node_name": "BarraDaTijucaDistrict",
 	},
+	"niteroi": {
+		"label": "Niterói — barcas + MAC Niemeyer",
+		"fare": 22,  # traversée de la baie
+		"node_name": "NiteroiDistrict",
+	},
 }
 
 # Position d'arrivée custom quand on entre via une sortie piétonne (pas via le

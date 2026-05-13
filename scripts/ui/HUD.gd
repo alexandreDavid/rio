@@ -12,8 +12,13 @@ extends Control
 @onready var abilities: VBoxContainer = $CharacterSheet/Margin/Layout/Abilities
 @onready var menu_button: Button = $MenuButton
 @onready var journal_button: Button = $JournalButton
+@onready var save_button: Button = $SaveButton
+@onready var photo_button: Button = $PhotoButton
 @onready var close_sheet_button: Button = $CharacterSheet/Margin/Layout/Close
 @onready var save_toast: Label = $SaveToast
+@onready var quest_tracker: PanelContainer = $QuestTracker
+@onready var quest_tracker_name: Label = $QuestTracker/Margin/VBox/QuestName
+@onready var quest_tracker_objective: Label = $QuestTracker/Margin/VBox/QuestObjective
 
 # Clé = nom d'axe renvoyé par EventBus.reputation_changed (ReputationSystem.Axis.keys()).
 # Valeur = teinte appliquée à la barre pour distinguer les axes d'un coup d'œil.
@@ -47,6 +52,10 @@ func _ready() -> void:
 	EventBus.act_changed.connect(_on_act_changed)
 	EventBus.quest_accepted.connect(_on_quest_change_check_main)
 	EventBus.quest_completed.connect(_on_quest_change_check_main)
+	EventBus.quest_accepted.connect(_refresh_tracker_for)
+	EventBus.quest_completed.connect(_refresh_tracker_for)
+	EventBus.quest_updated.connect(_refresh_tracker_for_obj)
+	call_deferred("_refresh_tracker")
 	SaveSystem.save_committed.connect(_on_save_committed)
 	SaveSystem.save_loaded.connect(_on_save_loaded)
 	DynamicMissionManager.mission_completed.connect(_on_dynamic_mission_completed)
@@ -65,6 +74,10 @@ func _ready() -> void:
 		close_sheet_button.pressed.connect(_toggle_phone)
 	if journal_button:
 		journal_button.pressed.connect(_toggle_journal)
+	if save_button:
+		save_button.pressed.connect(_on_save_pressed)
+	if photo_button:
+		photo_button.pressed.connect(_on_photo_pressed)
 	_init_abilities()
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -82,6 +95,10 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif key == KEY_K:
 		_toggle_cronica()
 		get_viewport().set_input_as_handled()
+	# F : photo mode — screenshot dans user://photos/. Sur mobile, bouton 📸 du HUD.
+	elif key == KEY_F:
+		_on_photo_pressed()
+		get_viewport().set_input_as_handled()
 
 func _toggle_phone() -> void:
 	var phone: Node = get_tree().current_scene.get_node_or_null("Phone")
@@ -96,6 +113,30 @@ func _toggle_cronica() -> void:
 		phone.close()
 	elif phone.has_method("open_cronica"):
 		phone.open_cronica()
+
+func _on_save_pressed() -> void:
+	SaveSystem.save_game()
+
+func _on_photo_pressed() -> void:
+	# Cache temporairement le HUD pour un cliché propre, puis attend une frame.
+	var was_visible: bool = visible
+	visible = false
+	await RenderingServer.frame_post_draw
+	var img: Image = get_viewport().get_texture().get_image()
+	visible = was_visible
+	if img == null:
+		_flash_toast("📸 Photo impossible", Color(0.95, 0.55, 0.45, 1))
+		return
+	DirAccess.make_dir_recursive_absolute("user://photos")
+	var t: Dictionary = Time.get_datetime_dict_from_system()
+	var name: String = "photo_%04d%02d%02d_%02d%02d%02d.png" % [
+			t.year, t.month, t.day, t.hour, t.minute, t.second]
+	var path: String = "user://photos/" + name
+	var err: int = img.save_png(path)
+	if err == OK:
+		_flash_toast("📸 " + name, Color(0.9, 0.95, 0.7, 1), 2.0)
+	else:
+		_flash_toast("📸 Échec de l'écriture", Color(0.95, 0.55, 0.45, 1))
 
 func _toggle_journal() -> void:
 	var journal: Node = get_tree().current_scene.get_node_or_null("JournalUI")
@@ -381,3 +422,50 @@ func _flash_toast(text: String, color: Color = Color(0.7, 0.95, 0.7, 1), duratio
 	tween.tween_interval(duration)
 	tween.tween_property(save_toast, "modulate:a", 0.0, 0.4)
 	tween.tween_callback(func(): save_toast.visible = false)
+
+# ─── Quest tracker (panel haut-droite) ───────────────────────────────────────
+# Affiche la quête MAIN active prioritaire (sinon une SIDE) + son 1er objectif
+# non complété. Caché si aucune quête active.
+
+func _refresh_tracker_for(_quest_id: String) -> void:
+	_refresh_tracker()
+
+func _refresh_tracker_for_obj(_quest_id: String, _obj_id: String) -> void:
+	_refresh_tracker()
+
+func _refresh_tracker() -> void:
+	if quest_tracker == null:
+		return
+	var quest: Quest = _pick_tracked_quest()
+	if quest == null:
+		quest_tracker.visible = false
+		return
+	quest_tracker.visible = true
+	var prefix: String = "✦" if quest.quest_type == Quest.QuestType.MAIN else "•"
+	if quest_tracker_name:
+		quest_tracker_name.text = "%s %s" % [prefix, quest.display_name]
+	var obj_desc: String = _first_pending_obj_desc(quest)
+	if quest_tracker_objective:
+		quest_tracker_objective.text = "→ %s" % obj_desc
+
+# Préfère la MAIN active la plus récente ; à défaut, n'importe quelle active.
+func _pick_tracked_quest() -> Quest:
+	var active: Array[String] = QuestManager.get_active_ids()
+	var fallback: Quest = null
+	# Itère en ordre inverse pour prioriser la plus récente
+	for i in range(active.size() - 1, -1, -1):
+		var q: Quest = QuestManager.get_quest(active[i])
+		if q == null:
+			continue
+		if q.quest_type == Quest.QuestType.MAIN:
+			return q
+		if fallback == null:
+			fallback = q
+	return fallback
+
+func _first_pending_obj_desc(quest: Quest) -> String:
+	var state: Dictionary = QuestManager.get_objectives_state(quest.id)
+	for obj in quest.objectives:
+		if not bool(state.get(obj.id, false)):
+			return obj.description
+	return "Retourner voir le contact"
