@@ -9,6 +9,8 @@
 [ext_resource type="PackedScene" path="res://scenes/vehicles/Car.tscn" id="7_car"]
 [ext_resource type="PackedScene" path="res://scenes/props/BasketCourt.tscn" id="9_court"]
 [ext_resource type="PackedScene" path="res://scenes/props/BondinhoLauncher.tscn" id="10_bondinho"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/Diego.tscn" id="14_diego"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/Sofia.tscn" id="15_sofia"]
 [ext_resource type="PackedScene" path="res://scenes/props/VolleyNet.tscn" id="11_volley"]
 [ext_resource type="PackedScene" path="res://scenes/props/ExerciseStation.tscn" id="12_exercise"]
 [ext_resource type="PackedScene" path="res://scenes/props/DistrictEntrance.tscn" id="13_entrance"]
@@ -2108,6 +2110,12 @@ theme_override_constants/outline_size = 3
 
 [node name="BondinhoLauncher" parent="." instance=ExtResource("10_bondinho")]
 position = Vector2(880, -10)
+
+[node name="Diego" parent="." instance=ExtResource("14_diego")]
+position = Vector2(-700, -120)
+
+[node name="Sofia" parent="." instance=ExtResource("15_sofia")]
+position = Vector2(820, -10)
 
 [node name="AirportEntrance" parent="." instance=ExtResource("13_entrance")]
 position = Vector2(-40, -1948)

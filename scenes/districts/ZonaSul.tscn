@@ -1,10 +1,19 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=24 format=3]
 
+[ext_resource type="Script" path="res://scripts/districts/ZonaSulDistrict.gd" id="0_script"]
 [ext_resource type="PackedScene" path="res://scenes/props/TaxiStand.tscn" id="1_taxi"]
 [ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="2_wander"]
 [ext_resource type="PackedScene" path="res://scenes/props/Viewpoint.tscn" id="3_view"]
 [ext_resource type="PackedScene" path="res://scenes/props/StreetVendor.tscn" id="4_vendor"]
 [ext_resource type="PackedScene" path="res://scenes/props/DistrictExit.tscn" id="5_exit"]
+[ext_resource type="PackedScene" path="res://scenes/props/SurfStation.tscn" id="6_surf"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/Lucas.tscn" id="7_lucas"]
+[ext_resource type="PackedScene" path="res://scenes/props/VolleyNet.tscn" id="8_volley"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/Camila.tscn" id="9_camila"]
+[ext_resource type="PackedScene" path="res://scenes/props/BuildingDoor.tscn" id="10_door"]
+[ext_resource type="PackedScene" path="res://scenes/interiors/PenthouseLeblon.tscn" id="11_penth"]
+[ext_resource type="PackedScene" path="res://scenes/interiors/OfficeIpanema.tscn" id="12_office"]
+[ext_resource type="PackedScene" path="res://scenes/interiors/ArpoadorBar.tscn" id="13_bar"]
 
 [sub_resource type="RectangleShape2D" id="WallH"]
 size = Vector2(1900, 16)
@@ -15,7 +24,29 @@ size = Vector2(16, 480)
 [sub_resource type="RectangleShape2D" id="ExitWideShape"]
 size = Vector2(64, 400)
 
+[sub_resource type="RectangleShape2D" id="BldA_Shape"]
+size = Vector2(120, 70)
+
+[sub_resource type="RectangleShape2D" id="BldB_Shape"]
+size = Vector2(120, 80)
+
+[sub_resource type="RectangleShape2D" id="BldC_Shape"]
+size = Vector2(120, 85)
+
+[sub_resource type="RectangleShape2D" id="BldD_Shape"]
+size = Vector2(120, 75)
+
+[sub_resource type="RectangleShape2D" id="BldE_Shape"]
+size = Vector2(120, 82)
+
+[sub_resource type="RectangleShape2D" id="BldF_Shape"]
+size = Vector2(120, 72)
+
+[sub_resource type="RectangleShape2D" id="BldG_Shape"]
+size = Vector2(120, 78)
+
 [node name="ZonaSulDistrict" type="Node2D"]
+script = ExtResource("0_script")
 
 [node name="Sky" type="ColorRect" parent="."]
 offset_left = -940.0
@@ -30,6 +61,55 @@ offset_top = -120.0
 offset_right = 940.0
 offset_bottom = -100.0
 color = Color(0.85, 0.85, 0.78, 1)
+
+[node name="Sun" type="ColorRect" parent="."]
+offset_left = 220.0
+offset_top = -200.0
+offset_right = 254.0
+offset_bottom = -166.0
+color = Color(0.98, 0.78, 0.55, 0.95)
+
+[node name="SunGlow" type="ColorRect" parent="."]
+offset_left = 206.0
+offset_top = -210.0
+offset_right = 268.0
+offset_bottom = -156.0
+color = Color(0.98, 0.85, 0.62, 0.3)
+
+[node name="CloudA" type="ColorRect" parent="."]
+offset_left = -540.0
+offset_top = -210.0
+offset_right = -440.0
+offset_bottom = -200.0
+color = Color(0.98, 0.98, 0.95, 0.85)
+
+[node name="CloudATail" type="ColorRect" parent="."]
+offset_left = -490.0
+offset_top = -204.0
+offset_right = -420.0
+offset_bottom = -198.0
+color = Color(0.98, 0.98, 0.95, 0.7)
+
+[node name="CloudB" type="ColorRect" parent="."]
+offset_left = -120.0
+offset_top = -230.0
+offset_right = 0.0
+offset_bottom = -218.0
+color = Color(0.98, 0.98, 0.95, 0.85)
+
+[node name="CloudBTail" type="ColorRect" parent="."]
+offset_left = -60.0
+offset_top = -224.0
+offset_right = 30.0
+offset_bottom = -218.0
+color = Color(0.98, 0.98, 0.95, 0.7)
+
+[node name="CloudC" type="ColorRect" parent="."]
+offset_left = 320.0
+offset_top = -200.0
+offset_right = 420.0
+offset_bottom = -190.0
+color = Color(0.98, 0.98, 0.95, 0.85)
 
 [node name="Sea" type="ColorRect" parent="."]
 offset_left = -940.0
@@ -164,6 +244,69 @@ offset_right = -760.0
 offset_bottom = -40.0
 color = Color(0.65, 0.55, 0.42, 1)
 
+[node name="BuildingABalcony1" type="ColorRect" parent="."]
+offset_left = -876.0
+offset_top = -32.0
+offset_right = -764.0
+offset_bottom = -28.0
+color = Color(0.42, 0.32, 0.25, 0.85)
+
+[node name="BuildingAWindow1" type="ColorRect" parent="."]
+offset_left = -854.0
+offset_top = -25.0
+offset_right = -844.0
+offset_bottom = -19.0
+color = Color(0.95, 0.85, 0.4, 0.95)
+
+[node name="BuildingAWindow2" type="ColorRect" parent="."]
+offset_left = -825.0
+offset_top = -25.0
+offset_right = -815.0
+offset_bottom = -19.0
+color = Color(0.25, 0.32, 0.45, 0.95)
+
+[node name="BuildingAWindow3" type="ColorRect" parent="."]
+offset_left = -796.0
+offset_top = -25.0
+offset_right = -786.0
+offset_bottom = -19.0
+color = Color(0.25, 0.32, 0.45, 0.95)
+
+[node name="BuildingABalcony2" type="ColorRect" parent="."]
+offset_left = -876.0
+offset_top = -16.0
+offset_right = -764.0
+offset_bottom = -12.0
+color = Color(0.42, 0.32, 0.25, 0.85)
+
+[node name="BuildingAWindow4" type="ColorRect" parent="."]
+offset_left = -854.0
+offset_top = -9.0
+offset_right = -844.0
+offset_bottom = -3.0
+color = Color(0.25, 0.32, 0.45, 0.95)
+
+[node name="BuildingAWindow5" type="ColorRect" parent="."]
+offset_left = -825.0
+offset_top = -9.0
+offset_right = -815.0
+offset_bottom = -3.0
+color = Color(0.95, 0.85, 0.4, 0.95)
+
+[node name="BuildingAWindow6" type="ColorRect" parent="."]
+offset_left = -796.0
+offset_top = -9.0
+offset_right = -786.0
+offset_bottom = -3.0
+color = Color(0.25, 0.32, 0.45, 0.95)
+
+[node name="BuildingADoor" type="ColorRect" parent="."]
+offset_left = -826.0
+offset_top = 14.0
+offset_right = -814.0
+offset_bottom = 30.0
+color = Color(0.32, 0.22, 0.18, 1)
+
 [node name="BuildingB" type="ColorRect" parent="."]
 offset_left = -640.0
 offset_top = -50.0
@@ -177,6 +320,69 @@ offset_top = -54.0
 offset_right = -520.0
 offset_bottom = -50.0
 color = Color(0.78, 0.72, 0.65, 1)
+
+[node name="BuildingBBalcony1" type="ColorRect" parent="."]
+offset_left = -636.0
+offset_top = -42.0
+offset_right = -524.0
+offset_bottom = -38.0
+color = Color(0.55, 0.45, 0.32, 0.85)
+
+[node name="BuildingBWindow1" type="ColorRect" parent="."]
+offset_left = -614.0
+offset_top = -35.0
+offset_right = -604.0
+offset_bottom = -29.0
+color = Color(0.25, 0.32, 0.45, 0.95)
+
+[node name="BuildingBWindow2" type="ColorRect" parent="."]
+offset_left = -585.0
+offset_top = -35.0
+offset_right = -575.0
+offset_bottom = -29.0
+color = Color(0.95, 0.85, 0.4, 0.95)
+
+[node name="BuildingBWindow3" type="ColorRect" parent="."]
+offset_left = -556.0
+offset_top = -35.0
+offset_right = -546.0
+offset_bottom = -29.0
+color = Color(0.25, 0.32, 0.45, 0.95)
+
+[node name="BuildingBBalcony2" type="ColorRect" parent="."]
+offset_left = -636.0
+offset_top = -26.0
+offset_right = -524.0
+offset_bottom = -22.0
+color = Color(0.55, 0.45, 0.32, 0.85)
+
+[node name="BuildingBWindow4" type="ColorRect" parent="."]
+offset_left = -614.0
+offset_top = -19.0
+offset_right = -604.0
+offset_bottom = -13.0
+color = Color(0.25, 0.32, 0.45, 0.95)
+
+[node name="BuildingBWindow5" type="ColorRect" parent="."]
+offset_left = -585.0
+offset_top = -19.0
+offset_right = -575.0
+offset_bottom = -13.0
+color = Color(0.25, 0.32, 0.45, 0.95)
+
+[node name="BuildingBWindow6" type="ColorRect" parent="."]
+offset_left = -556.0
+offset_top = -19.0
+offset_right = -546.0
+offset_bottom = -13.0
+color = Color(0.25, 0.32, 0.45, 0.95)
+
+[node name="BuildingBDoor" type="ColorRect" parent="."]
+offset_left = -586.0
+offset_top = 14.0
+offset_right = -574.0
+offset_bottom = 30.0
+color = Color(0.32, 0.22, 0.18, 1)
 
 [node name="BuildingC" type="ColorRect" parent="."]
 offset_left = -380.0
@@ -192,6 +398,97 @@ offset_right = -260.0
 offset_bottom = -55.0
 color = Color(0.78, 0.65, 0.42, 1)
 
+[node name="BuildingCBalcony1" type="ColorRect" parent="."]
+offset_left = -376.0
+offset_top = -47.0
+offset_right = -264.0
+offset_bottom = -43.0
+color = Color(0.52, 0.38, 0.22, 0.85)
+
+[node name="BuildingCWindow1" type="ColorRect" parent="."]
+offset_left = -354.0
+offset_top = -40.0
+offset_right = -344.0
+offset_bottom = -34.0
+color = Color(0.25, 0.32, 0.45, 0.95)
+
+[node name="BuildingCWindow2" type="ColorRect" parent="."]
+offset_left = -325.0
+offset_top = -40.0
+offset_right = -315.0
+offset_bottom = -34.0
+color = Color(0.25, 0.32, 0.45, 0.95)
+
+[node name="BuildingCWindow3" type="ColorRect" parent="."]
+offset_left = -296.0
+offset_top = -40.0
+offset_right = -286.0
+offset_bottom = -34.0
+color = Color(0.95, 0.85, 0.4, 0.95)
+
+[node name="BuildingCBalcony2" type="ColorRect" parent="."]
+offset_left = -376.0
+offset_top = -31.0
+offset_right = -264.0
+offset_bottom = -27.0
+color = Color(0.52, 0.38, 0.22, 0.85)
+
+[node name="BuildingCWindow4" type="ColorRect" parent="."]
+offset_left = -354.0
+offset_top = -24.0
+offset_right = -344.0
+offset_bottom = -18.0
+color = Color(0.95, 0.85, 0.4, 0.95)
+
+[node name="BuildingCWindow5" type="ColorRect" parent="."]
+offset_left = -325.0
+offset_top = -24.0
+offset_right = -315.0
+offset_bottom = -18.0
+color = Color(0.25, 0.32, 0.45, 0.95)
+
+[node name="BuildingCWindow6" type="ColorRect" parent="."]
+offset_left = -296.0
+offset_top = -24.0
+offset_right = -286.0
+offset_bottom = -18.0
+color = Color(0.25, 0.32, 0.45, 0.95)
+
+[node name="BuildingCBalcony3" type="ColorRect" parent="."]
+offset_left = -376.0
+offset_top = -15.0
+offset_right = -264.0
+offset_bottom = -11.0
+color = Color(0.52, 0.38, 0.22, 0.85)
+
+[node name="BuildingCWindow7" type="ColorRect" parent="."]
+offset_left = -354.0
+offset_top = -8.0
+offset_right = -344.0
+offset_bottom = -2.0
+color = Color(0.25, 0.32, 0.45, 0.95)
+
+[node name="BuildingCWindow8" type="ColorRect" parent="."]
+offset_left = -325.0
+offset_top = -8.0
+offset_right = -315.0
+offset_bottom = -2.0
+color = Color(0.25, 0.32, 0.45, 0.95)
+
+[node name="BuildingCWindow9" type="ColorRect" parent="."]
+offset_left = -296.0
+offset_top = -8.0
+offset_right = -286.0
+offset_bottom = -2.0
+color = Color(0.25, 0.32, 0.45, 0.95)
+
+[node name="BuildingCDoor" type="ColorRect" parent="."]
+offset_left = -326.0
+offset_top = 14.0
+offset_right = -314.0
+offset_bottom = 30.0
+color = Color(0.32, 0.22, 0.18, 1)
+
 [node name="BuildingD" type="ColorRect" parent="."]
 offset_left = -120.0
 offset_top = -45.0
@@ -205,6 +502,69 @@ offset_top = -50.0
 offset_right = 0.0
 offset_bottom = -45.0
 color = Color(0.62, 0.62, 0.65, 1)
+
+[node name="BuildingDBalcony1" type="ColorRect" parent="."]
+offset_left = -116.0
+offset_top = -37.0
+offset_right = -4.0
+offset_bottom = -33.0
+color = Color(0.42, 0.42, 0.45, 0.85)
+
+[node name="BuildingDWindow1" type="ColorRect" parent="."]
+offset_left = -94.0
+offset_top = -30.0
+offset_right = -84.0
+offset_bottom = -24.0
+color = Color(0.25, 0.32, 0.45, 0.95)
+
+[node name="BuildingDWindow2" type="ColorRect" parent="."]
+offset_left = -65.0
+offset_top = -30.0
+offset_right = -55.0
+offset_bottom = -24.0
+color = Color(0.25, 0.32, 0.45, 0.95)
+
+[node name="BuildingDWindow3" type="ColorRect" parent="."]
+offset_left = -36.0
+offset_top = -30.0
+offset_right = -26.0
+offset_bottom = -24.0
+color = Color(0.95, 0.85, 0.4, 0.95)
+
+[node name="BuildingDBalcony2" type="ColorRect" parent="."]
+offset_left = -116.0
+offset_top = -21.0
+offset_right = -4.0
+offset_bottom = -17.0
+color = Color(0.42, 0.42, 0.45, 0.85)
+
+[node name="BuildingDWindow4" type="ColorRect" parent="."]
+offset_left = -94.0
+offset_top = -14.0
+offset_right = -84.0
+offset_bottom = -8.0
+color = Color(0.25, 0.32, 0.45, 0.95)
+
+[node name="BuildingDWindow5" type="ColorRect" parent="."]
+offset_left = -65.0
+offset_top = -14.0
+offset_right = -55.0
+offset_bottom = -8.0
+color = Color(0.25, 0.32, 0.45, 0.95)
+
+[node name="BuildingDWindow6" type="ColorRect" parent="."]
+offset_left = -36.0
+offset_top = -14.0
+offset_right = -26.0
+offset_bottom = -8.0
+color = Color(0.25, 0.32, 0.45, 0.95)
+
+[node name="BuildingDDoor" type="ColorRect" parent="."]
+offset_left = -66.0
+offset_top = 14.0
+offset_right = -54.0
+offset_bottom = 30.0
+color = Color(0.22, 0.22, 0.25, 1)
 
 [node name="BuildingE" type="ColorRect" parent="."]
 offset_left = 100.0
@@ -220,6 +580,97 @@ offset_right = 220.0
 offset_bottom = -52.0
 color = Color(0.42, 0.55, 0.62, 1)
 
+[node name="BuildingEBalcony1" type="ColorRect" parent="."]
+offset_left = 104.0
+offset_top = -44.0
+offset_right = 216.0
+offset_bottom = -40.0
+color = Color(0.28, 0.42, 0.5, 0.85)
+
+[node name="BuildingEWindow1" type="ColorRect" parent="."]
+offset_left = 126.0
+offset_top = -37.0
+offset_right = 136.0
+offset_bottom = -31.0
+color = Color(0.25, 0.32, 0.45, 0.95)
+
+[node name="BuildingEWindow2" type="ColorRect" parent="."]
+offset_left = 155.0
+offset_top = -37.0
+offset_right = 165.0
+offset_bottom = -31.0
+color = Color(0.25, 0.32, 0.45, 0.95)
+
+[node name="BuildingEWindow3" type="ColorRect" parent="."]
+offset_left = 184.0
+offset_top = -37.0
+offset_right = 194.0
+offset_bottom = -31.0
+color = Color(0.25, 0.32, 0.45, 0.95)
+
+[node name="BuildingEBalcony2" type="ColorRect" parent="."]
+offset_left = 104.0
+offset_top = -28.0
+offset_right = 216.0
+offset_bottom = -24.0
+color = Color(0.28, 0.42, 0.5, 0.85)
+
+[node name="BuildingEWindow4" type="ColorRect" parent="."]
+offset_left = 126.0
+offset_top = -21.0
+offset_right = 136.0
+offset_bottom = -15.0
+color = Color(0.25, 0.32, 0.45, 0.95)
+
+[node name="BuildingEWindow5" type="ColorRect" parent="."]
+offset_left = 155.0
+offset_top = -21.0
+offset_right = 165.0
+offset_bottom = -15.0
+color = Color(0.95, 0.85, 0.4, 0.95)
+
+[node name="BuildingEWindow6" type="ColorRect" parent="."]
+offset_left = 184.0
+offset_top = -21.0
+offset_right = 194.0
+offset_bottom = -15.0
+color = Color(0.25, 0.32, 0.45, 0.95)
+
+[node name="BuildingEBalcony3" type="ColorRect" parent="."]
+offset_left = 104.0
+offset_top = -12.0
+offset_right = 216.0
+offset_bottom = -8.0
+color = Color(0.28, 0.42, 0.5, 0.85)
+
+[node name="BuildingEWindow7" type="ColorRect" parent="."]
+offset_left = 126.0
+offset_top = -5.0
+offset_right = 136.0
+offset_bottom = 1.0
+color = Color(0.25, 0.32, 0.45, 0.95)
+
+[node name="BuildingEWindow8" type="ColorRect" parent="."]
+offset_left = 155.0
+offset_top = -5.0
+offset_right = 165.0
+offset_bottom = 1.0
+color = Color(0.25, 0.32, 0.45, 0.95)
+
+[node name="BuildingEWindow9" type="ColorRect" parent="."]
+offset_left = 184.0
+offset_top = -5.0
+offset_right = 194.0
+offset_bottom = 1.0
+color = Color(0.25, 0.32, 0.45, 0.95)
+
+[node name="BuildingEDoor" type="ColorRect" parent="."]
+offset_left = 154.0
+offset_top = 14.0
+offset_right = 166.0
+offset_bottom = 30.0
+color = Color(0.22, 0.22, 0.25, 1)
+
 [node name="BuildingF" type="ColorRect" parent="."]
 offset_left = 380.0
 offset_top = -42.0
@@ -234,6 +685,69 @@ offset_right = 500.0
 offset_bottom = -42.0
 color = Color(0.65, 0.42, 0.38, 1)
 
+[node name="BuildingFBalcony1" type="ColorRect" parent="."]
+offset_left = 384.0
+offset_top = -34.0
+offset_right = 496.0
+offset_bottom = -30.0
+color = Color(0.52, 0.32, 0.28, 0.85)
+
+[node name="BuildingFWindow1" type="ColorRect" parent="."]
+offset_left = 406.0
+offset_top = -27.0
+offset_right = 416.0
+offset_bottom = -21.0
+color = Color(0.95, 0.85, 0.4, 0.95)
+
+[node name="BuildingFWindow2" type="ColorRect" parent="."]
+offset_left = 435.0
+offset_top = -27.0
+offset_right = 445.0
+offset_bottom = -21.0
+color = Color(0.25, 0.32, 0.45, 0.95)
+
+[node name="BuildingFWindow3" type="ColorRect" parent="."]
+offset_left = 464.0
+offset_top = -27.0
+offset_right = 474.0
+offset_bottom = -21.0
+color = Color(0.25, 0.32, 0.45, 0.95)
+
+[node name="BuildingFBalcony2" type="ColorRect" parent="."]
+offset_left = 384.0
+offset_top = -18.0
+offset_right = 496.0
+offset_bottom = -14.0
+color = Color(0.52, 0.32, 0.28, 0.85)
+
+[node name="BuildingFWindow4" type="ColorRect" parent="."]
+offset_left = 406.0
+offset_top = -11.0
+offset_right = 416.0
+offset_bottom = -5.0
+color = Color(0.25, 0.32, 0.45, 0.95)
+
+[node name="BuildingFWindow5" type="ColorRect" parent="."]
+offset_left = 435.0
+offset_top = -11.0
+offset_right = 445.0
+offset_bottom = -5.0
+color = Color(0.25, 0.32, 0.45, 0.95)
+
+[node name="BuildingFWindow6" type="ColorRect" parent="."]
+offset_left = 464.0
+offset_top = -11.0
+offset_right = 474.0
+offset_bottom = -5.0
+color = Color(0.25, 0.32, 0.45, 0.95)
+
+[node name="BuildingFDoor" type="ColorRect" parent="."]
+offset_left = 434.0
+offset_top = 14.0
+offset_right = 446.0
+offset_bottom = 30.0
+color = Color(0.32, 0.22, 0.18, 1)
+
 [node name="BuildingG" type="ColorRect" parent="."]
 offset_left = 580.0
 offset_top = -48.0
@@ -247,6 +761,69 @@ offset_top = -52.0
 offset_right = 700.0
 offset_bottom = -48.0
 color = Color(0.55, 0.55, 0.42, 1)
+
+[node name="BuildingGBalcony1" type="ColorRect" parent="."]
+offset_left = 584.0
+offset_top = -40.0
+offset_right = 696.0
+offset_bottom = -36.0
+color = Color(0.42, 0.42, 0.28, 0.85)
+
+[node name="BuildingGWindow1" type="ColorRect" parent="."]
+offset_left = 606.0
+offset_top = -33.0
+offset_right = 616.0
+offset_bottom = -27.0
+color = Color(0.25, 0.32, 0.45, 0.95)
+
+[node name="BuildingGWindow2" type="ColorRect" parent="."]
+offset_left = 635.0
+offset_top = -33.0
+offset_right = 645.0
+offset_bottom = -27.0
+color = Color(0.25, 0.32, 0.45, 0.95)
+
+[node name="BuildingGWindow3" type="ColorRect" parent="."]
+offset_left = 664.0
+offset_top = -33.0
+offset_right = 674.0
+offset_bottom = -27.0
+color = Color(0.25, 0.32, 0.45, 0.95)
+
+[node name="BuildingGBalcony2" type="ColorRect" parent="."]
+offset_left = 584.0
+offset_top = -24.0
+offset_right = 696.0
+offset_bottom = -20.0
+color = Color(0.42, 0.42, 0.28, 0.85)
+
+[node name="BuildingGWindow4" type="ColorRect" parent="."]
+offset_left = 606.0
+offset_top = -17.0
+offset_right = 616.0
+offset_bottom = -11.0
+color = Color(0.25, 0.32, 0.45, 0.95)
+
+[node name="BuildingGWindow5" type="ColorRect" parent="."]
+offset_left = 635.0
+offset_top = -17.0
+offset_right = 645.0
+offset_bottom = -11.0
+color = Color(0.25, 0.32, 0.45, 0.95)
+
+[node name="BuildingGWindow6" type="ColorRect" parent="."]
+offset_left = 664.0
+offset_top = -17.0
+offset_right = 674.0
+offset_bottom = -11.0
+color = Color(0.95, 0.85, 0.4, 0.95)
+
+[node name="BuildingGDoor" type="ColorRect" parent="."]
+offset_left = 634.0
+offset_top = 14.0
+offset_right = 646.0
+offset_bottom = 30.0
+color = Color(0.32, 0.22, 0.18, 1)
 
 [node name="Avenida" type="ColorRect" parent="."]
 offset_left = -940.0
@@ -445,6 +1022,421 @@ theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
 theme_override_constants/outline_size = 4
 
+[node name="BikeLane" type="ColorRect" parent="."]
+offset_left = -940.0
+offset_top = 100.0
+offset_right = 720.0
+offset_bottom = 108.0
+color = Color(0.62, 0.25, 0.22, 0.85)
+
+[node name="BikeLaneStripe1" type="ColorRect" parent="."]
+offset_left = -900.0
+offset_top = 103.0
+offset_right = -860.0
+offset_bottom = 105.0
+color = Color(0.95, 0.95, 0.92, 0.85)
+
+[node name="BikeLaneStripe2" type="ColorRect" parent="."]
+offset_left = -700.0
+offset_top = 103.0
+offset_right = -660.0
+offset_bottom = 105.0
+color = Color(0.95, 0.95, 0.92, 0.85)
+
+[node name="BikeLaneStripe3" type="ColorRect" parent="."]
+offset_left = -500.0
+offset_top = 103.0
+offset_right = -460.0
+offset_bottom = 105.0
+color = Color(0.95, 0.95, 0.92, 0.85)
+
+[node name="BikeLaneStripe4" type="ColorRect" parent="."]
+offset_left = -300.0
+offset_top = 103.0
+offset_right = -260.0
+offset_bottom = 105.0
+color = Color(0.95, 0.95, 0.92, 0.85)
+
+[node name="BikeLaneStripe5" type="ColorRect" parent="."]
+offset_left = -100.0
+offset_top = 103.0
+offset_right = -60.0
+offset_bottom = 105.0
+color = Color(0.95, 0.95, 0.92, 0.85)
+
+[node name="BikeLaneStripe6" type="ColorRect" parent="."]
+offset_left = 100.0
+offset_top = 103.0
+offset_right = 140.0
+offset_bottom = 105.0
+color = Color(0.95, 0.95, 0.92, 0.85)
+
+[node name="BikeLaneStripe7" type="ColorRect" parent="."]
+offset_left = 300.0
+offset_top = 103.0
+offset_right = 340.0
+offset_bottom = 105.0
+color = Color(0.95, 0.95, 0.92, 0.85)
+
+[node name="BikeLaneStripe8" type="ColorRect" parent="."]
+offset_left = 500.0
+offset_top = 103.0
+offset_right = 540.0
+offset_bottom = 105.0
+color = Color(0.95, 0.95, 0.92, 0.85)
+
+[node name="PalmCalcA_Trunk" type="ColorRect" parent="."]
+offset_left = -780.0
+offset_top = 78.0
+offset_right = -776.0
+offset_bottom = 100.0
+color = Color(0.4, 0.3, 0.22, 1)
+
+[node name="PalmCalcA_Top" type="ColorRect" parent="."]
+offset_left = -796.0
+offset_top = 58.0
+offset_right = -760.0
+offset_bottom = 78.0
+color = Color(0.32, 0.55, 0.32, 1)
+
+[node name="PalmCalcA_TopHi" type="ColorRect" parent="."]
+offset_left = -792.0
+offset_top = 60.0
+offset_right = -764.0
+offset_bottom = 70.0
+color = Color(0.42, 0.65, 0.4, 0.85)
+
+[node name="PalmCalcB_Trunk" type="ColorRect" parent="."]
+offset_left = -460.0
+offset_top = 80.0
+offset_right = -456.0
+offset_bottom = 100.0
+color = Color(0.4, 0.3, 0.22, 1)
+
+[node name="PalmCalcB_Top" type="ColorRect" parent="."]
+offset_left = -476.0
+offset_top = 62.0
+offset_right = -440.0
+offset_bottom = 80.0
+color = Color(0.32, 0.55, 0.32, 1)
+
+[node name="PalmCalcC_Trunk" type="ColorRect" parent="."]
+offset_left = 240.0
+offset_top = 80.0
+offset_right = 244.0
+offset_bottom = 100.0
+color = Color(0.4, 0.3, 0.22, 1)
+
+[node name="PalmCalcC_Top" type="ColorRect" parent="."]
+offset_left = 224.0
+offset_top = 62.0
+offset_right = 260.0
+offset_bottom = 80.0
+color = Color(0.32, 0.55, 0.32, 1)
+
+[node name="PalmCalcD_Trunk" type="ColorRect" parent="."]
+offset_left = 540.0
+offset_top = 78.0
+offset_right = 544.0
+offset_bottom = 100.0
+color = Color(0.4, 0.3, 0.22, 1)
+
+[node name="PalmCalcD_Top" type="ColorRect" parent="."]
+offset_left = 524.0
+offset_top = 58.0
+offset_right = 560.0
+offset_bottom = 78.0
+color = Color(0.32, 0.55, 0.32, 1)
+
+[node name="PalmCalcD_TopHi" type="ColorRect" parent="."]
+offset_left = 528.0
+offset_top = 60.0
+offset_right = 556.0
+offset_bottom = 70.0
+color = Color(0.42, 0.65, 0.4, 0.85)
+
+[node name="LeblonPostoPost1" type="ColorRect" parent="."]
+offset_left = -722.0
+offset_top = 130.0
+offset_right = -718.0
+offset_bottom = 168.0
+color = Color(0.55, 0.42, 0.32, 1)
+
+[node name="LeblonPostoPost2" type="ColorRect" parent="."]
+offset_left = -682.0
+offset_top = 130.0
+offset_right = -678.0
+offset_bottom = 168.0
+color = Color(0.55, 0.42, 0.32, 1)
+
+[node name="LeblonPostoCabin" type="ColorRect" parent="."]
+offset_left = -726.0
+offset_top = 110.0
+offset_right = -674.0
+offset_bottom = 130.0
+color = Color(0.95, 0.92, 0.85, 1)
+
+[node name="LeblonPostoRoof" type="ColorRect" parent="."]
+offset_left = -728.0
+offset_top = 104.0
+offset_right = -672.0
+offset_bottom = 110.0
+color = Color(0.85, 0.55, 0.4, 1)
+
+[node name="LeblonPostoFlag" type="ColorRect" parent="."]
+offset_left = -700.0
+offset_top = 92.0
+offset_right = -698.0
+offset_bottom = 104.0
+color = Color(0.55, 0.42, 0.32, 1)
+
+[node name="LeblonPostoFlagCloth" type="ColorRect" parent="."]
+offset_left = -698.0
+offset_top = 92.0
+offset_right = -686.0
+offset_bottom = 100.0
+color = Color(0.95, 0.85, 0.4, 1)
+
+[node name="LeblonPostoLabel" type="Label" parent="."]
+offset_left = -730.0
+offset_top = 132.0
+offset_right = -670.0
+offset_bottom = 146.0
+text = "Posto 9"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 9
+theme_override_colors/font_color = Color(0.18, 0.22, 0.32, 1)
+theme_override_colors/font_outline_color = Color(0.98, 0.95, 0.85, 0.85)
+theme_override_constants/outline_size = 2
+
+[node name="IpanemaPostoPost1" type="ColorRect" parent="."]
+offset_left = -122.0
+offset_top = 130.0
+offset_right = -118.0
+offset_bottom = 168.0
+color = Color(0.55, 0.42, 0.32, 1)
+
+[node name="IpanemaPostoPost2" type="ColorRect" parent="."]
+offset_left = -82.0
+offset_top = 130.0
+offset_right = -78.0
+offset_bottom = 168.0
+color = Color(0.55, 0.42, 0.32, 1)
+
+[node name="IpanemaPostoCabin" type="ColorRect" parent="."]
+offset_left = -126.0
+offset_top = 110.0
+offset_right = -74.0
+offset_bottom = 130.0
+color = Color(0.95, 0.92, 0.85, 1)
+
+[node name="IpanemaPostoRoof" type="ColorRect" parent="."]
+offset_left = -128.0
+offset_top = 104.0
+offset_right = -72.0
+offset_bottom = 110.0
+color = Color(0.85, 0.55, 0.4, 1)
+
+[node name="IpanemaPostoFlag" type="ColorRect" parent="."]
+offset_left = -100.0
+offset_top = 92.0
+offset_right = -98.0
+offset_bottom = 104.0
+color = Color(0.55, 0.42, 0.32, 1)
+
+[node name="IpanemaPostoFlagCloth" type="ColorRect" parent="."]
+offset_left = -98.0
+offset_top = 92.0
+offset_right = -86.0
+offset_bottom = 100.0
+color = Color(0.4, 0.65, 0.95, 1)
+
+[node name="IpanemaPostoLabel" type="Label" parent="."]
+offset_left = -130.0
+offset_top = 132.0
+offset_right = -70.0
+offset_bottom = 146.0
+text = "Posto 8"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 9
+theme_override_colors/font_color = Color(0.18, 0.22, 0.32, 1)
+theme_override_colors/font_outline_color = Color(0.98, 0.95, 0.85, 0.85)
+theme_override_constants/outline_size = 2
+
+[node name="BeachTowelA" type="ColorRect" parent="."]
+offset_left = -540.0
+offset_top = 150.0
+offset_right = -504.0
+offset_bottom = 168.0
+color = Color(0.85, 0.42, 0.45, 0.95)
+
+[node name="BeachTowelB" type="ColorRect" parent="."]
+offset_left = -400.0
+offset_top = 160.0
+offset_right = -364.0
+offset_bottom = 178.0
+color = Color(0.4, 0.65, 0.85, 0.95)
+
+[node name="BeachTowelC" type="ColorRect" parent="."]
+offset_left = 60.0
+offset_top = 158.0
+offset_right = 96.0
+offset_bottom = 176.0
+color = Color(0.95, 0.85, 0.4, 0.95)
+
+[node name="BeachTowelD" type="ColorRect" parent="."]
+offset_left = 360.0
+offset_top = 162.0
+offset_right = 396.0
+offset_bottom = 180.0
+color = Color(0.62, 0.42, 0.82, 0.95)
+
+[node name="Sandcastle1Base" type="ColorRect" parent="."]
+offset_left = -608.0
+offset_top = 178.0
+offset_right = -592.0
+offset_bottom = 188.0
+color = Color(0.78, 0.65, 0.45, 1)
+
+[node name="Sandcastle1Tower" type="ColorRect" parent="."]
+offset_left = -604.0
+offset_top = 168.0
+offset_right = -596.0
+offset_bottom = 178.0
+color = Color(0.78, 0.65, 0.45, 1)
+
+[node name="Sandcastle2Base" type="ColorRect" parent="."]
+offset_left = 232.0
+offset_top = 182.0
+offset_right = 250.0
+offset_bottom = 190.0
+color = Color(0.72, 0.6, 0.42, 1)
+
+[node name="Sandcastle2Tower" type="ColorRect" parent="."]
+offset_left = 236.0
+offset_top = 174.0
+offset_right = 246.0
+offset_bottom = 182.0
+color = Color(0.72, 0.6, 0.42, 1)
+
+[node name="UmbrellaE" type="ColorRect" parent="."]
+offset_left = -540.0
+offset_top = 124.0
+offset_right = -500.0
+offset_bottom = 130.0
+color = Color(0.4, 0.85, 0.55, 1)
+
+[node name="UmbrellaEPole" type="ColorRect" parent="."]
+offset_left = -522.0
+offset_top = 130.0
+offset_right = -518.0
+offset_bottom = 164.0
+color = Color(0.55, 0.42, 0.32, 1)
+
+[node name="UmbrellaF" type="ColorRect" parent="."]
+offset_left = -60.0
+offset_top = 135.0
+offset_right = -20.0
+offset_bottom = 141.0
+color = Color(0.85, 0.42, 0.55, 1)
+
+[node name="UmbrellaFPole" type="ColorRect" parent="."]
+offset_left = -42.0
+offset_top = 141.0
+offset_right = -38.0
+offset_bottom = 175.0
+color = Color(0.55, 0.42, 0.32, 1)
+
+[node name="UmbrellaG" type="ColorRect" parent="."]
+offset_left = 280.0
+offset_top = 142.0
+offset_right = 320.0
+offset_bottom = 148.0
+color = Color(0.95, 0.42, 0.4, 1)
+
+[node name="UmbrellaGPole" type="ColorRect" parent="."]
+offset_left = 298.0
+offset_top = 148.0
+offset_right = 302.0
+offset_bottom = 182.0
+color = Color(0.55, 0.42, 0.32, 1)
+
+[node name="ParkingSpotA" type="ColorRect" parent="."]
+offset_left = -680.0
+offset_top = 56.0
+offset_right = -680.0
+offset_bottom = 64.0
+color = Color(0.95, 0.85, 0.4, 0.7)
+
+[node name="ParkingDivA1" type="ColorRect" parent="."]
+offset_left = -680.0
+offset_top = 56.0
+offset_right = -638.0
+offset_bottom = 58.0
+color = Color(0.95, 0.85, 0.4, 0.65)
+
+[node name="ParkingDivA2" type="ColorRect" parent="."]
+offset_left = -680.0
+offset_top = 62.0
+offset_right = -638.0
+offset_bottom = 64.0
+color = Color(0.95, 0.85, 0.4, 0.65)
+
+[node name="ParkingDivB1" type="ColorRect" parent="."]
+offset_left = -160.0
+offset_top = 56.0
+offset_right = -120.0
+offset_bottom = 58.0
+color = Color(0.95, 0.85, 0.4, 0.65)
+
+[node name="ParkingDivB2" type="ColorRect" parent="."]
+offset_left = -160.0
+offset_top = 62.0
+offset_right = -120.0
+offset_bottom = 64.0
+color = Color(0.95, 0.85, 0.4, 0.65)
+
+[node name="ParkingDivC1" type="ColorRect" parent="."]
+offset_left = 360.0
+offset_top = 56.0
+offset_right = 400.0
+offset_bottom = 58.0
+color = Color(0.95, 0.85, 0.4, 0.65)
+
+[node name="ParkingDivC2" type="ColorRect" parent="."]
+offset_left = 360.0
+offset_top = 62.0
+offset_right = 400.0
+offset_bottom = 64.0
+color = Color(0.95, 0.85, 0.4, 0.65)
+
+[node name="SeagullA" type="Label" parent="."]
+offset_left = -380.0
+offset_top = -180.0
+offset_right = -360.0
+offset_bottom = -170.0
+text = "˜"
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.95, 0.92, 0.85, 0.9)
+
+[node name="SeagullB" type="Label" parent="."]
+offset_left = 220.0
+offset_top = -160.0
+offset_right = 240.0
+offset_bottom = -150.0
+text = "˜"
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.95, 0.92, 0.85, 0.85)
+
+[node name="SeagullC" type="Label" parent="."]
+offset_left = 480.0
+offset_top = -200.0
+offset_right = 500.0
+offset_bottom = -190.0
+text = "˜"
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.95, 0.92, 0.85, 0.85)
+
 [node name="Walls" type="Node2D" parent="."]
 
 [node name="Top" type="StaticBody2D" parent="Walls"]
@@ -471,6 +1463,50 @@ position = Vector2(908, 96)
 [node name="Shape" type="CollisionShape2D" parent="Walls/Right"]
 shape = SubResource("WallV")
 
+[node name="Buildings" type="Node2D" parent="."]
+
+[node name="BuildingA_Body" type="StaticBody2D" parent="Buildings"]
+position = Vector2(-820, -5)
+
+[node name="Shape" type="CollisionShape2D" parent="Buildings/BuildingA_Body"]
+shape = SubResource("BldA_Shape")
+
+[node name="BuildingB_Body" type="StaticBody2D" parent="Buildings"]
+position = Vector2(-580, -10)
+
+[node name="Shape" type="CollisionShape2D" parent="Buildings/BuildingB_Body"]
+shape = SubResource("BldB_Shape")
+
+[node name="BuildingC_Body" type="StaticBody2D" parent="Buildings"]
+position = Vector2(-320, -12.5)
+
+[node name="Shape" type="CollisionShape2D" parent="Buildings/BuildingC_Body"]
+shape = SubResource("BldC_Shape")
+
+[node name="BuildingD_Body" type="StaticBody2D" parent="Buildings"]
+position = Vector2(-60, -7.5)
+
+[node name="Shape" type="CollisionShape2D" parent="Buildings/BuildingD_Body"]
+shape = SubResource("BldD_Shape")
+
+[node name="BuildingE_Body" type="StaticBody2D" parent="Buildings"]
+position = Vector2(160, -11)
+
+[node name="Shape" type="CollisionShape2D" parent="Buildings/BuildingE_Body"]
+shape = SubResource("BldE_Shape")
+
+[node name="BuildingF_Body" type="StaticBody2D" parent="Buildings"]
+position = Vector2(440, -6)
+
+[node name="Shape" type="CollisionShape2D" parent="Buildings/BuildingF_Body"]
+shape = SubResource("BldF_Shape")
+
+[node name="BuildingG_Body" type="StaticBody2D" parent="Buildings"]
+position = Vector2(640, -9)
+
+[node name="Shape" type="CollisionShape2D" parent="Buildings/BuildingG_Body"]
+shape = SubResource("BldG_Shape")
+
 [node name="PlayerSpawn" type="Marker2D" parent="."]
 position = Vector2(800, 130)
 
@@ -493,6 +1529,24 @@ flavor_speaker = "Sobrinho"
 flavor_text = "La Pedra do Arpoador. Quand le soleil se couche derrière les Dois Irmãos, la foule applaudit comme à un concert. Tu n'avais jamais vu une côte applaudir le ciel."
 money_reward = 90
 
+[node name="SurfStationArpoador" parent="." instance=ExtResource("6_surf")]
+position = Vector2(620, 130)
+
+[node name="SurfStationLabel" type="Label" parent="."]
+offset_left = 580.0
+offset_top = 100.0
+offset_right = 660.0
+offset_bottom = 116.0
+text = "🏄 Surf — Arpoador"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 3
+
+[node name="Lucas" parent="." instance=ExtResource("7_lucas")]
+position = Vector2(560, 130)
+
 [node name="ViewpointIpanema" parent="." instance=ExtResource("3_view")]
 position = Vector2(0, 60)
 viewpoint_id = "ipanema_calcadao"
@@ -500,6 +1554,24 @@ prompt_first = "Admirer le calçadão"
 flavor_speaker = "Sobrinho"
 flavor_text = "Le motif d'ondas — noir et blanc, signé Burle Marx. Tu marches dessus comme tout le monde, et soudain tu repenses à 'Garota de Ipanema'. Ça résonne dans tes pas."
 money_reward = 80
+
+[node name="VolleyNetIpanema" parent="." instance=ExtResource("8_volley")]
+position = Vector2(80, 130)
+
+[node name="VolleyNetIpanemaLabel" type="Label" parent="."]
+offset_left = 40.0
+offset_top = 100.0
+offset_right = 120.0
+offset_bottom = 116.0
+text = "🏐 Volei — Ipanema"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 3
+
+[node name="Camila" parent="." instance=ExtResource("9_camila")]
+position = Vector2(20, 130)
 
 [node name="ViewpointLeblon" parent="." instance=ExtResource("3_view")]
 position = Vector2(-700, 60)
@@ -624,3 +1696,60 @@ speed = 16.0
 pause_at_waypoints = 2.0
 pause_random_jitter = 1.0
 look_at_player_distance = 60.0
+
+[node name="DoorPenthouse" parent="." instance=ExtResource("10_door")]
+position = Vector2(-820, 32)
+prompt_text = "Entrer dans la cobertura"
+
+[node name="DoorPenthouseLabel" type="Label" parent="."]
+offset_left = -860.0
+offset_top = 34.0
+offset_right = -780.0
+offset_bottom = 50.0
+text = "Cobertura"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 9
+theme_override_colors/font_color = Color(0.98, 0.95, 0.85, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 3
+
+[node name="DoorOffice" parent="." instance=ExtResource("10_door")]
+position = Vector2(-60, 32)
+prompt_text = "Entrer au cabinet d'avocat"
+
+[node name="DoorOfficeLabel" type="Label" parent="."]
+offset_left = -100.0
+offset_top = 34.0
+offset_right = -20.0
+offset_bottom = 50.0
+text = "Advocacia"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 9
+theme_override_colors/font_color = Color(0.98, 0.95, 0.85, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 3
+
+[node name="DoorBar" parent="." instance=ExtResource("10_door")]
+position = Vector2(640, 32)
+prompt_text = "Entrer au bar"
+
+[node name="DoorBarLabel" type="Label" parent="."]
+offset_left = 600.0
+offset_top = 34.0
+offset_right = 680.0
+offset_bottom = 50.0
+text = "Bar do pôr-do-sol"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 9
+theme_override_colors/font_color = Color(0.98, 0.95, 0.85, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 3
+
+[node name="PenthouseLeblon" parent="." instance=ExtResource("11_penth")]
+position = Vector2(2000, -3000)
+
+[node name="OfficeIpanema" parent="." instance=ExtResource("12_office")]
+position = Vector2(2700, -3000)
+
+[node name="ArpoadorBar" parent="." instance=ExtResource("13_bar")]
+position = Vector2(3400, -3000)

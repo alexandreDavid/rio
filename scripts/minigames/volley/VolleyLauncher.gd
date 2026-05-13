@@ -51,11 +51,17 @@ func _launch() -> void:
 		_active_match.match_ended.connect(_on_match_ended)
 	print("[VolleyLauncher] match instancié et ajouté à l'arbre")
 
+const CAMILA_QUEST_ID: String = "camila_ipanema_volley"
+const CAMILA_OBJ_ID: String = "win_volley_match"
+
 func _on_match_ended(won: bool, _sp: int, _so: int) -> void:
 	print("[VolleyLauncher] match ended, won=%s" % won)
 	var inv: Inventory = _player_inventory()
 	if won and inv and bet_amount > 0:
 		inv.add_money(bet_amount * 2)
+	# Quête Camila (Ipanema) : la 1re victoire de match coche l'objectif.
+	if won and QuestManager.is_active(CAMILA_QUEST_ID):
+		QuestManager.complete_objective(CAMILA_QUEST_ID, CAMILA_OBJ_ID)
 	if _active_match:
 		_active_match.queue_free()
 		_active_match = null

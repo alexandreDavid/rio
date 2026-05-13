@@ -1,0 +1,36 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_deliver_bandeira"]
+script = ExtResource("2_obj")
+id = "deliver_to_bandeira"
+description = "Apporter l'enveloppe scellée à Dr. Bandeira (Advocacia, Ipanema)"
+optional = false
+
+[sub_resource type="Resource" id="obj_verify_ivan"]
+script = ExtResource("2_obj")
+id = "verify_with_ivan"
+description = "Passer voir Iván au Bar do Pôr-do-Sol (Arpoador) avec le mot de passe"
+optional = false
+
+[sub_resource type="Resource" id="obj_return_caldeira"]
+script = ExtResource("2_obj")
+id = "return_to_caldeira"
+description = "Revenir voir Sra. Caldeira dans sa cobertura (Leblon)"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "zona_sul_envelope"
+display_name = "Une enveloppe à porter"
+description = "Sra. Caldeira, veuve dans une cobertura à Leblon, te confie une enveloppe scellée. À remettre à son avocat Dr. Bandeira (Ipanema). Lui te demandera ensuite de vérifier un nom avec Iván, le barman d'Arpoador. Puis tu reviendras voir la veuve. Discret, payé."
+journal_text = "Leblon → Ipanema (Bandeira) → Arpoador (Iván) → Leblon (Caldeira)."
+giver_npc_id = "caldeira"
+ink_knot = "caldeira_offer"
+objectives = Array[Resource]([SubResource("obj_deliver_bandeira"), SubResource("obj_verify_ivan"), SubResource("obj_return_caldeira")])
+money_reward = 200
+reputation_rewards = {0: 3}
+required_reputation = {}
+required_act = 1

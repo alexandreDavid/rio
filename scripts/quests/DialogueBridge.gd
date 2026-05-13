@@ -1376,6 +1376,141 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 		"text": "*tape dans tes mains* Le pot tient encore parole, sobrinho. Tu peux y retourner quand tu veux — les gamins recommencent chaque après-midi.",
 		"choices": ["Valeu, mestre"],
 	},
+	# --- Lucas — duel de surf à Arpoador (ZonaSul) ---
+	"lucas_intro": {
+		"speaker": "Lucas",
+		"text": "*serre sa planche sous le bras, regarde l'horizon* Tu surfes, ou tu poses pour les touristes ? Arpoador, c'est pas pour les frileux. Le poste 7, c'est notre table — on y mange les newbies au petit déjeuner. *te scanne* Tu m'as l'air solide. T'oserais ?",
+		"choices": ["Présente-toi"],
+		"on_choose": {
+			"0": {"next": "lucas_offer"},
+		},
+	},
+	"lucas_offer": {
+		"speaker": "Lucas",
+		"text": "*sourit, recoiffe ses dreads* Lucas, sobrinho. Arpoador depuis tout petit. Voilà le deal : tu prends ma planche de rechange, tu me prouves que tu sais lire la vague. Une session propre — pas de wipeout sur les trois premiers takeoffs. Si tu réussis, je dis à toute la praia que t'es du sang. 250 reais et le respect du poste 7. La SurfStation est juste là, sur le sable.",
+		"choices": ["J'y vais (FAIRE LA SURF SESSION)", "Plus tard"],
+		"on_choose": {
+			"0": {"accept_quest": "lucas_arpoador_surf"},
+		},
+	},
+	"lucas_remind": {
+		"speaker": "Lucas",
+		"text": "*pointe la mer du menton* La SurfStation t'attend. Tiens-toi sur la planche, lis la vague avant qu'elle te lise. Reviens me voir quand t'as bouclé une session.",
+		"choices": ["J'y vais"],
+	},
+	"lucas_done": {
+		"speaker": "Lucas",
+		"text": "*te tend une noix de coco fraîche* Voilà, sobrinho. Le poste 7 a vu ce que t'as dans les bras. T'es du sang d'Arpoador maintenant. Reviens quand tu veux, la planche est à toi.",
+		"choices": ["Obrigado, Lucas"],
+	},
+	# --- Camila — match volley à Ipanema (ZonaSul) ---
+	"camila_intro": {
+		"speaker": "Camila",
+		"text": "*tape la balle deux fois dans la paume* Eh, sobrinho. Tu joues au volei ou tu regardes ? Pas de filet, sable mou, soleil dans les yeux — Ipanema, c'est notre table à nous.",
+		"choices": ["Présente-toi"],
+		"on_choose": {
+			"0": {"next": "camila_offer"},
+		},
+	},
+	"camila_offer": {
+		"speaker": "Camila",
+		"text": "*sourit large* Camila, capitaine de l'équipe du poste 9. On joue trois sets, deux gagnants. Pas de pari, juste l'honneur — et 200 reais que mon oncle a mis dans la caisse pour qui nous bat. La VolleyNet est plantée à dix mètres. Tu rentres ?",
+		"choices": ["J'y vais (FAIRE LE MATCH)", "Plus tard"],
+		"on_choose": {
+			"0": {"accept_quest": "camila_ipanema_volley"},
+		},
+	},
+	"camila_remind": {
+		"speaker": "Camila",
+		"text": "*attend en regardant la mer* On t'attend sur le sable. Le filet est tendu, mes coéquipières s'échauffent. Reviens quand t'es prêt à enfiler le maillot.",
+		"choices": ["J'arrive"],
+	},
+	"camila_done": {
+		"speaker": "Camila",
+		"text": "*te claque la main* Bien joué, sobrinho. Tu lis le sable. Si t'as besoin d'une équipe pour un autre tournoi, tu sais où me trouver — poste 9, toujours.",
+		"choices": ["Valeu, Camila"],
+	},
+	# --- Mestre Diego — roda capoeira à Botafogo Praia ---
+	"diego_intro": {
+		"speaker": "Mestre Diego",
+		"text": "*frappe son atabaque, sourire aux dents blanches* Ah, le neveu de Zé. La capoeira, c'est l'âme de la praia, sobrinho. Un petit tip et je te montre ce que mes vingt ans dans la roda valent.",
+		"choices": ["Combien ?"],
+		"on_choose": {
+			"0": {"next": "diego_offer"},
+		},
+	},
+	"diego_offer": {
+		"speaker": "Mestre Diego",
+		"text": "*tape une fois sur le berimbau* Cent reais. Pas pour moi — pour la roda, pour les jeunes que je forme ici. En échange, tu vois la série meia-lua de compasso → rasteira → armada. Une figure rare, je la garde pour les fins connaisseurs.",
+		"choices": ["OK (R$ 100)", "Trop cher"],
+		"on_choose": {
+			"0": {"finish_quest": {"quest": "diego_botafogo_capoeira", "objective": "tip_diego", "payout": 0}, "pay_bribe": 100, "rep": {0: 3, 4: 2}, "next": "diego_show"},
+		},
+	},
+	"diego_show": {
+		"speaker": "Mestre Diego",
+		"text": "*lance le berimbau, fait sa série en bord de mer — meia-lua, rasteira, armada — atterrit sans souffle, te salue avec deux mains* Voilà, sobrinho. La capoeira, c'est résister en dansant. Tu retiendras ça.",
+		"choices": ["Inoubliable, mestre"],
+	},
+	"diego_done": {
+		"speaker": "Mestre Diego",
+		"text": "*te montre son berimbau* La roda continue chaque dimanche, sobrinho. Reviens écouter les chants — celui-là, je le réserve aux amis du sang.",
+		"choices": ["Saudações, mestre"],
+	},
+	# --- Sofia — guide japonaise au bondinho de l'Urca ---
+	"sofia_intro": {
+		"speaker": "Sofia",
+		"text": "*tient un guide froissé, regarde le pylône du bondinho* Sumimasen... vous parlez français ? *consulte son guide* Pão de Açúcar... téléphérique... est-ce sécurisé seule ?",
+		"choices": ["Présente-toi"],
+		"on_choose": {
+			"0": {"next": "sofia_offer"},
+		},
+	},
+	"sofia_offer": {
+		"speaker": "Sofia",
+		"text": "*soupire de soulagement* Sofia, étudiante en archi de Kyoto, six mois à Rio. Le bondinho, je n'ose pas seule — vertige et la rumeur des touristes pickpockets. Si vous m'accompagnez jusqu'au sommet, je paie nos deux tickets et un pourboire de 180 reais. Coucher de soleil sur le pão, c'est ce que je suis venue voir.",
+		"choices": ["D'accord, je vous guide", "Plus tard"],
+		"on_choose": {
+			"0": {"accept_quest": "sofia_bondinho_tour"},
+		},
+	},
+	"sofia_remind": {
+		"speaker": "Sofia",
+		"text": "*regarde le pylône* Le bondinho est juste là — borne orange. Vous êtes prêt ? Le sommet doit être incroyable au coucher.",
+		"choices": ["On y va"],
+	},
+	"sofia_done": {
+		"speaker": "Sofia",
+		"text": "*te tend l'enveloppe avec les 180 reais, courbette légère* Domo arigato, sobrinho-san. Le pão de açúcar au coucher du soleil, c'est encore plus beau qu'à Hokusai. Si vous passez par Kyoto, demandez après moi à l'académie d'architecture.",
+		"choices": ["Boa viagem, Sofia"],
+	},
+	# --- Mateus — concours de pêche aux Cagarras ---
+	"mateus_intro": {
+		"speaker": "Mateus",
+		"text": "*répare son filet, sans lever la tête* Sobrinho. Pêcheur des Cagarras depuis vingt ans, j'ai vu le banc de pirajuba changer de cap trois fois. Tu pêches ?",
+		"choices": ["Un peu"],
+		"on_choose": {
+			"0": {"next": "mateus_offer"},
+		},
+	},
+	"mateus_offer": {
+		"speaker": "Mateus",
+		"text": "*finit un nœud* Petit concours informel. Tu prends mon canot, tu vas au FishingSpot près de l'îlot du milieu. Si tu ramènes une prise, 220 reais et le respect des bateaux. Si tu rentres bredouille, t'es bredouille — c'est tout. Marché ?",
+		"choices": ["J'y vais (PÊCHE AUX CAGARRAS)", "Plus tard"],
+		"on_choose": {
+			"0": {"accept_quest": "mateus_cagarras_pesca"},
+		},
+	},
+	"mateus_remind": {
+		"speaker": "Mateus",
+		"text": "*pointe la mer du menton* L'îlot du milieu. Le banc bouge avec les courants — vise la zone d'écume, pas l'eau plate.",
+		"choices": ["J'y vais"],
+	},
+	"mateus_done": {
+		"speaker": "Mateus",
+		"text": "*hoche la tête, presque souriant* Beau coup. T'as l'œil pour le banc. La mer respecte les patients, sobrinho. Reviens quand tu veux mouiller un fil.",
+		"choices": ["Valeu, Mateus"],
+	},
 	# Restaurante — Cantinho Carioca
 	"chef_intro": {
 		"speaker": "Chef",
@@ -1657,6 +1792,86 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 		"on_choose": {
 			"0": {"finish_quest": {"quest": "act2_intro", "objective": "uncover_tio_ze", "payout": 0}, "set_flag": "tio_ze_revealed", "rep": {4: 5, 0: 3}},
 		},
+	},
+	# --- Side quest : zona_sul_envelope — Sra. Caldeira (cobertura Leblon) ---
+	"caldeira_offer": {
+		"speaker": "Sra. Caldeira",
+		"text": "*pose son thé glacé, te scrute* Tu sembles avoir des jambes solides. J'ai une enveloppe à porter à mon avocat, Dr. Bandeira, à Ipanema. Discret. Tu reviens, je paie. Deux cents reais. *léger sourire* Mon défunt mari n'utilisait que des messagers — les téléphones laissent des traces.",
+		"choices": ["J'accepte", "Une autre fois"],
+		"on_choose": {
+			"0": {"accept_quest": "zona_sul_envelope"},
+		},
+	},
+	"caldeira_remind_deliver": {
+		"speaker": "Sra. Caldeira",
+		"text": "*reverse du thé glacé* L'enveloppe est dans ta poche, sobrinho. Bandeira, Ipanema, deuxième immeuble en partant du calçadão. Ne la rouvre pas.",
+		"choices": ["J'y vais"],
+	},
+	"caldeira_remind_verify": {
+		"speaker": "Sra. Caldeira",
+		"text": "*regard fixe, calme* Bandeira a lu ? Bien. Maintenant Iván — au bar d'Arpoador. Dis-lui : « la veuve demande si la mer est haute ». Il comprendra.",
+		"choices": ["Compris"],
+	},
+	"caldeira_return": {
+		"speaker": "Sra. Caldeira",
+		"text": "*ne se retourne pas de la baie vitrée* Iván a confirmé le nom ? *sourit, encore face à l'océan* Bom. Mon défunt mari disait : les concierges savent plus que les juges. *pose deux cents reais sur la table basse* Tu n'as rien vu, rien entendu.",
+		"choices": ["Tudo bem, senhora"],
+		"on_choose": {
+			"0": {"finish_quest": {"quest": "zona_sul_envelope", "objective": "return_to_caldeira", "payout": 200}, "rep": {0: 3}},
+		},
+	},
+	"caldeira_after_done": {
+		"speaker": "Sra. Caldeira",
+		"text": "*sirote un thé glacé* La discrétion paye, sobrinho. Si j'ai d'autres petites courses, je saurai où te trouver.",
+		"choices": ["Obrigada, senhora"],
+	},
+	# --- Side quest : zona_sul_envelope — Dr. Bandeira (cabinet Ipanema) ---
+	"bandeira_receive": {
+		"speaker": "Dr. Bandeira",
+		"text": "*écarte le dossier, te regarde par-dessus ses lunettes* Sra. Caldeira ? *tend la main, paume vers le haut* Donne. *ouvre l'enveloppe d'un coupe-papier, lit en silence, mâchoire serrée* Hmpf. Le concierge du Palace. Encore lui. *replie la lettre* Tu vas voir Iván au bar d'Arpoador. Mot de passe : « la veuve demande si la mer est haute ». Il confirmera le nom.",
+		"choices": ["D'accord, doutor"],
+		"on_choose": {
+			"0": {"finish_quest": {"quest": "zona_sul_envelope", "objective": "deliver_to_bandeira", "payout": 0}},
+		},
+	},
+	"bandeira_after_received": {
+		"speaker": "Dr. Bandeira",
+		"text": "*range l'enveloppe dans un tiroir, ferme à clé* Iván d'Arpoador. Mot de passe — « la veuve demande si la mer est haute ». Il te donnera un nom. Tu retournes voir Caldeira. C'est tout.",
+		"choices": ["Très bien"],
+	},
+	"bandeira_after_done": {
+		"speaker": "Dr. Bandeira",
+		"text": "*soulève à peine les yeux du dossier* La veuve a payé ? Bien. *signe une feuille* Si elle te recontacte, écoute-la. Elle paie comptant.",
+		"choices": ["Compris, doutor"],
+	},
+	"bandeira_default": {
+		"speaker": "Dr. Bandeira",
+		"text": "*ferme un dossier d'un coup sec* Beaucoup de propriétaires veulent vendre vite ces temps-ci. Sans m'appeler. *te scrute* Si quelqu'un de la famille reçoit une offre — Bandeira, deuxième étage, n'oublie pas.",
+		"choices": ["Note"],
+	},
+	# --- Side quest : zona_sul_envelope — Iván (Bar do Pôr-do-Sol, Arpoador) ---
+	"ivan_verify": {
+		"speaker": "Iván",
+		"text": "*essuie un verre, sourire neutre* Caipirinha ?\n— *tu murmures* La veuve demande si la mer est haute.\n*Iván ne sourit plus. Il pose le verre, se penche très près.* Tu diras à Caldeira : le concierge du Palace est de l'autre côté. Il a déjà encaissé. *se redresse, voix forte de nouveau* Cerveja gelada, gentil ? À la maison cette fois.",
+		"choices": ["Obrigado, Iván"],
+		"on_choose": {
+			"0": {"finish_quest": {"quest": "zona_sul_envelope", "objective": "verify_with_ivan", "payout": 0}},
+		},
+	},
+	"ivan_after_verified": {
+		"speaker": "Iván",
+		"text": "*range un verre, voix basse* Caldeira t'attend. Va lui dire ce que tu sais. Et ne reviens pas si tu vois quelqu'un te suivre.",
+		"choices": ["Compris"],
+	},
+	"ivan_after_done": {
+		"speaker": "Iván",
+		"text": "*verse une cachaça* La veuve t'a payé ? Bom. *pose le verre sur le comptoir* Reviens quand tu veux, sobrinho. Ici on entend tout, on raconte rien.",
+		"choices": ["Saúde"],
+	},
+	"ivan_default": {
+		"speaker": "Iván",
+		"text": "*essuie un verre, sourire fatigué* Chez moi le pôr-do-sol commence à dix-sept heures et finit à minuit. Caipirinha ? Cerveja gelada ? *pose le verre* On parle, on écoute. Tout passe par ce bar.",
+		"choices": ["Une cerveja"],
 	},
 }
 

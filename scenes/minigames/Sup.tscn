@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/minigames/sup/SupGame.gd" id="1_game"]
+[ext_resource type="PackedScene" path="res://scenes/ui/MinigameTouchControls.tscn" id="2_touch"]
 
 [node name="SupGame" type="Node2D"]
 script = ExtResource("1_game")
@@ -196,7 +197,10 @@ offset_left = -240.0
 offset_top = -52.0
 offset_right = 240.0
 offset_bottom = -16.0
-text = "[WASD / Flèches] pagayer"
+text = "Joystick : pagayer"
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 22
 theme_override_colors/font_color = Color(0.85, 0.85, 0.95, 1)
+
+[node name="TouchControls" parent="." instance=ExtResource("2_touch")]
+show_interact = false

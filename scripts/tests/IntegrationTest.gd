@@ -56,8 +56,14 @@ const QUEST_RESOURCES: Array[String] = [
 	"res://resources/quests/consortium_airport_pickup.tres",
 	"res://resources/quests/ronaldo_aterro_basket.tres",
 	"res://resources/quests/pedro_cagarras_sup.tres",
+	"res://resources/quests/lucas_arpoador_surf.tres",
+	"res://resources/quests/camila_ipanema_volley.tres",
+	"res://resources/quests/diego_botafogo_capoeira.tres",
+	"res://resources/quests/sofia_bondinho_tour.tres",
+	"res://resources/quests/mateus_cagarras_pesca.tres",
 	"res://resources/quests/act4_carnaval_desfile.tres",
 	"res://resources/quests/beto_lost.tres",
+	"res://resources/quests/zona_sul_envelope.tres",
 ]
 
 const NPC_DATA_DIR: String = "res://resources/npcs/"
@@ -653,6 +659,16 @@ const NPC_DISPATCH_KNOTS: Dictionary = {
 	"concierge": [
 		"concierge_act2_reveal",
 	],
+	"caldeira": [
+		"caldeira_offer", "caldeira_remind_deliver", "caldeira_remind_verify",
+		"caldeira_return", "caldeira_after_done",
+	],
+	"bandeira": [
+		"bandeira_receive", "bandeira_after_received", "bandeira_after_done", "bandeira_default",
+	],
+	"ivan": [
+		"ivan_verify", "ivan_after_verified", "ivan_after_done", "ivan_default",
+	],
 }
 
 func _test_npc_dispatch_knots() -> void:
@@ -777,6 +793,11 @@ const SCRIPT_COMPLETED_OBJECTIVES: Dictionary = {
 	"ronaldo_maracana_torcida": ["lead_torcida"],
 	"ronaldo_aterro_basket": ["win_basket_session"],
 	"pedro_cagarras_sup": ["round_islands"],
+	"lucas_arpoador_surf": ["win_surf_session"],
+	"camila_ipanema_volley": ["win_volley_match"],
+	"diego_botafogo_capoeira": ["tip_diego"],
+	"sofia_bondinho_tour": ["guide_to_summit"],
+	"mateus_cagarras_pesca": ["haul_catch"],
 	# Viewpoint dans le district Corcovado.
 	"padre_corcovado_relic": ["bless_at_corcovado"],
 	# MainBoot._on_district_changed coche les étapes du tour à l'arrivée.

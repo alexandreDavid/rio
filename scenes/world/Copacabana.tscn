@@ -190,7 +190,7 @@ payout = 0
 position = Vector2(1700, 100)
 
 [node name="TouristVIP" parent="." instance=ExtResource("13_tourist_vip")]
-position = Vector2(1790, 122)
+position = Vector2(1850, 122)
 
 [node name="Musicien" parent="." instance=ExtResource("11_musicien")]
 position = Vector2(610, 118)
@@ -255,6 +255,103 @@ variants = [{
 "speaker": "Beto",
 "text": "*joue dans le sable, fait un château bancal* Olá ! Tu sais faire les châteaux qui tiennent jusqu'à la marée ?",
 "choices": ["Bonne chance, Beto"]
+}]
+
+[node name="LurdesShadow" type="ColorRect" parent="."]
+offset_left = 454.0
+offset_top = 223.0
+offset_right = 466.0
+offset_bottom = 226.0
+color = Color(0, 0, 0, 0.32)
+
+[node name="LurdesBody" type="ColorRect" parent="."]
+offset_left = 456.0
+offset_top = 211.0
+offset_right = 464.0
+offset_bottom = 223.0
+color = Color(0.85, 0.55, 0.62, 1)
+
+[node name="LurdesHead" type="ColorRect" parent="."]
+offset_left = 457.0
+offset_top = 205.0
+offset_right = 463.0
+offset_bottom = 211.0
+color = Color(0.85, 0.65, 0.5, 1)
+
+[node name="LurdesHair" type="ColorRect" parent="."]
+offset_left = 456.0
+offset_top = 203.0
+offset_right = 464.0
+offset_bottom = 206.0
+color = Color(0.92, 0.92, 0.85, 1)
+
+[node name="LurdesSpot" parent="." instance=ExtResource("62_reactive")]
+position = Vector2(460, 215)
+npc_id = "coco_regular"
+prompt = "Parler à Dona Lurdes"
+variants = [{
+"id": "after_envelope",
+"quest_completed": "zona_sul_envelope",
+"speaker": "Dona Lurdes",
+"text": "*sirote son coco à la paille, baisse la voix* Tu sais, sobrinho, on parle aux Postes. La veuve de Leblon — Caldeira — elle cherche encore quelqu'un de fiable. *fait un signe vers le calçadão* Elle paie cash. Elle dit rien. Si tu veux y retourner, le portier connaît ta tête maintenant.",
+"choices": ["Obrigado, dona"]
+}, {
+"id": "default",
+"speaker": "Dona Lurdes",
+"text": "*assise sur le sable, t-shirt délavé, coco à la main* Quarante ans que je viens ici, mon fils. Le sable change, le vendeur de coco non. *aspire à la paille* C'est ça la vraie Copacabana — pas les hôtels, pas les touristes.",
+"choices": ["Belo, dona"]
+}]
+
+[node name="RenatoShadow" type="ColorRect" parent="."]
+offset_left = 1729.0
+offset_top = 114.0
+offset_right = 1741.0
+offset_bottom = 117.0
+color = Color(0, 0, 0, 0.32)
+
+[node name="RenatoBody" type="ColorRect" parent="."]
+offset_left = 1731.0
+offset_top = 103.0
+offset_right = 1739.0
+offset_bottom = 115.0
+color = Color(0.78, 0.18, 0.18, 1)
+
+[node name="RenatoBodyButtons" type="ColorRect" parent="."]
+offset_left = 1734.0
+offset_top = 106.0
+offset_right = 1736.0
+offset_bottom = 113.0
+color = Color(0.95, 0.85, 0.32, 1)
+
+[node name="RenatoHead" type="ColorRect" parent="."]
+offset_left = 1732.0
+offset_top = 97.0
+offset_right = 1738.0
+offset_bottom = 103.0
+color = Color(0.55, 0.42, 0.32, 1)
+
+[node name="RenatoCap" type="ColorRect" parent="."]
+offset_left = 1731.0
+offset_top = 94.0
+offset_right = 1739.0
+offset_bottom = 97.0
+color = Color(0.42, 0.12, 0.12, 1)
+
+[node name="RenatoSpot" parent="." instance=ExtResource("62_reactive")]
+position = Vector2(1735, 105)
+npc_id = "palace_bellboy"
+prompt = "Parler à Renato"
+variants = [{
+"id": "after_envelope",
+"quest_completed": "zona_sul_envelope",
+"speaker": "Renato",
+"text": "*ajuste sa casquette rouge, regard fuyant, fait mine d'épousseter une valise invisible* Le concierge ? *baisse la voix* Toutes les veuves de Leblon descendent en bas pour lui parler. Sra. Caldeira en premier — trois fois cette semaine. *te scrute* Si tu travailles pour elle, sobrinho, dis-lui : le concierge connaît plus de noms que les juges. Et il commence à les vendre.",
+"choices": ["Compris, Renato"]
+}, {
+"id": "default",
+"speaker": "Renato",
+"text": "*ajuste sa casquette rouge, sourire d'opérette* Le Palace, sobrinho, c'est trois étages d'histoires qu'on raconte pas. Sinon on perd le job. *te tend une carte mentale* Une nuit ici, c'est huit cents reais. *rit* Compte pas sur moi pour faire une remise.",
+"choices": ["Belo"]
 }]
 
 [node name="Consortium" parent="." instance=ExtResource("28_consortium")]
@@ -379,7 +476,7 @@ z_index = 1
 position = Vector2(-12000, -2900)
 
 [node name="ExitToZonaSul" parent="." instance=ExtResource("58_exit")]
-position = Vector2(-280, 110)
+position = Vector2(20, 110)
 target_district = "zona_sul"
 label_text = "← ARPOADOR / IPANEMA"
 

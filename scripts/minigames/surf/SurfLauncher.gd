@@ -36,9 +36,15 @@ func _launch() -> void:
 	if _active_match.has_signal("match_ended"):
 		_active_match.match_ended.connect(_on_match_ended)
 
+const LUCAS_QUEST_ID: String = "lucas_arpoador_surf"
+const LUCAS_OBJ_ID: String = "win_surf_session"
+
 func _on_match_ended(qualifies: bool, _time_survived: float) -> void:
 	if qualifies:
 		ReputationSystem.gain_capped(ReputationSystem.Axis.TOURIST, 1, "surf", 3)
+		# Quête Lucas (Arpoador) : la 1re session surf qualifiée coche l'objectif.
+		if QuestManager.is_active(LUCAS_QUEST_ID):
+			QuestManager.complete_objective(LUCAS_QUEST_ID, LUCAS_OBJ_ID)
 	if _active_match:
 		_active_match.queue_free()
 		_active_match = null

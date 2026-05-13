@@ -102,6 +102,7 @@ var _plate_cook_time: float = 0.0
 @onready var tutorial_root: Control = $UI/Tutorial
 @onready var tutorial_button: Button = $UI/Tutorial/Panel/Margin/Layout/StartButton
 @onready var help_button: Button = $UI/HelpButton
+@onready var touch_controls: CanvasLayer = get_node_or_null("TouchControls")
 
 const COOK_BAR_WIDTH: float = 360.0
 
@@ -114,7 +115,7 @@ func _ready() -> void:
 		cam.make_current()
 	_set_status("Bom dia ! Trois ingrédients sur la plaque, puis four, puis panier.")
 	if prompt_label:
-		prompt_label.text = "[E] Prendre · Déposer · Sortir du four · Vendre · Jeter"
+		prompt_label.text = "Joystick : bouger · Bouton Action : prendre / déposer / vendre"
 	_position_perfect_markers()
 	_refresh_plate_visuals()
 	_refresh_oven_smoke()
@@ -126,6 +127,8 @@ func _ready() -> void:
 		tutorial_root.visible = true
 	if help_button:
 		help_button.visible = false  # caché tant que le tuto est ouvert
+	if touch_controls:
+		touch_controls.visible = false
 
 func _position_perfect_markers() -> void:
 	if cook_perfect_marker_a:
@@ -154,6 +157,8 @@ func _close_tutorial() -> void:
 		tutorial_root.visible = false
 	if help_button:
 		help_button.visible = true
+	if touch_controls:
+		touch_controls.visible = true
 
 func _open_tutorial() -> void:
 	_tutorial_visible = true
@@ -161,6 +166,8 @@ func _open_tutorial() -> void:
 		tutorial_root.visible = true
 	if help_button:
 		help_button.visible = false
+	if touch_controls:
+		touch_controls.visible = false
 
 func _update_player(delta: float) -> void:
 	var dir: Vector2 = Vector2(

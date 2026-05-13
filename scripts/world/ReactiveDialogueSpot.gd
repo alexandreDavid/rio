@@ -73,4 +73,33 @@ func _variant_matches(v: Dictionary) -> bool:
 	var min_act: int = int(v.get("act", 0))
 	if min_act > 0 and CampaignManager.current_act < min_act:
 		return false
+	# Conditions liées aux quêtes — permettent à un spot de réagir à l'état narratif
+	# sans avoir à miroiter chaque objectif dans un flag.
+	var quest_active: String = v.get("quest_active", "")
+	if quest_active != "" and not QuestManager.is_active(quest_active):
+		return false
+	var quest_completed: String = v.get("quest_completed", "")
+	if quest_completed != "" and not QuestManager.is_completed(quest_completed):
+		return false
+	var quest_not_active: String = v.get("quest_not_active", "")
+	if quest_not_active != "" and QuestManager.is_active(quest_not_active):
+		return false
+	var quest_not_completed: String = v.get("quest_not_completed", "")
+	if quest_not_completed != "" and QuestManager.is_completed(quest_not_completed):
+		return false
+	# `objective_done` / `objective_pending` : [quest_id, objective_id]. Pour
+	# `done`, la quête peut être active ou complétée — on regarde juste l'état
+	# de l'objectif. Pour `pending`, la quête doit être active et l'objectif false.
+	var obj_done: Array = v.get("objective_done", [])
+	if obj_done.size() == 2:
+		var state: Dictionary = QuestManager.get_objectives_state(String(obj_done[0]))
+		if not bool(state.get(String(obj_done[1]), false)):
+			return false
+	var obj_pending: Array = v.get("objective_pending", [])
+	if obj_pending.size() == 2:
+		if not QuestManager.is_active(String(obj_pending[0])):
+			return false
+		var state2: Dictionary = QuestManager.get_objectives_state(String(obj_pending[0]))
+		if bool(state2.get(String(obj_pending[1]), false)):
+			return false
 	return true

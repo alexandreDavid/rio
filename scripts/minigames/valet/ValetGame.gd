@@ -77,6 +77,7 @@ var _slot_highlights: Array = []  # Array[ColorRect] indexée comme SLOTS
 @onready var tutorial_root: Control = $UI/Tutorial
 @onready var tutorial_button: Button = $UI/Tutorial/Panel/Margin/Layout/StartButton
 @onready var help_button: Button = $UI/HelpButton
+@onready var touch_controls: CanvasLayer = get_node_or_null("TouchControls")
 
 var _tutorial_visible: bool = true
 
@@ -88,7 +89,7 @@ func _ready() -> void:
 	_collect_slot_highlights()
 	_set_status("Bem-vindo ao Copa. Le service ouvre.")
 	if prompt_label:
-		prompt_label.text = "[E] Prendre · Garer · Restituer    [WASD/Flèches] Bouger"
+		prompt_label.text = "Joystick : bouger · Bouton Action : prendre / garer / restituer"
 	_refresh_drop_zone_visual()
 	if tutorial_button:
 		tutorial_button.pressed.connect(_close_tutorial)
@@ -98,6 +99,8 @@ func _ready() -> void:
 		tutorial_root.visible = true
 	if help_button:
 		help_button.visible = false
+	if touch_controls:
+		touch_controls.visible = false
 
 func _collect_slot_highlights() -> void:
 	if arena == null:
@@ -128,6 +131,8 @@ func _close_tutorial() -> void:
 		tutorial_root.visible = false
 	if help_button:
 		help_button.visible = true
+	if touch_controls:
+		touch_controls.visible = true
 
 func _open_tutorial() -> void:
 	_tutorial_visible = true
@@ -135,6 +140,8 @@ func _open_tutorial() -> void:
 		tutorial_root.visible = true
 	if help_button:
 		help_button.visible = false
+	if touch_controls:
+		touch_controls.visible = false
 
 func _update_player(delta: float) -> void:
 	var dir: Vector2 = Vector2(

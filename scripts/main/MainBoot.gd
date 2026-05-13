@@ -68,8 +68,14 @@ const QUEST_RESOURCES: Array[String] = [
 	"res://resources/quests/consortium_airport_pickup.tres",
 	"res://resources/quests/ronaldo_aterro_basket.tres",
 	"res://resources/quests/pedro_cagarras_sup.tres",
+	"res://resources/quests/lucas_arpoador_surf.tres",
+	"res://resources/quests/camila_ipanema_volley.tres",
+	"res://resources/quests/diego_botafogo_capoeira.tres",
+	"res://resources/quests/sofia_bondinho_tour.tres",
+	"res://resources/quests/mateus_cagarras_pesca.tres",
 	"res://resources/quests/act4_carnaval_desfile.tres",
 	"res://resources/quests/beto_lost.tres",
+	"res://resources/quests/zona_sul_envelope.tres",
 ]
 
 # Quêtes auto-acceptées dès qu'elles deviennent disponibles (passage d'acte).

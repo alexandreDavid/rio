@@ -31,6 +31,9 @@ func get_quest(quest_id: String) -> Quest:
 func get_objectives_state(quest_id: String) -> Dictionary:
 	return _objectives.get(quest_id, {})
 
+func is_objective_done(quest_id: String, objective_id: String) -> bool:
+	return bool(_objectives.get(quest_id, {}).get(objective_id, false))
+
 func get_active_ids() -> Array[String]:
 	var out: Array[String] = []
 	for id in _state:

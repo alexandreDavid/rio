@@ -90,7 +90,7 @@ const WALK_ENTRIES: Dictionary = {
 	# pointant vers la source — sinon ping-pong infini (le joueur arrive,
 	# touche immédiatement le trigger retour, repart, etc.).
 	"copacabana": {
-		"zona_sul":           Vector2(-240, 110),    # depuis Arpoador (ouest, après le Forte)
+		"zona_sul":           Vector2(60, 110),      # depuis Arpoador — est de ExitToZonaSul (x=20)
 		"botafogo_flamengo":  Vector2(2150, -100),   # arrivée Túnel Novo (Av. Princesa Isabel) — sud de l'exit (-210)
 		"favela_morro":       Vector2(200, -100),    # arrivée pied du morro (Forte) — sud de ExitToFavela (-210)
 	},

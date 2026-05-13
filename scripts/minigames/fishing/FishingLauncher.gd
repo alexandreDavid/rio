@@ -39,10 +39,16 @@ func _launch() -> void:
 	if _active_match.has_signal("match_ended"):
 		_active_match.match_ended.connect(_on_match_ended)
 
+const MATEUS_QUEST_ID: String = "mateus_cagarras_pesca"
+const MATEUS_OBJ_ID: String = "haul_catch"
+
 func _on_match_ended(_won: bool, payout: int) -> void:
 	var inv: Inventory = _player_inventory()
 	if inv and payout > 0:
 		inv.add_money(payout)
+	# Quête Mateus (Cagarras) : 1re session avec un payout > 0 coche l'objectif.
+	if payout > 0 and QuestManager.is_active(MATEUS_QUEST_ID):
+		QuestManager.complete_objective(MATEUS_QUEST_ID, MATEUS_OBJ_ID)
 	if _active_match:
 		_active_match.queue_free()
 		_active_match = null

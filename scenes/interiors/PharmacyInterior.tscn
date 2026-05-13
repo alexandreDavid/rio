@@ -16,6 +16,9 @@ size = Vector2(220, 22)
 [sub_resource type="RectangleShape2D" id="ShelfShape"]
 size = Vector2(160, 16)
 
+[sub_resource type="RectangleShape2D" id="FarmaInteractWide"]
+size = Vector2(120, 200)
+
 [node name="PharmacyInterior" type="Node2D"]
 
 [node name="Floor" type="ColorRect" parent="."]
@@ -163,6 +166,9 @@ position = Vector2(0, 75)
 
 [node name="Farmaceutico" parent="." instance=ExtResource("2_farma")]
 position = Vector2(0, -50)
+
+[node name="InteractShape" parent="Farmaceutico/Interactable" index="0"]
+shape = SubResource("FarmaInteractWide")
 
 [node name="ElderlyClient" parent="." instance=ExtResource("3_wander")]
 position = Vector2(-90, 30)
