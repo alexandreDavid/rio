@@ -65,6 +65,20 @@ func _physics_process(delta: float) -> void:
 	velocity = input * speed
 	move_and_slide()
 	_update_visual(delta)
+	# Footsteps : AudioManager accumule la distance et émet un step toutes les ~24 px.
+	AudioManager.notify_player_position(global_position, _current_surface())
+
+# Surface dominante par district pour choisir le bon SFX de pas. Heuristique
+# simple par district — pas de détection par tile y, on garde ça léger.
+func _current_surface() -> String:
+	var d: String = DistrictManager.current()
+	match d:
+		"copacabana", "zona_sul", "cagarras":
+			return "sand"
+		"corcovado", "aterro_flamengo":
+			return "grass"
+		_:
+			return "road"
 
 # Appelé par Rideable.mount/dismount. Désactive la collision pour ne pas pousser
 # le véhicule, masque rien (le sprite reste visible sur la selle).

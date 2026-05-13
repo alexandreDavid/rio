@@ -167,6 +167,35 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 		"text": "Dette soldée, parceiro. Claudinho, range ta samba funèbre. Tu es un homme libre… pour l'instant.",
 		"choices": ["Merci"],
 	},
+	# --- Visites surprise des créanciers (CreditorVisitManager) ---
+	"creditor_visit_soft": {
+		"speaker": "Dom Nilton (consortium)",
+		"text": "*surgit derrière toi, main sur ton épaule, sourire pas amical* Sobrinho. Je passais dans le quartier. Cent reais, là, tout de suite, ça me ferait plaisir. Une petite goutte sur le tonneau. *attend, la paume ouverte*",
+		"choices": ["Poser 100 R$", "Pas maintenant, Dom Nilton"],
+		"on_choose": {
+			"0": {"pay_debt": 100, "rep": {1: 1}},
+			"1": {"rep": {1: -1, 3: -1}},
+		},
+	},
+	"creditor_visit_ultimatum": {
+		"speaker": "Dom Nilton (consortium)",
+		"text": "*te coupe la route, deux types derrière lui en arrière-plan* Sobrinho, ça fait des semaines. Cinq cents reais sur la table aujourd'hui, ou Claudinho commence à composer ta samba funèbre demain. *jette un coup d'œil aux deux types* Ils dorment mal, eux. Ça les soulagerait, un peu d'action.",
+		"choices": ["Poser 500 R$", "Négocier (200 R$, perdre rep)", "Je n'ai pas l'argent"],
+		"on_choose": {
+			"0": {"pay_debt": 500, "rep": {1: 2}},
+			"1": {"pay_debt": 200, "rep": {1: -1, 3: -2}},
+			"2": {"rep": {1: -2, 3: -2}, "set_flag": "creditor_ultimatum_refused"},
+		},
+	},
+	"creditor_visit_raid": {
+		"speaker": "Cobrador",
+		"text": "*deux types t'encadrent, le plus grand a une chaîne en or qu'il fait jouer entre ses doigts* Tu connais le tarif, sobrinho ? On vide les poches, on prend ce qu'il y a, on s'en va. Ou tu sors le couteau et on s'arrange autrement. *l'autre rit sans bruit*",
+		"choices": ["Vider mes poches (perdre 50% du cash)", "Tenter de fuir"],
+		"on_choose": {
+			"0": {"raid_pct": 0.5, "rep": {1: -1}},
+			"1": {"raid_pct": 0.7, "rep": {2: 1, 1: -2}},
+		},
+	},
 	# --- Side quest : aller chercher Don Salvatore à Santos Dumont ---
 	"consortium_airport_offer": {
 		"speaker": "Dom Nilton (consortium)",
@@ -2037,6 +2066,17 @@ func _apply_placeholder_action(action: Dictionary) -> void:
 		return
 	if action.has("pay_debt"):
 		pay_debt(int(action.pay_debt))
+		return
+	# Raid : prend un % de l'argent du joueur. Utilisé par CreditorVisitManager
+	# quand un cobrador débarque et force le paiement. Float 0..1.
+	if action.has("raid_pct"):
+		var pct: float = clamp(float(action.raid_pct), 0.0, 1.0)
+		if inv:
+			var taken: int = int(round(float(inv.money) * pct))
+			inv.spend_money(taken)
+		if action.has("rep"):
+			for axis_key in action.rep:
+				ReputationSystem.modify(int(axis_key), action.rep[axis_key])
 		return
 	if action.has("earn"):
 		# Gain direct, hors quête (jobs répétables : shifts au bar, promenade du chien…).

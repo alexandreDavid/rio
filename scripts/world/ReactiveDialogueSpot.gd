@@ -102,4 +102,11 @@ func _variant_matches(v: Dictionary) -> bool:
 		var state2: Dictionary = QuestManager.get_objectives_state(String(obj_pending[0]))
 		if bool(state2.get(String(obj_pending[1]), false)):
 			return false
+	# Phase de la journée — TimeOfDay.Phase : 0=MORNING, 1=AFTERNOON, 2=EVENING.
+	# `phase` : la variante ne s'affiche que pendant cette phase.
+	# `not_phase` : la variante ne s'affiche PAS pendant cette phase.
+	if v.has("phase") and TimeOfDay.current_phase != int(v.get("phase", -1)):
+		return false
+	if v.has("not_phase") and TimeOfDay.current_phase == int(v.get("not_phase", -1)):
+		return false
 	return true

@@ -1,0 +1,17 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/BettingKiosk.gd" id="1_bet"]
+[ext_resource type="Script" path="res://scripts/world/Interactable.gd" id="2_inter"]
+
+[sub_resource type="RectangleShape2D" id="ProxShape"]
+size = Vector2(60, 60)
+
+[node name="BettingKiosk" type="Node2D"]
+script = ExtResource("1_bet")
+
+[node name="Interactable" type="Area2D" parent="."]
+script = ExtResource("2_inter")
+prompt = "Parier"
+
+[node name="Shape" type="CollisionShape2D" parent="Interactable"]
+shape = SubResource("ProxShape")

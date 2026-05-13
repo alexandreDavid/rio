@@ -145,7 +145,7 @@ func _on_corn_cart_state_changed(_carrying: bool) -> void:
 const TOUR_OBJECTIVES: Dictionary = {
 	"corcovado":  "see_corcovado",
 	"pao_acucar": "see_paoacucar",
-	"lagoa":      "see_lagoa",
+	"zona_sul":   "see_lagoa",  # La Lagoa est désormais intégrée dans le district Zona Sul
 	# Maracanã n'est pas dans le tour officiel — c'est plus une activité supporter.
 }
 

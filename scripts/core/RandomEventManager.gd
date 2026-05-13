@@ -78,6 +78,83 @@ const EVENT_POOL: Array = [
 		"icon": "⚽",
 		"spawn_zones": ["sand"],
 	},
+	{
+		"id": "pickpocket_kid",
+		"label": "Carteirista",
+		"speaker": "Sobrinho",
+		"text": "Tu sens une main glisser dans ta poche arrière. Tu retournes — un gosse, treize ans peut-être, déjà à dix mètres. Trop tard. *vérifies ton fric* Quinze reais évaporés. Une partie de toi a presque envie de l'applaudir pour la technique.",
+		"money": -15,
+		"rep_axis": -1,
+		"rep_amount": 0,
+		"icon": "🏃",
+		"spawn_zones": ["av_atlantica", "calcadao"],
+	},
+	{
+		"id": "wedding_photographer",
+		"label": "Photo de mariage",
+		"speaker": "Mariée",
+		"text": "*la mariée et son nouvel époux courent sur le sable, le photographe a deux secondes pour le shot* Senhor ! Vous voulez nous tenir le bouquet pendant la photo ? *vingt secondes de gloire, le photographe te glisse 30 reais dans la main au passage*",
+		"money": 30,
+		"rep_axis": 3,  # TOURIST
+		"rep_amount": 1,
+		"icon": "📸",
+		"spawn_zones": ["sand", "calcadao"],
+	},
+	{
+		"id": "street_fight",
+		"label": "Briga de rua",
+		"speaker": "Sobrinho",
+		"text": "Deux hommes ivres se balancent des mots devant le bar. Un commence à lever le poing. Tu te glisses entre les deux, mains levées : « calma, fica frio, vão sentar ». Ça désamorce. Le barman, soulagé, te file une cachaça gratuite — 8 reais d'économie.",
+		"money": 8,
+		"rep_axis": 2,  # STREET
+		"rep_amount": 2,
+		"icon": "✋",
+		"spawn_zones": ["av_atlantica"],
+	},
+	{
+		"id": "lost_kid",
+		"label": "Criança perdida",
+		"speaker": "Gamin",
+		"text": "*petit, six ans peut-être, t-shirt orange, mâche sa main* Eu... j'sais plus où est maman. *tu repères une femme paniquée au loin sur le calçadão, tu lui ramènes le gamin* La mère essaie de te donner 50 reais, refuses, elle insiste, tu finis par prendre 20 pour faire la paix.",
+		"money": 20,
+		"rep_axis": 0,  # CIVIC
+		"rep_amount": 2,
+		"icon": "👶",
+		"spawn_zones": ["sand", "calcadao"],
+	},
+	{
+		"id": "fake_rolex",
+		"label": "Rolex mystère",
+		"speaker": "Vendedor",
+		"text": "*ouvre sa veste, six montres alignées sur la doublure* Rolex original, freguês, 80 reais. *tu inspectes, le poids sonne creux, la trotteuse saute par à-coups* Tu hausses les épaules et reprends ta route. Le mec t'insulte en s'éloignant. Pas une bonne affaire.",
+		"money": 0,
+		"rep_axis": -1,
+		"rep_amount": 0,
+		"icon": "⌚",
+		"spawn_zones": ["av_atlantica"],
+	},
+	{
+		"id": "homeless_blessing",
+		"label": "Vovó da rua",
+		"speaker": "Sobrinho",
+		"text": "Une vieille recroquevillée près du mur, regard clair. Tu lui glisses 10 reais sans réfléchir. Elle te prend la main, te dit quelque chose en bas-portugais que tu ne comprends qu'à moitié — « ton oncle te regarde, sobrinho ». Tu sens ton dos se redresser tout seul.",
+		"money": -10,
+		"rep_axis": 0,  # CIVIC
+		"rep_amount": 3,
+		"icon": "🕊️",
+		"spawn_zones": ["nossa_senhora", "av_atlantica"],
+	},
+	{
+		"id": "ipanema_band",
+		"label": "Cordel de bossa",
+		"speaker": "Sobrinho",
+		"text": "Un trio bossa s'est installé sur le calçadão : guitare, voix, cajón. Tu t'arrêtes, t'écoutes Garota de Ipanema version 2026. Cinq minutes, dix. Tu laisses 5 reais dans le chapeau au moment de partir.",
+		"money": -5,
+		"rep_axis": 4,  # CHARISMA
+		"rep_amount": 2,
+		"icon": "🎸",
+		"spawn_zones": ["calcadao"],
+	},
 ]
 
 # Zones de spawn → bbox approximative dans le monde Copacabana.

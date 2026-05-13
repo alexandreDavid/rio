@@ -157,6 +157,7 @@ func _ready() -> void:
 	_spawn_forte()
 	_spawn_leme_rocks()
 	_spawn_zone_markers()
+	_spawn_streetlamps()
 	_spawn_ambient_wanderers()
 
 func _spawn_tile_strip(container_name: String, y_top: float, y_bot: float, tile_region: Rect2, z_idx: int = -5) -> void:
@@ -1406,3 +1407,51 @@ func _add_wanderer(container: Node, scene: PackedScene, pos: Vector2, color: Col
 	w.set("hat_color", hat_color)
 	w.set("hat", hat)
 	container.add_child(w)
+
+# Lampadaires le long du calçadão, à intervalles réguliers. Le poteau est
+# toujours visible (visuel statique) ; le halo + l'ampoule sont tagués
+# "nightlight" et s'allument uniquement le soir (cf. DayLighting.gd).
+func _spawn_streetlamps() -> void:
+	var container: Node2D = Node2D.new()
+	container.name = "StreetLamps"
+	add_child(container)
+	const LAMP_Y_POLE_TOP: float = 90.0
+	const LAMP_Y_POLE_BOTTOM: float = 124.0
+	const LAMP_SPACING: float = 280.0
+	var x: float = map_start_x + 100.0
+	while x <= map_end_x:
+		_spawn_one_streetlamp(container, x)
+		x += LAMP_SPACING
+
+func _spawn_one_streetlamp(parent: Node, x: float) -> void:
+	# Poteau (visible jour + nuit)
+	var pole: ColorRect = ColorRect.new()
+	pole.name = "Pole"
+	pole.offset_left = x - 2.0
+	pole.offset_top = 90.0
+	pole.offset_right = x + 2.0
+	pole.offset_bottom = 124.0
+	pole.color = Color(0.32, 0.30, 0.30, 1)
+	parent.add_child(pole)
+	# Halo jaune (groupe nightlight)
+	var halo: ColorRect = ColorRect.new()
+	halo.name = "Halo"
+	halo.offset_left = x - 14.0
+	halo.offset_top = 80.0
+	halo.offset_right = x + 14.0
+	halo.offset_bottom = 100.0
+	halo.color = Color(1.0, 0.92, 0.55, 0.45)
+	halo.add_to_group("nightlight")
+	halo.visible = false
+	parent.add_child(halo)
+	# Ampoule (groupe nightlight)
+	var bulb: ColorRect = ColorRect.new()
+	bulb.name = "Bulb"
+	bulb.offset_left = x - 3.0
+	bulb.offset_top = 88.0
+	bulb.offset_right = x + 3.0
+	bulb.offset_bottom = 94.0
+	bulb.color = Color(1.0, 0.95, 0.62, 1)
+	bulb.add_to_group("nightlight")
+	bulb.visible = false
+	parent.add_child(bulb)

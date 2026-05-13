@@ -63,12 +63,24 @@ const DEFAULT_SCHEDULE: Dictionary = {
 	# la téléporter dans la rue au démarrage.
 	"ze_bar": [{"pos": Vector2(500, 96)}],
 	"jorge": [{"pos": Vector2(1335, -100)}],
-	"musicien": [{"pos": Vector2(600, 96)}],
+	"musicien": [
+		{"phase": 2, "pos": Vector2(9999, -9999)},  # rentre chez lui le soir
+		{"pos": Vector2(600, 96)},
+	],
 	# joggeur : patrouille gérée par NPCPatrol — pas de règle scheduler pour ne pas l'interrompre.
-	"pecheur": [{"pos": Vector2(200, 200)}],
-	"coconut_vendor": [{"pos": Vector2(420, 200)}],
+	"pecheur": [
+		{"phase": 2, "pos": Vector2(9999, -9999)},  # pêche s'arrête au coucher du soleil
+		{"pos": Vector2(200, 200)},
+	],
+	"coconut_vendor": [
+		{"phase": 2, "pos": Vector2(9999, -9999)},  # ferme le kiosque le soir
+		{"pos": Vector2(420, 200)},
+	],
 	"military_pm": [{"pos": Vector2(100, 96)}],
-	"tourist_vip": [{"pos": Vector2(1780, 96)}],
+	"tourist_vip": [
+		{"phase": 2, "pos": Vector2(9999, -9999)},  # rentre à l'hôtel pour le dîner
+		{"pos": Vector2(1780, 96)},
+	],
 	"policier": [{"pos": Vector2(1200, 96)}],
 }
 

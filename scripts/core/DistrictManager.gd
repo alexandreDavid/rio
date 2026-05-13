@@ -33,11 +33,6 @@ const DISTRICTS: Dictionary = {
 		"node_name": "PaoAcucarDistrict",
 		"taxi_available": false,
 	},
-	"lagoa": {
-		"label": "Lagoa Rodrigo de Freitas",
-		"fare": 12,
-		"node_name": "LagoaDistrict",
-	},
 	"maracana": {
 		"label": "Maracanã — torcida pela Seleção",
 		"fare": 18,
