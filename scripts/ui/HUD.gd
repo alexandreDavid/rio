@@ -389,6 +389,14 @@ const MAIN_NEXT_HINT: Dictionary = {
 		"text": "✓ Audiences données — Sambódromo : mène le Carnaval",
 		"hide_signals": ["act4_carnaval_desfile"],
 	},
+	"consortium_peninsula": {
+		"text": "✦ Chaîne consortium scellée — Magalhães te rappelle au Riserva Uno (Barra)",
+		"hide_signals": ["pacto_barra"],
+	},
+	"pacto_barra": {
+		"text": "✓ Pacto da Barra signé — endossement politique en poche",
+		"hide_signals": [],
+	},
 }
 
 # Toast doré pour chaque MAIN qui vient de devenir disponible (prereq satisfait

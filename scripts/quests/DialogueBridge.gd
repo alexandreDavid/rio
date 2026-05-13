@@ -288,6 +288,33 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 		"text": "*évite ton regard, change de trottoir mentalement* Bonjour, monsieur. *court vers les ascenseurs* Excusez-moi, j'ai une réunion de copropriété.",
 		"choices": ["Bonne journée, Sr. Magalhães"],
 	},
+	# --- Pacto da Barra (MAIN, prereq = consortium_peninsula) ---
+	# Magalhães revient — il a vu Carrasco signer, puis Mendonça plier. La peur
+	# initiale est devenue calcul. Il propose une rente officielle + un
+	# endossement politique tenu en réserve. Pour le joueur : pivot business
+	# qui efface un gros morceau de dette sans nouvelle violence. Deux visites :
+	# offer (accepte la quête) puis seal (paie + finish + flag).
+	"magalhaes_pacto_offer": {
+		"speaker": "Sr. Magalhães",
+		"text": "*t'attend dans le hall, costume repassé, sourire mesuré* Sobrinho. *te tend la main, geste appris* Carrasco a signé. Mendonça a signé. Les trois plus gros condomínios de la Barra, sous le même drapeau. *baisse la voix* Ce n'est plus une protection — c'est un fief. J'ai parlé au conseil. On veut formaliser : rente officielle, plus… *hésite* une lettre d'endossement politique. À utiliser quand vous en aurez besoin. Cinq mille reais cash, dix mille de votre dette effacée. Vous êtes intéressé ?",
+		"choices": ["J'accepte — je reviens demain pour signer", "Pas maintenant"],
+		"on_choose": {
+			"0": {"accept_quest": "pacto_barra"},
+		},
+	},
+	"magalhaes_pacto_seal": {
+		"speaker": "Sr. Magalhães",
+		"text": "*sort un dossier en cuir noir, deux exemplaires* Voici. Pacto da Barra — c'est comme ça que le conseil l'a appelé. *pousse un stylo Montblanc vers toi* Vous signez ici, ici, et là. *te regarde* Et vous gardez cette enveloppe en lieu sûr. *te tend une seconde enveloppe scellée* Endossement politique. Le jour où vous voudrez vous présenter — ou faire élire quelqu'un — vous l'ouvrez, et tout Barra suit. *referme le dossier* À partir de ce soir, le consortium n'envoie plus personne. C'est vous, et nous, directement.",
+		"choices": ["Pacto scellé"],
+		"on_choose": {
+			"0": {"finish_quest": {"quest": "pacto_barra", "objective": "seal_pacto", "payout": 5000}, "pay_debt": 10000, "rep": {4: 8}, "set_flag": "barra_pacto_sealed"},
+		},
+	},
+	"magalhaes_after_pacto": {
+		"speaker": "Sr. Magalhães",
+		"text": "*te salue d'un hochement discret, comme à un égal* Tudo bem, sobrinho. *montre l'enveloppe que tu détiens, sous-entendu* Le jour venu, vous savez où me trouver.",
+		"choices": ["Tudo bem, Sr. Magalhães"],
+	},
 	# --- Chaîne consortium 2 : Le Parc Residences ---
 	"consortium_le_parc_offer": {
 		"speaker": "Dom Nilton (consortium)",
