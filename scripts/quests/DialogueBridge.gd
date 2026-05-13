@@ -1282,6 +1282,17 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 			"0": {"finish_quest": {"quest": "act3_prefeito_endorsements", "objective": "endorse_padeiro", "payout": 0}},
 		},
 	},
+	# Variante Pacto da Barra : Magalhães a déjà glissé une enveloppe au Padre,
+	# qui la rétrocède comme « contribution civique ». Routée par Padre.gd
+	# quand barra_pacto_sealed est vrai.
+	"padre_act3_endorse_close_with_barra": {
+		"speaker": "Padre Anselmo",
+		"text": "*pose la main sur ton épaule, sourit largement* Tu as Carlos, le padeiro, et ma bénédiction. *sort une enveloppe de cuir noir, sceau de Riserva Uno* Et ceci. Magalhães me l'a fait porter avant-hier — il a écrit « Pacto da Barra » au dos. *te tend une liasse* Sa contribution à la coalition : trois mille reais. La Barra avec la paroisse, c'est rare. Tu sais quoi faire de ça.",
+		"choices": ["Amen, padre"],
+		"on_choose": {
+			"0": {"finish_quest": {"quest": "act3_prefeito_endorsements", "objective": "endorse_padre", "payout": 3000}, "rep": {0: 2, 4: 2}},
+		},
+	},
 	# --- ACTE 3 : Coronel do Bairro (voie Prefeito) ---
 	"padre_act3_offer": {
 		"speaker": "Padre Anselmo",
@@ -1297,6 +1308,24 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 		"choices": ["Amen, padre"],
 		"on_choose": {
 			"0": {"set_endgame": "PREFEITO", "finish_quest": {"quest": "act3_prefeito_eleicao", "objective": "win_election", "payout": 5000}, "rep": {0: 10}},
+		},
+	},
+	# Variante Pacto da Barra : la Barra alimente la cagnotte. Routée par
+	# Padre.gd quand barra_pacto_sealed est vrai.
+	"padre_act3_offer_with_barra": {
+		"speaker": "Padre Anselmo",
+		"text": "Meu filho, le bairro a confiance en toi — Copacabana, et désormais la Barra via l'enveloppe de Magalhães. Le scrutin pour la sous-préfecture est dans trois jours. Si tu fais campagne, Copacabana te reconnaît Coronel do Bairro, et la Barra te doit le silence. Sept mille reais cette fois — Magalhães a doublé la cagnotte. Ce qu'il appelle 'investissement'.",
+		"choices": ["Je fais campagne (FIN PREFEITO)", "Plus tard"],
+		"on_choose": {
+			"0": {"accept_quest": "act3_prefeito_eleicao", "next": "padre_act3_close_with_barra"},
+		},
+	},
+	"padre_act3_close_with_barra": {
+		"speaker": "Padre Anselmo",
+		"text": "*pose la main sur ton épaule, sourit* Coronel. Le quartier respire grâce à toi, et la Barra te respecte. Magalhães l'a écrit lui-même : « le sobrinho a tenu son mot ». *signe le contrat de cagnotte* La paix descend sur toi.",
+		"choices": ["Amen, padre"],
+		"on_choose": {
+			"0": {"set_endgame": "PREFEITO", "finish_quest": {"quest": "act3_prefeito_eleicao", "objective": "win_election", "payout": 7000}, "rep": {0: 10, 4: 5}},
 		},
 	},
 	"padre_act3_done": {

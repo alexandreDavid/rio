@@ -28,17 +28,19 @@ func _on_interacted(_by: Node) -> void:
 		return
 	# Acte 3 : trois soutiens (endorsements) puis finale Prefeito (eleicao).
 	if CampaignManager.current_act >= 3 and _eligible_for_act3():
+		# Pacto da Barra (MAIN) — variantes Padre avec contribution de Magalhães.
+		var with_barra: bool = CampaignManager.has_flag("barra_pacto_sealed")
 		if QuestManager.is_completed(QUEST_ELEICAO):
 			knot = "padre_act3_done"
 		elif QuestManager.is_active(QUEST_ELEICAO):
-			knot = "padre_act3_offer"
+			knot = "padre_act3_offer_with_barra" if with_barra else "padre_act3_offer"
 		elif QuestManager.is_available(QUEST_ELEICAO) and QuestManager.is_completed(QUEST_ENDORSE):
-			knot = "padre_act3_offer"
+			knot = "padre_act3_offer_with_barra" if with_barra else "padre_act3_offer"
 		elif QuestManager.is_active(QUEST_ENDORSE):
 			var eobjs: Dictionary = QuestManager.get_objectives_state(QUEST_ENDORSE)
 			if eobjs.get("endorse_carlos", false) and eobjs.get("endorse_padeiro", false) \
 					and not eobjs.get("endorse_padre", false):
-				knot = "padre_act3_endorse_close"
+				knot = "padre_act3_endorse_close_with_barra" if with_barra else "padre_act3_endorse_close"
 			else:
 				knot = "padre_act3_endorse_remind"
 		elif QuestManager.is_available(QUEST_ENDORSE):
