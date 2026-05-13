@@ -35,6 +35,7 @@
 [ext_resource type="PackedScene" path="res://scenes/interiors/AcademiaInterior.tscn" id="27_academia_int"]
 [ext_resource type="PackedScene" path="res://scenes/interiors/HouseInterior.tscn" id="61_house_int"]
 [ext_resource type="PackedScene" path="res://scenes/props/ReactiveDialogueSpot.tscn" id="62_reactive"]
+[ext_resource type="PackedScene" path="res://scenes/props/RachaLauncher.tscn" id="63_racha"]
 [ext_resource type="PackedScene" path="res://scenes/npcs/SeuJoao.tscn" id="2_seu_joao"]
 [ext_resource type="PackedScene" path="res://scenes/props/CornCart.tscn" id="3_cart"]
 [ext_resource type="PackedScene" path="res://scenes/npcs/Customer.tscn" id="4_customer"]
@@ -221,6 +222,9 @@ position = Vector2(280, 260)
 
 [node name="Jorge" parent="." instance=ExtResource("24_jorge")]
 position = Vector2(1335, -100)
+
+[node name="RachaLauncher" parent="." instance=ExtResource("63_racha")]
+position = Vector2(400, 40)
 
 [node name="Traffic" type="Node" parent="."]
 script = ExtResource("25_traffic")
