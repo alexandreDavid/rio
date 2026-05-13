@@ -28,13 +28,21 @@ const REP_AXIS_COLORS: Dictionary = {
 @onready var taxi_screen: Control = $Frame/Screens/Taxi
 @onready var stats_screen: Control = $Frame/Screens/Stats
 @onready var cronica_screen: Control = $Frame/Screens/Cronica
+@onready var photos_screen: Control = $Frame/Screens/Photos
 @onready var taxi_list: VBoxContainer = $Frame/Screens/Taxi/Scroll/Box
 @onready var taxi_status: Label = $Frame/Screens/Taxi/Status
 @onready var stats_box: VBoxContainer = $Frame/Screens/Stats/Scroll/Box
 @onready var cronica_box: VBoxContainer = $Frame/Screens/Cronica/Scroll/Box
 @onready var cronica_counter: Label = $Frame/Screens/Cronica/Counter
+@onready var photos_box: VBoxContainer = $Frame/Screens/Photos/Scroll/Box
+@onready var photos_path_label: Label = $Frame/Screens/Photos/PathLabel
+@onready var photos_empty: Label = $Frame/Screens/Photos/Empty
 @onready var back_button: Button = $Frame/BackButton
 @onready var close_button: Button = $Frame/CloseButton
+@onready var photo_viewer: Control = $Frame/PhotoViewer
+@onready var viewer_image: TextureRect = $Frame/PhotoViewer/ViewerImage
+@onready var viewer_name: Label = $Frame/PhotoViewer/ViewerName
+@onready var viewer_close: Button = $Frame/PhotoViewer/ViewerClose
 
 # App home screen buttons
 @onready var app_taxi: Button = $Frame/Screens/Home/Grid/Taxi
@@ -42,6 +50,9 @@ const REP_AXIS_COLORS: Dictionary = {
 @onready var app_journal: Button = $Frame/Screens/Home/Grid/Journal
 @onready var app_missions: Button = $Frame/Screens/Home/Grid/Missions
 @onready var app_cronica: Button = $Frame/Screens/Home/Grid/Cronica
+@onready var app_photos: Button = $Frame/Screens/Home/Grid/Photos
+
+const PHOTOS_DIR: String = "user://photos"
 
 func _ready() -> void:
 	visible = false
@@ -56,10 +67,14 @@ func _ready() -> void:
 		app_missions.pressed.connect(_open_missions)
 	if app_cronica:
 		app_cronica.pressed.connect(func(): _show_screen("cronica"))
+	if app_photos:
+		app_photos.pressed.connect(func(): _show_screen("photos"))
 	if back_button:
 		back_button.pressed.connect(func(): _show_screen("home"))
 	if close_button:
 		close_button.pressed.connect(close)
+	if viewer_close:
+		viewer_close.pressed.connect(_close_photo_viewer)
 	# Listeners pour live refresh quand le téléphone est ouvert.
 	EventBus.money_changed.connect(_on_money_changed)
 	EventBus.reputation_changed.connect(_on_rep_changed)
@@ -105,6 +120,8 @@ func _show_screen(name: String) -> void:
 	taxi_screen.visible = (name == "taxi")
 	stats_screen.visible = (name == "stats")
 	cronica_screen.visible = (name == "cronica")
+	if photos_screen:
+		photos_screen.visible = (name == "photos")
 	if back_button:
 		back_button.visible = (name != "home")
 	if name == "taxi":
@@ -113,6 +130,8 @@ func _show_screen(name: String) -> void:
 		_refresh_stats()
 	elif name == "cronica":
 		_refresh_cronica()
+	elif name == "photos":
+		_refresh_photos()
 
 # ------------------------------------------------------------------
 # Taxi app
@@ -414,3 +433,99 @@ func _open_missions() -> void:
 	var missions: Node = get_tree().current_scene.get_node_or_null("MissionBoardUI")
 	if missions and missions.has_method("open"):
 		missions.open()
+
+# ------------------------------------------------------------------
+# Photos app — liste les screenshots du mode photo (user://photos/)
+# ------------------------------------------------------------------
+
+const THUMB_W: int = 96
+const THUMB_H: int = 54
+
+func _refresh_photos() -> void:
+	if photos_box == null:
+		return
+	for child in photos_box.get_children():
+		child.queue_free()
+	var files: Array[String] = _list_photo_files()
+	# Path absolu OS pour donner au joueur l'emplacement réel des PNG.
+	if photos_path_label:
+		var abs_path: String = ProjectSettings.globalize_path(PHOTOS_DIR + "/")
+		photos_path_label.text = abs_path
+	if photos_empty:
+		photos_empty.visible = files.is_empty()
+	for fname in files:
+		photos_box.add_child(_build_photo_row(fname))
+
+func _list_photo_files() -> Array[String]:
+	var out: Array[String] = []
+	if not DirAccess.dir_exists_absolute(PHOTOS_DIR):
+		return out
+	for f in DirAccess.get_files_at(PHOTOS_DIR):
+		if f.to_lower().ends_with(".png"):
+			out.append(f)
+	# Plus récents d'abord (noms horodatés YYYYMMDD_HHMMSS triés desc).
+	out.sort_custom(func(a, b): return a > b)
+	return out
+
+func _build_photo_row(fname: String) -> Control:
+	var row: Button = Button.new()
+	row.custom_minimum_size = Vector2(360, THUMB_H + 12)
+	row.flat = true
+	row.pressed.connect(func(): _open_photo_viewer(fname))
+	var hbox: HBoxContainer = HBoxContainer.new()
+	hbox.anchor_right = 1.0
+	hbox.anchor_bottom = 1.0
+	hbox.add_theme_constant_override("separation", 10)
+	hbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_child(hbox)
+	var thumb: TextureRect = TextureRect.new()
+	thumb.custom_minimum_size = Vector2(THUMB_W, THUMB_H)
+	thumb.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	thumb.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	thumb.texture = _load_photo_texture(fname)
+	hbox.add_child(thumb)
+	var info: VBoxContainer = VBoxContainer.new()
+	info.add_theme_constant_override("separation", 2)
+	info.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	var name_label: Label = Label.new()
+	name_label.text = fname
+	name_label.add_theme_font_size_override("font_size", 11)
+	name_label.add_theme_color_override("font_color", Color(0.92, 0.92, 0.95))
+	info.add_child(name_label)
+	var size_label: Label = Label.new()
+	size_label.text = _photo_size_text(fname)
+	size_label.add_theme_font_size_override("font_size", 10)
+	size_label.add_theme_color_override("font_color", Color(0.65, 0.65, 0.7))
+	info.add_child(size_label)
+	hbox.add_child(info)
+	return row
+
+func _load_photo_texture(fname: String) -> Texture2D:
+	var img: Image = Image.load_from_file(PHOTOS_DIR + "/" + fname)
+	if img == null:
+		return null
+	return ImageTexture.create_from_image(img)
+
+func _photo_size_text(fname: String) -> String:
+	var f: FileAccess = FileAccess.open(PHOTOS_DIR + "/" + fname, FileAccess.READ)
+	if f == null:
+		return ""
+	var size: int = f.get_length()
+	f.close()
+	if size > 1024 * 1024:
+		return "%.1f MB" % (float(size) / (1024.0 * 1024.0))
+	return "%d KB" % int(size / 1024.0)
+
+func _open_photo_viewer(fname: String) -> void:
+	if photo_viewer == null or viewer_image == null:
+		return
+	viewer_image.texture = _load_photo_texture(fname)
+	if viewer_name:
+		viewer_name.text = fname
+	photo_viewer.visible = true
+
+func _close_photo_viewer() -> void:
+	if photo_viewer:
+		photo_viewer.visible = false
+	if viewer_image:
+		viewer_image.texture = null
