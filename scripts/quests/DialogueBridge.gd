@@ -321,6 +321,16 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 		"text": "*pose son thermos de café, regarde la baie* Cinquante-deux ans de barcas, sobrinho. Je connais chaque vague entre Praça XV et ici. *te scrute* Toi, t'as l'air d'avoir besoin de bouger un truc. Reviens si t'as cinq minutes pour un vieux.",
 		"choices": ["Bonne journée, Bruno"],
 	},
+	"bruno_chat_warm": {
+		"speaker": "Bruno",
+		"text": "*verse une seconde tasse, te la tend sans demander* Sobrinho. *fait signe vers la baie* Ferry de seize heures, c'est le mien. Si t'as un truc à passer, dis-le maintenant.",
+		"choices": ["Pas aujourd'hui, Bruno"],
+	},
+	"bruno_chat_familiar": {
+		"speaker": "Bruno",
+		"text": "*te voit, sourit pour la deuxième fois de sa vie* Le sobrinho carioca. *tape la planche à côté de lui* Assieds-toi. *te tend la cachaça déjà décapsulée* Cinquante-deux ans de barcas et personne ne m'a jamais demandé comment je vais. Toi, si.",
+		"choices": ["Tu vas comment, Bruno ?"],
+	},
 	"bruno_offer": {
 		"speaker": "Bruno",
 		"text": "*pointe un colis en carton près du bollard* Cette caisse, elle attend Helena, la curatrice du MAC, depuis trois jours. *montre ses genoux* Moi je remonte plus la rampe — opération l'an dernier, jamais récupéré. Tu me la portes là-haut ? Cent quatre-vingts reais, et tu fais une heureuse.",
@@ -343,6 +353,16 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 		"speaker": "Helena",
 		"text": "*pose son catalogue* La pièce du mois ? *fait un signe vers le MAC* « Esquecimento » d'Adriana Varejão. Sang séché sur faïence portugaise. *te regarde* Vous venez d'où ? Du calçadão, d'accord. *léger sourire* Ici on a les mêmes vagues que vous, mais on a aussi le silence. C'est la grosse différence.",
 		"choices": ["Bonne visite, Helena"],
+	},
+	"helena_chat_warm": {
+		"speaker": "Helena",
+		"text": "*te reconnaît, ferme son catalogue* Rebonjour. *tapote le banc à côté d'elle* Vous revenez pour la sculpture ou pour l'eau ? *léger sourire* La plupart des cariocas viennent pour le café, en fait.",
+		"choices": ["Pour les deux, Helena"],
+	},
+	"helena_chat_familiar": {
+		"speaker": "Helena",
+		"text": "*pose deux cafés sur le banc avant même que tu t'assoies* Vous êtes le seul Carioca régulier que j'ai. *te tend une tasse* Bruno parle de vous comme d'un sobrinho. Moi aussi maintenant.",
+		"choices": ["Obrigado, Helena"],
 	},
 	"helena_receive_carga": {
 		"speaker": "Helena",
@@ -735,6 +755,18 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 		"on_choose": {
 			"0": {"accept_quest": "quest_milho_01"},
 		},
+	},
+	# Variantes affinité : ces knots remplacent le fallback neutre quand le joueur
+	# a parlé plusieurs fois à Seu João (NPCAffinity).
+	"seu_joao_chat_warm": {
+		"speaker": "Seu João",
+		"text": "*te reconnaît, te sourit* Sobrinho ! *fait un signe vers la charrette* Ça avance ?",
+		"choices": ["Ça avance, tio"],
+	},
+	"seu_joao_chat_familiar": {
+		"speaker": "Seu João",
+		"text": "*ne lève même pas les yeux du grill, te tend déjà un milho beurré* Tiens, gratis pour la maison. *enfin te regarde* T'es comme un fils, parceiro. Sérieux.",
+		"choices": ["Obrigado, tio"],
 	},
 	"seu_joao_reminder": {
 		"speaker": "Seu João",

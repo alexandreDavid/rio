@@ -64,6 +64,7 @@ func save_game() -> bool:
 		"dynamic_missions": DynamicMissionManager.serialize(),
 		"district": DistrictManager.serialize(),
 		"journal": NarrativeJournal.serialize(),
+		"affinity": NPCAffinity.serialize(),
 		"player": _serialize_player(),
 	}
 	var file: FileAccess = FileAccess.open(SAVE_PATH, FileAccess.WRITE)
@@ -98,6 +99,7 @@ func load_game() -> bool:
 	DynamicMissionManager.deserialize(data.get("dynamic_missions", {}))
 	DistrictManager.deserialize(data.get("district", {}))
 	NarrativeJournal.deserialize(data.get("journal", {}))
+	NPCAffinity.deserialize(data.get("affinity", {}))
 	_deserialize_player(data.get("player", {}))
 	_broadcast_post_load()
 	_loading = false

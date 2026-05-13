@@ -93,5 +93,6 @@ func _pick_knot() -> String:
 		# Première rencontre : déclenche l'héritage narratif (acte 1).
 		return "seu_joao_heritage"
 
-	# Fallback : ligne neutre (utilise le knot par défaut du NPCData).
-	return data.ink_knot
+	# Fallback : ligne neutre, varie selon l'affinité accumulée.
+	return NPCAffinity.knot_for_tier(data.id, data.ink_knot,
+			"seu_joao_chat_warm", "seu_joao_chat_familiar")

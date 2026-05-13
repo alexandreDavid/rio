@@ -10,7 +10,8 @@ func _on_interacted(_by: Node) -> void:
 	if data == null:
 		return
 	await _approach_player_if_far()
-	var knot: String = "helena_default"
+	var knot: String = NPCAffinity.knot_for_tier(data.id, "helena_default",
+			"helena_chat_warm", "helena_chat_familiar")
 	if QuestManager.is_active(QUEST_ID) \
 			and not QuestManager.is_objective_done(QUEST_ID, OBJ_DELIVER):
 		knot = "helena_receive_carga"

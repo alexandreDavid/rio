@@ -39,6 +39,7 @@ DistrictManager="*res://scripts/core/DistrictManager.gd"
 NarrativeJournal="*res://scripts/core/NarrativeJournal.gd"
 RandomEventManager="*res://scripts/core/RandomEventManager.gd"
 CreditorVisitManager="*res://scripts/core/CreditorVisitManager.gd"
+NPCAffinity="*res://scripts/core/NPCAffinity.gd"
 DebugConsole="*res://scripts/debug/DebugConsole.gd"
 
 [display]
