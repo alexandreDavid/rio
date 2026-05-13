@@ -1,0 +1,281 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/props/BuildingDoor.tscn" id="1_door"]
+[ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="2_wander"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/Mendonca.tscn" id="3_mendonca"]
+
+[sub_resource type="RectangleShape2D" id="WallH"]
+size = Vector2(480, 12)
+
+[sub_resource type="RectangleShape2D" id="WallV"]
+size = Vector2(12, 320)
+
+[node name="PeninsulaInterior" type="Node2D"]
+
+[node name="Ground" type="ColorRect" parent="."]
+offset_left = -240.0
+offset_top = -160.0
+offset_right = 240.0
+offset_bottom = 160.0
+color = Color(0.95, 0.92, 0.85, 1)
+
+[node name="MarbleVein1" type="ColorRect" parent="."]
+offset_left = -240.0
+offset_top = -100.0
+offset_right = 240.0
+offset_bottom = -97.0
+color = Color(0.82, 0.78, 0.70, 0.6)
+
+[node name="MarbleVein2" type="ColorRect" parent="."]
+offset_left = -240.0
+offset_top = 0.0
+offset_right = 240.0
+offset_bottom = 3.0
+color = Color(0.82, 0.78, 0.70, 0.6)
+
+[node name="MarbleVein3" type="ColorRect" parent="."]
+offset_left = -3.0
+offset_top = -160.0
+offset_right = 3.0
+offset_bottom = 160.0
+color = Color(0.82, 0.78, 0.70, 0.6)
+
+# Red carpet center
+[node name="RedCarpet" type="ColorRect" parent="."]
+offset_left = -30.0
+offset_top = -150.0
+offset_right = 30.0
+offset_bottom = 150.0
+color = Color(0.62, 0.18, 0.22, 0.85)
+
+[node name="RedCarpetGold1" type="ColorRect" parent="."]
+offset_left = -32.0
+offset_top = -150.0
+offset_right = -28.0
+offset_bottom = 150.0
+color = Color(0.92, 0.78, 0.32, 0.85)
+
+[node name="RedCarpetGold2" type="ColorRect" parent="."]
+offset_left = 28.0
+offset_top = -150.0
+offset_right = 32.0
+offset_bottom = 150.0
+color = Color(0.92, 0.78, 0.32, 0.85)
+
+# Reception desk au nord
+[node name="ReceptionDesk" type="ColorRect" parent="."]
+offset_left = -80.0
+offset_top = -150.0
+offset_right = 80.0
+offset_bottom = -120.0
+color = Color(0.42, 0.28, 0.18, 1)
+
+[node name="ReceptionGold" type="ColorRect" parent="."]
+offset_left = -80.0
+offset_top = -125.0
+offset_right = 80.0
+offset_bottom = -120.0
+color = Color(0.92, 0.78, 0.32, 1)
+
+# Lustres / chandeliers
+[node name="ChandelierC" type="ColorRect" parent="."]
+offset_left = -20.0
+offset_top = -158.0
+offset_right = 20.0
+offset_bottom = -148.0
+color = Color(0.92, 0.78, 0.32, 1)
+
+[node name="ChandelierCGlow" type="ColorRect" parent="."]
+offset_left = -36.0
+offset_top = -148.0
+offset_right = 36.0
+offset_bottom = -120.0
+color = Color(0.95, 0.85, 0.55, 0.25)
+
+# Vasques décoratives
+[node name="VaseL" type="ColorRect" parent="."]
+offset_left = -200.0
+offset_top = -100.0
+offset_right = -180.0
+offset_bottom = -65.0
+color = Color(0.62, 0.42, 0.32, 1)
+
+[node name="VaseLFlowers" type="ColorRect" parent="."]
+offset_left = -206.0
+offset_top = -118.0
+offset_right = -174.0
+offset_bottom = -100.0
+color = Color(0.95, 0.65, 0.78, 1)
+
+[node name="VaseR" type="ColorRect" parent="."]
+offset_left = 180.0
+offset_top = -100.0
+offset_right = 200.0
+offset_bottom = -65.0
+color = Color(0.62, 0.42, 0.32, 1)
+
+[node name="VaseRFlowers" type="ColorRect" parent="."]
+offset_left = 174.0
+offset_top = -118.0
+offset_right = 206.0
+offset_bottom = -100.0
+color = Color(0.95, 0.55, 0.55, 1)
+
+# Bar lounge ouest
+[node name="LoungeBar" type="ColorRect" parent="."]
+offset_left = -210.0
+offset_top = 30.0
+offset_right = -100.0
+offset_bottom = 60.0
+color = Color(0.32, 0.18, 0.18, 1)
+
+[node name="LoungeBarTop" type="ColorRect" parent="."]
+offset_left = -210.0
+offset_top = 28.0
+offset_right = -100.0
+offset_bottom = 32.0
+color = Color(0.92, 0.78, 0.32, 1)
+
+[node name="LoungeBottle1" type="ColorRect" parent="."]
+offset_left = -195.0
+offset_top = 15.0
+offset_right = -187.0
+offset_bottom = 30.0
+color = Color(0.62, 0.42, 0.22, 1)
+
+[node name="LoungeBottle2" type="ColorRect" parent="."]
+offset_left = -180.0
+offset_top = 12.0
+offset_right = -172.0
+offset_bottom = 30.0
+color = Color(0.32, 0.55, 0.32, 1)
+
+[node name="LoungeBottle3" type="ColorRect" parent="."]
+offset_left = -165.0
+offset_top = 15.0
+offset_right = -157.0
+offset_bottom = 30.0
+color = Color(0.72, 0.32, 0.22, 1)
+
+# Hélipad sur le toit (vue depuis intérieur en perspective : indicateur sol)
+[node name="HelipadCircle" type="ColorRect" parent="."]
+offset_left = 110.0
+offset_top = 20.0
+offset_right = 200.0
+offset_bottom = 110.0
+color = Color(0.32, 0.32, 0.35, 1)
+
+[node name="HelipadH1" type="ColorRect" parent="."]
+offset_left = 140.0
+offset_top = 30.0
+offset_right = 148.0
+offset_bottom = 100.0
+color = Color(0.95, 0.85, 0.32, 1)
+
+[node name="HelipadH2" type="ColorRect" parent="."]
+offset_left = 168.0
+offset_top = 30.0
+offset_right = 176.0
+offset_bottom = 100.0
+color = Color(0.95, 0.85, 0.32, 1)
+
+[node name="HelipadH3" type="ColorRect" parent="."]
+offset_left = 148.0
+offset_top = 58.0
+offset_right = 168.0
+offset_bottom = 66.0
+color = Color(0.95, 0.85, 0.32, 1)
+
+[node name="HelipadLabel" type="Label" parent="."]
+offset_left = 110.0
+offset_top = -2.0
+offset_right = 200.0
+offset_bottom = 14.0
+text = "Helipad"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 8
+theme_override_colors/font_color = Color(0.62, 0.62, 0.62, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.7)
+theme_override_constants/outline_size = 2
+
+[node name="Title" type="Label" parent="."]
+offset_left = -120.0
+offset_top = -178.0
+offset_right = 120.0
+offset_bottom = -162.0
+text = "PENÍNSULA  PRIVÉ"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.42, 0.32, 0.18, 1)
+theme_override_colors/font_outline_color = Color(0.95, 0.92, 0.78, 0.85)
+theme_override_constants/outline_size = 3
+
+[node name="Walls" type="Node2D" parent="."]
+
+[node name="Top" type="StaticBody2D" parent="Walls"]
+position = Vector2(0, -160)
+
+[node name="ShapeTopPen" type="CollisionShape2D" parent="Walls/Top"]
+shape = SubResource("WallH")
+
+[node name="Bottom" type="StaticBody2D" parent="Walls"]
+position = Vector2(0, 160)
+
+[node name="ShapeBottomPen" type="CollisionShape2D" parent="Walls/Bottom"]
+shape = SubResource("WallH")
+
+[node name="Left" type="StaticBody2D" parent="Walls"]
+position = Vector2(-240, 0)
+
+[node name="ShapeLeftPen" type="CollisionShape2D" parent="Walls/Left"]
+shape = SubResource("WallV")
+
+[node name="Right" type="StaticBody2D" parent="Walls"]
+position = Vector2(240, 0)
+
+[node name="ShapeRightPen" type="CollisionShape2D" parent="Walls/Right"]
+shape = SubResource("WallV")
+
+[node name="ExitDoor" parent="." instance=ExtResource("1_door")]
+position = Vector2(0, 155)
+prompt_text = "Sortir"
+is_exit = true
+
+[node name="SpawnPoint" type="Marker2D" parent="."]
+position = Vector2(0, 125)
+
+[node name="Mendonca" parent="." instance=ExtResource("3_mendonca")]
+position = Vector2(0, -100)
+
+# Receptionist statique
+[node name="Receptionist" parent="." instance=ExtResource("2_wander")]
+position = Vector2(40, -135)
+color = Color(0.32, 0.32, 0.32, 1)
+size = Vector2(10, 17)
+stationary = true
+bob_strength = 0.2
+look_at_player_distance = 50.0
+
+# Bodyguard au coin
+[node name="BodyguardL" parent="." instance=ExtResource("2_wander")]
+position = Vector2(-160, -50)
+color = Color(0.18, 0.18, 0.22, 1)
+size = Vector2(11, 18)
+stationary = true
+look_at_player_distance = 60.0
+
+[node name="BodyguardR" parent="." instance=ExtResource("2_wander")]
+position = Vector2(160, -50)
+color = Color(0.18, 0.18, 0.22, 1)
+size = Vector2(11, 18)
+stationary = true
+look_at_player_distance = 60.0
+
+# Client VIP au lounge
+[node name="VIPGuest" parent="." instance=ExtResource("2_wander")]
+position = Vector2(-150, 80)
+color = Color(0.95, 0.85, 0.55, 1)
+size = Vector2(10, 17)
+stationary = true
+bob_strength = 0.4
+look_at_player_distance = 50.0

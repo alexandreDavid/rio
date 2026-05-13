@@ -20,6 +20,16 @@ const SCENARIOS: Dictionary = {
 	"creditor_raid":      {"min_debt": 2000, "knot": "creditor_visit_raid"},
 }
 
+# Scénario alternatif qui prend la priorité si commissaire_alerted est posé
+# (cousin commissaire de Mendonça suit le joueur). Tenente Borges débarque
+# pour pot-de-vin au lieu (ou en plus) du consortium.
+const POLICE_SCENARIO: Dictionary = {
+	"knot": "creditor_police_shakedown",
+	"npc_id": "borges",
+	"flag": "commissaire_alerted",
+	"override_chance": 0.5,  # 50% que la visite soit Borges au lieu du consortium
+}
+
 var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
 var _last_visit_time: float = 0.0
 var _elapsed_since_check: float = 0.0
@@ -73,9 +83,13 @@ func _try_trigger_visit() -> void:
 	_trigger_visit(debt_remaining)
 
 func _trigger_visit(debt_remaining: int) -> void:
+	_last_visit_time = Time.get_ticks_msec() / 1000.0
+	# Si commissaire_alerted posé, 50% des visites sont des shakedowns police.
+	if CampaignManager.has_flag(POLICE_SCENARIO.flag) and _rng.randf() < POLICE_SCENARIO.override_chance:
+		DialogueBridge.start_dialogue(POLICE_SCENARIO.npc_id, POLICE_SCENARIO.knot)
+		return
 	var scenario_id: String = _pick_scenario(debt_remaining)
 	var entry: Dictionary = SCENARIOS[scenario_id]
-	_last_visit_time = Time.get_ticks_msec() / 1000.0
 	DialogueBridge.start_dialogue("nilton", entry.knot)
 
 func _pick_scenario(debt: int) -> String:

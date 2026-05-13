@@ -1,0 +1,71 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/minigames/kite/KiteLauncher.gd" id="1_launch"]
+[ext_resource type="Script" path="res://scripts/world/Interactable.gd" id="2_inter"]
+[ext_resource type="PackedScene" path="res://scenes/minigames/Surf.tscn" id="3_match"]
+
+[sub_resource type="RectangleShape2D" id="InteractShape"]
+size = Vector2(56, 56)
+
+[node name="KiteStation" type="Node2D"]
+script = ExtResource("1_launch")
+interactable = NodePath("Interactable")
+match_scene = ExtResource("3_match")
+
+[node name="Board" type="ColorRect" parent="."]
+offset_left = -8.0
+offset_top = -2.0
+offset_right = 8.0
+offset_bottom = 22.0
+color = Color(0.42, 0.62, 0.95, 1)
+
+[node name="BoardStripe" type="ColorRect" parent="Board"]
+offset_left = 6.0
+offset_top = 4.0
+offset_right = 10.0
+offset_bottom = 18.0
+color = Color(0.95, 0.55, 0.25, 1)
+
+[node name="KiteLine" type="ColorRect" parent="."]
+offset_left = -1.0
+offset_top = -48.0
+offset_right = 1.0
+offset_bottom = 0.0
+color = Color(0.42, 0.42, 0.42, 0.7)
+
+[node name="KiteWing" type="ColorRect" parent="."]
+offset_left = -18.0
+offset_top = -60.0
+offset_right = 18.0
+offset_bottom = -48.0
+color = Color(0.95, 0.42, 0.55, 1)
+
+[node name="KiteWingTip" type="ColorRect" parent="."]
+offset_left = -22.0
+offset_top = -56.0
+offset_right = -18.0
+offset_bottom = -52.0
+color = Color(0.95, 0.42, 0.55, 1)
+
+[node name="KiteWingTipR" type="ColorRect" parent="."]
+offset_left = 18.0
+offset_top = -56.0
+offset_right = 22.0
+offset_bottom = -52.0
+color = Color(0.95, 0.42, 0.55, 1)
+
+[node name="Sparkle" type="Label" parent="."]
+offset_left = -12.0
+offset_top = -82.0
+offset_right = 12.0
+offset_bottom = -60.0
+text = "🪁"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 20
+
+[node name="Interactable" type="Area2D" parent="."]
+script = ExtResource("2_inter")
+prompt = "Kite-board"
+
+[node name="InteractShape" type="CollisionShape2D" parent="Interactable"]
+shape = SubResource("InteractShape")

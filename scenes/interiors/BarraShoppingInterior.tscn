@@ -1,0 +1,344 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/props/BuildingDoor.tscn" id="1_door"]
+[ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="2_wander"]
+[ext_resource type="PackedScene" path="res://scenes/props/DialogueSpot.tscn" id="3_spot"]
+
+[sub_resource type="RectangleShape2D" id="WallH"]
+size = Vector2(480, 12)
+
+[sub_resource type="RectangleShape2D" id="WallV"]
+size = Vector2(12, 320)
+
+[sub_resource type="RectangleShape2D" id="KioskShape"]
+size = Vector2(80, 30)
+
+[node name="BarraShoppingInterior" type="Node2D"]
+
+[node name="Floor" type="ColorRect" parent="."]
+offset_left = -240.0
+offset_top = -160.0
+offset_right = 240.0
+offset_bottom = 160.0
+color = Color(0.92, 0.92, 0.95, 1)
+
+[node name="FloorTile1" type="ColorRect" parent="."]
+offset_left = -240.0
+offset_top = -80.0
+offset_right = 240.0
+offset_bottom = -77.0
+color = Color(0.82, 0.82, 0.85, 0.6)
+
+[node name="FloorTile2" type="ColorRect" parent="."]
+offset_left = -240.0
+offset_top = 0.0
+offset_right = 240.0
+offset_bottom = 3.0
+color = Color(0.82, 0.82, 0.85, 0.6)
+
+[node name="FloorTile3" type="ColorRect" parent="."]
+offset_left = -240.0
+offset_top = 80.0
+offset_right = 240.0
+offset_bottom = 83.0
+color = Color(0.82, 0.82, 0.85, 0.6)
+
+[node name="FloorTile4" type="ColorRect" parent="."]
+offset_left = -2.0
+offset_top = -160.0
+offset_right = 2.0
+offset_bottom = 160.0
+color = Color(0.82, 0.82, 0.85, 0.6)
+
+# Atrium central avec verrière
+[node name="AtriumCeiling" type="ColorRect" parent="."]
+offset_left = -100.0
+offset_top = -150.0
+offset_right = 100.0
+offset_bottom = -100.0
+color = Color(0.72, 0.85, 0.95, 0.35)
+
+[node name="AtriumGlassFrame1" type="ColorRect" parent="."]
+offset_left = -100.0
+offset_top = -150.0
+offset_right = -96.0
+offset_bottom = -100.0
+color = Color(0.55, 0.55, 0.58, 1)
+
+[node name="AtriumGlassFrame2" type="ColorRect" parent="."]
+offset_left = 96.0
+offset_top = -150.0
+offset_right = 100.0
+offset_bottom = -100.0
+color = Color(0.55, 0.55, 0.58, 1)
+
+# Boutique gauche (mode)
+[node name="ShopFashion" type="StaticBody2D" parent="."]
+position = Vector2(-180, -110)
+
+[node name="ShapeFashion" type="CollisionShape2D" parent="ShopFashion"]
+shape = SubResource("KioskShape")
+
+[node name="FashionBack" type="ColorRect" parent="ShopFashion"]
+offset_left = -40.0
+offset_top = -15.0
+offset_right = 40.0
+offset_bottom = 15.0
+color = Color(0.92, 0.42, 0.62, 1)
+
+[node name="FashionMannequinL" type="ColorRect" parent="ShopFashion"]
+offset_left = -30.0
+offset_top = -10.0
+offset_right = -20.0
+offset_bottom = 8.0
+color = Color(0.85, 0.78, 0.65, 1)
+
+[node name="FashionMannequinR" type="ColorRect" parent="ShopFashion"]
+offset_left = 20.0
+offset_top = -10.0
+offset_right = 30.0
+offset_bottom = 8.0
+color = Color(0.32, 0.32, 0.42, 1)
+
+[node name="FashionSign" type="Label" parent="ShopFashion"]
+offset_left = -40.0
+offset_top = -25.0
+offset_right = 40.0
+offset_bottom = -15.0
+text = "Carioca Moda"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 8
+theme_override_colors/font_color = Color(0.18, 0.18, 0.22, 1)
+
+# Boutique électronique
+[node name="ShopElectro" type="StaticBody2D" parent="."]
+position = Vector2(-60, -110)
+
+[node name="ShapeElectro" type="CollisionShape2D" parent="ShopElectro"]
+shape = SubResource("KioskShape")
+
+[node name="ElectroBack" type="ColorRect" parent="ShopElectro"]
+offset_left = -40.0
+offset_top = -15.0
+offset_right = 40.0
+offset_bottom = 15.0
+color = Color(0.18, 0.32, 0.55, 1)
+
+[node name="ElectroDisplay1" type="ColorRect" parent="ShopElectro"]
+offset_left = -32.0
+offset_top = -8.0
+offset_right = -8.0
+offset_bottom = 8.0
+color = Color(0.18, 0.22, 0.32, 1)
+
+[node name="ElectroDisplay2" type="ColorRect" parent="ShopElectro"]
+offset_left = 8.0
+offset_top = -8.0
+offset_right = 32.0
+offset_bottom = 8.0
+color = Color(0.18, 0.22, 0.32, 1)
+
+[node name="ElectroSign" type="Label" parent="ShopElectro"]
+offset_left = -40.0
+offset_top = -25.0
+offset_right = 40.0
+offset_bottom = -15.0
+text = "ZTech"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 8
+theme_override_colors/font_color = Color(0.95, 0.95, 0.85, 1)
+
+# Food court
+[node name="FoodCourtBar" type="StaticBody2D" parent="."]
+position = Vector2(120, -110)
+
+[node name="ShapeFood" type="CollisionShape2D" parent="FoodCourtBar"]
+shape = SubResource("KioskShape")
+
+[node name="FoodBack" type="ColorRect" parent="FoodCourtBar"]
+offset_left = -40.0
+offset_top = -15.0
+offset_right = 40.0
+offset_bottom = 15.0
+color = Color(0.95, 0.62, 0.32, 1)
+
+[node name="FoodPainHot" type="ColorRect" parent="FoodCourtBar"]
+offset_left = -30.0
+offset_top = -10.0
+offset_right = -14.0
+offset_bottom = 4.0
+color = Color(0.85, 0.55, 0.32, 1)
+
+[node name="FoodGrill" type="ColorRect" parent="FoodCourtBar"]
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 12.0
+offset_bottom = 8.0
+color = Color(0.42, 0.32, 0.22, 1)
+
+[node name="FoodSign" type="Label" parent="FoodCourtBar"]
+offset_left = -40.0
+offset_top = -25.0
+offset_right = 40.0
+offset_bottom = -15.0
+text = "Lanchonete"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 8
+theme_override_colors/font_color = Color(0.18, 0.18, 0.22, 1)
+
+# Tables food court (sud de l'atrium)
+[node name="Table1" type="ColorRect" parent="."]
+offset_left = -100.0
+offset_top = 0.0
+offset_right = -60.0
+offset_bottom = 30.0
+color = Color(0.85, 0.78, 0.65, 1)
+
+[node name="Table2" type="ColorRect" parent="."]
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 40.0
+offset_bottom = 30.0
+color = Color(0.85, 0.78, 0.65, 1)
+
+[node name="Table3" type="ColorRect" parent="."]
+offset_left = 80.0
+offset_top = 0.0
+offset_right = 120.0
+offset_bottom = 30.0
+color = Color(0.85, 0.78, 0.65, 1)
+
+# Plante déco
+[node name="PlantA" type="ColorRect" parent="."]
+offset_left = -210.0
+offset_top = -30.0
+offset_right = -190.0
+offset_bottom = -10.0
+color = Color(0.32, 0.55, 0.32, 1)
+
+[node name="PlantB" type="ColorRect" parent="."]
+offset_left = 190.0
+offset_top = -30.0
+offset_right = 210.0
+offset_bottom = -10.0
+color = Color(0.32, 0.55, 0.32, 1)
+
+# Escalators (en haut, allant vers étages)
+[node name="EscalatorUp" type="ColorRect" parent="."]
+offset_left = 160.0
+offset_top = -80.0
+offset_right = 200.0
+offset_bottom = -50.0
+color = Color(0.45, 0.45, 0.48, 1)
+
+[node name="EscalatorUpStep1" type="ColorRect" parent="."]
+offset_left = 162.0
+offset_top = -78.0
+offset_right = 198.0
+offset_bottom = -73.0
+color = Color(0.32, 0.32, 0.35, 0.6)
+
+[node name="EscalatorUpStep2" type="ColorRect" parent="."]
+offset_left = 162.0
+offset_top = -70.0
+offset_right = 198.0
+offset_bottom = -65.0
+color = Color(0.32, 0.32, 0.35, 0.6)
+
+[node name="EscalatorUpStep3" type="ColorRect" parent="."]
+offset_left = 162.0
+offset_top = -62.0
+offset_right = 198.0
+offset_bottom = -57.0
+color = Color(0.32, 0.32, 0.35, 0.6)
+
+# Titre
+[node name="Title" type="Label" parent="."]
+offset_left = -120.0
+offset_top = -178.0
+offset_right = 120.0
+offset_bottom = -162.0
+text = "BARRA  SHOPPING"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.42, 0.18, 0.55, 1)
+theme_override_colors/font_outline_color = Color(0.95, 0.95, 0.92, 0.85)
+theme_override_constants/outline_size = 3
+
+[node name="Walls" type="Node2D" parent="."]
+
+[node name="Top" type="StaticBody2D" parent="Walls"]
+position = Vector2(0, -160)
+
+[node name="ShapeTopW" type="CollisionShape2D" parent="Walls/Top"]
+shape = SubResource("WallH")
+
+[node name="Bottom" type="StaticBody2D" parent="Walls"]
+position = Vector2(0, 160)
+
+[node name="ShapeBottomW" type="CollisionShape2D" parent="Walls/Bottom"]
+shape = SubResource("WallH")
+
+[node name="Left" type="StaticBody2D" parent="Walls"]
+position = Vector2(-240, 0)
+
+[node name="ShapeLeftW" type="CollisionShape2D" parent="Walls/Left"]
+shape = SubResource("WallV")
+
+[node name="Right" type="StaticBody2D" parent="Walls"]
+position = Vector2(240, 0)
+
+[node name="ShapeRightW" type="CollisionShape2D" parent="Walls/Right"]
+shape = SubResource("WallV")
+
+[node name="ExitDoor" parent="." instance=ExtResource("1_door")]
+position = Vector2(0, 155)
+prompt_text = "Sortir"
+is_exit = true
+
+[node name="SpawnPoint" type="Marker2D" parent="."]
+position = Vector2(0, 125)
+
+# Shoppers ambient
+[node name="ShopperA" parent="." instance=ExtResource("2_wander")]
+position = Vector2(-160, 60)
+color = Color(0.85, 0.62, 0.78, 1)
+size = Vector2(10, 17)
+roam_zone = Rect2(-80, -50, 160, 100)
+speed = 20.0
+pause_at_waypoints = 1.5
+look_at_player_distance = 50.0
+
+[node name="ShopperB" parent="." instance=ExtResource("2_wander")]
+position = Vector2(150, 60)
+color = Color(0.42, 0.55, 0.85, 1)
+size = Vector2(10, 17)
+roam_zone = Rect2(-80, -50, 160, 100)
+speed = 24.0
+pause_at_waypoints = 1.2
+look_at_player_distance = 50.0
+
+[node name="ChildRunner" parent="." instance=ExtResource("2_wander")]
+position = Vector2(50, 80)
+color = Color(0.95, 0.85, 0.4, 1)
+size = Vector2(7, 12)
+roam_zone = Rect2(-100, -40, 200, 80)
+speed = 40.0
+pause_at_waypoints = 0.3
+look_at_player_distance = 40.0
+
+# Vendeur food court
+[node name="FoodVendor" parent="." instance=ExtResource("2_wander")]
+position = Vector2(120, -90)
+color = Color(0.42, 0.32, 0.22, 1)
+size = Vector2(10, 17)
+stationary = true
+bob_strength = 0.3
+look_at_player_distance = 40.0
+
+[node name="FoodVendorSpot" parent="." instance=ExtResource("3_spot")]
+position = Vector2(120, -90)
+npc_id = "shopping_food_vendor"
+prompt = "Parler au vendeur"
+speaker = "Vendedora"
+text = "*essuie le comptoir* Pão de queijo encore chaud, açaí frais, suco de cupuaçu. Quinze reais le combo. *sourire commercial* C'est pas Ipanema ici, on prend le temps."

@@ -1,0 +1,285 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/props/BuildingDoor.tscn" id="1_door"]
+[ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="2_wander"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/Carrasco.tscn" id="3_carrasco"]
+
+[sub_resource type="RectangleShape2D" id="WallH"]
+size = Vector2(480, 12)
+
+[sub_resource type="RectangleShape2D" id="WallV"]
+size = Vector2(12, 320)
+
+[node name="LeParcInterior" type="Node2D"]
+
+[node name="Ground" type="ColorRect" parent="."]
+offset_left = -240.0
+offset_top = -160.0
+offset_right = 240.0
+offset_bottom = 160.0
+color = Color(0.85, 0.95, 0.78, 1)
+
+[node name="MarbleAlley1" type="ColorRect" parent="."]
+offset_left = -240.0
+offset_top = -50.0
+offset_right = 240.0
+offset_bottom = -45.0
+color = Color(0.92, 0.88, 0.78, 0.7)
+
+[node name="MarbleAlley2" type="ColorRect" parent="."]
+offset_left = -240.0
+offset_top = 50.0
+offset_right = 240.0
+offset_bottom = 55.0
+color = Color(0.92, 0.88, 0.78, 0.7)
+
+[node name="MarbleAlley3" type="ColorRect" parent="."]
+offset_left = -3.0
+offset_top = -160.0
+offset_right = 3.0
+offset_bottom = 160.0
+color = Color(0.92, 0.88, 0.78, 0.7)
+
+[node name="TowerWestBase" type="ColorRect" parent="."]
+offset_left = -220.0
+offset_top = -150.0
+offset_right = -140.0
+offset_bottom = -60.0
+color = Color(0.95, 0.92, 0.85, 1)
+
+[node name="TowerWestRoof" type="ColorRect" parent="."]
+offset_left = -222.0
+offset_top = -156.0
+offset_right = -138.0
+offset_bottom = -150.0
+color = Color(0.62, 0.55, 0.48, 1)
+
+[node name="TowerEastBase" type="ColorRect" parent="."]
+offset_left = 140.0
+offset_top = -150.0
+offset_right = 220.0
+offset_bottom = -60.0
+color = Color(0.95, 0.92, 0.85, 1)
+
+[node name="TowerEastRoof" type="ColorRect" parent="."]
+offset_left = 138.0
+offset_top = -156.0
+offset_right = 222.0
+offset_bottom = -150.0
+color = Color(0.62, 0.55, 0.48, 1)
+
+[node name="GardenA" type="ColorRect" parent="."]
+offset_left = -130.0
+offset_top = -140.0
+offset_right = -30.0
+offset_bottom = -60.0
+color = Color(0.42, 0.62, 0.32, 1)
+
+[node name="GardenB" type="ColorRect" parent="."]
+offset_left = 30.0
+offset_top = -140.0
+offset_right = 130.0
+offset_bottom = -60.0
+color = Color(0.42, 0.62, 0.32, 1)
+
+[node name="GardenFlower1" type="ColorRect" parent="."]
+offset_left = -100.0
+offset_top = -120.0
+offset_right = -90.0
+offset_bottom = -110.0
+color = Color(0.95, 0.55, 0.62, 1)
+
+[node name="GardenFlower2" type="ColorRect" parent="."]
+offset_left = -60.0
+offset_top = -100.0
+offset_right = -50.0
+offset_bottom = -90.0
+color = Color(0.95, 0.85, 0.4, 1)
+
+[node name="GardenFlower3" type="ColorRect" parent="."]
+offset_left = 60.0
+offset_top = -120.0
+offset_right = 70.0
+offset_bottom = -110.0
+color = Color(0.62, 0.42, 0.85, 1)
+
+[node name="GardenFlower4" type="ColorRect" parent="."]
+offset_left = 100.0
+offset_top = -90.0
+offset_right = 110.0
+offset_bottom = -80.0
+color = Color(0.95, 0.55, 0.62, 1)
+
+# Piscine olympique au centre
+[node name="Pool" type="ColorRect" parent="."]
+offset_left = -110.0
+offset_top = -20.0
+offset_right = 110.0
+offset_bottom = 30.0
+color = Color(0.42, 0.78, 0.92, 1)
+
+[node name="PoolHi" type="ColorRect" parent="."]
+offset_left = -100.0
+offset_top = -10.0
+offset_right = -30.0
+offset_bottom = -7.0
+color = Color(0.92, 0.95, 0.98, 0.65)
+
+[node name="PoolLane1" type="ColorRect" parent="."]
+offset_left = -110.0
+offset_top = -2.0
+offset_right = 110.0
+offset_bottom = 0.0
+color = Color(0.95, 0.95, 0.92, 0.4)
+
+[node name="PoolLane2" type="ColorRect" parent="."]
+offset_left = -110.0
+offset_top = 12.0
+offset_right = 110.0
+offset_bottom = 14.0
+color = Color(0.95, 0.95, 0.92, 0.4)
+
+# Loungers
+[node name="LoungerL1" type="ColorRect" parent="."]
+offset_left = -150.0
+offset_top = -5.0
+offset_right = -116.0
+offset_bottom = 5.0
+color = Color(0.95, 0.95, 0.92, 1)
+
+[node name="LoungerL2" type="ColorRect" parent="."]
+offset_left = -150.0
+offset_top = 15.0
+offset_right = -116.0
+offset_bottom = 25.0
+color = Color(0.95, 0.95, 0.92, 1)
+
+[node name="LoungerR1" type="ColorRect" parent="."]
+offset_left = 116.0
+offset_top = -5.0
+offset_right = 150.0
+offset_bottom = 5.0
+color = Color(0.95, 0.95, 0.92, 1)
+
+[node name="LoungerR2" type="ColorRect" parent="."]
+offset_left = 116.0
+offset_top = 15.0
+offset_right = 150.0
+offset_bottom = 25.0
+color = Color(0.95, 0.95, 0.92, 1)
+
+# Court tennis au sud-est
+[node name="TennisCourt" type="ColorRect" parent="."]
+offset_left = 80.0
+offset_top = 70.0
+offset_right = 220.0
+offset_bottom = 140.0
+color = Color(0.55, 0.32, 0.32, 1)
+
+[node name="TennisLine1" type="ColorRect" parent="."]
+offset_left = 148.0
+offset_top = 70.0
+offset_right = 152.0
+offset_bottom = 140.0
+color = Color(0.95, 0.95, 0.92, 1)
+
+[node name="TennisLine2" type="ColorRect" parent="."]
+offset_left = 80.0
+offset_top = 103.0
+offset_right = 220.0
+offset_bottom = 107.0
+color = Color(0.95, 0.95, 0.92, 1)
+
+# Spa au sud-ouest
+[node name="SpaEntry" type="ColorRect" parent="."]
+offset_left = -200.0
+offset_top = 70.0
+offset_right = -100.0
+offset_bottom = 130.0
+color = Color(0.72, 0.62, 0.78, 1)
+
+[node name="SpaLabel" type="Label" parent="."]
+offset_left = -200.0
+offset_top = 80.0
+offset_right = -100.0
+offset_bottom = 96.0
+text = "SPA"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.95, 0.95, 0.92, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 2
+
+[node name="Title" type="Label" parent="."]
+offset_left = -120.0
+offset_top = -178.0
+offset_right = 120.0
+offset_bottom = -162.0
+text = "LE  PARC  RESIDENCES"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.32, 0.18, 0.55, 1)
+theme_override_colors/font_outline_color = Color(0.95, 0.95, 0.92, 0.85)
+theme_override_constants/outline_size = 3
+
+[node name="Walls" type="Node2D" parent="."]
+
+[node name="Top" type="StaticBody2D" parent="Walls"]
+position = Vector2(0, -160)
+
+[node name="ShapeTopP" type="CollisionShape2D" parent="Walls/Top"]
+shape = SubResource("WallH")
+
+[node name="Bottom" type="StaticBody2D" parent="Walls"]
+position = Vector2(0, 160)
+
+[node name="ShapeBottomP" type="CollisionShape2D" parent="Walls/Bottom"]
+shape = SubResource("WallH")
+
+[node name="Left" type="StaticBody2D" parent="Walls"]
+position = Vector2(-240, 0)
+
+[node name="ShapeLeftP" type="CollisionShape2D" parent="Walls/Left"]
+shape = SubResource("WallV")
+
+[node name="Right" type="StaticBody2D" parent="Walls"]
+position = Vector2(240, 0)
+
+[node name="ShapeRightP" type="CollisionShape2D" parent="Walls/Right"]
+shape = SubResource("WallV")
+
+[node name="ExitDoor" parent="." instance=ExtResource("1_door")]
+position = Vector2(0, 155)
+prompt_text = "Sortir"
+is_exit = true
+
+[node name="SpawnPoint" type="Marker2D" parent="."]
+position = Vector2(0, 125)
+
+[node name="Carrasco" parent="." instance=ExtResource("3_carrasco")]
+position = Vector2(0, 70)
+
+# Residents ambient
+[node name="ResidentSwimmer" parent="." instance=ExtResource("2_wander")]
+position = Vector2(-50, 5)
+color = Color(0.95, 0.85, 0.62, 1)
+size = Vector2(10, 14)
+stationary = true
+bob_strength = 1.2
+look_at_player_distance = 50.0
+
+[node name="ResidentTennis" parent="." instance=ExtResource("2_wander")]
+position = Vector2(150, 105)
+color = Color(0.95, 0.95, 0.92, 1)
+size = Vector2(10, 17)
+stationary = true
+bob_strength = 0.4
+look_at_player_distance = 50.0
+
+[node name="ResidentLounger" parent="." instance=ExtResource("2_wander")]
+position = Vector2(-130, 20)
+color = Color(0.92, 0.65, 0.55, 1)
+size = Vector2(11, 14)
+stationary = true
+bob_strength = 0.3
+look_at_player_distance = 50.0

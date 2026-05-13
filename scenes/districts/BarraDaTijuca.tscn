@@ -1,0 +1,1303 @@
+[gd_scene load_steps=18 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/props/TaxiStand.tscn" id="1_taxi"]
+[ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="2_wander"]
+[ext_resource type="PackedScene" path="res://scenes/props/Viewpoint.tscn" id="3_view"]
+[ext_resource type="PackedScene" path="res://scenes/props/DistrictExit.tscn" id="5_exit"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/Magalhaes.tscn" id="6_magalhaes"]
+[ext_resource type="PackedScene" path="res://scenes/props/KiteStation.tscn" id="7_kite"]
+[ext_resource type="Script" path="res://scripts/districts/BarraDaTijucaDistrict.gd" id="8_script"]
+[ext_resource type="PackedScene" path="res://scenes/props/BuildingDoor.tscn" id="9_door"]
+[ext_resource type="PackedScene" path="res://scenes/interiors/BarraShoppingInterior.tscn" id="10_shopping"]
+[ext_resource type="PackedScene" path="res://scenes/interiors/LeParcInterior.tscn" id="11_leparc"]
+[ext_resource type="PackedScene" path="res://scenes/interiors/PeninsulaInterior.tscn" id="12_peninsula"]
+
+[sub_resource type="RectangleShape2D" id="WallH"]
+size = Vector2(2000, 16)
+
+[sub_resource type="RectangleShape2D" id="WallV"]
+size = Vector2(16, 700)
+
+[sub_resource type="RectangleShape2D" id="ExitWideShape"]
+size = Vector2(96, 600)
+
+[sub_resource type="RectangleShape2D" id="CondoWallH"]
+size = Vector2(600, 8)
+
+[sub_resource type="RectangleShape2D" id="CondoWallVShort"]
+size = Vector2(8, 150)
+
+[sub_resource type="RectangleShape2D" id="TowerBlock"]
+size = Vector2(120, 100)
+
+[node name="BarraDaTijucaDistrict" type="Node2D"]
+script = ExtResource("8_script")
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# MER (sud) y=200..400
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[node name="Sea" type="ColorRect" parent="."]
+offset_left = -1000.0
+offset_top = 200.0
+offset_right = 1000.0
+offset_bottom = 400.0
+color = Color(0.28, 0.48, 0.58, 1)
+
+[node name="SeaHighlight" type="ColorRect" parent="."]
+offset_left = -1000.0
+offset_top = 200.0
+offset_right = 1000.0
+offset_bottom = 206.0
+color = Color(0.78, 0.88, 0.92, 0.55)
+
+[node name="WaveLineA" type="ColorRect" parent="."]
+offset_left = -800.0
+offset_top = 240.0
+offset_right = -680.0
+offset_bottom = 242.0
+color = Color(0.85, 0.92, 0.95, 0.55)
+
+[node name="WaveLineB" type="ColorRect" parent="."]
+offset_left = -300.0
+offset_top = 260.0
+offset_right = -180.0
+offset_bottom = 262.0
+color = Color(0.85, 0.92, 0.95, 0.55)
+
+[node name="WaveLineC" type="ColorRect" parent="."]
+offset_left = 300.0
+offset_top = 250.0
+offset_right = 420.0
+offset_bottom = 252.0
+color = Color(0.85, 0.92, 0.95, 0.55)
+
+[node name="WaveLineD" type="ColorRect" parent="."]
+offset_left = 700.0
+offset_top = 280.0
+offset_right = 820.0
+offset_bottom = 282.0
+color = Color(0.85, 0.92, 0.95, 0.55)
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PLAGE (sable) y=130..200
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[node name="Sand" type="ColorRect" parent="."]
+offset_left = -1000.0
+offset_top = 130.0
+offset_right = 1000.0
+offset_bottom = 200.0
+color = Color(0.92, 0.82, 0.62, 1)
+
+[node name="SandFoam" type="ColorRect" parent="."]
+offset_left = -1000.0
+offset_top = 196.0
+offset_right = 1000.0
+offset_bottom = 200.0
+color = Color(0.95, 0.95, 0.95, 0.6)
+
+[node name="UmbrellaA" type="ColorRect" parent="."]
+offset_left = -600.0
+offset_top = 155.0
+offset_right = -560.0
+offset_bottom = 161.0
+color = Color(0.95, 0.55, 0.4, 1)
+
+[node name="UmbrellaAPole" type="ColorRect" parent="."]
+offset_left = -582.0
+offset_top = 161.0
+offset_right = -578.0
+offset_bottom = 188.0
+color = Color(0.55, 0.42, 0.32, 1)
+
+[node name="UmbrellaB" type="ColorRect" parent="."]
+offset_left = 200.0
+offset_top = 165.0
+offset_right = 240.0
+offset_bottom = 171.0
+color = Color(0.4, 0.65, 0.95, 1)
+
+[node name="UmbrellaBPole" type="ColorRect" parent="."]
+offset_left = 218.0
+offset_top = 171.0
+offset_right = 222.0
+offset_bottom = 192.0
+color = Color(0.55, 0.42, 0.32, 1)
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CALÇADÃO + BIKE LANE y=80..130
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[node name="BikeLane" type="ColorRect" parent="."]
+offset_left = -1000.0
+offset_top = 120.0
+offset_right = 1000.0
+offset_bottom = 130.0
+color = Color(0.62, 0.25, 0.22, 0.85)
+
+[node name="Calcadao" type="ColorRect" parent="."]
+offset_left = -1000.0
+offset_top = 80.0
+offset_right = 1000.0
+offset_bottom = 120.0
+color = Color(0.92, 0.92, 0.88, 1)
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# AVENUE LÚCIO COSTA — y=-30..80 (double voie + médiane palmiers)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[node name="AvLucioSouth" type="ColorRect" parent="."]
+offset_left = -1000.0
+offset_top = 30.0
+offset_right = 1000.0
+offset_bottom = 80.0
+color = Color(0.30, 0.28, 0.30, 1)
+
+[node name="AvLucioSouthLine" type="ColorRect" parent="."]
+offset_left = -1000.0
+offset_top = 53.0
+offset_right = 1000.0
+offset_bottom = 55.0
+color = Color(0.95, 0.85, 0.4, 0.7)
+
+[node name="AvMedian" type="ColorRect" parent="."]
+offset_left = -1000.0
+offset_top = 10.0
+offset_right = 1000.0
+offset_bottom = 30.0
+color = Color(0.42, 0.62, 0.42, 1)
+
+[node name="MedianPalm1" type="ColorRect" parent="."]
+offset_left = -700.0
+offset_top = 12.0
+offset_right = -680.0
+offset_bottom = 28.0
+color = Color(0.32, 0.55, 0.32, 1)
+
+[node name="MedianPalm2" type="ColorRect" parent="."]
+offset_left = -400.0
+offset_top = 12.0
+offset_right = -380.0
+offset_bottom = 28.0
+color = Color(0.32, 0.55, 0.32, 1)
+
+[node name="MedianPalm3" type="ColorRect" parent="."]
+offset_left = -100.0
+offset_top = 12.0
+offset_right = -80.0
+offset_bottom = 28.0
+color = Color(0.32, 0.55, 0.32, 1)
+
+[node name="MedianPalm4" type="ColorRect" parent="."]
+offset_left = 200.0
+offset_top = 12.0
+offset_right = 220.0
+offset_bottom = 28.0
+color = Color(0.32, 0.55, 0.32, 1)
+
+[node name="MedianPalm5" type="ColorRect" parent="."]
+offset_left = 500.0
+offset_top = 12.0
+offset_right = 520.0
+offset_bottom = 28.0
+color = Color(0.32, 0.55, 0.32, 1)
+
+[node name="MedianPalm6" type="ColorRect" parent="."]
+offset_left = 800.0
+offset_top = 12.0
+offset_right = 820.0
+offset_bottom = 28.0
+color = Color(0.32, 0.55, 0.32, 1)
+
+[node name="AvLucioNorth" type="ColorRect" parent="."]
+offset_left = -1000.0
+offset_top = -40.0
+offset_right = 1000.0
+offset_bottom = 10.0
+color = Color(0.30, 0.28, 0.30, 1)
+
+[node name="AvLucioNorthLine" type="ColorRect" parent="."]
+offset_left = -1000.0
+offset_top = -17.0
+offset_right = 1000.0
+offset_bottom = -15.0
+color = Color(0.95, 0.85, 0.4, 0.7)
+
+[node name="AvLucioSidewalkN" type="ColorRect" parent="."]
+offset_left = -1000.0
+offset_top = -60.0
+offset_right = 1000.0
+offset_bottom = -40.0
+color = Color(0.72, 0.70, 0.65, 1)
+
+[node name="AvenidaLabel" type="Label" parent="."]
+offset_left = -200.0
+offset_top = -58.0
+offset_right = 200.0
+offset_bottom = -42.0
+text = "Av. Lúcio Costa"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 9
+theme_override_colors/font_color = Color(0.98, 0.92, 0.65, 0.85)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 3
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# IMMEUBLES HAUTS (towers) y=-200..-60
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Tower A (ouest)
+[node name="TowerA" type="ColorRect" parent="."]
+offset_left = -900.0
+offset_top = -200.0
+offset_right = -780.0
+offset_bottom = -60.0
+color = Color(0.78, 0.85, 0.95, 1)
+
+[node name="TowerARoof" type="ColorRect" parent="."]
+offset_left = -900.0
+offset_top = -210.0
+offset_right = -780.0
+offset_bottom = -200.0
+color = Color(0.55, 0.62, 0.72, 1)
+
+[node name="TowerAWindow1" type="ColorRect" parent="."]
+offset_left = -880.0
+offset_top = -180.0
+offset_right = -800.0
+offset_bottom = -176.0
+color = Color(0.25, 0.32, 0.45, 0.85)
+
+[node name="TowerAWindow2" type="ColorRect" parent="."]
+offset_left = -880.0
+offset_top = -150.0
+offset_right = -800.0
+offset_bottom = -146.0
+color = Color(0.25, 0.32, 0.45, 0.85)
+
+[node name="TowerAWindow3" type="ColorRect" parent="."]
+offset_left = -880.0
+offset_top = -120.0
+offset_right = -800.0
+offset_bottom = -116.0
+color = Color(0.25, 0.32, 0.45, 0.85)
+
+[node name="TowerAWindow4" type="ColorRect" parent="."]
+offset_left = -880.0
+offset_top = -90.0
+offset_right = -800.0
+offset_bottom = -86.0
+color = Color(0.25, 0.32, 0.45, 0.85)
+
+# Tower B
+[node name="TowerB" type="ColorRect" parent="."]
+offset_left = -600.0
+offset_top = -220.0
+offset_right = -480.0
+offset_bottom = -60.0
+color = Color(0.85, 0.78, 0.62, 1)
+
+[node name="TowerBRoof" type="ColorRect" parent="."]
+offset_left = -600.0
+offset_top = -228.0
+offset_right = -480.0
+offset_bottom = -220.0
+color = Color(0.62, 0.55, 0.42, 1)
+
+[node name="TowerBWindow1" type="ColorRect" parent="."]
+offset_left = -580.0
+offset_top = -200.0
+offset_right = -500.0
+offset_bottom = -196.0
+color = Color(0.25, 0.32, 0.45, 0.85)
+
+[node name="TowerBWindow2" type="ColorRect" parent="."]
+offset_left = -580.0
+offset_top = -170.0
+offset_right = -500.0
+offset_bottom = -166.0
+color = Color(0.25, 0.32, 0.45, 0.85)
+
+[node name="TowerBWindow3" type="ColorRect" parent="."]
+offset_left = -580.0
+offset_top = -140.0
+offset_right = -500.0
+offset_bottom = -136.0
+color = Color(0.95, 0.85, 0.4, 0.85)
+
+[node name="TowerBWindow4" type="ColorRect" parent="."]
+offset_left = -580.0
+offset_top = -110.0
+offset_right = -500.0
+offset_bottom = -106.0
+color = Color(0.25, 0.32, 0.45, 0.85)
+
+# Tower D (est) — entre le condomínio et la sortie ZonaSul
+[node name="TowerD" type="ColorRect" parent="."]
+offset_left = 480.0
+offset_top = -200.0
+offset_right = 600.0
+offset_bottom = -60.0
+color = Color(0.62, 0.72, 0.85, 1)
+
+[node name="TowerDRoof" type="ColorRect" parent="."]
+offset_left = 480.0
+offset_top = -210.0
+offset_right = 600.0
+offset_bottom = -200.0
+color = Color(0.42, 0.55, 0.62, 1)
+
+[node name="TowerDWindow1" type="ColorRect" parent="."]
+offset_left = 500.0
+offset_top = -180.0
+offset_right = 580.0
+offset_bottom = -176.0
+color = Color(0.25, 0.32, 0.45, 0.85)
+
+[node name="TowerDWindow2" type="ColorRect" parent="."]
+offset_left = 500.0
+offset_top = -150.0
+offset_right = 580.0
+offset_bottom = -146.0
+color = Color(0.25, 0.32, 0.45, 0.85)
+
+[node name="TowerDWindow3" type="ColorRect" parent="."]
+offset_left = 500.0
+offset_top = -120.0
+offset_right = 580.0
+offset_bottom = -116.0
+color = Color(0.25, 0.32, 0.45, 0.85)
+
+[node name="TowerE" type="ColorRect" parent="."]
+offset_left = 720.0
+offset_top = -180.0
+offset_right = 840.0
+offset_bottom = -60.0
+color = Color(0.85, 0.62, 0.72, 1)
+
+[node name="TowerERoof" type="ColorRect" parent="."]
+offset_left = 720.0
+offset_top = -190.0
+offset_right = 840.0
+offset_bottom = -180.0
+color = Color(0.62, 0.42, 0.52, 1)
+
+[node name="TowerEWindow1" type="ColorRect" parent="."]
+offset_left = 740.0
+offset_top = -160.0
+offset_right = 820.0
+offset_bottom = -156.0
+color = Color(0.25, 0.32, 0.45, 0.85)
+
+[node name="TowerEWindow2" type="ColorRect" parent="."]
+offset_left = 740.0
+offset_top = -130.0
+offset_right = 820.0
+offset_bottom = -126.0
+color = Color(0.25, 0.32, 0.45, 0.85)
+
+[node name="TowerEWindow3" type="ColorRect" parent="."]
+offset_left = 740.0
+offset_top = -100.0
+offset_right = 820.0
+offset_bottom = -96.0
+color = Color(0.25, 0.32, 0.45, 0.85)
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CONDOMÍNIO RISERVA UNO  x=-300..300, y=-220..-60
+# Compound clos avec portail au sud, pool, fontaine, manager au centre.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[node name="CondoGround" type="ColorRect" parent="."]
+offset_left = -300.0
+offset_top = -220.0
+offset_right = 300.0
+offset_bottom = -60.0
+color = Color(0.85, 0.92, 0.78, 1)
+
+[node name="CondoMarbleTile1" type="ColorRect" parent="."]
+offset_left = -300.0
+offset_top = -150.0
+offset_right = 300.0
+offset_bottom = -147.0
+color = Color(0.72, 0.78, 0.65, 0.65)
+
+[node name="CondoMarbleTile2" type="ColorRect" parent="."]
+offset_left = -3.0
+offset_top = -220.0
+offset_right = 3.0
+offset_bottom = -60.0
+color = Color(0.72, 0.78, 0.65, 0.5)
+
+[node name="CondoFenceTop" type="ColorRect" parent="."]
+offset_left = -300.0
+offset_top = -224.0
+offset_right = 300.0
+offset_bottom = -216.0
+color = Color(0.32, 0.32, 0.32, 1)
+
+[node name="CondoFenceLeft" type="ColorRect" parent="."]
+offset_left = -304.0
+offset_top = -220.0
+offset_right = -296.0
+offset_bottom = -60.0
+color = Color(0.32, 0.32, 0.32, 1)
+
+[node name="CondoFenceRight" type="ColorRect" parent="."]
+offset_left = 296.0
+offset_top = -220.0
+offset_right = 304.0
+offset_bottom = -60.0
+color = Color(0.32, 0.32, 0.32, 1)
+
+[node name="CondoFenceSouthL" type="ColorRect" parent="."]
+offset_left = -300.0
+offset_top = -64.0
+offset_right = -50.0
+offset_bottom = -60.0
+color = Color(0.32, 0.32, 0.32, 1)
+
+[node name="CondoFenceSouthR" type="ColorRect" parent="."]
+offset_left = 50.0
+offset_top = -64.0
+offset_right = 300.0
+offset_bottom = -60.0
+color = Color(0.32, 0.32, 0.32, 1)
+
+# Portail (gap dans le mur sud, x=-50..50)
+[node name="CondoGateLPillar" type="ColorRect" parent="."]
+offset_left = -56.0
+offset_top = -78.0
+offset_right = -44.0
+offset_bottom = -60.0
+color = Color(0.72, 0.62, 0.42, 1)
+
+[node name="CondoGateRPillar" type="ColorRect" parent="."]
+offset_left = 44.0
+offset_top = -78.0
+offset_right = 56.0
+offset_bottom = -60.0
+color = Color(0.72, 0.62, 0.42, 1)
+
+[node name="CondoGateArch" type="ColorRect" parent="."]
+offset_left = -56.0
+offset_top = -82.0
+offset_right = 56.0
+offset_bottom = -76.0
+color = Color(0.62, 0.52, 0.32, 1)
+
+[node name="CondoSignPanel" type="ColorRect" parent="."]
+offset_left = -90.0
+offset_top = -94.0
+offset_right = 90.0
+offset_bottom = -82.0
+color = Color(0.32, 0.18, 0.18, 1)
+
+[node name="CondoSignLabel" type="Label" parent="."]
+offset_left = -90.0
+offset_top = -94.0
+offset_right = 90.0
+offset_bottom = -82.0
+text = "RISERVA UNO"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 9
+theme_override_colors/font_color = Color(0.95, 0.78, 0.45, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 2
+
+# Tours intérieures du condomínio (visibles depuis l'avenue)
+[node name="CondoTowerA" type="ColorRect" parent="."]
+offset_left = -240.0
+offset_top = -200.0
+offset_right = -160.0
+offset_bottom = -100.0
+color = Color(0.95, 0.92, 0.85, 1)
+
+[node name="CondoTowerARoof" type="ColorRect" parent="."]
+offset_left = -240.0
+offset_top = -206.0
+offset_right = -160.0
+offset_bottom = -200.0
+color = Color(0.72, 0.68, 0.62, 1)
+
+[node name="CondoTowerB" type="ColorRect" parent="."]
+offset_left = 160.0
+offset_top = -200.0
+offset_right = 240.0
+offset_bottom = -100.0
+color = Color(0.95, 0.92, 0.85, 1)
+
+[node name="CondoTowerBRoof" type="ColorRect" parent="."]
+offset_left = 160.0
+offset_top = -206.0
+offset_right = 240.0
+offset_bottom = -200.0
+color = Color(0.72, 0.68, 0.62, 1)
+
+# Pool centrale
+[node name="CondoPool" type="ColorRect" parent="."]
+offset_left = -60.0
+offset_top = -180.0
+offset_right = 60.0
+offset_bottom = -140.0
+color = Color(0.55, 0.85, 0.92, 1)
+
+[node name="CondoPoolHi" type="ColorRect" parent="."]
+offset_left = -50.0
+offset_top = -170.0
+offset_right = 0.0
+offset_bottom = -167.0
+color = Color(0.92, 0.95, 0.98, 0.65)
+
+# Sun loungers
+[node name="LoungerL" type="ColorRect" parent="."]
+offset_left = -120.0
+offset_top = -160.0
+offset_right = -86.0
+offset_bottom = -148.0
+color = Color(0.95, 0.92, 0.85, 1)
+
+[node name="LoungerR" type="ColorRect" parent="."]
+offset_left = 86.0
+offset_top = -160.0
+offset_right = 120.0
+offset_bottom = -148.0
+color = Color(0.95, 0.92, 0.85, 1)
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# MURS PERIMETER
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[node name="Walls" type="Node2D" parent="."]
+
+[node name="Top" type="StaticBody2D" parent="Walls"]
+position = Vector2(0, -260)
+
+[node name="ShapeTop" type="CollisionShape2D" parent="Walls/Top"]
+shape = SubResource("WallH")
+
+[node name="Bottom" type="StaticBody2D" parent="Walls"]
+position = Vector2(0, 200)
+
+[node name="ShapeBottom" type="CollisionShape2D" parent="Walls/Bottom"]
+shape = SubResource("WallH")
+
+[node name="Left" type="StaticBody2D" parent="Walls"]
+position = Vector2(-1000, -30)
+
+[node name="ShapeLeft" type="CollisionShape2D" parent="Walls/Left"]
+shape = SubResource("WallV")
+
+# Condomínio walls — empêchent de traverser hors du portail (z barrière sud
+# coupée en 2 pour le gap)
+[node name="CondoTopWall" type="StaticBody2D" parent="Walls"]
+position = Vector2(0, -220)
+
+[node name="ShapeCondoTop" type="CollisionShape2D" parent="Walls/CondoTopWall"]
+shape = SubResource("CondoWallH")
+
+[node name="CondoLeftWall" type="StaticBody2D" parent="Walls"]
+position = Vector2(-300, -145)
+
+[node name="ShapeCondoLeft" type="CollisionShape2D" parent="Walls/CondoLeftWall"]
+shape = SubResource("CondoWallVShort")
+
+[node name="CondoRightWall" type="StaticBody2D" parent="Walls"]
+position = Vector2(300, -145)
+
+[node name="ShapeCondoRight" type="CollisionShape2D" parent="Walls/CondoRightWall"]
+shape = SubResource("CondoWallVShort")
+
+# Pool barrier (empêche le joueur de marcher dans l'eau)
+[node name="PoolBarrier" type="StaticBody2D" parent="Walls"]
+position = Vector2(0, -160)
+
+[node name="ShapePoolBarrier" type="CollisionShape2D" parent="Walls/PoolBarrier"]
+shape = SubResource("TowerBlock")
+
+# Blocks pour rendre les tours impassables (la rue passe juste devant)
+[node name="TowerABlock" type="StaticBody2D" parent="Walls"]
+position = Vector2(-840, -130)
+
+[node name="ShapeTowerA" type="CollisionShape2D" parent="Walls/TowerABlock"]
+shape = SubResource("TowerBlock")
+
+[node name="TowerBBlock" type="StaticBody2D" parent="Walls"]
+position = Vector2(-540, -140)
+
+[node name="ShapeTowerB" type="CollisionShape2D" parent="Walls/TowerBBlock"]
+shape = SubResource("TowerBlock")
+
+[node name="TowerDBlock" type="StaticBody2D" parent="Walls"]
+position = Vector2(540, -130)
+
+[node name="ShapeTowerD" type="CollisionShape2D" parent="Walls/TowerDBlock"]
+shape = SubResource("TowerBlock")
+
+[node name="TowerEBlock" type="StaticBody2D" parent="Walls"]
+position = Vector2(780, -120)
+
+[node name="ShapeTowerE" type="CollisionShape2D" parent="Walls/TowerEBlock"]
+shape = SubResource("TowerBlock")
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SPAWN + EXIT (côté est, vers ZonaSul)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[node name="PlayerSpawn" type="Marker2D" parent="."]
+position = Vector2(900, 100)
+
+[node name="ExitToZonaSul" parent="." instance=ExtResource("5_exit")]
+position = Vector2(975, -30)
+target_district = "zona_sul"
+label_text = "→ LEBLON / IPANEMA"
+
+[node name="CollisionShape2D" parent="ExitToZonaSul" index="0"]
+shape = SubResource("ExitWideShape")
+
+[node name="TaxiStand" parent="." instance=ExtResource("1_taxi")]
+position = Vector2(-800, 60)
+
+[node name="ViewpointPraia" parent="." instance=ExtResource("3_view")]
+position = Vector2(-200, 140)
+viewpoint_id = "barra_praia"
+prompt_first = "Admirer l'horizon Barra"
+flavor_speaker = "Sobrinho"
+flavor_text = "Dix-huit kilomètres de plage rectiligne, sans rocher, sans bout. Le vent vient d'Angra. Les surfeurs disent que l'eau est plus froide ici — courant ascendant. La Barra c'est l'Atlantique en mode plein, sans découpe."
+money_reward = 60
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# NPCs ambient
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[node name="JoggerA" parent="." instance=ExtResource("2_wander")]
+position = Vector2(-500, 95)
+color = Color(0.4, 0.85, 0.55, 1)
+size = Vector2(9, 16)
+roam_zone = Rect2(-400, -10, 800, 20)
+speed = 55.0
+pause_at_waypoints = 0.2
+
+[node name="JoggerB" parent="." instance=ExtResource("2_wander")]
+position = Vector2(400, 95)
+color = Color(0.95, 0.55, 0.4, 1)
+size = Vector2(9, 16)
+roam_zone = Rect2(-400, -10, 800, 20)
+speed = 45.0
+pause_at_waypoints = 0.3
+
+[node name="SunBatherA" parent="." instance=ExtResource("2_wander")]
+position = Vector2(-300, 170)
+color = Color(0.95, 0.65, 0.55, 1)
+size = Vector2(11, 14)
+stationary = true
+bob_strength = 0.4
+look_at_player_distance = 50.0
+
+[node name="SunBatherB" parent="." instance=ExtResource("2_wander")]
+position = Vector2(450, 175)
+color = Color(0.4, 0.65, 0.95, 1)
+size = Vector2(11, 14)
+stationary = true
+bob_strength = 0.4
+look_at_player_distance = 50.0
+
+# Garde du condomínio à l'entrée — bloque visuellement mais pas physiquement
+[node name="GuardConcierge" parent="." instance=ExtResource("2_wander")]
+position = Vector2(80, -80)
+color = Color(0.18, 0.32, 0.45, 1)
+size = Vector2(10, 17)
+stationary = true
+look_at_player_distance = 50.0
+
+[node name="Magalhaes" parent="." instance=ExtResource("6_magalhaes")]
+position = Vector2(0, -120)
+
+[node name="DistrictLabel" type="Label" parent="."]
+offset_left = -200.0
+offset_top = -250.0
+offset_right = 200.0
+offset_bottom = -230.0
+text = "BARRA  DA  TIJUCA"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 4
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# LAMPADAIRES Lúcio Costa — 6 le long de l'avenue
+# Poteaux toujours visibles, halos + ampoules taggés "nightlight"
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[node name="LampLC1Pole" type="ColorRect" parent="."]
+offset_left = -802.0
+offset_top = -50.0
+offset_right = -798.0
+offset_bottom = -20.0
+color = Color(0.32, 0.30, 0.30, 1)
+
+[node name="LampLC1Halo" type="ColorRect" parent="." groups=["nightlight"]]
+offset_left = -816.0
+offset_top = -60.0
+offset_right = -784.0
+offset_bottom = -40.0
+color = Color(1.0, 0.92, 0.55, 0.45)
+
+[node name="LampLC1Bulb" type="ColorRect" parent="." groups=["nightlight"]]
+offset_left = -804.0
+offset_top = -54.0
+offset_right = -796.0
+offset_bottom = -48.0
+color = Color(1.0, 0.95, 0.62, 1)
+
+[node name="LampLC2Pole" type="ColorRect" parent="."]
+offset_left = -452.0
+offset_top = -50.0
+offset_right = -448.0
+offset_bottom = -20.0
+color = Color(0.32, 0.30, 0.30, 1)
+
+[node name="LampLC2Halo" type="ColorRect" parent="." groups=["nightlight"]]
+offset_left = -466.0
+offset_top = -60.0
+offset_right = -434.0
+offset_bottom = -40.0
+color = Color(1.0, 0.92, 0.55, 0.45)
+
+[node name="LampLC2Bulb" type="ColorRect" parent="." groups=["nightlight"]]
+offset_left = -454.0
+offset_top = -54.0
+offset_right = -446.0
+offset_bottom = -48.0
+color = Color(1.0, 0.95, 0.62, 1)
+
+[node name="LampLC3Pole" type="ColorRect" parent="."]
+offset_left = -152.0
+offset_top = -50.0
+offset_right = -148.0
+offset_bottom = -20.0
+color = Color(0.32, 0.30, 0.30, 1)
+
+[node name="LampLC3Halo" type="ColorRect" parent="." groups=["nightlight"]]
+offset_left = -166.0
+offset_top = -60.0
+offset_right = -134.0
+offset_bottom = -40.0
+color = Color(1.0, 0.92, 0.55, 0.45)
+
+[node name="LampLC3Bulb" type="ColorRect" parent="." groups=["nightlight"]]
+offset_left = -154.0
+offset_top = -54.0
+offset_right = -146.0
+offset_bottom = -48.0
+color = Color(1.0, 0.95, 0.62, 1)
+
+[node name="LampLC4Pole" type="ColorRect" parent="."]
+offset_left = 148.0
+offset_top = -50.0
+offset_right = 152.0
+offset_bottom = -20.0
+color = Color(0.32, 0.30, 0.30, 1)
+
+[node name="LampLC4Halo" type="ColorRect" parent="." groups=["nightlight"]]
+offset_left = 134.0
+offset_top = -60.0
+offset_right = 166.0
+offset_bottom = -40.0
+color = Color(1.0, 0.92, 0.55, 0.45)
+
+[node name="LampLC4Bulb" type="ColorRect" parent="." groups=["nightlight"]]
+offset_left = 146.0
+offset_top = -54.0
+offset_right = 154.0
+offset_bottom = -48.0
+color = Color(1.0, 0.95, 0.62, 1)
+
+[node name="LampLC5Pole" type="ColorRect" parent="."]
+offset_left = 448.0
+offset_top = -50.0
+offset_right = 452.0
+offset_bottom = -20.0
+color = Color(0.32, 0.30, 0.30, 1)
+
+[node name="LampLC5Halo" type="ColorRect" parent="." groups=["nightlight"]]
+offset_left = 434.0
+offset_top = -60.0
+offset_right = 466.0
+offset_bottom = -40.0
+color = Color(1.0, 0.92, 0.55, 0.45)
+
+[node name="LampLC5Bulb" type="ColorRect" parent="." groups=["nightlight"]]
+offset_left = 446.0
+offset_top = -54.0
+offset_right = 454.0
+offset_bottom = -48.0
+color = Color(1.0, 0.95, 0.62, 1)
+
+[node name="LampLC6Pole" type="ColorRect" parent="."]
+offset_left = 748.0
+offset_top = -50.0
+offset_right = 752.0
+offset_bottom = -20.0
+color = Color(0.32, 0.30, 0.30, 1)
+
+[node name="LampLC6Halo" type="ColorRect" parent="." groups=["nightlight"]]
+offset_left = 734.0
+offset_top = -60.0
+offset_right = 766.0
+offset_bottom = -40.0
+color = Color(1.0, 0.92, 0.55, 0.45)
+
+[node name="LampLC6Bulb" type="ColorRect" parent="." groups=["nightlight"]]
+offset_left = 746.0
+offset_top = -54.0
+offset_right = 754.0
+offset_bottom = -48.0
+color = Color(1.0, 0.95, 0.62, 1)
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# AMBIENT supplémentaire — joggers, cyclistes, surfeurs, valet
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[node name="JoggerC" parent="." instance=ExtResource("2_wander")]
+position = Vector2(-150, 95)
+color = Color(0.62, 0.85, 0.55, 1)
+size = Vector2(9, 16)
+roam_zone = Rect2(-400, -10, 800, 20)
+speed = 50.0
+pause_at_waypoints = 0.2
+
+[node name="CyclistA" parent="." instance=ExtResource("2_wander")]
+position = Vector2(0, 125)
+color = Color(0.4, 0.55, 0.85, 1)
+size = Vector2(10, 16)
+roam_zone = Rect2(-600, -10, 1200, 20)
+speed = 75.0
+pause_at_waypoints = 0.1
+
+[node name="CyclistB" parent="." instance=ExtResource("2_wander")]
+position = Vector2(-350, 125)
+color = Color(0.85, 0.55, 0.42, 1)
+size = Vector2(10, 16)
+roam_zone = Rect2(-600, -10, 1200, 20)
+speed = 65.0
+pause_at_waypoints = 0.15
+
+[node name="Surfer" parent="." instance=ExtResource("2_wander")]
+position = Vector2(150, 175)
+color = Color(0.32, 0.55, 0.82, 1)
+size = Vector2(10, 17)
+roam_zone = Rect2(-150, -20, 300, 40)
+speed = 18.0
+pause_at_waypoints = 2.5
+look_at_player_distance = 50.0
+
+[node name="ChildOnSand" parent="." instance=ExtResource("2_wander")]
+position = Vector2(-450, 165)
+color = Color(0.95, 0.85, 0.4, 1)
+size = Vector2(7, 12)
+roam_zone = Rect2(-150, -30, 300, 60)
+speed = 35.0
+pause_at_waypoints = 0.4
+look_at_player_distance = 50.0
+
+[node name="CondoValet" parent="." instance=ExtResource("2_wander")]
+position = Vector2(120, -65)
+color = Color(0.62, 0.42, 0.22, 1)
+size = Vector2(10, 17)
+stationary = true
+bob_strength = 0.3
+look_at_player_distance = 50.0
+
+[node name="DogWalker" parent="." instance=ExtResource("2_wander")]
+position = Vector2(600, 105)
+color = Color(0.55, 0.42, 0.32, 1)
+size = Vector2(10, 17)
+roam_zone = Rect2(-300, -15, 600, 30)
+speed = 22.0
+pause_at_waypoints = 1.2
+look_at_player_distance = 50.0
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# BRT TRANSOESTE — abribus + viewpoint informatif (à l'ouest, vers Recreio)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[node name="BRTShelter" type="ColorRect" parent="."]
+offset_left = -750.0
+offset_top = -38.0
+offset_right = -650.0
+offset_bottom = -22.0
+color = Color(0.55, 0.62, 0.65, 1)
+
+[node name="BRTShelterRoof" type="ColorRect" parent="."]
+offset_left = -752.0
+offset_top = -44.0
+offset_right = -648.0
+offset_bottom = -38.0
+color = Color(0.32, 0.55, 0.72, 1)
+
+[node name="BRTBench" type="ColorRect" parent="."]
+offset_left = -740.0
+offset_top = -26.0
+offset_right = -660.0
+offset_bottom = -22.0
+color = Color(0.42, 0.32, 0.22, 1)
+
+[node name="BRTSignPole" type="ColorRect" parent="."]
+offset_left = -698.0
+offset_top = -55.0
+offset_right = -694.0
+offset_bottom = -38.0
+color = Color(0.32, 0.32, 0.32, 1)
+
+[node name="BRTSignPanel" type="ColorRect" parent="."]
+offset_left = -722.0
+offset_top = -68.0
+offset_right = -670.0
+offset_bottom = -55.0
+color = Color(0.32, 0.55, 0.72, 1)
+
+[node name="BRTSignLabel" type="Label" parent="."]
+offset_left = -722.0
+offset_top = -68.0
+offset_right = -670.0
+offset_bottom = -55.0
+text = "BRT"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 8
+theme_override_colors/font_color = Color(0.98, 0.95, 0.85, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 2
+
+[node name="ViewpointBRT" parent="." instance=ExtResource("3_view")]
+position = Vector2(-700, -10)
+viewpoint_id = "barra_brt"
+prompt_first = "Lire le panneau BRT"
+flavor_speaker = "Sobrinho"
+flavor_text = "BRT TransOeste, ligne Alvorada → Santa Cruz. *consulte les horaires* Un bus toutes les 4 minutes en heure de pointe. Cinquante-six kilomètres de couloir réservé. Avant ça, la même course en voiture prenait deux heures à travers la Barra. Maintenant : trente-cinq minutes. *un articulé de quinze mètres passe en rugissant* La ville change quand les transports changent."
+money_reward = 25
+
+# KiteStation sur la plage côté ouest (Barra c'est LA spot kite de Rio)
+[node name="KiteStation" parent="." instance=ExtResource("7_kite")]
+position = Vector2(-400, 175)
+
+[node name="KiteStationLabel" type="Label" parent="."]
+offset_left = -440.0
+offset_top = 200.0
+offset_right = -360.0
+offset_bottom = 216.0
+text = "🪁 Kite-board"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 3
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# BARRA SHOPPING — façade nord avec porte d'entrée vers intérieur
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[node name="ShoppingFacade" type="ColorRect" parent="."]
+offset_left = 200.0
+offset_top = -260.0
+offset_right = 460.0
+offset_bottom = -210.0
+color = Color(0.62, 0.42, 0.65, 1)
+
+[node name="ShoppingFacadeRoof" type="ColorRect" parent="."]
+offset_left = 196.0
+offset_top = -268.0
+offset_right = 464.0
+offset_bottom = -260.0
+color = Color(0.42, 0.28, 0.45, 1)
+
+[node name="ShoppingWindow1" type="ColorRect" parent="."]
+offset_left = 220.0
+offset_top = -250.0
+offset_right = 250.0
+offset_bottom = -240.0
+color = Color(0.95, 0.85, 0.42, 0.9)
+
+[node name="ShoppingWindow2" type="ColorRect" parent="."]
+offset_left = 270.0
+offset_top = -250.0
+offset_right = 300.0
+offset_bottom = -240.0
+color = Color(0.95, 0.85, 0.42, 0.9)
+
+[node name="ShoppingWindow3" type="ColorRect" parent="."]
+offset_left = 320.0
+offset_top = -250.0
+offset_right = 350.0
+offset_bottom = -240.0
+color = Color(0.95, 0.85, 0.42, 0.9)
+
+[node name="ShoppingWindow4" type="ColorRect" parent="."]
+offset_left = 370.0
+offset_top = -250.0
+offset_right = 400.0
+offset_bottom = -240.0
+color = Color(0.95, 0.85, 0.42, 0.9)
+
+[node name="ShoppingWindow5" type="ColorRect" parent="."]
+offset_left = 420.0
+offset_top = -250.0
+offset_right = 450.0
+offset_bottom = -240.0
+color = Color(0.95, 0.85, 0.42, 0.9)
+
+[node name="ShoppingWindow6" type="ColorRect" parent="."]
+offset_left = 220.0
+offset_top = -230.0
+offset_right = 250.0
+offset_bottom = -220.0
+color = Color(0.42, 0.55, 0.82, 0.9)
+
+[node name="ShoppingWindow7" type="ColorRect" parent="."]
+offset_left = 320.0
+offset_top = -230.0
+offset_right = 350.0
+offset_bottom = -220.0
+color = Color(0.42, 0.55, 0.82, 0.9)
+
+[node name="ShoppingWindow8" type="ColorRect" parent="."]
+offset_left = 420.0
+offset_top = -230.0
+offset_right = 450.0
+offset_bottom = -220.0
+color = Color(0.42, 0.55, 0.82, 0.9)
+
+[node name="ShoppingEntrance" type="ColorRect" parent="."]
+offset_left = 324.0
+offset_top = -212.0
+offset_right = 336.0
+offset_bottom = -208.0
+color = Color(0.22, 0.18, 0.25, 1)
+
+[node name="ShoppingLogoPanel" type="ColorRect" parent="."]
+offset_left = 260.0
+offset_top = -270.0
+offset_right = 400.0
+offset_bottom = -260.0
+color = Color(0.95, 0.55, 0.4, 1)
+
+[node name="ShoppingLogoLabel" type="Label" parent="."]
+offset_left = 260.0
+offset_top = -270.0
+offset_right = 400.0
+offset_bottom = -260.0
+text = "BARRA SHOPPING"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 7
+theme_override_colors/font_color = Color(0.98, 0.95, 0.85, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 2
+
+[node name="ShoppingPromptLabel" type="Label" parent="."]
+offset_left = 240.0
+offset_top = -200.0
+offset_right = 420.0
+offset_bottom = -184.0
+text = "🛍️ Barra Shopping"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 9
+theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.9)
+theme_override_constants/outline_size = 3
+
+[node name="DoorShopping" parent="." instance=ExtResource("9_door")]
+position = Vector2(330, -210)
+prompt_text = "Entrer au Barra Shopping"
+
+[node name="BarraShoppingInterior" parent="." instance=ExtResource("10_shopping")]
+position = Vector2(2500, -1000)
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# LE PARC RESIDENCES — façade ouest (entre TowerA et TowerB) + porte
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[node name="LeParcFacade" type="ColorRect" parent="."]
+offset_left = -770.0
+offset_top = -250.0
+offset_right = -610.0
+offset_bottom = -210.0
+color = Color(0.45, 0.32, 0.55, 1)
+
+[node name="LeParcFacadeRoof" type="ColorRect" parent="."]
+offset_left = -774.0
+offset_top = -258.0
+offset_right = -606.0
+offset_bottom = -250.0
+color = Color(0.32, 0.22, 0.42, 1)
+
+[node name="LeParcWindow1" type="ColorRect" parent="."]
+offset_left = -760.0
+offset_top = -240.0
+offset_right = -740.0
+offset_bottom = -230.0
+color = Color(0.95, 0.85, 0.4, 0.9)
+
+[node name="LeParcWindow2" type="ColorRect" parent="."]
+offset_left = -720.0
+offset_top = -240.0
+offset_right = -700.0
+offset_bottom = -230.0
+color = Color(0.42, 0.55, 0.82, 0.9)
+
+[node name="LeParcWindow3" type="ColorRect" parent="."]
+offset_left = -680.0
+offset_top = -240.0
+offset_right = -660.0
+offset_bottom = -230.0
+color = Color(0.95, 0.85, 0.4, 0.9)
+
+[node name="LeParcWindow4" type="ColorRect" parent="."]
+offset_left = -640.0
+offset_top = -240.0
+offset_right = -620.0
+offset_bottom = -230.0
+color = Color(0.42, 0.55, 0.82, 0.9)
+
+[node name="LeParcEntrance" type="ColorRect" parent="."]
+offset_left = -696.0
+offset_top = -212.0
+offset_right = -684.0
+offset_bottom = -208.0
+color = Color(0.22, 0.18, 0.25, 1)
+
+[node name="LeParcSignPanel" type="ColorRect" parent="."]
+offset_left = -750.0
+offset_top = -268.0
+offset_right = -630.0
+offset_bottom = -258.0
+color = Color(0.62, 0.42, 0.78, 1)
+
+[node name="LeParcSignLabel" type="Label" parent="."]
+offset_left = -750.0
+offset_top = -268.0
+offset_right = -630.0
+offset_bottom = -258.0
+text = "LE PARC"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 7
+theme_override_colors/font_color = Color(0.98, 0.95, 0.85, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 2
+
+[node name="LeParcPromptLabel" type="Label" parent="."]
+offset_left = -780.0
+offset_top = -200.0
+offset_right = -600.0
+offset_bottom = -184.0
+text = "🏛 Le Parc Residences"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 9
+theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.9)
+theme_override_constants/outline_size = 3
+
+[node name="DoorLeParc" parent="." instance=ExtResource("9_door")]
+position = Vector2(-690, -210)
+prompt_text = "Entrer au Le Parc"
+
+[node name="LeParcInterior" parent="." instance=ExtResource("11_leparc")]
+position = Vector2(2500, -2000)
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PENÍNSULA PRIVÉ — façade dorée entre TowerD et TowerE (x=620..720)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[node name="PeninsulaFacade" type="ColorRect" parent="."]
+offset_left = 620.0
+offset_top = -260.0
+offset_right = 720.0
+offset_bottom = -210.0
+color = Color(0.62, 0.52, 0.32, 1)
+
+[node name="PeninsulaFacadeRoof" type="ColorRect" parent="."]
+offset_left = 616.0
+offset_top = -268.0
+offset_right = 724.0
+offset_bottom = -260.0
+color = Color(0.42, 0.35, 0.18, 1)
+
+[node name="PeninsulaWindow1" type="ColorRect" parent="."]
+offset_left = 628.0
+offset_top = -250.0
+offset_right = 648.0
+offset_bottom = -240.0
+color = Color(0.95, 0.85, 0.4, 0.95)
+
+[node name="PeninsulaWindow2" type="ColorRect" parent="."]
+offset_left = 658.0
+offset_top = -250.0
+offset_right = 678.0
+offset_bottom = -240.0
+color = Color(0.95, 0.85, 0.4, 0.95)
+
+[node name="PeninsulaWindow3" type="ColorRect" parent="."]
+offset_left = 688.0
+offset_top = -250.0
+offset_right = 708.0
+offset_bottom = -240.0
+color = Color(0.95, 0.85, 0.4, 0.95)
+
+[node name="PeninsulaWindow4" type="ColorRect" parent="."]
+offset_left = 628.0
+offset_top = -232.0
+offset_right = 648.0
+offset_bottom = -222.0
+color = Color(0.42, 0.55, 0.82, 0.95)
+
+[node name="PeninsulaWindow5" type="ColorRect" parent="."]
+offset_left = 688.0
+offset_top = -232.0
+offset_right = 708.0
+offset_bottom = -222.0
+color = Color(0.42, 0.55, 0.82, 0.95)
+
+[node name="PeninsulaEntrance" type="ColorRect" parent="."]
+offset_left = 664.0
+offset_top = -212.0
+offset_right = 676.0
+offset_bottom = -208.0
+color = Color(0.22, 0.18, 0.12, 1)
+
+[node name="PeninsulaSignPanel" type="ColorRect" parent="."]
+offset_left = 630.0
+offset_top = -278.0
+offset_right = 710.0
+offset_bottom = -268.0
+color = Color(0.92, 0.78, 0.32, 1)
+
+[node name="PeninsulaSignLabel" type="Label" parent="."]
+offset_left = 630.0
+offset_top = -278.0
+offset_right = 710.0
+offset_bottom = -268.0
+text = "PENÍNSULA"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 7
+theme_override_colors/font_color = Color(0.18, 0.12, 0.08, 1)
+theme_override_constants/outline_size = 0
+
+[node name="PeninsulaPromptLabel" type="Label" parent="."]
+offset_left = 600.0
+offset_top = -200.0
+offset_right = 740.0
+offset_bottom = -184.0
+text = "🥂 Península Privé"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 9
+theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.9)
+theme_override_constants/outline_size = 3
+
+[node name="DoorPeninsula" parent="." instance=ExtResource("9_door")]
+position = Vector2(670, -210)
+prompt_text = "Entrer au Península Privé"
+
+[node name="PeninsulaInterior" parent="." instance=ExtResource("12_peninsula")]
+position = Vector2(2500, -3000)

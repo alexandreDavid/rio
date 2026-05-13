@@ -74,6 +74,11 @@ const DISTRICTS: Dictionary = {
 		"fare": 8,
 		"node_name": "FavelaDoMorroDistrict",
 	},
+	"barra_tijuca": {
+		"label": "Barra da Tijuca — condomínios",
+		"fare": 18,
+		"node_name": "BarraDaTijucaDistrict",
+	},
 }
 
 # Position d'arrivée custom quand on entre via une sortie piétonne (pas via le
@@ -90,14 +95,20 @@ const WALK_ENTRIES: Dictionary = {
 		"favela_morro":       Vector2(200, -100),    # arrivée pied du morro (Forte) — sud de ExitToFavela (-210)
 	},
 	"zona_sul": {
-		"copacabana": Vector2(800, 130),  # arrivée depuis l'est (Copa) — ouest de ExitToCopa (905)
+		"copacabana": Vector2(800, 130),                # arrivée depuis l'est (Copa) — ouest de ExitToCopa (905)
+		"botafogo_flamengo": Vector2(850, -1020),       # depuis Botafogo — sud de ExitToBotafogo (-1080)
+		"barra_tijuca": Vector2(-870, 100),             # depuis Barra — est de ExitToBarra (-920)
 	},
 	"botafogo_flamengo": {
-		"copacabana": Vector2(0, 250),  # sortie nord du Túnel Novo — nord de ExitToCopa (365)
-		"pao_acucar": Vector2(880, 30),  # retour du bondinho au sud-est, près de la borne
+		"copacabana": Vector2(0, 250),                  # sortie nord du Túnel Novo — nord de ExitToCopa (365)
+		"pao_acucar": Vector2(880, 30),                 # retour du bondinho au sud-est, près de la borne
+		"zona_sul": Vector2(700, 310),                  # depuis Lagoa/Ipanema — nord de ExitToZonaSul (360)
 	},
 	"favela_morro": {
 		"copacabana": Vector2(0, 150),    # arrivée depuis le bas — nord de ExitToCopa (250) à 70 px
+	},
+	"barra_tijuca": {
+		"zona_sul": Vector2(920, 100),                  # depuis Leblon — ouest de ExitToZonaSul (975)
 	},
 }
 

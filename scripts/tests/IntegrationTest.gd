@@ -64,6 +64,9 @@ const QUEST_RESOURCES: Array[String] = [
 	"res://resources/quests/act4_carnaval_desfile.tres",
 	"res://resources/quests/beto_lost.tres",
 	"res://resources/quests/zona_sul_envelope.tres",
+	"res://resources/quests/consortium_barra_security.tres",
+	"res://resources/quests/consortium_le_parc.tres",
+	"res://resources/quests/consortium_peninsula.tres",
 ]
 
 const NPC_DATA_DIR: String = "res://resources/npcs/"
@@ -804,6 +807,10 @@ const SCRIPT_COMPLETED_OBJECTIVES: Dictionary = {
 	"tourist_vip_tour": ["see_corcovado", "see_paoacucar", "see_lagoa"],
 	# Side quest favela — ReactiveDialogueSpot actions.
 	"beto_lost": ["find_beto", "tell_vizinha"],
+	# Side quest Barra Riserva Uno — Magalhães script + Nilton dialog actions.
+	"consortium_barra_security": ["intimidate_magalhaes", "close_deal"],
+	"consortium_le_parc": ["intimidate_carrasco", "close_deal_carrasco"],
+	"consortium_peninsula": ["intimidate_mendonca", "close_deal_mendonca"],
 	# Acte 3 Polícia — intel via VizinhaSpot (variante runtime, pas dans PLACEHOLDER).
 	"act3_policia_intel": ["intel_vizinha"],
 	# Acte 3 Tráfico — pickup auto-coché par MainBoot district_changed (Botafogo).

@@ -187,6 +187,22 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 			"2": {"rep": {1: -2, 3: -2}, "set_flag": "creditor_ultimatum_refused"},
 		},
 	},
+	# --- Ramos refuse de parler post-commissaire_alerted ---
+	"ramos_commissaire_alerted": {
+		"speaker": "Capitão Ramos",
+		"text": "*ne se retourne pas, continue de regarder l'océan* Sobrinho. *crache un noyau d'olive* Le commissaire du 19e DP m'a appelé hier. Il a ton nom. Il a une liste de trois condomínios sur la Barra. *te regarde enfin, regard glacial* Je peux pas te parler tant que ton dossier monte chez lui. Reviens quand tu auras tranché ta voie pour de bon. D'ici là, je te connais pas.",
+		"choices": ["Compris, Capitão"],
+	},
+	# --- Police shakedown : nouveau scénario CreditorVisitManager post-flag ---
+	"creditor_police_shakedown": {
+		"speaker": "Tenente Borges (PMERJ)",
+		"text": "*tape l'épaule du joueur, sourire faux* Sobrinho. *montre son badge sans le lâcher* Le commissaire Mendonça veut que j'augmente la pression sur les nouveaux entrepreneurs de la Barra. Trois cents reais et je rentre faire mon rapport. Sinon on continue la conversation au 19e DP. Cinco minutos pour décider.",
+		"choices": ["Poser 300 R$", "Refuser (le rouer de coups)"],
+		"on_choose": {
+			"0": {"pay_bribe": 300, "rep": {1: 2}},
+			"1": {"raid_pct": 0.15, "rep": {1: -2, 2: 2}},
+		},
+	},
 	"creditor_visit_raid": {
 		"speaker": "Cobrador",
 		"text": "*deux types t'encadrent, le plus grand a une chaîne en or qu'il fait jouer entre ses doigts* Tu connais le tarif, sobrinho ? On vide les poches, on prend ce qu'il y a, on s'en va. Ou tu sors le couteau et on s'arrange autrement. *l'autre rit sans bruit*",
@@ -217,6 +233,168 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 		"on_choose": {
 			"0": {"finish_quest": {"quest": "consortium_airport_pickup", "objective": "deliver_to_consortium", "payout": 0}, "pay_debt": 500},
 		},
+	},
+	# --- Side quest Barra Riserva Uno : "protection" du condomínio ---
+	"consortium_barra_offer": {
+		"speaker": "Dom Nilton (consortium)",
+		"text": "*déplie un plan de la Barra* Riserva Uno. Condomínio fermé, six tours, piscines olympiques. Le gérant — Magalhães — il dit toujours non quand on parle « protection ». *te scrute* J'aimerais qu'il dise oui. Tu prends le taxi pour la Barra, tu lui fais comprendre la couleur du ciel. Et tu reviens signer. Huit cents reais et cinq cents de dette en moins.",
+		"choices": ["J'y vais", "Pas le moment"],
+		"on_choose": {
+			"0": {"accept_quest": "consortium_barra_security"},
+		},
+	},
+	"consortium_barra_remind": {
+		"speaker": "Dom Nilton (consortium)",
+		"text": "Le condomínio Riserva Uno, à la Barra. Sr. Magalhães. *fait un signe vers l'ouest* T'as quelque chose à lui expliquer.",
+		"choices": ["J'y vais"],
+	},
+	"consortium_barra_after_intimidate": {
+		"speaker": "Dom Nilton (consortium)",
+		"text": "*sourit, allume une cigarette* Tu l'as secoué ? Bom. Retourne le voir maintenant — il sera prêt à signer. Le papier est dans sa main, sobrinho. Reste qu'à fermer.",
+		"choices": ["Compris"],
+	},
+	"consortium_barra_done": {
+		"speaker": "Dom Nilton (consortium)",
+		"text": "*range le contrat dans une enveloppe en cuir* Premier mois de protection signé. *te tend une liasse* Huit cents reais et cinq cents de dette en moins. Magalhães enverra le suivant tout seul — il a compris le système. Tu es bon dans ce qu'on fait, sobrinho. Trop bon, peut-être.",
+		"choices": ["Obrigado, Dom Nilton"],
+		"on_choose": {
+			"0": {"finish_quest": {"quest": "consortium_barra_security", "objective": "close_deal", "payout": 800}, "pay_debt": 500, "rep": {1: 3, 0: -2}},
+		},
+	},
+	# --- Sr. Magalhães au Riserva Uno ---
+	"magalhaes_default": {
+		"speaker": "Sr. Magalhães",
+		"text": "*ajuste sa cravate, regarde sa montre* Vous cherchez quelqu'un, monsieur ? *jette un coup d'œil au garde* Le Riserva Uno ne reçoit pas de visiteurs sans rendez-vous.",
+		"choices": ["Pardon, je me suis trompé"],
+	},
+	"magalhaes_first_visit": {
+		"speaker": "Sr. Magalhães",
+		"text": "*pâlit en t'apercevant approcher* Vous… vous venez de la part de Dom Nilton, n'est-ce pas ? *se redresse, voix tremblante* Non. NON. Le syndic du condomínio a déjà payé sa sécurité officielle. SP Security, contrat de trois ans. Je ne signerai rien de plus, vous entendez ? Sortez.",
+		"choices": ["*sortir le couteau, doucement* Vous allez réfléchir une nuit, Sr. Magalhães. Une nuit.", "*partir sans rien dire*"],
+		"on_choose": {
+			"0": {"finish_quest": {"quest": "consortium_barra_security", "objective": "intimidate_magalhaes", "payout": 0}, "rep": {2: 1, 0: -1}},
+		},
+	},
+	"magalhaes_close_deal": {
+		"speaker": "Sr. Magalhães",
+		"text": "*signe le contrat sans relever la tête, les mains tremblantes* Quatre mille reais par mois. Premier versement comptant. *te tend une enveloppe épaisse* Vous direz à Dom Nilton que… que je comprends les choses, maintenant. Que je suis un homme raisonnable. *te regarde enfin* Surtout, ne revenez plus jamais en personne. Le syndic poserait des questions.",
+		"choices": ["Bien noté, Sr. Magalhães"],
+		"on_choose": {
+			"0": {"finish_quest": {"quest": "consortium_barra_security", "objective": "close_deal", "payout": 0}},
+		},
+	},
+	"magalhaes_after_deal": {
+		"speaker": "Sr. Magalhães",
+		"text": "*évite ton regard, change de trottoir mentalement* Bonjour, monsieur. *court vers les ascenseurs* Excusez-moi, j'ai une réunion de copropriété.",
+		"choices": ["Bonne journée, Sr. Magalhães"],
+	},
+	# --- Chaîne consortium 2 : Le Parc Residences ---
+	"consortium_le_parc_offer": {
+		"speaker": "Dom Nilton (consortium)",
+		"text": "*pose une enveloppe sur la table* Riserva Uno a payé. Magalhães a fait passer le mot — c'est tout le bénéfice de la trouille bien placée. *te scrute* Le Parc Residences, à deux cents mètres à l'ouest. Sr. Carrasco, le gérant. Plus combatif, plus ancien, plus connecté. Mais il sait que tu viens, maintenant. Mille reais, sept cents de dette en moins. Tu prends ?",
+		"choices": ["J'y vais", "Pas le moment"],
+		"on_choose": {
+			"0": {"accept_quest": "consortium_le_parc"},
+		},
+	},
+	"consortium_le_parc_remind": {
+		"speaker": "Dom Nilton (consortium)",
+		"text": "Le Parc Residences, sobrinho. Carrasco. *fait un signe vers la Barra* Il sait que tu arrives. Plus tu attends, plus il prépare une parade.",
+		"choices": ["J'y vais"],
+	},
+	"consortium_le_parc_after_intimidate": {
+		"speaker": "Dom Nilton (consortium)",
+		"text": "*sourire en coin* Tu l'as déjà secoué ? Bon travail. Retourne signer, sobrinho — il sait maintenant qu'on a un système.",
+		"choices": ["Compris"],
+	},
+	"consortium_le_parc_done": {
+		"speaker": "Dom Nilton (consortium)",
+		"text": "*compte les billets, glisse une enveloppe vers toi* Mille reais. Sept cents de moins sur la dette. *te regarde longuement* Sobrinho, tu construis quelque chose, là. Deux signatures en deux semaines. La Barra entière va passer à la caisse. *se penche* Mais attention. Plus tu signes, plus tu deviens une cible. Pour la police, pour les rivaux. La trouille marche dans les deux sens.",
+		"choices": ["Obrigado, Dom Nilton"],
+		"on_choose": {
+			"0": {"finish_quest": {"quest": "consortium_le_parc", "objective": "close_deal_carrasco", "payout": 1000}, "pay_debt": 700, "rep": {1: 4, 0: -3}},
+		},
+	},
+	# --- Sr. Carrasco au Le Parc ---
+	"carrasco_default": {
+		"speaker": "Sr. Carrasco",
+		"text": "*lève un sourcil, ferme un dossier* Vous êtes résident, monsieur ? Non ? Alors je vous demande de quitter le compound. *fait signe à un agent de sécurité*",
+		"choices": ["Je m'en vais"],
+	},
+	"carrasco_first_visit": {
+		"speaker": "Sr. Carrasco",
+		"text": "*te reconnaît, ne se lève pas, voix dure* Ah. Magalhães m'a appelé. *referme son dossier d'un coup sec* Je ne suis pas Magalhães, sobrinho. J'ai trente ans de gestion, deux avocats au bureau, un cousin commissaire. Vous savez quoi ? Faites votre numéro, on verra qui tremble en premier.",
+		"choices": ["*déposer une photo de sa femme sur le bureau, en silence*", "*partir sans rien dire*"],
+		"on_choose": {
+			"0": {"finish_quest": {"quest": "consortium_le_parc", "objective": "intimidate_carrasco", "payout": 0}, "rep": {2: 2, 0: -2}},
+		},
+	},
+	"carrasco_close_deal": {
+		"speaker": "Sr. Carrasco",
+		"text": "*signe le contrat sans relever la tête, mâchoire crispée* Six mille reais par mois. *te tend une enveloppe plus épaisse que celle de Magalhães* Et faites en sorte qu'on ne se recroise jamais, vous et moi. Si je revois votre visage à Le Parc, ce sera mon cousin commissaire qui vous accueillera.",
+		"choices": ["Bien noté, Sr. Carrasco"],
+		"on_choose": {
+			"0": {"finish_quest": {"quest": "consortium_le_parc", "objective": "close_deal_carrasco", "payout": 0}},
+		},
+	},
+	"carrasco_after_deal": {
+		"speaker": "Sr. Carrasco",
+		"text": "*sort son téléphone sans relever la tête* Sortez du compound, ou j'appelle.",
+		"choices": ["*partir*"],
+	},
+	# --- Chaîne consortium 3 : Península Privé (cousin commissaire) ---
+	"consortium_peninsula_offer": {
+		"speaker": "Dom Nilton (consortium)",
+		"text": "*pose une bouteille de cachaça, te sert un verre tout petit* Le Parc a payé. Tu deviens une légende, sobrinho. *te regarde longuement* Reste un nom dans le carnet : Sr. Mendonça, Península Privé. Helipad sur le toit. Bodyguards à l'entrée. Et cousin commissaire au 19e DP. *avale son verre* La prochaine signature est la plus chère — quinze cents reais, neuf cents de dette en moins. Mais après ça, la police saura qui tu es. Ramos te lâchera la patte. Tito te recevra peut-être avec moins de méfiance. Ton choix.",
+		"choices": ["J'y vais", "Pas le moment"],
+		"on_choose": {
+			"0": {"accept_quest": "consortium_peninsula"},
+		},
+	},
+	"consortium_peninsula_remind": {
+		"speaker": "Dom Nilton (consortium)",
+		"text": "Mendonça. Península Privé. *fait un signe vers l'ouest* Cousin commissaire en avance. Vas-y avant qu'il ait posé toutes ses caméras.",
+		"choices": ["J'y vais"],
+	},
+	"consortium_peninsula_after_intimidate": {
+		"speaker": "Dom Nilton (consortium)",
+		"text": "*sifflement bref* Mendonça secoué. *expression neutre* Il a déjà appelé son cousin, sobrinho. Retourne signer maintenant — sinon la police met en place une opération sur le compound, et tu n'entreras plus jamais.",
+		"choices": ["J'y vais tout de suite"],
+	},
+	"consortium_peninsula_done": {
+		"speaker": "Dom Nilton (consortium)",
+		"text": "*compte les billets en silence, glisse une grosse enveloppe* Quinze cents reais. Neuf cents de moins sur la dette. *se penche en avant, voix basse* Mendonça a signé, sobrinho. C'est historique. Trois condomínios de la Barra paient maintenant — quarante mille reais par mois récurrents. Tu m'as rendu plus fort que je ne l'étais. *expression change* Mais le commissaire — son cousin — il connaît ton visage maintenant. Évite le calçadão une semaine. Et quand tu reverras Capitão Ramos, il aura une raison de moins de te protéger.",
+		"choices": ["Obrigado, Dom Nilton"],
+		"on_choose": {
+			"0": {"finish_quest": {"quest": "consortium_peninsula", "objective": "close_deal_mendonca", "payout": 1500}, "pay_debt": 900, "rep": {1: -5, 0: -4, 2: 3}, "set_flag": "commissaire_alerted"},
+		},
+	},
+	# --- Sr. Mendonça au Península ---
+	"mendonca_default": {
+		"speaker": "Sr. Mendonça",
+		"text": "*pose son verre de scotch, sourire poli, dur* Vous avez perdu votre chemin, monsieur. Le Península est privé. *lève deux doigts — les deux bodyguards convergent* Mes hommes vont vous raccompagner. Sans rancune.",
+		"choices": ["Je m'en vais"],
+	},
+	"mendonca_first_visit": {
+		"speaker": "Sr. Mendonça",
+		"text": "*ne lève pas les yeux, continue de signer des documents* Carrasco m'a prévenu. Magalhães aussi, indirectement. *signe encore, voix sans émotion* Vous êtes le sobrinho de Zé. Vingt-trois ans, presque pas d'éducation formelle, dette de cinquante mille au consortium. *te regarde enfin* Mon cousin commissaire connaît tout votre dossier. Si vous touchez à un cheveu de mon personnel, vous dormez en prison cette nuit. Donc — qu'est-ce que vous voulez réellement ?",
+		"choices": ["*déposer la liste blanchiment sur le bureau, en silence*", "*partir sans rien dire*"],
+		"on_choose": {
+			"0": {"finish_quest": {"quest": "consortium_peninsula", "objective": "intimidate_mendonca", "payout": 0}, "rep": {2: 3, 1: -2}},
+		},
+	},
+	"mendonca_close_deal": {
+		"speaker": "Sr. Mendonça",
+		"text": "*regarde longuement la liste, repose son verre, soupire* Vous avez beaucoup mieux préparé que je le pensais. *signe le contrat sans relire* Dix mille reais par mois. *te tend une mallette en cuir* Premier semestre payé d'avance — soixante mille. *te regarde droit dans les yeux* Mon cousin sait que j'ai signé. Il ne nous arrêtera ni vous ni moi. Mais il ne nous protégera plus non plus. C'était mon dernier accord avec la police carioca. *te tend la main* Bienvenue dans le système, sobrinho.",
+		"choices": ["*serrer la main*"],
+		"on_choose": {
+			"0": {"finish_quest": {"quest": "consortium_peninsula", "objective": "close_deal_mendonca", "payout": 0}},
+		},
+	},
+	"mendonca_after_deal": {
+		"speaker": "Sr. Mendonça",
+		"text": "*lève son verre dans ta direction* Sobrinho. *boit* Tu fais partie de la machine maintenant. Cigarro ? Whisky ? Évite quand même de revenir trop souvent — les caméras enregistrent tout.",
+		"choices": ["Obrigado, Sr. Mendonça"],
 	},
 	"salvatore_intro": {
 		"speaker": "Don Salvatore",
@@ -2057,6 +2235,12 @@ func _apply_placeholder_action(action: Dictionary) -> void:
 		if action.has("rep"):
 			for axis_key in action.rep:
 				ReputationSystem.modify(int(axis_key), action.rep[axis_key])
+		# pay_debt en bonus de finish_quest (consortium_*_done patterns).
+		if action.has("pay_debt"):
+			pay_debt(int(action.pay_debt))
+		# set_flag en bonus (utilisé pour les pivots narratifs post-quête).
+		if action.has("set_flag"):
+			set_flag(String(action.set_flag))
 		return
 	if action.has("pay_bribe"):
 		# Bribe pure (sans finish_quest) : ex. flic qui demande de l'argent.

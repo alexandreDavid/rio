@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3]
+[gd_scene load_steps=18 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/props/TaxiStand.tscn" id="1_taxi"]
 [ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="2_wander"]
@@ -35,6 +35,9 @@ size = Vector2(12, 250)
 
 [sub_resource type="RectangleShape2D" id="ExitWideShape"]
 size = Vector2(2900, 64)
+
+[sub_resource type="RectangleShape2D" id="ExitZonaSulShape"]
+size = Vector2(750, 96)
 
 [node name="BotafogoFlamengoDistrict" type="Node2D"]
 
@@ -1860,6 +1863,14 @@ label_text = "↓ TÚNEL → COPA"
 
 [node name="CollisionShape2D" parent="ExitToCopa" index="0"]
 shape = SubResource("ExitWideShape")
+
+[node name="ExitToZonaSul" parent="." instance=ExtResource("5_exit")]
+position = Vector2(700, 360)
+target_district = "zona_sul"
+label_text = "↓ LAGOA / IPANEMA"
+
+[node name="CollisionShape2D" parent="ExitToZonaSul" index="0"]
+shape = SubResource("ExitZonaSulShape")
 
 [node name="TaxiStand" parent="." instance=ExtResource("1_taxi")]
 position = Vector2(-700, -45)

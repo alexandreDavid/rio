@@ -76,6 +76,9 @@ const QUEST_RESOURCES: Array[String] = [
 	"res://resources/quests/act4_carnaval_desfile.tres",
 	"res://resources/quests/beto_lost.tres",
 	"res://resources/quests/zona_sul_envelope.tres",
+	"res://resources/quests/consortium_barra_security.tres",
+	"res://resources/quests/consortium_le_parc.tres",
+	"res://resources/quests/consortium_peninsula.tres",
 ]
 
 # Quêtes auto-acceptées dès qu'elles deviennent disponibles (passage d'acte).

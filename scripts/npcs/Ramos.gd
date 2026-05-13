@@ -15,6 +15,13 @@ func _on_interacted(_by: Node) -> void:
 		return
 	await _approach_player_if_far()
 	var knot: String = data.ink_knot  # "ramos_intro"
+	# Le commissaire (cousin de Mendonça, Península) a alerté Ramos sur le
+	# racket consortium. Tant que le joueur n'a pas choisi sa voie finale
+	# (acte 4), Ramos refuse de s'engager — il ne veut pas être lié à un
+	# criminel notoire.
+	if CampaignManager.has_flag("commissaire_alerted") and CampaignManager.current_act < 4:
+		DialogueBridge.start_dialogue(data.id, "ramos_commissaire_alerted")
+		return
 	# Acte 4 : règne du Chefe.
 	if CampaignManager.current_act >= 4 and CampaignManager.chosen_endgame == CampaignManager.Endgame.POLICIA:
 		if QuestManager.is_completed(QUEST_PURGA):

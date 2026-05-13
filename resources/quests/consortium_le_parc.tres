@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_intimidate_carrasco"]
+script = ExtResource("2_obj")
+id = "intimidate_carrasco"
+description = "Convaincre Sr. Carrasco (Le Parc) qu'il a besoin de la « protection »"
+optional = false
+
+[sub_resource type="Resource" id="obj_close_carrasco"]
+script = ExtResource("2_obj")
+id = "close_deal_carrasco"
+description = "Revenir signer le contrat avec Sr. Carrasco"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "consortium_le_parc"
+display_name = "Le Parc, deuxième signature"
+description = "Magalhães a parlé. Le Parc Residences (Barra) sait que tu arrives. Sr. Carrasco, le gérant, est plus combatif que Magalhães — mais aussi plus important. Mille reais et sept cents de dette en moins."
+journal_text = "Le Parc Residences (Barra), Sr. Carrasco. Plus dur cette fois."
+giver_npc_id = "nilton"
+ink_knot = "consortium_le_parc_offer"
+objectives = Array[Resource]([SubResource("obj_intimidate_carrasco"), SubResource("obj_close_carrasco")])
+money_reward = 1000
+reputation_rewards = {1: 4, 0: -3}
+required_reputation = {}
+required_act = 1
+prerequisite_quest_ids = Array[String](["consortium_barra_security"])
