@@ -315,6 +315,53 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 		"text": "*te salue d'un hochement discret, comme à un égal* Tudo bem, sobrinho. *montre l'enveloppe que tu détiens, sous-entendu* Le jour venu, vous savez où me trouver.",
 		"choices": ["Tudo bem, Sr. Magalhães"],
 	},
+	# --- Niterói : Bruno (ferry) + Helena (MAC) + Yara (étudiante) ---
+	"bruno_default": {
+		"speaker": "Bruno",
+		"text": "*pose son thermos de café, regarde la baie* Cinquante-deux ans de barcas, sobrinho. Je connais chaque vague entre Praça XV et ici. *te scrute* Toi, t'as l'air d'avoir besoin de bouger un truc. Reviens si t'as cinq minutes pour un vieux.",
+		"choices": ["Bonne journée, Bruno"],
+	},
+	"bruno_offer": {
+		"speaker": "Bruno",
+		"text": "*pointe un colis en carton près du bollard* Cette caisse, elle attend Helena, la curatrice du MAC, depuis trois jours. *montre ses genoux* Moi je remonte plus la rampe — opération l'an dernier, jamais récupéré. Tu me la portes là-haut ? Cent quatre-vingts reais, et tu fais une heureuse.",
+		"choices": ["D'accord, je l'emmène", "Plus tard"],
+		"on_choose": {
+			"0": {"accept_quest": "bruno_carga"},
+		},
+	},
+	"bruno_remind": {
+		"speaker": "Bruno",
+		"text": "*lève les yeux, te reconnaît* La caisse pour Helena, sobrinho. *fait un signe vers le MAC* Cinquante mètres et une rampe. Pour moi c'est l'Everest, pour toi c'est deux minutes.",
+		"choices": ["J'y vais"],
+	},
+	"bruno_after_carga": {
+		"speaker": "Bruno",
+		"text": "*te tend une cachaça artisanale, scellée* Helena m'a appelé. *sourit pour la première fois* Tiens, c'est pour toi. Distillerie de Paraty, ma région. *redevient sérieux* Si t'as encore besoin d'un passage à Rio, je peux t'embarquer gratis. Une fois.",
+		"choices": ["Obrigado, Bruno"],
+	},
+	"helena_default": {
+		"speaker": "Helena",
+		"text": "*pose son catalogue* La pièce du mois ? *fait un signe vers le MAC* « Esquecimento » d'Adriana Varejão. Sang séché sur faïence portugaise. *te regarde* Vous venez d'où ? Du calçadão, d'accord. *léger sourire* Ici on a les mêmes vagues que vous, mais on a aussi le silence. C'est la grosse différence.",
+		"choices": ["Bonne visite, Helena"],
+	},
+	"helena_receive_carga": {
+		"speaker": "Helena",
+		"text": "*tu poses la caisse, elle l'ouvre sans hésiter* Ah, enfin. *en sort un châssis enveloppé de papier kraft* La toile de Pape pour l'expo de juin. Bruno m'a appelée hier, paniqué, pensant qu'on l'avait perdue. *signe un reçu en deux exemplaires* Voilà pour vous, et merci. *te tend l'argent* Dites à Bruno que sa caisse était parfaitement emballée — il a toujours eu la main soigneuse.",
+		"choices": ["Avec plaisir, Helena"],
+		"on_choose": {
+			"0": {"finish_quest": {"quest": "bruno_carga", "objective": "deliver_to_helena", "payout": 180}, "rep": {4: 3, 0: 2}},
+		},
+	},
+	"helena_after_carga": {
+		"speaker": "Helena",
+		"text": "*te reconnaît à travers la vitre, te fait signe* La toile est accrochée. *montre l'étage* Si vous repassez en juin, vous la verrez en place. Et dites bien à Bruno qu'il reste invité au vernissage.",
+		"choices": ["Compris"],
+	},
+	"yara_default": {
+		"speaker": "Yara",
+		"text": "*ferme son carnet de croquis, te regarde* Trois ans que je viens dessiner ici. *montre la soucoupe* Niemeyer disait que ses bâtiments étaient des sculptures où on entre. *léger sourire* Le truc, c'est que la sculpture est meilleure dehors. Vous allez voir.",
+		"choices": ["Bonne séance, Yara"],
+	},
 	# --- Chaîne consortium 2 : Le Parc Residences ---
 	"consortium_le_parc_offer": {
 		"speaker": "Dom Nilton (consortium)",

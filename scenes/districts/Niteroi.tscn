@@ -1,9 +1,11 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/props/TaxiStand.tscn" id="1_taxi"]
 [ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="2_wander"]
 [ext_resource type="PackedScene" path="res://scenes/props/Viewpoint.tscn" id="3_view"]
-[ext_resource type="PackedScene" path="res://scenes/props/DialogueSpot.tscn" id="4_spot"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/Helena.tscn" id="5_helena"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/Bruno.tscn" id="6_bruno"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/Yara.tscn" id="7_yara"]
 
 [sub_resource type="RectangleShape2D" id="WallH"]
 size = Vector2(1600, 16)
@@ -476,21 +478,17 @@ flavor_speaker = "Sobrinho"
 flavor_text = "La baie de Guanabara. Quatre cents kilomètres carrés d'eau salée prise entre Rio et Niterói. Les ferries traversent toutes les vingt minutes. *le vent vient du sud-est, frais* Quand tu vis à Rio, tu oublies que la ville est entourée d'eau. Ici tu t'en souviens."
 money_reward = 50
 
-# NPC Helena — curatrice d'art au MAC
-[node name="HelenaNPC" parent="." instance=ExtResource("2_wander")]
+# NPC Helena — curatrice d'art au MAC (reçoit le colis de Bruno)
+[node name="Helena" parent="." instance=ExtResource("5_helena")]
 position = Vector2(60, 75)
-color = Color(0.85, 0.42, 0.62, 1)
-size = Vector2(10, 17)
-stationary = true
-bob_strength = 0.3
-look_at_player_distance = 50.0
 
-[node name="HelenaSpot" parent="." instance=ExtResource("4_spot")]
-position = Vector2(60, 75)
-npc_id = "helena_curator"
-prompt = "Parler à Helena"
-speaker = "Helena"
-text = "*pose son catalogue* La pièce du mois ? *fait un signe vers le MAC* « Esquecimento » d'Adriana Varejão. Sang séché sur faïence portugaise. *te regarde* Vous venez d'où ? Du calçadão, d'accord. *léger sourire* Ici on a les mêmes vagues que vous, mais on a aussi le silence. C'est la grosse différence."
+# NPC Bruno — vieux capitaine ferry sur le dock (donneur SIDE bruno_carga)
+[node name="Bruno" parent="." instance=ExtResource("6_bruno")]
+position = Vector2(330, -35)
+
+# NPC Yara — étudiante en arts plastiques près du MAC (lore, pas de quête)
+[node name="Yara" parent="." instance=ExtResource("7_yara")]
+position = Vector2(-90, 85)
 
 # Quelques visiteurs ambient
 [node name="VisitorA" parent="." instance=ExtResource("2_wander")]
