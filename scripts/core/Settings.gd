@@ -17,6 +17,11 @@ var tutorial_seen: bool = false
 # Slot de save courant (1..3). Persiste globalement pour que la session
 # suivante reprenne sur le même emplacement.
 var current_slot: int = 1
+# Compteurs "vu pour la dernière fois" par app du Phone — alimentent les
+# badges rouges quand le compteur actuel les dépasse.
+var last_seen_cronica: int = 0
+var last_seen_conquistas: int = 0
+var last_seen_photos: int = 0
 
 func _ready() -> void:
 	load_settings()
@@ -31,6 +36,9 @@ func load_settings() -> void:
 	ambient_volume = clampf(float(cfg.get_value("volumes", "ambient", ambient_volume)), 0.0, 1.0)
 	tutorial_seen = bool(cfg.get_value("ui", "tutorial_seen", tutorial_seen))
 	current_slot = clampi(int(cfg.get_value("save", "current_slot", current_slot)), 1, 3)
+	last_seen_cronica = int(cfg.get_value("phone", "last_seen_cronica", last_seen_cronica))
+	last_seen_conquistas = int(cfg.get_value("phone", "last_seen_conquistas", last_seen_conquistas))
+	last_seen_photos = int(cfg.get_value("phone", "last_seen_photos", last_seen_photos))
 	volumes_changed.emit()
 
 func save_settings() -> void:
@@ -40,6 +48,9 @@ func save_settings() -> void:
 	cfg.set_value("volumes", "ambient", ambient_volume)
 	cfg.set_value("ui", "tutorial_seen", tutorial_seen)
 	cfg.set_value("save", "current_slot", current_slot)
+	cfg.set_value("phone", "last_seen_cronica", last_seen_cronica)
+	cfg.set_value("phone", "last_seen_conquistas", last_seen_conquistas)
+	cfg.set_value("phone", "last_seen_photos", last_seen_photos)
 	cfg.save(PATH)
 
 func set_music(v: float) -> void:
@@ -63,4 +74,11 @@ func mark_tutorial_seen() -> void:
 
 func set_current_slot(slot: int) -> void:
 	current_slot = clampi(slot, 1, 3)
+	save_settings()
+
+func mark_seen(app_id: String, count: int) -> void:
+	match app_id:
+		"cronica": last_seen_cronica = count
+		"conquistas": last_seen_conquistas = count
+		"photos": last_seen_photos = count
 	save_settings()

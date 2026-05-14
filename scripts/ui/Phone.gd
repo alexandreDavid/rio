@@ -74,6 +74,10 @@ const REP_AXIS_COLORS: Dictionary = {
 
 const PHOTOS_DIR: String = "user://photos"
 
+# Badges rouges sur les icônes du home — créés en code pour éviter de toucher
+# la scène. Mis à jour à chaque ouverture de l'écran home.
+var _badges: Dictionary = {}
+
 func _ready() -> void:
 	visible = false
 	# Wire app icons.
@@ -97,6 +101,7 @@ func _ready() -> void:
 		app_conquistas.pressed.connect(func(): _show_screen("conquistas"))
 	if app_mapa:
 		app_mapa.pressed.connect(func(): _show_screen("mapa"))
+	_setup_app_badges()
 	# Sliders volumes — émettent au glisser, persistés par Settings.
 	if slider_music:
 		slider_music.value_changed.connect(func(v): Settings.set_music(v))
@@ -142,6 +147,7 @@ func toggle() -> void:
 func open() -> void:
 	visible = true
 	_show_screen("home")
+	_refresh_badges()
 	get_tree().paused = true
 
 # Ouvre directement sur l'app Crônica (raccourci HUD K).
@@ -157,6 +163,50 @@ func close() -> void:
 # ------------------------------------------------------------------
 # Screens
 # ------------------------------------------------------------------
+
+func _setup_app_badges() -> void:
+	# Crée un Label rouge attaché en haut-droite de chaque app sujette à
+	# notification. Caché par défaut, _refresh_badges décide quand l'afficher.
+	for pair in [["cronica", app_cronica], ["conquistas", app_conquistas], ["photos", app_photos]]:
+		var app_id: String = pair[0]
+		var btn: Button = pair[1]
+		if btn == null:
+			continue
+		var badge: Label = Label.new()
+		badge.text = ""
+		badge.add_theme_font_size_override("font_size", 13)
+		badge.add_theme_color_override("font_color", Color(1, 1, 1, 1))
+		badge.add_theme_color_override("font_outline_color", Color(0.85, 0.15, 0.12, 1))
+		badge.add_theme_constant_override("outline_size", 8)
+		badge.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		badge.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		badge.anchor_left = 1.0
+		badge.anchor_right = 1.0
+		badge.offset_left = -28.0
+		badge.offset_top = 4.0
+		badge.offset_right = -4.0
+		badge.offset_bottom = 26.0
+		badge.visible = false
+		btn.add_child(badge)
+		_badges[app_id] = badge
+
+func _refresh_badges() -> void:
+	var cronica_new: int = NarrativeJournal.unlocked_count() - Settings.last_seen_cronica
+	var conquistas_new: int = AchievementSystem.count_unlocked() - Settings.last_seen_conquistas
+	var photos_new: int = _list_photo_files().size() - Settings.last_seen_photos
+	_update_badge("cronica", cronica_new)
+	_update_badge("conquistas", conquistas_new)
+	_update_badge("photos", photos_new)
+
+func _update_badge(app_id: String, count: int) -> void:
+	var badge: Label = _badges.get(app_id, null) as Label
+	if badge == null:
+		return
+	if count > 0:
+		badge.text = str(count) if count < 10 else "9+"
+		badge.visible = true
+	else:
+		badge.visible = false
 
 func _show_screen(name: String) -> void:
 	home_screen.visible = (name == "home")
@@ -191,6 +241,15 @@ func _show_screen(name: String) -> void:
 		_refresh_conquistas()
 	elif name == "mapa":
 		_refresh_mapa()
+	# Marque comme "vue" l'app ouverte (badge disparaît au retour home).
+	if name == "cronica":
+		Settings.mark_seen("cronica", NarrativeJournal.unlocked_count())
+	elif name == "conquistas":
+		Settings.mark_seen("conquistas", AchievementSystem.count_unlocked())
+	elif name == "photos":
+		Settings.mark_seen("photos", _list_photo_files().size())
+	elif name == "home":
+		_refresh_badges()
 
 # ------------------------------------------------------------------
 # Taxi app
