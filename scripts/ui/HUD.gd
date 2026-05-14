@@ -11,6 +11,7 @@ extends Control
 @onready var character_sheet: PanelContainer = $CharacterSheet
 @onready var abilities: VBoxContainer = $CharacterSheet/Margin/Layout/Abilities
 @onready var menu_button: Button = $MenuButton
+var _phone_badge: Label = null
 @onready var journal_button: Button = $JournalButton
 @onready var save_button: Button = $SaveButton
 @onready var photo_button: Button = $PhotoButton
@@ -61,6 +62,12 @@ func _ready() -> void:
 	SaveSystem.save_loaded.connect(_on_save_loaded)
 	DynamicMissionManager.mission_completed.connect(_on_dynamic_mission_completed)
 	AchievementSystem.achievement_unlocked.connect(_on_achievement_unlocked)
+	# Badge cumulé du bouton 📱 : se rafraîchit quand un événement peut
+	# changer un compteur (quête, achievement, fin de dialogue qui peut
+	# ajouter un knot Crônica).
+	EventBus.quest_accepted.connect(func(_q): _refresh_phone_badge())
+	EventBus.quest_completed.connect(func(_q): _refresh_phone_badge())
+	EventBus.dialogue_ended.connect(func(_n): _refresh_phone_badge())
 	call_deferred("_seed_main_signaled")
 	_refresh_day()
 	_refresh_debt()
@@ -72,6 +79,7 @@ func _ready() -> void:
 		character_sheet.hide()  # remplacé par l'app Saúde du téléphone
 	if menu_button:
 		menu_button.pressed.connect(_toggle_phone)
+		_setup_phone_badge()
 	if close_sheet_button:
 		close_sheet_button.pressed.connect(_toggle_phone)
 	if journal_button:
@@ -106,6 +114,49 @@ func _toggle_phone() -> void:
 	var phone: Node = get_tree().current_scene.get_node_or_null("Phone")
 	if phone and phone.has_method("toggle"):
 		phone.toggle()
+	# Le joueur a ouvert le phone : il va voir les badges individuels, on
+	# peut cacher le dot rouge du bouton.
+	call_deferred("_refresh_phone_badge")
+
+func _setup_phone_badge() -> void:
+	if menu_button == null:
+		return
+	_phone_badge = Label.new()
+	_phone_badge.name = "Badge"
+	_phone_badge.text = "●"
+	_phone_badge.add_theme_font_size_override("font_size", 18)
+	_phone_badge.add_theme_color_override("font_color", Color(0.95, 0.2, 0.18, 1))
+	_phone_badge.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.9))
+	_phone_badge.add_theme_constant_override("outline_size", 4)
+	_phone_badge.anchor_left = 1.0
+	_phone_badge.anchor_right = 1.0
+	_phone_badge.offset_left = -22.0
+	_phone_badge.offset_top = 0.0
+	_phone_badge.offset_right = -4.0
+	_phone_badge.offset_bottom = 22.0
+	_phone_badge.visible = false
+	menu_button.add_child(_phone_badge)
+	_refresh_phone_badge()
+
+func _refresh_phone_badge() -> void:
+	if _phone_badge == null:
+		return
+	# Si le téléphone est ouvert, pas de badge (les badges in-app prennent le relais).
+	var phone: Node = get_tree().current_scene.get_node_or_null("Phone")
+	if phone and "visible" in phone and phone.visible:
+		_phone_badge.visible = false
+		return
+	var total: int = 0
+	total += max(0, NarrativeJournal.unlocked_count() - Settings.last_seen_cronica)
+	total += max(0, AchievementSystem.count_unlocked() - Settings.last_seen_conquistas)
+	# Photos : count via DirAccess pour éviter d'instancier Phone.
+	if DirAccess.dir_exists_absolute("user://photos"):
+		var n: int = 0
+		for f in DirAccess.get_files_at("user://photos"):
+			if f.to_lower().ends_with(".png"):
+				n += 1
+		total += max(0, n - Settings.last_seen_photos)
+	_phone_badge.visible = total > 0
 
 func _toggle_cronica() -> void:
 	var phone: Node = get_tree().current_scene.get_node_or_null("Phone")
@@ -427,6 +478,7 @@ func _on_achievement_unlocked(_id: String, data: Dictionary) -> void:
 	if reward > 0:
 		text += "  +R$ %d" % reward
 	_flash_toast(text, Color(0.95, 0.85, 0.4, 1), 3.0)
+	_refresh_phone_badge()
 
 func _on_dynamic_mission_completed(category: int, money: int, rep: int) -> void:
 	var label: String = DynamicMissionManager.CATEGORY_LABELS.get(category, "")
