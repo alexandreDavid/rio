@@ -20,6 +20,7 @@ const CATEGORIES: Array = [
 	{"id": "sides",     "label": "Missions secondaires"},
 	{"id": "districts", "label": "Districts & escapades"},
 	{"id": "carnaval",  "label": "Carnaval & finale"},
+	{"id": "conquistas","label": "Conquistas franchies"},
 ]
 
 # Liste curatée. Clé = ink_knot exact ; valeur = { category, title }.
@@ -89,6 +90,22 @@ const JOURNAL_ENTRIES: Dictionary = {
 	"pecheur_cagarras_done":    {"category": "districts", "title": "La mer t'aime bien"},
 	"carlos_lagoa_offer":       {"category": "districts", "title": "Volta da Lagoa avec Carlos"},
 	"padre_corcovado_offer":    {"category": "districts", "title": "La relique du Corcovado"},
+	# --- CONQUISTAS — paragraphes rétrospectifs, marqués au déblocage ---
+	"conquista_first_quest":        {"category": "conquistas", "title": "Primeira missão"},
+	"conquista_first_payment":      {"category": "conquistas", "title": "Primeiro acompte"},
+	"conquista_debt_cleared":       {"category": "conquistas", "title": "Dívida saldada"},
+	"conquista_act_2":              {"category": "conquistas", "title": "Acte 2 — Os verdadeiros rostos"},
+	"conquista_act_3":              {"category": "conquistas", "title": "Acte 3 — A última volta"},
+	"conquista_act_4":              {"category": "conquistas", "title": "Acte 4 — O Reinado"},
+	"conquista_endgame_prefeito":   {"category": "conquistas", "title": "Coronel do Bairro"},
+	"conquista_endgame_policia":    {"category": "conquistas", "title": "Chefe de Polícia"},
+	"conquista_endgame_trafico":    {"category": "conquistas", "title": "Patrão do Morro"},
+	"conquista_pacto_barra":        {"category": "conquistas", "title": "Pacto da Barra"},
+	"conquista_commissaire_alerted":{"category": "conquistas", "title": "Olho da Polícia"},
+	"conquista_first_familiar":     {"category": "conquistas", "title": "Compañero"},
+	"conquista_three_familiar":     {"category": "conquistas", "title": "Coração do bairro"},
+	"conquista_first_photo":        {"category": "conquistas", "title": "Carioca documentariste"},
+	"conquista_pesca_baia":         {"category": "conquistas", "title": "Pesca da Baía"},
 }
 
 var _read: Dictionary = {}  # knot_id -> true

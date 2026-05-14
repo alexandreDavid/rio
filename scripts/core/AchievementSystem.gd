@@ -102,6 +102,9 @@ func _unlock(id: String) -> void:
 	_unlocked[id] = true
 	var data: Dictionary = _find_in_catalog(id)
 	achievement_unlocked.emit(id, data)
+	# Inscrit l'entrée rétrospective correspondante dans la Crônica si elle
+	# existe (knot "conquista_<id>" cf. NarrativeJournal.JOURNAL_ENTRIES).
+	NarrativeJournal.mark_read("conquista_%s" % id)
 
 func _find_in_catalog(id: String) -> Dictionary:
 	for entry in CATALOG:

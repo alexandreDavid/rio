@@ -2300,6 +2300,22 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 		"text": "*essuie un verre, sourire fatigué* Chez moi le pôr-do-sol commence à dix-sept heures et finit à minuit. Caipirinha ? Cerveja gelada ? *pose le verre* On parle, on écoute. Tout passe par ce bar.",
 		"choices": ["Une cerveja"],
 	},
+	# --- Conquistas — paragraphes rétrospectifs, marqués read au déblocage ---
+	"conquista_first_quest": {"speaker": "Crônica", "text": "Le jour où j'ai accepté ma première mission. Le calçadão était bondé, l'air sentait le milho grillé. Je ne savais pas que c'était le début de quelque chose de plus grand.", "choices": ["Fermer"]},
+	"conquista_first_payment": {"speaker": "Crônica", "text": "Premier acompte. Cinq cents reais comptés deux fois avant de les donner. Le consortium a noté la première ligne dans son carnet noir — et moi aussi.", "choices": ["Fermer"]},
+	"conquista_debt_cleared": {"speaker": "Crônica", "text": "Cinquante mille remboursés. Dom Nilton n'a pas souri. Mais le carnet noir s'est fermé devant moi — c'est tout ce qui comptait.", "choices": ["Fermer"]},
+	"conquista_act_2": {"speaker": "Crônica", "text": "L'acte 2 a commencé un soir comme les autres. Tio Zé m'attendait sur le porche. Il avait quelque chose à me dire — quelque chose qu'il portait depuis huit ans.", "choices": ["Fermer"]},
+	"conquista_act_3": {"speaker": "Crônica", "text": "Trois portes ouvertes. Polícia, tráfico, prefeito. Chacune fermait les deux autres. J'ai choisi celle qui faisait le moins de bruit dans ma tête.", "choices": ["Fermer"]},
+	"conquista_act_4": {"speaker": "Crônica", "text": "Le règne. Le bairro chantait mon nom à la messe, à la favela, ou au commissariat — selon. J'avais traversé. Le Sambódromo m'attendait.", "choices": ["Fermer"]},
+	"conquista_endgame_prefeito": {"speaker": "Crônica", "text": "Coronel do Bairro. Le titre n'existe pas officiellement. Mais quand je passe sur le calçadão, les commerçants se redressent.", "choices": ["Fermer"]},
+	"conquista_endgame_policia": {"speaker": "Crônica", "text": "Chefe de Polícia. Ramos m'a tendu sa casquette le dernier matin de l'Operação Madrugada. « Tu en as fait plus que moi en trente ans. »", "choices": ["Fermer"]},
+	"conquista_endgame_trafico": {"speaker": "Crônica", "text": "Patrão do Morro. Miguel m'a appelé « irmão » devant tous les jeunes de la favela. Il n'avait jamais fait ça pour personne.", "choices": ["Fermer"]},
+	"conquista_pacto_barra": {"speaker": "Crônica", "text": "Magalhães m'a remis l'enveloppe scellée du Riserva Uno. Je ne l'ai pas ouverte. Mais je sais qu'elle est dans la poche intérieure de ma veste — et lui aussi.", "choices": ["Fermer"]},
+	"conquista_commissaire_alerted": {"speaker": "Crônica", "text": "Mendonça avait un cousin commissaire. Je ne le savais pas avant d'entrer au Península Privé. Maintenant la PM connaît mon nom — pas encore mon visage.", "choices": ["Fermer"]},
+	"conquista_first_familiar": {"speaker": "Crônica", "text": "Quelqu'un m'a appelé sobrinho sans hésiter, comme si on se connaissait depuis des années. C'était presque le cas.", "choices": ["Fermer"]},
+	"conquista_three_familiar": {"speaker": "Crônica", "text": "Trois personnes du bairro me considèrent comme de la famille. C'est plus que je n'avais à mon arrivée. C'est plus que la plupart en accumulent.", "choices": ["Fermer"]},
+	"conquista_first_photo": {"speaker": "Crônica", "text": "J'ai pris ma première photo. Une vague, un détail du calçadão, le mont du Pão de Açúcar en arrière-plan. On garde ce qu'on voit pour ne pas oublier qu'on l'a vu.", "choices": ["Fermer"]},
+	"conquista_pesca_baia": {"speaker": "Crônica", "text": "Bruno m'a tendu sa canne sans rien dire. J'ai sorti un robalo de la baie de Guanabara au troisième essai. Trente-quatre ans qu'il en parlait — et c'est moi qui l'ai sorti.", "choices": ["Fermer"]},
 }
 
 var _active_npc_id: String = ""
