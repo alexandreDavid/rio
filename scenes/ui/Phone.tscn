@@ -186,107 +186,107 @@ theme_override_colors/font_color = Color(0.6, 0.6, 0.65, 1)
 offset_top = 80.0
 offset_right = 368.0
 offset_bottom = 480.0
-columns = 2
-theme_override_constants/h_separation = 24
-theme_override_constants/v_separation = 24
+columns = 3
+theme_override_constants/h_separation = 14
+theme_override_constants/v_separation = 14
 
 [node name="Taxi" type="Button" parent="Frame/Screens/Home/Grid"]
-custom_minimum_size = Vector2(150, 150)
+custom_minimum_size = Vector2(108, 108)
 text = "🚕
 Taxi"
 tooltip_text = "Voyager entre quartiers (tarif en R$)"
 theme_override_styles/normal = SubResource("AppButtonStyle")
 theme_override_styles/hover = SubResource("AppButtonStyle")
 theme_override_styles/pressed = SubResource("AppButtonStyle")
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 20
 theme_override_colors/font_color = Color(0.18, 0.14, 0.1, 1)
 
 [node name="Stats" type="Button" parent="Frame/Screens/Home/Grid"]
-custom_minimum_size = Vector2(150, 150)
+custom_minimum_size = Vector2(108, 108)
 text = "💪
 Saúde"
 tooltip_text = "État du joueur, dette, tracker d'acte, stats de partie"
 theme_override_styles/normal = SubResource("AppButtonStyleStats")
 theme_override_styles/hover = SubResource("AppButtonStyleStats")
 theme_override_styles/pressed = SubResource("AppButtonStyleStats")
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 20
 theme_override_colors/font_color = Color(0.12, 0.18, 0.12, 1)
 
 [node name="Missions" type="Button" parent="Frame/Screens/Home/Grid"]
-custom_minimum_size = Vector2(150, 150)
+custom_minimum_size = Vector2(108, 108)
 text = "📋
 Missões"
 tooltip_text = "Petites missions dynamiques disponibles dans le quartier"
 theme_override_styles/normal = SubResource("AppButtonStyleMissions")
 theme_override_styles/hover = SubResource("AppButtonStyleMissions")
 theme_override_styles/pressed = SubResource("AppButtonStyleMissions")
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 20
 theme_override_colors/font_color = Color(0.12, 0.18, 0.22, 1)
 
 [node name="Cronica" type="Button" parent="Frame/Screens/Home/Grid"]
-custom_minimum_size = Vector2(150, 150)
+custom_minimum_size = Vector2(108, 108)
 text = "📜
 Crônica"
 tooltip_text = "Toutes les quêtes (✦ trame + • activités) + retro des conquistas"
 theme_override_styles/normal = SubResource("AppButtonStyleCronica")
 theme_override_styles/hover = SubResource("AppButtonStyleCronica")
 theme_override_styles/pressed = SubResource("AppButtonStyleCronica")
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 20
 theme_override_colors/font_color = Color(0.22, 0.12, 0.08, 1)
 
 [node name="Photos" type="Button" parent="Frame/Screens/Home/Grid"]
-custom_minimum_size = Vector2(150, 150)
+custom_minimum_size = Vector2(108, 108)
 text = "📸
 Álbum"
 tooltip_text = "Album des photos prises avec F ou 📸 — viewer plein écran"
 theme_override_styles/normal = SubResource("AppButtonStylePhotos")
 theme_override_styles/hover = SubResource("AppButtonStylePhotos")
 theme_override_styles/pressed = SubResource("AppButtonStylePhotos")
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 20
 theme_override_colors/font_color = Color(0.08, 0.18, 0.22, 1)
 
 [node name="Noticias" type="Button" parent="Frame/Screens/Home/Grid"]
-custom_minimum_size = Vector2(150, 150)
+custom_minimum_size = Vector2(108, 108)
 text = "📰
 Notícias"
 tooltip_text = "Manchettes réactives selon ta dette / voie / actions"
 theme_override_styles/normal = SubResource("AppButtonStyleNoticias")
 theme_override_styles/hover = SubResource("AppButtonStyleNoticias")
 theme_override_styles/pressed = SubResource("AppButtonStyleNoticias")
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 20
 theme_override_colors/font_color = Color(0.22, 0.18, 0.14, 1)
 
 [node name="Ajustes" type="Button" parent="Frame/Screens/Home/Grid"]
-custom_minimum_size = Vector2(150, 150)
+custom_minimum_size = Vector2(108, 108)
 text = "⚙
 Ajustes"
 tooltip_text = "Volumes audio, slots de save, tutorial, crédits, quitter"
 theme_override_styles/normal = SubResource("AppButtonStyleAjustes")
 theme_override_styles/hover = SubResource("AppButtonStyleAjustes")
 theme_override_styles/pressed = SubResource("AppButtonStyleAjustes")
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 20
 theme_override_colors/font_color = Color(0.95, 0.95, 0.95, 1)
 
 [node name="Conquistas" type="Button" parent="Frame/Screens/Home/Grid"]
-custom_minimum_size = Vector2(150, 150)
+custom_minimum_size = Vector2(108, 108)
 text = "🏆
 Conquistas"
 tooltip_text = "Jalons débloqués + barres de progression pour les seuils"
 theme_override_styles/normal = SubResource("AppButtonStyleConquistas")
 theme_override_styles/hover = SubResource("AppButtonStyleConquistas")
 theme_override_styles/pressed = SubResource("AppButtonStyleConquistas")
-theme_override_font_sizes/font_size = 22
+theme_override_font_sizes/font_size = 18
 theme_override_colors/font_color = Color(0.22, 0.16, 0.06, 1)
 
 [node name="Mapa" type="Button" parent="Frame/Screens/Home/Grid"]
-custom_minimum_size = Vector2(150, 150)
+custom_minimum_size = Vector2(108, 108)
 text = "🗺
 Mapa"
 tooltip_text = "Carte des quartiers groupés par région — voyage rapide"
 theme_override_styles/normal = SubResource("AppButtonStyleMapa")
 theme_override_styles/hover = SubResource("AppButtonStyleMapa")
 theme_override_styles/pressed = SubResource("AppButtonStyleMapa")
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 20
 theme_override_colors/font_color = Color(0.08, 0.22, 0.16, 1)
 
 [node name="Taxi" type="Control" parent="Frame/Screens"]
@@ -706,7 +706,7 @@ offset_bottom = 80.0
 text = "←"
 flat = true
 tooltip_text = "Retour à l'accueil du téléphone"
-theme_override_font_sizes/font_size = 22
+theme_override_font_sizes/font_size = 18
 theme_override_colors/font_color = Color(0.95, 0.92, 0.85, 1)
 
 [node name="CloseButton" type="Button" parent="Frame"]
