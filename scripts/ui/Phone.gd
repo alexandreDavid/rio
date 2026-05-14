@@ -981,7 +981,30 @@ func _build_achievement_row(entry: Dictionary) -> Control:
 	desc.add_theme_color_override("font_color", Color(0.7, 0.7, 0.75) if unlocked else Color(0.4, 0.4, 0.45))
 	desc.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	info.add_child(desc)
+	# Barre de progression pour les achievements à seuil non débloqués.
+	if not unlocked:
+		var prog: Dictionary = AchievementSystem.progress_for(entry.get("id", ""))
+		if not prog.is_empty():
+			info.add_child(_build_progress_row(int(prog.current), int(prog.max)))
 	return card
+
+func _build_progress_row(current: int, max_value: int) -> Control:
+	var row: HBoxContainer = HBoxContainer.new()
+	row.add_theme_constant_override("separation", 6)
+	var bar: ProgressBar = ProgressBar.new()
+	bar.min_value = 0.0
+	bar.max_value = float(max_value)
+	bar.value = float(current)
+	bar.show_percentage = false
+	bar.custom_minimum_size = Vector2(160, 8)
+	bar.modulate = Color(0.55, 0.85, 0.95)
+	row.add_child(bar)
+	var lbl: Label = Label.new()
+	lbl.text = "%d/%d" % [current, max_value]
+	lbl.add_theme_font_size_override("font_size", 9)
+	lbl.add_theme_color_override("font_color", Color(0.6, 0.6, 0.65))
+	row.add_child(lbl)
+	return row
 
 func _refresh_ajustes() -> void:
 	# Synchronise les sliders avec les valeurs actuelles de Settings.

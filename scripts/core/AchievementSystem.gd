@@ -101,6 +101,26 @@ func _photo_count() -> int:
 			n += 1
 	return n
 
+# Renvoie {current, max} pour les achievements à seuil, {} sinon.
+# Utilisé par l'UI Conquistas pour afficher une barre de progression.
+func progress_for(id: String) -> Dictionary:
+	match id:
+		"wealthy_10k":
+			return {"current": min(CampaignManager.debt_paid, 10000), "max": 10000}
+		"debt_cleared":
+			return {"current": CampaignManager.debt_paid, "max": CampaignManager.DEBT_TOTAL}
+		"three_familiar":
+			return {"current": min(_familiar_count(), 3), "max": 3}
+		"chatterbox":
+			return {"current": min(NPCAffinity._counts.keys().size(), 10), "max": 10}
+		"globetrotter":
+			return {"current": min(_districts_visited.keys().size(), 5), "max": 5}
+		"shutterbug":
+			return {"current": min(_photo_count(), 5), "max": 5}
+		"viewpoint_collector":
+			return {"current": min(_viewpoint_count(), 3), "max": 3}
+	return {}
+
 func _viewpoint_count() -> int:
 	var n: int = 0
 	for k in CampaignManager.flags:
