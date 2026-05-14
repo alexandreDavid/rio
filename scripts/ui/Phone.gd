@@ -35,6 +35,7 @@ const REP_AXIS_COLORS: Dictionary = {
 @onready var slider_music: HSlider = $Frame/Screens/Ajustes/Box/MusicRow/MusicSlider
 @onready var slider_sfx: HSlider = $Frame/Screens/Ajustes/Box/SfxRow/SfxSlider
 @onready var slider_ambient: HSlider = $Frame/Screens/Ajustes/Box/AmbientRow/AmbientSlider
+@onready var replay_tutorial_btn: Button = $Frame/Screens/Ajustes/Box/ReplayTutorial
 @onready var conquistas_screen: Control = $Frame/Screens/Conquistas
 @onready var conquistas_box: VBoxContainer = $Frame/Screens/Conquistas/Scroll/Box
 @onready var conquistas_counter: Label = $Frame/Screens/Conquistas/Counter
@@ -94,6 +95,8 @@ func _ready() -> void:
 		slider_sfx.value_changed.connect(func(v): Settings.set_sfx(v))
 	if slider_ambient:
 		slider_ambient.value_changed.connect(func(v): Settings.set_ambient(v))
+	if replay_tutorial_btn:
+		replay_tutorial_btn.pressed.connect(_replay_tutorial)
 	if back_button:
 		back_button.pressed.connect(func(): _show_screen("home"))
 	if close_button:
@@ -795,6 +798,12 @@ func _refresh_ajustes() -> void:
 		slider_sfx.set_value_no_signal(Settings.sfx_volume)
 	if slider_ambient:
 		slider_ambient.set_value_no_signal(Settings.ambient_volume)
+
+func _replay_tutorial() -> void:
+	var t: Node = get_tree().current_scene.get_node_or_null("Tutorial")
+	if t and t.has_method("open"):
+		close()
+		t.open()
 
 func _build_news_row(item: Dictionary) -> Control:
 	var card: PanelContainer = PanelContainer.new()

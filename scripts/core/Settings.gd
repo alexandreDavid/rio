@@ -11,6 +11,9 @@ const PATH: String = "user://settings.cfg"
 var music_volume: float = 0.7
 var sfx_volume: float = 0.85
 var ambient_volume: float = 0.55
+# Vrai après dismiss du tutoriel d'accueil. Persiste globalement (pas par save)
+# pour qu'un retour de Nouvelle Partie ne le re-déclenche pas inutilement.
+var tutorial_seen: bool = false
 
 func _ready() -> void:
 	load_settings()
@@ -23,6 +26,7 @@ func load_settings() -> void:
 	music_volume = clampf(float(cfg.get_value("volumes", "music", music_volume)), 0.0, 1.0)
 	sfx_volume = clampf(float(cfg.get_value("volumes", "sfx", sfx_volume)), 0.0, 1.0)
 	ambient_volume = clampf(float(cfg.get_value("volumes", "ambient", ambient_volume)), 0.0, 1.0)
+	tutorial_seen = bool(cfg.get_value("ui", "tutorial_seen", tutorial_seen))
 	volumes_changed.emit()
 
 func save_settings() -> void:
@@ -30,6 +34,7 @@ func save_settings() -> void:
 	cfg.set_value("volumes", "music", music_volume)
 	cfg.set_value("volumes", "sfx", sfx_volume)
 	cfg.set_value("volumes", "ambient", ambient_volume)
+	cfg.set_value("ui", "tutorial_seen", tutorial_seen)
 	cfg.save(PATH)
 
 func set_music(v: float) -> void:
@@ -45,4 +50,8 @@ func set_sfx(v: float) -> void:
 func set_ambient(v: float) -> void:
 	ambient_volume = clampf(v, 0.0, 1.0)
 	volumes_changed.emit()
+	save_settings()
+
+func mark_tutorial_seen() -> void:
+	tutorial_seen = true
 	save_settings()
