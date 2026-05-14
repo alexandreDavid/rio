@@ -976,7 +976,11 @@ func _build_achievement_row(entry: Dictionary) -> Control:
 	title.add_theme_color_override("font_color", Color(0.95, 0.85, 0.4) if unlocked else Color(0.55, 0.55, 0.6))
 	info.add_child(title)
 	var desc: Label = Label.new()
-	desc.text = entry.get("desc", "")
+	var desc_text: String = entry.get("desc", "")
+	var reward: int = int(entry.get("reward", 0))
+	if reward > 0:
+		desc_text += "  ·  +R$ %d" % reward
+	desc.text = desc_text
 	desc.add_theme_font_size_override("font_size", 10)
 	desc.add_theme_color_override("font_color", Color(0.7, 0.7, 0.75) if unlocked else Color(0.4, 0.4, 0.45))
 	desc.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART

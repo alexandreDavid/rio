@@ -8,31 +8,31 @@ extends Node
 signal achievement_unlocked(id: String, data: Dictionary)
 
 const CATALOG: Array = [
-	{"id": "first_quest", "icon": "🎯", "title": "Primeira missão", "desc": "Accepter votre première quête."},
-	{"id": "first_payment", "icon": "💸", "title": "Primeiro acompte", "desc": "Premier R$ versé au consortium."},
-	{"id": "wealthy_10k", "icon": "💵", "title": "Dez mil pagos", "desc": "Verser 10 000 R$ au consortium."},
-	{"id": "debt_cleared", "icon": "💰", "title": "Dívida saldada", "desc": "Solder la dette de 50 000 R$."},
-	{"id": "act_2", "icon": "🎬", "title": "Acte 2 — Os verdadeiros rostos", "desc": "Franchir le seuil de l'acte 2."},
-	{"id": "act_3", "icon": "🎬", "title": "Acte 3 — A última volta", "desc": "Atteindre l'acte 3."},
-	{"id": "act_4", "icon": "🎬", "title": "Acte 4 — O Reinado", "desc": "Régner sur le bairro."},
-	{"id": "endgame_prefeito", "icon": "🏛", "title": "Coronel do Bairro", "desc": "Sceller la voie Prefeito."},
-	{"id": "endgame_policia", "icon": "🚓", "title": "Chefe de Polícia", "desc": "Sceller la voie Polícia."},
-	{"id": "endgame_trafico", "icon": "👑", "title": "Patrão do Morro", "desc": "Sceller la voie Tráfico."},
-	{"id": "carnaval_complete", "icon": "🎭", "title": "Sapucaí cantou", "desc": "Mener le défilé du Sambódromo."},
-	{"id": "pacto_barra", "icon": "✍", "title": "Pacto da Barra", "desc": "Sceller le pacte avec Magalhães."},
-	{"id": "commissaire_alerted", "icon": "🚨", "title": "Olho da Polícia", "desc": "Pousser Mendonça à appeler son cousin commissaire."},
-	{"id": "first_familiar", "icon": "🤝", "title": "Compañero", "desc": "Atteindre l'affinité « familier » avec un NPC."},
-	{"id": "three_familiar", "icon": "👥", "title": "Coração do bairro", "desc": "Trois NPCs en affinité « familier »."},
-	{"id": "chatterbox", "icon": "🗨", "title": "Quem fala com todos", "desc": "Discuter avec 10 NPCs différents."},
-	{"id": "globetrotter", "icon": "🚖", "title": "Conhece a cidade", "desc": "Visiter 5 districts différents."},
-	{"id": "respeitado", "icon": "⭐", "title": "Respeitado", "desc": "Atteindre 50 sur un axe de réputation."},
-	{"id": "beach_athlete", "icon": "🏐", "title": "Atleta da praia", "desc": "Compléter une activité sportive (volley, surf, SUP, basket…)."},
-	{"id": "niteroi_resident", "icon": "⛴", "title": "Filho da baía", "desc": "Compléter les deux quêtes de Bruno à Niterói."},
-	{"id": "first_photo", "icon": "📸", "title": "Carioca documentariste", "desc": "Prendre votre première photo."},
-	{"id": "shutterbug", "icon": "🖼", "title": "Acervo carioca", "desc": "Prendre 5 photos."},
-	{"id": "pesca_baia", "icon": "🐟", "title": "Pesca da Baía", "desc": "Sortir un poisson au ponton de Niterói."},
-	{"id": "viewpoint_collector", "icon": "🌅", "title": "Vistas da cidade", "desc": "Admirer 3 viewpoints panoramiques."},
-	{"id": "escape_artist", "icon": "🕊", "title": "Sem polícia atrás", "desc": "Atteindre l'acte 3 sans alerter le commissaire."},
+	{"id": "first_quest", "icon": "🎯", "title": "Primeira missão", "desc": "Accepter votre première quête.", "reward": 50},
+	{"id": "first_payment", "icon": "💸", "title": "Primeiro acompte", "desc": "Premier R$ versé au consortium.", "reward": 100},
+	{"id": "wealthy_10k", "icon": "💵", "title": "Dez mil pagos", "desc": "Verser 10 000 R$ au consortium.", "reward": 200},
+	{"id": "debt_cleared", "icon": "💰", "title": "Dívida saldada", "desc": "Solder la dette de 50 000 R$.", "reward": 1000},
+	{"id": "act_2", "icon": "🎬", "title": "Acte 2 — Os verdadeiros rostos", "desc": "Franchir le seuil de l'acte 2.", "reward": 300},
+	{"id": "act_3", "icon": "🎬", "title": "Acte 3 — A última volta", "desc": "Atteindre l'acte 3.", "reward": 500},
+	{"id": "act_4", "icon": "🎬", "title": "Acte 4 — O Reinado", "desc": "Régner sur le bairro.", "reward": 800},
+	{"id": "endgame_prefeito", "icon": "🏛", "title": "Coronel do Bairro", "desc": "Sceller la voie Prefeito.", "reward": 500},
+	{"id": "endgame_policia", "icon": "🚓", "title": "Chefe de Polícia", "desc": "Sceller la voie Polícia.", "reward": 500},
+	{"id": "endgame_trafico", "icon": "👑", "title": "Patrão do Morro", "desc": "Sceller la voie Tráfico.", "reward": 500},
+	{"id": "carnaval_complete", "icon": "🎭", "title": "Sapucaí cantou", "desc": "Mener le défilé du Sambódromo.", "reward": 1500},
+	{"id": "pacto_barra", "icon": "✍", "title": "Pacto da Barra", "desc": "Sceller le pacte avec Magalhães.", "reward": 300},
+	{"id": "commissaire_alerted", "icon": "🚨", "title": "Olho da Polícia", "desc": "Pousser Mendonça à appeler son cousin commissaire.", "reward": 100},
+	{"id": "first_familiar", "icon": "🤝", "title": "Compañero", "desc": "Atteindre l'affinité « familier » avec un NPC.", "reward": 100},
+	{"id": "three_familiar", "icon": "👥", "title": "Coração do bairro", "desc": "Trois NPCs en affinité « familier ».", "reward": 250},
+	{"id": "chatterbox", "icon": "🗨", "title": "Quem fala com todos", "desc": "Discuter avec 10 NPCs différents.", "reward": 300},
+	{"id": "globetrotter", "icon": "🚖", "title": "Conhece a cidade", "desc": "Visiter 5 districts différents.", "reward": 250},
+	{"id": "respeitado", "icon": "⭐", "title": "Respeitado", "desc": "Atteindre 50 sur un axe de réputation.", "reward": 250},
+	{"id": "beach_athlete", "icon": "🏐", "title": "Atleta da praia", "desc": "Compléter une activité sportive (volley, surf, SUP, basket…).", "reward": 200},
+	{"id": "niteroi_resident", "icon": "⛴", "title": "Filho da baía", "desc": "Compléter les deux quêtes de Bruno à Niterói.", "reward": 200},
+	{"id": "first_photo", "icon": "📸", "title": "Carioca documentariste", "desc": "Prendre votre première photo.", "reward": 50},
+	{"id": "shutterbug", "icon": "🖼", "title": "Acervo carioca", "desc": "Prendre 5 photos.", "reward": 200},
+	{"id": "pesca_baia", "icon": "🐟", "title": "Pesca da Baía", "desc": "Sortir un poisson au ponton de Niterói.", "reward": 100},
+	{"id": "viewpoint_collector", "icon": "🌅", "title": "Vistas da cidade", "desc": "Admirer 3 viewpoints panoramiques.", "reward": 150},
+	{"id": "escape_artist", "icon": "🕊", "title": "Sem polícia atrás", "desc": "Atteindre l'acte 3 sans alerter le commissaire.", "reward": 400},
 ]
 
 var _unlocked: Dictionary = {}
@@ -205,6 +205,12 @@ func _unlock(id: String) -> void:
 		return
 	_unlocked[id] = true
 	var data: Dictionary = _find_in_catalog(id)
+	# Bonus R$ : crédite directement le joueur si reward > 0.
+	var reward: int = int(data.get("reward", 0))
+	if reward > 0 and GameManager.player:
+		var inv: Inventory = GameManager.player.get_node_or_null("Inventory") as Inventory
+		if inv:
+			inv.add_money(reward)
 	achievement_unlocked.emit(id, data)
 	# Inscrit l'entrée rétrospective correspondante dans la Crônica si elle
 	# existe (knot "conquista_<id>" cf. NarrativeJournal.JOURNAL_ENTRIES).

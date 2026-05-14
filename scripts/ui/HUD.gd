@@ -422,7 +422,11 @@ func _check_new_main_available() -> void:
 func _on_achievement_unlocked(_id: String, data: Dictionary) -> void:
 	var icon: String = data.get("icon", "🏆")
 	var title: String = data.get("title", "Conquista")
-	_flash_toast("%s %s" % [icon, title], Color(0.95, 0.85, 0.4, 1), 3.0)
+	var reward: int = int(data.get("reward", 0))
+	var text: String = "%s %s" % [icon, title]
+	if reward > 0:
+		text += "  +R$ %d" % reward
+	_flash_toast(text, Color(0.95, 0.85, 0.4, 1), 3.0)
 
 func _on_dynamic_mission_completed(category: int, money: int, rep: int) -> void:
 	var label: String = DynamicMissionManager.CATEGORY_LABELS.get(category, "")
