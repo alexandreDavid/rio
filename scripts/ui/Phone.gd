@@ -203,8 +203,16 @@ func _update_badge(app_id: String, count: int) -> void:
 	if badge == null:
 		return
 	if count > 0:
+		var was_hidden: bool = not badge.visible
 		badge.text = str(count) if count < 10 else "9+"
 		badge.visible = true
+		# Pulse subtil à la première apparition (transition cachée → visible).
+		if was_hidden:
+			badge.pivot_offset = badge.size / 2.0
+			badge.scale = Vector2(1.5, 1.5)
+			var tw: Tween = create_tween()
+			tw.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+			tw.tween_property(badge, "scale", Vector2.ONE, 0.28)
 	else:
 		badge.visible = false
 

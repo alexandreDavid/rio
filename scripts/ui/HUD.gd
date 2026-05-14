@@ -433,6 +433,13 @@ func _flash_toast(text: String, color: Color = Color(0.7, 0.95, 0.7, 1), duratio
 	save_toast.text = text
 	save_toast.visible = true
 	save_toast.modulate = color
+	# Anim d'entrée : scale 0.85 → 1.0 avec un léger overshoot.
+	save_toast.pivot_offset = save_toast.size / 2.0
+	save_toast.scale = Vector2(0.85, 0.85)
+	var entrance: Tween = create_tween()
+	entrance.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	entrance.tween_property(save_toast, "scale", Vector2.ONE, 0.22)
+	# Fade-out après pause.
 	var tween: Tween = create_tween()
 	tween.tween_interval(duration)
 	tween.tween_property(save_toast, "modulate:a", 0.0, 0.4)
@@ -448,20 +455,39 @@ func _refresh_tracker_for(_quest_id: String) -> void:
 func _refresh_tracker_for_obj(_quest_id: String, _obj_id: String) -> void:
 	_refresh_tracker()
 
+var _tracker_last_text: String = ""
+
 func _refresh_tracker() -> void:
 	if quest_tracker == null:
 		return
 	var quest: Quest = _pick_tracked_quest()
 	if quest == null:
 		quest_tracker.visible = false
+		_tracker_last_text = ""
 		return
-	quest_tracker.visible = true
 	var prefix: String = "✦" if quest.quest_type == Quest.QuestType.MAIN else "•"
-	if quest_tracker_name:
-		quest_tracker_name.text = "%s %s" % [prefix, quest.display_name]
+	var name_text: String = "%s %s" % [prefix, quest.display_name]
 	var obj_desc: String = _first_pending_obj_desc(quest)
+	if quest_tracker_name:
+		quest_tracker_name.text = name_text
 	if quest_tracker_objective:
 		quest_tracker_objective.text = "→ %s" % obj_desc
+	# Anim subtile uniquement quand le contenu change réellement.
+	var combined: String = name_text + " / " + obj_desc
+	var was_invisible: bool = not quest_tracker.visible
+	quest_tracker.visible = true
+	if combined != _tracker_last_text or was_invisible:
+		_tracker_last_text = combined
+		_play_tracker_punch()
+
+func _play_tracker_punch() -> void:
+	if quest_tracker == null:
+		return
+	quest_tracker.pivot_offset = quest_tracker.size / 2.0
+	quest_tracker.scale = Vector2(0.92, 0.92)
+	var tw: Tween = create_tween()
+	tw.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tw.tween_property(quest_tracker, "scale", Vector2.ONE, 0.22)
 
 # Préfère la MAIN active la plus récente ; à défaut, n'importe quelle active.
 func _pick_tracked_quest() -> Quest:
