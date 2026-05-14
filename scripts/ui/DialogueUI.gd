@@ -4,11 +4,20 @@ extends Control
 @onready var speaker_label: Label = $Panel/Speaker
 @onready var text_label: RichTextLabel = $Panel/Text
 @onready var choices_container: VBoxContainer = $Panel/Choices
+@onready var panel: Panel = $Panel
+@onready var next_indicator: Label = $Panel/NextIndicator
+
+var _indicator_tween: Tween = null
 
 func _ready() -> void:
 	DialogueBridge.line_shown.connect(_on_line_shown)
 	DialogueBridge.choices_presented.connect(_on_choices_presented)
 	DialogueBridge.dialogue_finished.connect(_on_dialogue_finished)
+	if panel:
+		# Tap dans la zone libre du panel → avance le dialogue si une seule
+		# option (knot purement informatif). Les zones de Button restent
+		# autonomes et bloquent l'événement.
+		panel.gui_input.connect(_on_panel_gui_input)
 	hide()
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -51,6 +60,8 @@ func _on_choices_presented(choices: Array) -> void:
 		var first: Button = choices_container.get_child(0) as Button
 		if first:
 			first.grab_focus()
+	# Indicateur « tap pour avancer » : visible uniquement quand 1 seul choix.
+	_set_next_indicator(choices.size() == 1)
 
 func _on_choice_pressed(index: int) -> void:
 	print("[DialogueUI] _on_choice_pressed(%d) — button clicked" % index)
@@ -58,6 +69,7 @@ func _on_choice_pressed(index: int) -> void:
 
 func _on_dialogue_finished() -> void:
 	_clear_choices()
+	_set_next_indicator(false)
 	hide()
 
 func _clear_choices() -> void:
@@ -65,3 +77,30 @@ func _clear_choices() -> void:
 		return
 	for child in choices_container.get_children():
 		child.queue_free()
+
+func _on_panel_gui_input(event: InputEvent) -> void:
+	if not (event is InputEventMouseButton):
+		return
+	var mb: InputEventMouseButton = event as InputEventMouseButton
+	if not mb.pressed or mb.button_index != MOUSE_BUTTON_LEFT:
+		return
+	# Tap-to-advance : déclenche choix 0 uniquement quand il n'y a qu'une
+	# option (knot informatif, type bavardage). Les knots à choix multiples
+	# exigent une décision explicite sur un bouton.
+	if choices_container and choices_container.get_child_count() == 1:
+		DialogueBridge.choose(0)
+		panel.accept_event()
+
+func _set_next_indicator(active: bool) -> void:
+	if next_indicator == null:
+		return
+	if _indicator_tween and _indicator_tween.is_valid():
+		_indicator_tween.kill()
+	next_indicator.visible = active
+	if not active:
+		return
+	# Pulse alpha 1.0 ↔ 0.35 en boucle.
+	next_indicator.modulate.a = 1.0
+	_indicator_tween = create_tween().set_loops()
+	_indicator_tween.tween_property(next_indicator, "modulate:a", 0.35, 0.6).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	_indicator_tween.tween_property(next_indicator, "modulate:a", 1.0, 0.6).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
