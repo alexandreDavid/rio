@@ -1,10 +1,11 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/props/TaxiStand.tscn" id="1_taxi"]
 [ext_resource type="PackedScene" path="res://scenes/props/DeliveryPoint.tscn" id="2_drop"]
 [ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="3_wander"]
 [ext_resource type="PackedScene" path="res://scenes/props/Viewpoint.tscn" id="4_view"]
 [ext_resource type="PackedScene" path="res://scenes/props/StreetVendor.tscn" id="5_vendor"]
+[ext_resource type="Script" path="res://scripts/world/AmbientDrifter.gd" id="6_drift"]
 
 [sub_resource type="RectangleShape2D" id="WallH"]
 size = Vector2(700, 16)
@@ -13,6 +14,47 @@ size = Vector2(700, 16)
 size = Vector2(16, 360)
 
 [node name="CorcovadoDistrict" type="Node2D"]
+script = ExtResource("6_drift")
+wrap_left = -400.0
+wrap_right = 400.0
+drift_speed = 4.0
+
+# Bruma de montagne — larges bandes blanches semi-transparentes qui dérivent
+# lentement vers l'ouest, donnant l'altitude au Mirante do Cristo.
+[node name="BrumaA" type="ColorRect" parent="." groups=["drift_west"]]
+offset_left = -300.0
+offset_top = -180.0
+offset_right = -150.0
+offset_bottom = -168.0
+color = Color(0.95, 0.95, 0.95, 0.35)
+
+[node name="BrumaB" type="ColorRect" parent="." groups=["drift_west"]]
+offset_left = 50.0
+offset_top = -210.0
+offset_right = 220.0
+offset_bottom = -198.0
+color = Color(0.92, 0.92, 0.95, 0.4)
+
+[node name="BrumaC" type="ColorRect" parent="." groups=["drift_west"]]
+offset_left = 240.0
+offset_top = -150.0
+offset_right = 380.0
+offset_bottom = -140.0
+color = Color(0.95, 0.95, 0.95, 0.3)
+
+[node name="BrumaD" type="ColorRect" parent="." groups=["drift_west"]]
+offset_left = -380.0
+offset_top = -120.0
+offset_right = -200.0
+offset_bottom = -110.0
+color = Color(0.95, 0.95, 0.95, 0.32)
+
+[node name="CorcovadoBird" type="ColorRect" parent="." groups=["drift_west"]]
+offset_left = 100.0
+offset_top = -240.0
+offset_right = 106.0
+offset_bottom = -238.0
+color = Color(0.2, 0.15, 0.18, 0.9)
 
 [node name="Sky" type="ColorRect" parent="."]
 offset_left = -360.0
