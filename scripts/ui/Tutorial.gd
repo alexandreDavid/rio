@@ -38,7 +38,16 @@ const PAGES: Array = [
 var _current: int = 0
 
 func _ready() -> void:
+	# Cache à la fois la CanvasLayer et ses Control enfants : en Godot 4,
+	# CanvasLayer.visible=false stoppe le rendu mais ne désactive PAS toujours
+	# l'input des Control enfants. La Backdrop a mouse_filter=STOP par défaut
+	# et bloquerait toute la fenêtre tant que le tutoriel n'est pas explicitement
+	# ouvert. On désactive les deux niveaux pour être sûr.
 	visible = false
+	if backdrop:
+		backdrop.visible = false
+	if panel:
+		panel.visible = false
 	prev_btn.pressed.connect(_prev)
 	next_btn.pressed.connect(_next)
 	skip_btn.pressed.connect(_close)
@@ -48,12 +57,20 @@ func _ready() -> void:
 
 func open() -> void:
 	_current = 0
+	if backdrop:
+		backdrop.visible = true
+	if panel:
+		panel.visible = true
 	_show_page()
 	visible = true
 	get_tree().paused = true
 
 func _close() -> void:
 	visible = false
+	if backdrop:
+		backdrop.visible = false
+	if panel:
+		panel.visible = false
 	get_tree().paused = false
 	Settings.mark_tutorial_seen()
 
