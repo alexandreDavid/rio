@@ -203,13 +203,87 @@ func _refresh_stats() -> void:
 	if stam:
 		_add_stat_label("⚡ Énergie", "%d / %d" % [int(stam.current), int(stam.max_value)], Color(0.55, 0.95, 0.55))
 	# Séparateur
-	var sep: HSeparator = HSeparator.new()
-	stats_box.add_child(sep)
+	stats_box.add_child(HSeparator.new())
+	# Tracker progression d'acte (cible + barre + pivots manquants)
+	_add_act_tracker()
+	stats_box.add_child(HSeparator.new())
 	# Réputation 5 axes avec barres
 	for axis_name in REP_AXIS_NAMES:
 		var axis_int: int = ReputationSystem.Axis.get(axis_name)
 		var value: int = ReputationSystem.get_value(axis_int)
 		_add_rep_row(axis_name, value)
+
+# Vue « Estratégia » : combien de R$ + quels pivots manquent pour passer au
+# prochain acte. Acte 4 (règne) affiche le titre. Acte 3 sans voie choisie
+# pointe vers les trois NPCs de finale.
+func _add_act_tracker() -> void:
+	var act: int = CampaignManager.current_act
+	var section: Label = Label.new()
+	section.add_theme_font_size_override("font_size", 13)
+	section.add_theme_color_override("font_color", Color(0.95, 0.85, 0.4))
+	if act >= 4:
+		section.text = "🏛 Reinado : %s" % CampaignManager.reign_title()
+		stats_box.add_child(section)
+		var hint: Label = Label.new()
+		hint.text = "Le pouvoir est à toi. Sambódromo t'attend pour le défilé."
+		hint.add_theme_font_size_override("font_size", 11)
+		hint.add_theme_color_override("font_color", Color(0.7, 0.7, 0.75))
+		hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		stats_box.add_child(hint)
+		return
+	if act == 3:
+		section.text = "🎯 Acte 3 — Choisir une voie"
+		stats_box.add_child(section)
+		_add_act3_hint()
+		return
+	section.text = "🎯 Acte %d → %d" % [act, act + 1]
+	stats_box.add_child(section)
+	# Barre de progression dette (acte 1→2 = 500, acte 2→3 = 25000).
+	var threshold: int = CampaignManager.ACT1_THRESHOLD if act == 1 else CampaignManager.ACT2_THRESHOLD
+	var paid: int = CampaignManager.debt_paid
+	var pct_bar: HBoxContainer = HBoxContainer.new()
+	pct_bar.add_theme_constant_override("separation", 8)
+	var pct_label: Label = Label.new()
+	pct_label.text = "💰"
+	pct_label.custom_minimum_size = Vector2(28, 0)
+	pct_bar.add_child(pct_label)
+	var bar: ProgressBar = ProgressBar.new()
+	bar.min_value = 0.0
+	bar.max_value = float(threshold)
+	bar.value = float(min(paid, threshold))
+	bar.show_percentage = false
+	bar.custom_minimum_size = Vector2(180, 12)
+	bar.modulate = Color(0.95, 0.85, 0.4) if paid >= threshold else Color(0.95, 0.55, 0.45)
+	pct_bar.add_child(bar)
+	var val: Label = Label.new()
+	val.text = "%d / %d" % [min(paid, threshold), threshold]
+	val.add_theme_font_size_override("font_size", 10)
+	pct_bar.add_child(val)
+	stats_box.add_child(pct_bar)
+	# Pivots manquants
+	var pivots: Array = CampaignManager.ACT_PIVOT_QUESTS.get(act + 1, [])
+	for pid in pivots:
+		var done: bool = QuestManager.is_completed(pid)
+		var q: Quest = QuestManager.get_quest(pid)
+		var row: Label = Label.new()
+		var name: String = q.display_name if q != null and q.display_name != "" else pid
+		row.text = "  %s %s" % [("✓" if done else "▢"), name]
+		row.add_theme_font_size_override("font_size", 11)
+		row.add_theme_color_override("font_color", Color(0.55, 0.85, 0.55) if done else Color(0.7, 0.7, 0.75))
+		stats_box.add_child(row)
+
+func _add_act3_hint() -> void:
+	var endgame: int = CampaignManager.chosen_endgame
+	var hint: Label = Label.new()
+	hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	hint.add_theme_font_size_override("font_size", 11)
+	hint.add_theme_color_override("font_color", Color(0.7, 0.7, 0.75))
+	if endgame == CampaignManager.Endgame.NONE:
+		hint.text = "Trois voies, mutuellement exclusives :\n  • Ramos (Bar) → Polícia\n  • Miguel (Morro) → Tráfico\n  • Padre (Chapelle) → Prefeito"
+	else:
+		var name: String = CampaignManager.endgame_name()
+		hint.text = "Voie scellée : %s. Termine la chaîne pour l'acte 4." % name
+	stats_box.add_child(hint)
 
 func _add_stat_label(prefix: String, value: String, color: Color) -> void:
 	var row: HBoxContainer = HBoxContainer.new()
