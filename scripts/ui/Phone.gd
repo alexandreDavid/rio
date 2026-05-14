@@ -39,6 +39,9 @@ const REP_AXIS_COLORS: Dictionary = {
 @onready var conquistas_screen: Control = $Frame/Screens/Conquistas
 @onready var conquistas_box: VBoxContainer = $Frame/Screens/Conquistas/Scroll/Box
 @onready var conquistas_counter: Label = $Frame/Screens/Conquistas/Counter
+@onready var mapa_screen: Control = $Frame/Screens/Mapa
+@onready var mapa_box: VBoxContainer = $Frame/Screens/Mapa/Scroll/Box
+@onready var mapa_here_label: Label = $Frame/Screens/Mapa/HereLabel
 @onready var taxi_list: VBoxContainer = $Frame/Screens/Taxi/Scroll/Box
 @onready var taxi_status: Label = $Frame/Screens/Taxi/Status
 @onready var stats_box: VBoxContainer = $Frame/Screens/Stats/Scroll/Box
@@ -64,6 +67,7 @@ const REP_AXIS_COLORS: Dictionary = {
 @onready var app_noticias: Button = $Frame/Screens/Home/Grid/Noticias
 @onready var app_ajustes: Button = $Frame/Screens/Home/Grid/Ajustes
 @onready var app_conquistas: Button = $Frame/Screens/Home/Grid/Conquistas
+@onready var app_mapa: Button = $Frame/Screens/Home/Grid/Mapa
 
 const PHOTOS_DIR: String = "user://photos"
 
@@ -88,6 +92,8 @@ func _ready() -> void:
 		app_ajustes.pressed.connect(func(): _show_screen("ajustes"))
 	if app_conquistas:
 		app_conquistas.pressed.connect(func(): _show_screen("conquistas"))
+	if app_mapa:
+		app_mapa.pressed.connect(func(): _show_screen("mapa"))
 	# Sliders volumes — émettent au glisser, persistés par Settings.
 	if slider_music:
 		slider_music.value_changed.connect(func(v): Settings.set_music(v))
@@ -156,6 +162,8 @@ func _show_screen(name: String) -> void:
 		ajustes_screen.visible = (name == "ajustes")
 	if conquistas_screen:
 		conquistas_screen.visible = (name == "conquistas")
+	if mapa_screen:
+		mapa_screen.visible = (name == "mapa")
 	if back_button:
 		back_button.visible = (name != "home")
 	if name == "taxi":
@@ -172,6 +180,8 @@ func _show_screen(name: String) -> void:
 		_refresh_ajustes()
 	elif name == "conquistas":
 		_refresh_conquistas()
+	elif name == "mapa":
+		_refresh_mapa()
 
 # ------------------------------------------------------------------
 # Taxi app
@@ -739,6 +749,69 @@ func _build_news_items() -> Array:
 	if day >= 5:
 		out.append({"text": "Vendedores de milho assados disputam território no calçadão", "source": "Sociedade Rio", "color": NEWS_COLOR_AMBIENT})
 	return out
+
+# Districts groupés par région géographique pour l'app Mapa.
+const MAPA_REGIONS: Array = [
+	{"label": "🌄 Norte", "ids": ["sambodromo", "maracana", "corcovado"]},
+	{"label": "🌅 Leste (baía + bondinho)", "ids": ["niteroi", "pao_acucar", "santos_dumont", "aterro_flamengo", "botafogo_flamengo"]},
+	{"label": "🏙 Centro", "ids": ["favela_morro", "copacabana"]},
+	{"label": "🏖 Sul + Oeste", "ids": ["zona_sul", "cagarras", "barra_tijuca"]},
+]
+
+func _refresh_mapa() -> void:
+	if mapa_box == null:
+		return
+	for child in mapa_box.get_children():
+		child.queue_free()
+	var current_id: String = DistrictManager.current()
+	if mapa_here_label:
+		mapa_here_label.text = "Vous êtes ici : %s" % DistrictManager.get_label(current_id)
+	for region in MAPA_REGIONS:
+		var header: Label = Label.new()
+		header.text = String(region.label)
+		header.add_theme_font_size_override("font_size", 12)
+		header.add_theme_color_override("font_color", Color(0.7, 0.7, 0.75))
+		mapa_box.add_child(header)
+		for id in region.ids:
+			if not DistrictManager.DISTRICTS.has(id):
+				continue
+			mapa_box.add_child(_build_mapa_row(id, current_id))
+		var sep: HSeparator = HSeparator.new()
+		mapa_box.add_child(sep)
+
+func _build_mapa_row(district_id: String, current_id: String) -> Control:
+	var info: Dictionary = DistrictManager.DISTRICTS[district_id]
+	var label: String = DistrictManager.get_label(district_id)
+	var fare: int = DistrictManager.get_fare(district_id)
+	var taxi_ok: bool = info.get("taxi_available", true)
+	var is_current: bool = (district_id == current_id)
+	var btn: Button = Button.new()
+	btn.custom_minimum_size = Vector2(360, 38)
+	btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	btn.add_theme_font_size_override("font_size", 12)
+	var prefix: String = "📍 " if is_current else "  "
+	var suffix: String
+	if is_current:
+		suffix = "  · ici"
+	elif not taxi_ok:
+		suffix = "  · bondinho seulement"
+	elif fare > 0:
+		suffix = "  · R$ %d" % fare
+	else:
+		suffix = ""
+	btn.text = "%s%s%s" % [prefix, label, suffix]
+	btn.disabled = is_current or not taxi_ok
+	if is_current:
+		btn.add_theme_color_override("font_color", Color(0.95, 0.85, 0.4))
+	elif not taxi_ok:
+		btn.add_theme_color_override("font_color", Color(0.55, 0.55, 0.6))
+	if not btn.disabled:
+		btn.pressed.connect(func(): _on_mapa_pressed(district_id))
+	return btn
+
+func _on_mapa_pressed(district_id: String) -> void:
+	if DistrictManager.travel_to(district_id):
+		close()
 
 func _refresh_conquistas() -> void:
 	if conquistas_box == null:
