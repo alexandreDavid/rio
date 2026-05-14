@@ -35,58 +35,58 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -240.0
-offset_top = -210.0
-offset_right = 240.0
-offset_bottom = 210.0
+offset_left = -260.0
+offset_top = -180.0
+offset_right = 260.0
+offset_bottom = 180.0
 theme_override_styles/panel = SubResource("PanelStyle")
 
 [node name="Margin" type="MarginContainer" parent="Panel"]
 
 [node name="VBox" type="VBoxContainer" parent="Panel/Margin"]
-theme_override_constants/separation = 16
+theme_override_constants/separation = 12
 
 [node name="Title" type="Label" parent="Panel/Margin/VBox"]
 text = "Titre"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 22
+theme_override_font_sizes/font_size = 20
 theme_override_colors/font_color = Color(0.95, 0.75, 0.32, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.7)
 theme_override_constants/outline_size = 3
 
 [node name="Body" type="Label" parent="Panel/Margin/VBox"]
 text = "Texte"
-custom_minimum_size = Vector2(0, 240)
-theme_override_font_sizes/font_size = 14
+custom_minimum_size = Vector2(0, 160)
+theme_override_font_sizes/font_size = 13
 theme_override_colors/font_color = Color(0.95, 0.92, 0.85, 1)
 autowrap_mode = 2
 size_flags_vertical = 3
 
 [node name="Footer" type="HBoxContainer" parent="Panel/Margin/VBox"]
-theme_override_constants/separation = 8
+theme_override_constants/separation = 6
 
 [node name="Skip" type="Button" parent="Panel/Margin/VBox/Footer"]
 text = "Passer"
-custom_minimum_size = Vector2(80, 44)
-theme_override_font_sizes/font_size = 13
+custom_minimum_size = Vector2(72, 36)
+theme_override_font_sizes/font_size = 12
 
 [node name="Spacer" type="Control" parent="Panel/Margin/VBox/Footer"]
 size_flags_horizontal = 3
 
 [node name="Indicator" type="Label" parent="Panel/Margin/VBox/Footer"]
 text = "1 / 5"
-custom_minimum_size = Vector2(50, 0)
+custom_minimum_size = Vector2(44, 0)
 vertical_alignment = 1
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 12
 theme_override_colors/font_color = Color(0.7, 0.7, 0.75, 1)
 
 [node name="Prev" type="Button" parent="Panel/Margin/VBox/Footer"]
 text = "Précédent"
-custom_minimum_size = Vector2(100, 44)
-theme_override_font_sizes/font_size = 13
+custom_minimum_size = Vector2(90, 36)
+theme_override_font_sizes/font_size = 12
 
 [node name="Next" type="Button" parent="Panel/Margin/VBox/Footer"]
 text = "Suivant"
-custom_minimum_size = Vector2(100, 44)
-theme_override_font_sizes/font_size = 13
+custom_minimum_size = Vector2(90, 36)
+theme_override_font_sizes/font_size = 12
