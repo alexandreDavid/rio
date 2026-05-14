@@ -26,14 +26,19 @@ const STORY_PAGES: Array[String] = [
 var _page: int = 0
 
 func _ready() -> void:
+	print("[Intro] _ready : continue=%s load=%s newgame=%s slotpicker=%s panel=%s" % [
+			continue_button != null, load_button != null, newgame_button != null,
+			slot_picker_button != null, slots_panel != null])
 	if continue_button:
 		continue_button.pressed.connect(_advance)
+		continue_button.pressed.connect(func(): print("[Intro] Continue pressed"))
 	if load_button:
 		load_button.pressed.connect(_goto_main)
 	if newgame_button:
 		newgame_button.pressed.connect(_start_new_game)
 	if slot_picker_button:
 		slot_picker_button.pressed.connect(_open_slots)
+		slot_picker_button.pressed.connect(func(): print("[Intro] SlotPicker pressed"))
 	if slots_close:
 		slots_close.pressed.connect(_close_slots)
 	if slot_btn_1:
