@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/props/TaxiStand.tscn" id="1_taxi"]
 [ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="2_wander"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" path="res://scenes/npcs/Bruno.tscn" id="6_bruno"]
 [ext_resource type="PackedScene" path="res://scenes/npcs/Yara.tscn" id="7_yara"]
 [ext_resource type="PackedScene" path="res://scenes/props/FishingSpot.tscn" id="8_fish"]
+[ext_resource type="Script" path="res://scripts/districts/NiteroiDistrict.gd" id="9_script"]
 
 [sub_resource type="RectangleShape2D" id="WallH"]
 size = Vector2(1600, 16)
@@ -15,6 +16,7 @@ size = Vector2(1600, 16)
 size = Vector2(16, 700)
 
 [node name="NiteroiDistrict" type="Node2D"]
+script = ExtResource("9_script")
 
 # Sky et baie de Guanabara vue depuis Niteroi
 [node name="Sky" type="ColorRect" parent="."]
@@ -422,6 +424,109 @@ offset_top = 58.0
 offset_right = 8.0
 offset_bottom = 64.0
 color = Color(1.0, 0.95, 0.62, 1)
+
+# Nuages cosmétiques dans le ciel (drift lent géré par script)
+[node name="CloudA" type="ColorRect" parent="."]
+offset_left = -640.0
+offset_top = -275.0
+offset_right = -560.0
+offset_bottom = -262.0
+color = Color(0.95, 0.95, 0.92, 0.85)
+
+[node name="CloudB" type="ColorRect" parent="."]
+offset_left = -180.0
+offset_top = -286.0
+offset_right = -90.0
+offset_bottom = -274.0
+color = Color(0.92, 0.92, 0.88, 0.78)
+
+[node name="CloudC" type="ColorRect" parent="."]
+offset_left = 220.0
+offset_top = -270.0
+offset_right = 320.0
+offset_bottom = -258.0
+color = Color(0.95, 0.95, 0.92, 0.82)
+
+# Mouettes — petits chevrons blancs qui dérivent sur la baie
+[node name="GullA" type="ColorRect" parent="."]
+offset_left = -350.0
+offset_top = -195.0
+offset_right = -340.0
+offset_bottom = -192.0
+color = Color(0.98, 0.98, 0.95, 1)
+
+[node name="GullB" type="ColorRect" parent="."]
+offset_left = 80.0
+offset_top = -160.0
+offset_right = 90.0
+offset_bottom = -157.0
+color = Color(0.98, 0.98, 0.95, 1)
+
+[node name="GullC" type="ColorRect" parent="."]
+offset_left = 380.0
+offset_top = -170.0
+offset_right = 390.0
+offset_bottom = -167.0
+color = Color(0.98, 0.98, 0.95, 1)
+
+# Cerf-volant attrapé par les courants au-dessus du MAC
+[node name="KiteString" type="ColorRect" parent="."]
+offset_left = -50.0
+offset_top = -228.0
+offset_right = -48.0
+offset_bottom = -195.0
+color = Color(0.4, 0.4, 0.4, 0.7)
+
+[node name="KiteBody" type="ColorRect" parent="."]
+offset_left = -60.0
+offset_top = -240.0
+offset_right = -36.0
+offset_bottom = -228.0
+color = Color(0.85, 0.32, 0.42, 0.95)
+
+# Petit bateau de pêche qui dérive sur la baie (animé par le script)
+[node name="FishingBoat" type="ColorRect" parent="."]
+offset_left = -180.0
+offset_top = -90.0
+offset_right = -140.0
+offset_bottom = -78.0
+color = Color(0.85, 0.65, 0.42, 0.95)
+
+[node name="FishingBoatMast" type="ColorRect" parent="."]
+offset_left = -163.0
+offset_top = -110.0
+offset_right = -160.0
+offset_bottom = -90.0
+color = Color(0.55, 0.42, 0.32, 0.95)
+
+[node name="FishingBoatSail" type="ColorRect" parent="."]
+offset_left = -160.0
+offset_top = -108.0
+offset_right = -140.0
+offset_bottom = -92.0
+color = Color(0.92, 0.88, 0.78, 0.85)
+
+# Vagues additionnelles (densité visuelle accrue)
+[node name="BayWave3" type="ColorRect" parent="."]
+offset_left = -680.0
+offset_top = -75.0
+offset_right = -540.0
+offset_bottom = -72.0
+color = Color(0.85, 0.92, 0.95, 0.45)
+
+[node name="BayWave4" type="ColorRect" parent="."]
+offset_left = -120.0
+offset_top = -55.0
+offset_right = 20.0
+offset_bottom = -52.0
+color = Color(0.85, 0.92, 0.95, 0.55)
+
+[node name="BayWave5" type="ColorRect" parent="."]
+offset_left = 480.0
+offset_top = -110.0
+offset_right = 620.0
+offset_bottom = -107.0
+color = Color(0.85, 0.92, 0.95, 0.45)
 
 # Walls
 [node name="Walls" type="Node2D" parent="."]
