@@ -212,17 +212,6 @@ theme_override_styles/pressed = SubResource("AppButtonStyleStats")
 theme_override_font_sizes/font_size = 24
 theme_override_colors/font_color = Color(0.12, 0.18, 0.12, 1)
 
-[node name="Journal" type="Button" parent="Frame/Screens/Home/Grid"]
-custom_minimum_size = Vector2(150, 150)
-text = "📖
-Diário"
-tooltip_text = "Journal narratif des quêtes actives et complétées (J)"
-theme_override_styles/normal = SubResource("AppButtonStyleJournal")
-theme_override_styles/hover = SubResource("AppButtonStyleJournal")
-theme_override_styles/pressed = SubResource("AppButtonStyleJournal")
-theme_override_font_sizes/font_size = 24
-theme_override_colors/font_color = Color(0.18, 0.12, 0.18, 1)
-
 [node name="Missions" type="Button" parent="Frame/Screens/Home/Grid"]
 custom_minimum_size = Vector2(150, 150)
 text = "📋

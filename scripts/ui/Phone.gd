@@ -65,7 +65,7 @@ const REP_AXIS_COLORS: Dictionary = {
 # App home screen buttons
 @onready var app_taxi: Button = $Frame/Screens/Home/Grid/Taxi
 @onready var app_stats: Button = $Frame/Screens/Home/Grid/Stats
-@onready var app_journal: Button = $Frame/Screens/Home/Grid/Journal
+@onready var app_journal: Button = get_node_or_null("Frame/Screens/Home/Grid/Journal") as Button
 @onready var app_missions: Button = $Frame/Screens/Home/Grid/Missions
 @onready var app_cronica: Button = $Frame/Screens/Home/Grid/Cronica
 @onready var app_photos: Button = $Frame/Screens/Home/Grid/Photos
