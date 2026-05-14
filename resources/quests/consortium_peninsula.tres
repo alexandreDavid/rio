@@ -21,7 +21,7 @@ id = "consortium_peninsula"
 display_name = "Península, le dernier ticket"
 description = "Mendonça préside le Península Privé. Helipad sur le toit, bodyguards à l'entrée, cousin commissaire au 19e DP. Le plus gros tarif, mais à partir d'ici la police saura. 1500 reais et 900 d'effacement de dette. Rep police en chute libre."
 journal_text = "Sr. Mendonça, Península (Barra). Cousin commissaire = danger."
-giver_npc_id = "nilton"
+giver_npc_id = "consortium"
 ink_knot = "consortium_peninsula_offer"
 objectives = Array[Resource]([SubResource("obj_intimidate_mendonca"), SubResource("obj_close_mendonca")])
 money_reward = 1500
