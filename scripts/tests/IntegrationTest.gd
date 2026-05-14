@@ -69,6 +69,7 @@ const QUEST_RESOURCES: Array[String] = [
 	"res://resources/quests/consortium_peninsula.tres",
 	"res://resources/quests/pacto_barra.tres",
 	"res://resources/quests/bruno_carga.tres",
+	"res://resources/quests/bruno_pesca_baia.tres",
 ]
 
 const NPC_DATA_DIR: String = "res://resources/npcs/"
@@ -803,6 +804,7 @@ const SCRIPT_COMPLETED_OBJECTIVES: Dictionary = {
 	"diego_botafogo_capoeira": ["tip_diego"],
 	"sofia_bondinho_tour": ["guide_to_summit"],
 	"mateus_cagarras_pesca": ["haul_catch"],
+	"bruno_pesca_baia": ["haul_baia"],
 	# Viewpoint dans le district Corcovado.
 	"padre_corcovado_relic": ["bless_at_corcovado"],
 	# MainBoot._on_district_changed coche les étapes du tour à l'arrivée.

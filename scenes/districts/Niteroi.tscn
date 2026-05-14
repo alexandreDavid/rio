@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/props/TaxiStand.tscn" id="1_taxi"]
 [ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="2_wander"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" path="res://scenes/npcs/Helena.tscn" id="5_helena"]
 [ext_resource type="PackedScene" path="res://scenes/npcs/Bruno.tscn" id="6_bruno"]
 [ext_resource type="PackedScene" path="res://scenes/npcs/Yara.tscn" id="7_yara"]
+[ext_resource type="PackedScene" path="res://scenes/props/FishingSpot.tscn" id="8_fish"]
 
 [sub_resource type="RectangleShape2D" id="WallH"]
 size = Vector2(1600, 16)
@@ -489,6 +490,10 @@ position = Vector2(330, -35)
 # NPC Yara — étudiante en arts plastiques près du MAC (lore, pas de quête)
 [node name="Yara" parent="." instance=ExtResource("7_yara")]
 position = Vector2(-90, 85)
+
+# Spot de pêche au bout du ponton (SIDE bruno_pesca_baia)
+[node name="FishingSpot" parent="." instance=ExtResource("8_fish")]
+position = Vector2(470, -40)
 
 # Quelques visiteurs ambient
 [node name="VisitorA" parent="." instance=ExtResource("2_wander")]

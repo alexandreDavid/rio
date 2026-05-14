@@ -349,6 +349,25 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 		"text": "*te tend une cachaça artisanale, scellée* Helena m'a appelé. *sourit pour la première fois* Tiens, c'est pour toi. Distillerie de Paraty, ma région. *redevient sérieux* Si t'as encore besoin d'un passage à Rio, je peux t'embarquer gratis. Une fois.",
 		"choices": ["Obrigado, Bruno"],
 	},
+	# --- Bruno : SIDE Pesca da Baía (prereq bruno_carga) ---
+	"bruno_pesca_offer": {
+		"speaker": "Bruno",
+		"text": "*pose sa canne sur la planche, te tend la sienne* Sobrinho. Cette baie, elle a mille robalos par mètre carré, et personne ne les sort plus. *sourit* Sors-en un — un seul — et je te paie de la cachaça. Le ponton là-bas, c'est mon spot depuis trente-quatre ans.",
+		"choices": ["J'essaie maintenant", "Plus tard"],
+		"on_choose": {
+			"0": {"accept_quest": "bruno_pesca_baia"},
+		},
+	},
+	"bruno_pesca_remind": {
+		"speaker": "Bruno",
+		"text": "*pointe le bout du ponton, l'eau qui clapote* La canne t'attend, sobrinho. Une session, un poisson — t'es bon.",
+		"choices": ["J'y vais"],
+	},
+	"bruno_pesca_done": {
+		"speaker": "Bruno",
+		"text": "*sort la cachaça promise, la décapsule* Tu l'as sorti. *te tend la bouteille* Trente-quatre ans que je voyais des touristes essayer sans rien attraper. Toi en deux essais. *te scrute* T'es de la famille des pêcheurs, sobrinho. C'est dans le sang ou pas.",
+		"choices": ["Obrigado, Bruno"],
+	},
 	"helena_default": {
 		"speaker": "Helena",
 		"text": "*pose son catalogue* La pièce du mois ? *fait un signe vers le MAC* « Esquecimento » d'Adriana Varejão. Sang séché sur faïence portugaise. *te regarde* Vous venez d'où ? Du calçadão, d'accord. *léger sourire* Ici on a les mêmes vagues que vous, mais on a aussi le silence. C'est la grosse différence.",
