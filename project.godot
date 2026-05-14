@@ -40,6 +40,7 @@ NarrativeJournal="*res://scripts/core/NarrativeJournal.gd"
 RandomEventManager="*res://scripts/core/RandomEventManager.gd"
 CreditorVisitManager="*res://scripts/core/CreditorVisitManager.gd"
 NPCAffinity="*res://scripts/core/NPCAffinity.gd"
+AchievementSystem="*res://scripts/core/AchievementSystem.gd"
 Settings="*res://scripts/core/Settings.gd"
 DebugConsole="*res://scripts/debug/DebugConsole.gd"
 

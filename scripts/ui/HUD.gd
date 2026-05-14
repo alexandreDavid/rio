@@ -59,6 +59,7 @@ func _ready() -> void:
 	SaveSystem.save_committed.connect(_on_save_committed)
 	SaveSystem.save_loaded.connect(_on_save_loaded)
 	DynamicMissionManager.mission_completed.connect(_on_dynamic_mission_completed)
+	AchievementSystem.achievement_unlocked.connect(_on_achievement_unlocked)
 	call_deferred("_seed_main_signaled")
 	_refresh_day()
 	_refresh_debt()
@@ -135,6 +136,7 @@ func _on_photo_pressed() -> void:
 	var err: int = img.save_png(path)
 	if err == OK:
 		_flash_toast("📸 " + name, Color(0.9, 0.95, 0.7, 1), 2.0)
+		AchievementSystem.notify_first_photo()
 	else:
 		_flash_toast("📸 Échec de l'écriture", Color(0.95, 0.55, 0.45, 1))
 
@@ -415,6 +417,11 @@ func _check_new_main_available() -> void:
 		if QuestManager.is_available(quest.id):
 			_signaled_main_ids[quest.id] = true
 			_flash_toast("✦ Nouvelle quête : %s" % quest.display_name, Color(1.0, 0.9, 0.55, 1))
+
+func _on_achievement_unlocked(_id: String, data: Dictionary) -> void:
+	var icon: String = data.get("icon", "🏆")
+	var title: String = data.get("title", "Conquista")
+	_flash_toast("%s %s" % [icon, title], Color(0.95, 0.85, 0.4, 1), 3.0)
 
 func _on_dynamic_mission_completed(category: int, money: int, rep: int) -> void:
 	var label: String = DynamicMissionManager.CATEGORY_LABELS.get(category, "")

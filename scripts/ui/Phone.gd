@@ -35,6 +35,9 @@ const REP_AXIS_COLORS: Dictionary = {
 @onready var slider_music: HSlider = $Frame/Screens/Ajustes/Box/MusicRow/MusicSlider
 @onready var slider_sfx: HSlider = $Frame/Screens/Ajustes/Box/SfxRow/SfxSlider
 @onready var slider_ambient: HSlider = $Frame/Screens/Ajustes/Box/AmbientRow/AmbientSlider
+@onready var conquistas_screen: Control = $Frame/Screens/Conquistas
+@onready var conquistas_box: VBoxContainer = $Frame/Screens/Conquistas/Scroll/Box
+@onready var conquistas_counter: Label = $Frame/Screens/Conquistas/Counter
 @onready var taxi_list: VBoxContainer = $Frame/Screens/Taxi/Scroll/Box
 @onready var taxi_status: Label = $Frame/Screens/Taxi/Status
 @onready var stats_box: VBoxContainer = $Frame/Screens/Stats/Scroll/Box
@@ -59,6 +62,7 @@ const REP_AXIS_COLORS: Dictionary = {
 @onready var app_photos: Button = $Frame/Screens/Home/Grid/Photos
 @onready var app_noticias: Button = $Frame/Screens/Home/Grid/Noticias
 @onready var app_ajustes: Button = $Frame/Screens/Home/Grid/Ajustes
+@onready var app_conquistas: Button = $Frame/Screens/Home/Grid/Conquistas
 
 const PHOTOS_DIR: String = "user://photos"
 
@@ -81,6 +85,8 @@ func _ready() -> void:
 		app_noticias.pressed.connect(func(): _show_screen("noticias"))
 	if app_ajustes:
 		app_ajustes.pressed.connect(func(): _show_screen("ajustes"))
+	if app_conquistas:
+		app_conquistas.pressed.connect(func(): _show_screen("conquistas"))
 	# Sliders volumes — émettent au glisser, persistés par Settings.
 	if slider_music:
 		slider_music.value_changed.connect(func(v): Settings.set_music(v))
@@ -145,6 +151,8 @@ func _show_screen(name: String) -> void:
 		noticias_screen.visible = (name == "noticias")
 	if ajustes_screen:
 		ajustes_screen.visible = (name == "ajustes")
+	if conquistas_screen:
+		conquistas_screen.visible = (name == "conquistas")
 	if back_button:
 		back_button.visible = (name != "home")
 	if name == "taxi":
@@ -159,6 +167,8 @@ func _show_screen(name: String) -> void:
 		_refresh_noticias()
 	elif name == "ajustes":
 		_refresh_ajustes()
+	elif name == "conquistas":
+		_refresh_conquistas()
 
 # ------------------------------------------------------------------
 # Taxi app
@@ -726,6 +736,55 @@ func _build_news_items() -> Array:
 	if day >= 5:
 		out.append({"text": "Vendedores de milho assados disputam território no calçadão", "source": "Sociedade Rio", "color": NEWS_COLOR_AMBIENT})
 	return out
+
+func _refresh_conquistas() -> void:
+	if conquistas_box == null:
+		return
+	for child in conquistas_box.get_children():
+		child.queue_free()
+	if conquistas_counter:
+		conquistas_counter.text = "%d / %d débloquées" % [AchievementSystem.count_unlocked(), AchievementSystem.count_total()]
+	for entry in AchievementSystem.CATALOG:
+		conquistas_box.add_child(_build_achievement_row(entry))
+
+func _build_achievement_row(entry: Dictionary) -> Control:
+	var unlocked: bool = AchievementSystem.is_unlocked(entry.get("id", ""))
+	var card: PanelContainer = PanelContainer.new()
+	var style: StyleBoxFlat = StyleBoxFlat.new()
+	style.bg_color = Color(0.18, 0.16, 0.12, 1) if unlocked else Color(0.12, 0.12, 0.14, 1)
+	style.corner_radius_top_left = 8
+	style.corner_radius_top_right = 8
+	style.corner_radius_bottom_right = 8
+	style.corner_radius_bottom_left = 8
+	style.content_margin_left = 10
+	style.content_margin_right = 10
+	style.content_margin_top = 6
+	style.content_margin_bottom = 6
+	card.add_theme_stylebox_override("panel", style)
+	var hbox: HBoxContainer = HBoxContainer.new()
+	hbox.add_theme_constant_override("separation", 10)
+	card.add_child(hbox)
+	var icon_label: Label = Label.new()
+	icon_label.text = entry.get("icon", "🏆") if unlocked else "🔒"
+	icon_label.custom_minimum_size = Vector2(34, 0)
+	icon_label.add_theme_font_size_override("font_size", 20)
+	hbox.add_child(icon_label)
+	var info: VBoxContainer = VBoxContainer.new()
+	info.add_theme_constant_override("separation", 2)
+	info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	hbox.add_child(info)
+	var title: Label = Label.new()
+	title.text = entry.get("title", "")
+	title.add_theme_font_size_override("font_size", 12)
+	title.add_theme_color_override("font_color", Color(0.95, 0.85, 0.4) if unlocked else Color(0.55, 0.55, 0.6))
+	info.add_child(title)
+	var desc: Label = Label.new()
+	desc.text = entry.get("desc", "")
+	desc.add_theme_font_size_override("font_size", 10)
+	desc.add_theme_color_override("font_color", Color(0.7, 0.7, 0.75) if unlocked else Color(0.4, 0.4, 0.45))
+	desc.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	info.add_child(desc)
+	return card
 
 func _refresh_ajustes() -> void:
 	# Synchronise les sliders avec les valeurs actuelles de Settings.
