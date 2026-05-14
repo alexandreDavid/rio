@@ -1,8 +1,9 @@
-extends Node2D
+extends AmbientDrifter
 
-# Câblage runtime des portes d'entrée des intérieurs Zona Sul. Les intérieurs
-# sont instanciés en local loin de la zone jouée (cf. ZonaSul.tscn). Comme
-# ZonaSul est elle-même décalée dans le monde Copacabana, on ne peut pas
+# Câblage runtime des portes d'entrée des intérieurs Zona Sul + drift décoratif
+# hérité d'AmbientDrifter (mouettes, nuages, bateau à voile dans la zone plage).
+# Les intérieurs sont instanciés en local loin de la zone jouée (cf. ZonaSul.tscn).
+# Comme ZonaSul est elle-même décalée dans le monde Copacabana, on ne peut pas
 # hardcoder les global_position dans la scène — on les résout au _ready en
 # lisant le SpawnPoint de chaque intérieur.
 
@@ -15,6 +16,8 @@ extends Node2D
 @onready var _door_bar: Node = get_node_or_null("DoorBar")
 
 func _ready() -> void:
+	# Drift parent : scan des groupes drift_west / drift_east / drift_bob.
+	super._ready()
 	_wire_door(_door_penthouse, _penthouse_spawn)
 	_wire_door(_door_office, _office_spawn)
 	_wire_door(_door_bar, _bar_spawn)

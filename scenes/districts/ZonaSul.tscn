@@ -74,6 +74,73 @@ size = Vector2(1100, 96)
 
 [node name="ZonaSulDistrict" type="Node2D"]
 script = ExtResource("0_script")
+wrap_left = -950.0
+wrap_right = 920.0
+drift_speed = 9.0
+
+# Décor animé plage : mouettes, cerf-volant, voilier sur la mer (sud)
+[node name="ZS_GullA" type="ColorRect" parent="." groups=["drift_west"]]
+offset_left = -700.0
+offset_top = 70.0
+offset_right = -690.0
+offset_bottom = 73.0
+color = Color(0.98, 0.98, 0.95, 1)
+
+[node name="ZS_GullB" type="ColorRect" parent="." groups=["drift_west"]]
+offset_left = -200.0
+offset_top = 50.0
+offset_right = -190.0
+offset_bottom = 53.0
+color = Color(0.98, 0.98, 0.95, 1)
+
+[node name="ZS_GullC" type="ColorRect" parent="." groups=["drift_west"]]
+offset_left = 380.0
+offset_top = 80.0
+offset_right = 390.0
+offset_bottom = 83.0
+color = Color(0.98, 0.98, 0.95, 1)
+
+[node name="ZS_KiteString" type="ColorRect" parent="." groups=["drift_west"]]
+offset_left = 280.0
+offset_top = 100.0
+offset_right = 282.0
+offset_bottom = 140.0
+color = Color(0.3, 0.3, 0.3, 0.7)
+
+[node name="ZS_KiteBody" type="ColorRect" parent="." groups=["drift_west"]]
+offset_left = 270.0
+offset_top = 80.0
+offset_right = 295.0
+offset_bottom = 100.0
+color = Color(0.85, 0.32, 0.55, 0.92)
+
+[node name="ZS_BoatHull" type="ColorRect" parent="." groups=["drift_east", "drift_bob"]]
+offset_left = -800.0
+offset_top = 340.0
+offset_right = -760.0
+offset_bottom = 350.0
+color = Color(0.92, 0.88, 0.78, 0.92)
+
+[node name="ZS_BoatSail" type="ColorRect" parent="." groups=["drift_east", "drift_bob"]]
+offset_left = -785.0
+offset_top = 312.0
+offset_right = -772.0
+offset_bottom = 342.0
+color = Color(0.98, 0.98, 0.95, 0.92)
+
+[node name="ZS_CloudA" type="ColorRect" parent="." groups=["drift_west"]]
+offset_left = -600.0
+offset_top = -90.0
+offset_right = -500.0
+offset_bottom = -78.0
+color = Color(0.95, 0.95, 0.92, 0.7)
+
+[node name="ZS_CloudB" type="ColorRect" parent="." groups=["drift_west"]]
+offset_left = 240.0
+offset_top = -100.0
+offset_right = 360.0
+offset_bottom = -88.0
+color = Color(0.92, 0.92, 0.88, 0.65)
 
 [node name="BuildingsRow" type="ColorRect" parent="."]
 offset_left = -940.0
