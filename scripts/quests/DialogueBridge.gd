@@ -768,6 +768,67 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 		"text": "*ne lève même pas les yeux du grill, te tend déjà un milho beurré* Tiens, gratis pour la maison. *enfin te regarde* T'es comme un fils, parceiro. Sérieux.",
 		"choices": ["Obrigado, tio"],
 	},
+	# --- Variantes affinité (NPCAffinity) pour les NPCs majeurs récurrents ---
+	"ramos_chat_warm": {
+		"speaker": "Capitão Ramos",
+		"text": "*hoche la tête vers la chaise vide en face* Reposes-toi, sobrinho. Le café est tiède mais il tient debout — comme nous deux.",
+		"choices": ["Obrigado, capitão"],
+	},
+	"ramos_chat_familiar": {
+		"speaker": "Capitão Ramos",
+		"text": "*pousse une feuille de papier devant toi, signe sa montre* Tu connais l'adresse maintenant, parceiro. Quand t'arrives, je sais déjà ce qu'il faut faire. Vai pra praia, prends ton air.",
+		"choices": ["Valeu"],
+	},
+	"padre_chat_warm": {
+		"speaker": "Padre Anselmo",
+		"text": "*te bénit d'un signe rapide* Meu filho, le bairro va mieux quand tu passes. Ne reste pas trop loin de la lumière.",
+		"choices": ["Amen, padre"],
+	},
+	"padre_chat_familiar": {
+		"speaker": "Padre Anselmo",
+		"text": "*sort un café portugais déjà servi, te le tend* La paroisse a deux piliers : la croix et toi. Je l'ai dit hier à la messe, et personne n'a tiqué.",
+		"choices": ["Que Dieu te garde"],
+	},
+	"tito_chat_warm": {
+		"speaker": "Tito",
+		"text": "*relève les yeux du domino, te fixe* Sobrinho. *fait signe à la chaise* Tu joues une partie ou tu observes ?",
+		"choices": ["J'observe, Tito"],
+	},
+	"tito_chat_familiar": {
+		"speaker": "Tito",
+		"text": "*pousse une pile de jetons vers toi sans rien dire, comme une évidence* Tu sais quel coup je vais jouer, parceiro. Et moi je sais lequel tu vas jouer après. C'est ça, le Morro.",
+		"choices": ["E é isso"],
+	},
+	"miguel_chat_warm": {
+		"speaker": "Miguel",
+		"text": "*ferme son cahier, te regarde* Sobrinho. *montre la pente* Tu prends le risque de monter sans qu'on t'appelle. Bom — j'aime ça.",
+		"choices": ["E aí, Miguel"],
+	},
+	"miguel_chat_familiar": {
+		"speaker": "Miguel",
+		"text": "*te tend un cigare déjà coupé, allumage compris* Patrão. *pause, sourire en coin* Le Morro chante ton nom le soir, sobrinho. Et moi je laisse faire.",
+		"choices": ["Valeu, irmão"],
+	},
+	"carlos_chat_warm": {
+		"speaker": "Carlos",
+		"text": "*essuie une bouteille, te salue d'un signe* Sobrinho. *fait glisser un caldo de cana sur le comptoir* Maison.",
+		"choices": ["Obrigado, Carlos"],
+	},
+	"carlos_chat_familiar": {
+		"speaker": "Carlos",
+		"text": "*range ton tabouret habituel, te le pousse* T'as ta place ici, sobrinho. *fait signe à la Lagoa* Le pédalo aussi, si tu veux faire un tour gratis.",
+		"choices": ["Valeu, Carlos"],
+	},
+	"padaria_chat_warm": {
+		"speaker": "Seu Tonio",
+		"text": "*sort un pão de queijo encore chaud du four, te le tend* Pour toi, sobrinho. Le four ne ment pas — il sait qui rentre.",
+		"choices": ["Obrigado, seu Tonio"],
+	},
+	"padaria_chat_familiar": {
+		"speaker": "Seu Tonio",
+		"text": "*pose un sac en papier rempli, te le glisse sous le bras* Coxinha, pão, pastel — la maison régale. *te scrute* Tu es un client comme on aimerait en avoir cinquante par jour, parceiro. Et un.",
+		"choices": ["Valeu, seu Tonio"],
+	},
 	"seu_joao_reminder": {
 		"speaker": "Seu João",
 		"text": "Pega a carrocinha ali e se vira, parceiro.",

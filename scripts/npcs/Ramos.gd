@@ -14,7 +14,10 @@ func _on_interacted(_by: Node) -> void:
 	if data == null:
 		return
 	await _approach_player_if_far()
-	var knot: String = data.ink_knot  # "ramos_intro"
+	# Fallback affinité : si aucune condition de quête ne s'applique, ramos a
+	# une salutation qui évolue avec le nombre de visites.
+	var knot: String = NPCAffinity.knot_for_tier(data.id, data.ink_knot,
+			"ramos_chat_warm", "ramos_chat_familiar")
 	# Le commissaire (cousin de Mendonça, Península) a alerté Ramos sur le
 	# racket consortium. Tant que le joueur n'a pas choisi sa voie finale
 	# (acte 4), Ramos refuse de s'engager — il ne veut pas être lié à un

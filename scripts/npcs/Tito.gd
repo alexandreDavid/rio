@@ -29,7 +29,8 @@ func _on_interacted(_by: Node) -> void:
 	if data == null:
 		return
 	await _approach_player_if_far()
-	var knot: String = data.ink_knot  # "tito_playing" par défaut
+	var knot: String = NPCAffinity.knot_for_tier(data.id, data.ink_knot,
+			"tito_chat_warm", "tito_chat_familiar")
 	# Livraison du médicament en priorité si la quête est active et pas encore livrée.
 	if QuestManager.is_active(QUEST_PHARMA):
 		var objs_p: Dictionary = QuestManager.get_objectives_state(QUEST_PHARMA)

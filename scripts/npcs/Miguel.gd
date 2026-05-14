@@ -13,7 +13,8 @@ func _on_interacted(_by: Node) -> void:
 	if data == null:
 		return
 	await _approach_player_if_far()
-	var knot: String = data.ink_knot  # "miguel_intro"
+	var knot: String = NPCAffinity.knot_for_tier(data.id, data.ink_knot,
+			"miguel_chat_warm", "miguel_chat_familiar")
 	# Acte 4 : règne du Patrão.
 	if CampaignManager.current_act >= 4 and CampaignManager.chosen_endgame == CampaignManager.Endgame.TRAFICO:
 		if QuestManager.is_completed(QUEST_TRIBUTO):
