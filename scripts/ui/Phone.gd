@@ -31,6 +31,10 @@ const REP_AXIS_COLORS: Dictionary = {
 @onready var photos_screen: Control = $Frame/Screens/Photos
 @onready var noticias_screen: Control = $Frame/Screens/Noticias
 @onready var noticias_box: VBoxContainer = $Frame/Screens/Noticias/Scroll/Box
+@onready var ajustes_screen: Control = $Frame/Screens/Ajustes
+@onready var slider_music: HSlider = $Frame/Screens/Ajustes/Box/MusicRow/MusicSlider
+@onready var slider_sfx: HSlider = $Frame/Screens/Ajustes/Box/SfxRow/SfxSlider
+@onready var slider_ambient: HSlider = $Frame/Screens/Ajustes/Box/AmbientRow/AmbientSlider
 @onready var taxi_list: VBoxContainer = $Frame/Screens/Taxi/Scroll/Box
 @onready var taxi_status: Label = $Frame/Screens/Taxi/Status
 @onready var stats_box: VBoxContainer = $Frame/Screens/Stats/Scroll/Box
@@ -54,6 +58,7 @@ const REP_AXIS_COLORS: Dictionary = {
 @onready var app_cronica: Button = $Frame/Screens/Home/Grid/Cronica
 @onready var app_photos: Button = $Frame/Screens/Home/Grid/Photos
 @onready var app_noticias: Button = $Frame/Screens/Home/Grid/Noticias
+@onready var app_ajustes: Button = $Frame/Screens/Home/Grid/Ajustes
 
 const PHOTOS_DIR: String = "user://photos"
 
@@ -74,6 +79,15 @@ func _ready() -> void:
 		app_photos.pressed.connect(func(): _show_screen("photos"))
 	if app_noticias:
 		app_noticias.pressed.connect(func(): _show_screen("noticias"))
+	if app_ajustes:
+		app_ajustes.pressed.connect(func(): _show_screen("ajustes"))
+	# Sliders volumes — émettent au glisser, persistés par Settings.
+	if slider_music:
+		slider_music.value_changed.connect(func(v): Settings.set_music(v))
+	if slider_sfx:
+		slider_sfx.value_changed.connect(func(v): Settings.set_sfx(v))
+	if slider_ambient:
+		slider_ambient.value_changed.connect(func(v): Settings.set_ambient(v))
 	if back_button:
 		back_button.pressed.connect(func(): _show_screen("home"))
 	if close_button:
@@ -129,6 +143,8 @@ func _show_screen(name: String) -> void:
 		photos_screen.visible = (name == "photos")
 	if noticias_screen:
 		noticias_screen.visible = (name == "noticias")
+	if ajustes_screen:
+		ajustes_screen.visible = (name == "ajustes")
 	if back_button:
 		back_button.visible = (name != "home")
 	if name == "taxi":
@@ -141,6 +157,8 @@ func _show_screen(name: String) -> void:
 		_refresh_photos()
 	elif name == "noticias":
 		_refresh_noticias()
+	elif name == "ajustes":
+		_refresh_ajustes()
 
 # ------------------------------------------------------------------
 # Taxi app
@@ -708,6 +726,16 @@ func _build_news_items() -> Array:
 	if day >= 5:
 		out.append({"text": "Vendedores de milho assados disputam território no calçadão", "source": "Sociedade Rio", "color": NEWS_COLOR_AMBIENT})
 	return out
+
+func _refresh_ajustes() -> void:
+	# Synchronise les sliders avec les valeurs actuelles de Settings.
+	# set_value_no_signal pour ne pas déclencher value_changed → save inutile.
+	if slider_music:
+		slider_music.set_value_no_signal(Settings.music_volume)
+	if slider_sfx:
+		slider_sfx.set_value_no_signal(Settings.sfx_volume)
+	if slider_ambient:
+		slider_ambient.set_value_no_signal(Settings.ambient_volume)
 
 func _build_news_row(item: Dictionary) -> Control:
 	var card: PanelContainer = PanelContainer.new()

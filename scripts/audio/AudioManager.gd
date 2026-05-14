@@ -163,6 +163,39 @@ func _ready() -> void:
 	EventBus.corn_cart_state_changed.connect(_on_corn_cart_state_changed)
 	if Engine.has_singleton("DistrictManager") or get_tree().root.has_node("DistrictManager"):
 		DistrictManager.district_changed.connect(_on_district_changed)
+	# Réagit aux changements de volumes depuis l'app Ajustes (Phone).
+	Settings.volumes_changed.connect(_apply_settings_volumes)
+	_apply_settings_volumes()
+
+# Mappe les volumes linéaires 0-1 stockés dans Settings vers les dB internes
+# de l'AudioManager. Applique aux streams actifs en live (musique, ambient,
+# SFX pool). Plages calées pour éviter la zone très basse en dB inaudible.
+const _MUSIC_DB_MIN: float = -28.0
+const _MUSIC_DB_MAX: float = 0.0
+const _AMBIENT_DB_MIN: float = -32.0
+const _AMBIENT_DB_MAX: float = -2.0
+const _SFX_DB_MIN: float = -24.0
+const _SFX_DB_MAX: float = 0.0
+
+func _apply_settings_volumes() -> void:
+	music_volume_db = _slider_to_db(Settings.music_volume, _MUSIC_DB_MIN, _MUSIC_DB_MAX)
+	ambient_volume_db = _slider_to_db(Settings.ambient_volume, _AMBIENT_DB_MIN, _AMBIENT_DB_MAX)
+	sfx_volume_db = _slider_to_db(Settings.sfx_volume, _SFX_DB_MIN, _SFX_DB_MAX)
+	if _music_a:
+		_music_a.volume_db = music_volume_db if _music_active_a else -80.0
+	if _music_b:
+		_music_b.volume_db = music_volume_db if not _music_active_a else -80.0
+	if _ambient_a:
+		_ambient_a.volume_db = ambient_volume_db if _ambient_active_a else -80.0
+	if _ambient_b:
+		_ambient_b.volume_db = ambient_volume_db if not _ambient_active_a else -80.0
+	for p in _sfx_pool:
+		p.volume_db = sfx_volume_db
+
+func _slider_to_db(linear: float, min_db: float, max_db: float) -> float:
+	if linear <= 0.001:
+		return -80.0
+	return lerpf(min_db, max_db, linear)
 
 func play(key: String) -> void:
 	var stream: AudioStream = _sfx_streams.get(key)
