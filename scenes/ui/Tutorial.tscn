@@ -21,7 +21,7 @@ shadow_color = Color(0, 0, 0, 0.65)
 shadow_size = 14
 
 [node name="Tutorial" type="CanvasLayer"]
-layer = 8
+layer = 120
 process_mode = 3
 script = ExtResource("1_tuto")
 

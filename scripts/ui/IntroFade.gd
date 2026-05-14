@@ -10,13 +10,18 @@ const FADE_DURATION: float = 1.4
 @onready var rect: ColorRect = $Rect
 
 func _ready() -> void:
+	# Continue à fader même quand le Tutorial pause l'arbre — sans ça, le fade
+	# noir restait opaque par-dessus le tutorial (Tutorial est à layer 8,
+	# IntroFade à layer 100, donc IntroFade couvre tout en pause), créant un
+	# écran noir bloquant au tout premier démarrage.
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	if CampaignManager.has_flag("intro_seen"):
 		visible = false
 		return
 	if rect == null:
 		return
 	rect.modulate = Color(1, 1, 1, 1)
-	var tween: Tween = create_tween()
+	var tween: Tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
 	tween.tween_interval(HOLD_DURATION)
 	tween.tween_property(rect, "modulate:a", 0.0, FADE_DURATION)
 	tween.tween_callback(func(): visible = false)
