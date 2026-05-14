@@ -327,11 +327,44 @@ func _refresh_stats() -> void:
 	# Tracker progression d'acte (cible + barre + pivots manquants)
 	_add_act_tracker()
 	stats_box.add_child(HSeparator.new())
+	# Stats cumulatives de la run (compteurs purs).
+	_add_run_stats()
+	stats_box.add_child(HSeparator.new())
 	# Réputation 5 axes avec barres
 	for axis_name in REP_AXIS_NAMES:
 		var axis_int: int = ReputationSystem.Axis.get(axis_name)
 		var value: int = ReputationSystem.get_value(axis_int)
 		_add_rep_row(axis_name, value)
+
+# Section « 📊 Stats de partie » : compteurs cumulatifs visibles depuis la
+# Saúde. Donne un sens d'avancement au joueur en dehors des actes/quêtes.
+func _add_run_stats() -> void:
+	var section: Label = Label.new()
+	section.text = "📊 Stats de partie"
+	section.add_theme_font_size_override("font_size", 13)
+	section.add_theme_color_override("font_color", Color(0.55, 0.85, 0.95))
+	stats_box.add_child(section)
+	_add_stat_label("📅 Jours vécus", str(TimeOfDay.day_count), Color(0.85, 0.85, 0.95))
+	_add_stat_label("🗨 NPCs rencontrés", str(NPCAffinity._counts.keys().size()), Color(0.85, 0.85, 0.95))
+	_add_stat_label("✅ Quêtes complétées", str(_count_completed_quests()), Color(0.85, 0.85, 0.95))
+	_add_stat_label("🚖 Districts visités", str(AchievementSystem._districts_visited.keys().size()), Color(0.85, 0.85, 0.95))
+	_add_stat_label("📸 Photos prises", str(_list_photo_files().size()), Color(0.85, 0.85, 0.95))
+	_add_stat_label("🌅 Viewpoints admirés", str(_count_viewpoints()), Color(0.85, 0.85, 0.95))
+	_add_stat_label("🏆 Conquistas", "%d / %d" % [AchievementSystem.count_unlocked(), AchievementSystem.count_total()], Color(0.95, 0.85, 0.4))
+
+func _count_completed_quests() -> int:
+	var n: int = 0
+	for qid in QuestManager._state:
+		if QuestManager.is_completed(qid):
+			n += 1
+	return n
+
+func _count_viewpoints() -> int:
+	var n: int = 0
+	for k in CampaignManager.flags:
+		if String(k).begins_with("viewpoint_") and CampaignManager.flags[k]:
+			n += 1
+	return n
 
 # Vue « Estratégia » : combien de R$ + quels pivots manquent pour passer au
 # prochain acte. Acte 4 (règne) affiche le titre. Acte 3 sans voie choisie
