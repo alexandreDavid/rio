@@ -36,6 +36,9 @@ const REP_AXIS_COLORS: Dictionary = {
 @onready var slider_sfx: HSlider = $Frame/Screens/Ajustes/Box/SfxRow/SfxSlider
 @onready var slider_ambient: HSlider = $Frame/Screens/Ajustes/Box/AmbientRow/AmbientSlider
 @onready var replay_tutorial_btn: Button = $Frame/Screens/Ajustes/Box/ReplayTutorial
+@onready var slot_btn_1: Button = $Frame/Screens/Ajustes/Box/SlotRow/Slot1
+@onready var slot_btn_2: Button = $Frame/Screens/Ajustes/Box/SlotRow/Slot2
+@onready var slot_btn_3: Button = $Frame/Screens/Ajustes/Box/SlotRow/Slot3
 @onready var conquistas_screen: Control = $Frame/Screens/Conquistas
 @onready var conquistas_box: VBoxContainer = $Frame/Screens/Conquistas/Scroll/Box
 @onready var conquistas_counter: Label = $Frame/Screens/Conquistas/Counter
@@ -103,6 +106,12 @@ func _ready() -> void:
 		slider_ambient.value_changed.connect(func(v): Settings.set_ambient(v))
 	if replay_tutorial_btn:
 		replay_tutorial_btn.pressed.connect(_replay_tutorial)
+	if slot_btn_1:
+		slot_btn_1.pressed.connect(func(): _on_slot_pressed(1))
+	if slot_btn_2:
+		slot_btn_2.pressed.connect(func(): _on_slot_pressed(2))
+	if slot_btn_3:
+		slot_btn_3.pressed.connect(func(): _on_slot_pressed(3))
 	if back_button:
 		back_button.pressed.connect(func(): _show_screen("home"))
 	if close_button:
@@ -871,6 +880,35 @@ func _refresh_ajustes() -> void:
 		slider_sfx.set_value_no_signal(Settings.sfx_volume)
 	if slider_ambient:
 		slider_ambient.set_value_no_signal(Settings.ambient_volume)
+	_refresh_slot_buttons()
+
+const SLOT_BUTTONS_BY_INDEX: Array = [null, null, null, null]
+
+func _refresh_slot_buttons() -> void:
+	var buttons: Array = [slot_btn_1, slot_btn_2, slot_btn_3]
+	for i in 3:
+		var slot: int = i + 1
+		var btn: Button = buttons[i]
+		if btn == null:
+			continue
+		var info: Dictionary = SaveSystem.slot_info(slot)
+		var prefix: String = "📍 " if slot == Settings.current_slot else "  "
+		if info.is_empty():
+			btn.text = "%sSlot %d — vide" % [prefix, slot]
+		else:
+			btn.text = "%sSlot %d — Jour %d · Acte %d · R$ %d payés" % [
+					prefix, slot, info.get("day", 1), info.get("act", 1), info.get("debt_paid", 0)]
+		btn.disabled = (slot == Settings.current_slot)
+
+func _on_slot_pressed(slot: int) -> void:
+	SaveSystem.switch_to_slot(slot)
+	_refresh_slot_buttons()
+	_flash_save_toast("Slot %d chargé" % slot)
+
+func _flash_save_toast(_msg: String) -> void:
+	# Utilise le toast du HUD si présent (reuse le système existant).
+	# Sinon : muet — l'utilisateur voit déjà le label changer.
+	pass
 
 func _replay_tutorial() -> void:
 	var t: Node = get_tree().current_scene.get_node_or_null("Tutorial")

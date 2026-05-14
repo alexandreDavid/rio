@@ -538,6 +538,32 @@ text = "Revoir le guide d'accueil"
 custom_minimum_size = Vector2(0, 44)
 theme_override_font_sizes/font_size = 13
 
+[node name="SlotsHeader" type="Label" parent="Frame/Screens/Ajustes/Box"]
+text = "💾 Sauvegardes"
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
+
+[node name="SlotRow" type="VBoxContainer" parent="Frame/Screens/Ajustes/Box"]
+theme_override_constants/separation = 4
+
+[node name="Slot1" type="Button" parent="Frame/Screens/Ajustes/Box/SlotRow"]
+text = "Slot 1"
+custom_minimum_size = Vector2(0, 44)
+theme_override_font_sizes/font_size = 12
+alignment = 0
+
+[node name="Slot2" type="Button" parent="Frame/Screens/Ajustes/Box/SlotRow"]
+text = "Slot 2"
+custom_minimum_size = Vector2(0, 44)
+theme_override_font_sizes/font_size = 12
+alignment = 0
+
+[node name="Slot3" type="Button" parent="Frame/Screens/Ajustes/Box/SlotRow"]
+text = "Slot 3"
+custom_minimum_size = Vector2(0, 44)
+theme_override_font_sizes/font_size = 12
+alignment = 0
+
 [node name="Conquistas" type="Control" parent="Frame/Screens"]
 visible = false
 anchor_right = 1.0

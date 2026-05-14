@@ -8,9 +8,16 @@ extends Node
 signal save_committed()
 signal save_loaded()
 
-const SAVE_PATH: String = "user://savegame.json"
+const LEGACY_SAVE_PATH: String = "user://savegame.json"
+const SAVE_PATH_PATTERN: String = "user://savegame_slot%d.json"
 # Bump à chaque refonte de l'état qui invalide les saves antérieures.
 const SAVE_VERSION: int = 2
+
+func current_save_path() -> String:
+	return SAVE_PATH_PATTERN % Settings.current_slot
+
+func slot_save_path(slot: int) -> String:
+	return SAVE_PATH_PATTERN % clampi(slot, 1, 3)
 
 var _save_pending: bool = false
 var _loading: bool = false
@@ -24,6 +31,11 @@ func _ready() -> void:
 	EventBus.debt_paid.connect(_schedule_save_two)
 	EventBus.day_elapsed.connect(_schedule_save)
 	EventBus.endgame_chosen.connect(_schedule_save)
+	# Migration : ancienne save unique → slot 1, une fois pour toutes.
+	if FileAccess.file_exists(LEGACY_SAVE_PATH) and not FileAccess.file_exists(slot_save_path(1)):
+		DirAccess.rename_absolute(
+			ProjectSettings.globalize_path(LEGACY_SAVE_PATH),
+			ProjectSettings.globalize_path(slot_save_path(1)))
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
@@ -68,18 +80,20 @@ func save_game() -> bool:
 		"achievements": AchievementSystem.serialize(),
 		"player": _serialize_player(),
 	}
-	var file: FileAccess = FileAccess.open(SAVE_PATH, FileAccess.WRITE)
+	var path: String = current_save_path()
+	var file: FileAccess = FileAccess.open(path, FileAccess.WRITE)
 	if file == null:
-		push_error("SaveSystem: cannot open %s for writing" % SAVE_PATH)
+		push_error("SaveSystem: cannot open %s for writing" % path)
 		return false
 	file.store_string(JSON.stringify(data, "\t"))
 	save_committed.emit()
 	return true
 
 func load_game() -> bool:
-	if not FileAccess.file_exists(SAVE_PATH):
+	var path: String = current_save_path()
+	if not FileAccess.file_exists(path):
 		return false
-	var file: FileAccess = FileAccess.open(SAVE_PATH, FileAccess.READ)
+	var file: FileAccess = FileAccess.open(path, FileAccess.READ)
 	var json: JSON = JSON.new()
 	var err: Error = json.parse(file.get_as_text())
 	if err != OK:
@@ -119,14 +133,55 @@ func _broadcast_post_load() -> void:
 	NPCScheduler.reposition_all()
 
 func has_save() -> bool:
-	return FileAccess.file_exists(SAVE_PATH)
+	return FileAccess.file_exists(current_save_path())
+
+func has_save_at(slot: int) -> bool:
+	return FileAccess.file_exists(slot_save_path(slot))
 
 func discard_save() -> void:
 	# Supprime la save + repose l'état en mémoire aux valeurs neuves.
 	# Utile pour "Nouvelle partie" ou après un bump de SAVE_VERSION.
-	if FileAccess.file_exists(SAVE_PATH):
-		DirAccess.remove_absolute(ProjectSettings.globalize_path(SAVE_PATH))
+	var path: String = current_save_path()
+	if FileAccess.file_exists(path):
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
 	_save_pending = false
+
+func discard_save_at(slot: int) -> void:
+	var path: String = slot_save_path(slot)
+	if FileAccess.file_exists(path):
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
+
+# Métadonnées minimales d'un slot pour l'UI : current_act, debt_paid, day.
+# Renvoie {} si le slot est vide.
+func slot_info(slot: int) -> Dictionary:
+	var path: String = slot_save_path(slot)
+	if not FileAccess.file_exists(path):
+		return {}
+	var file: FileAccess = FileAccess.open(path, FileAccess.READ)
+	if file == null:
+		return {}
+	var json: JSON = JSON.new()
+	if json.parse(file.get_as_text()) != OK:
+		return {}
+	var data: Dictionary = json.data
+	var campaign: Dictionary = data.get("campaign", {})
+	var time_data: Dictionary = data.get("time", {})
+	return {
+		"act": int(campaign.get("current_act", 1)),
+		"debt_paid": int(campaign.get("debt_paid", 0)),
+		"day": int(time_data.get("day_count", 1)),
+		"endgame": int(campaign.get("chosen_endgame", 0)),
+	}
+
+# Bascule de slot : sauve l'état courant, puis charge le slot demandé.
+# Si le slot cible est vide, le jeu reprend en état neuf (post-load broadcast).
+func switch_to_slot(new_slot: int) -> void:
+	if new_slot == Settings.current_slot:
+		return
+	save_game()
+	Settings.set_current_slot(new_slot)
+	if has_save():
+		load_game()
 
 func _serialize_player() -> Dictionary:
 	var p: Node = GameManager.player

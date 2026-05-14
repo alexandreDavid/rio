@@ -14,6 +14,9 @@ var ambient_volume: float = 0.55
 # Vrai après dismiss du tutoriel d'accueil. Persiste globalement (pas par save)
 # pour qu'un retour de Nouvelle Partie ne le re-déclenche pas inutilement.
 var tutorial_seen: bool = false
+# Slot de save courant (1..3). Persiste globalement pour que la session
+# suivante reprenne sur le même emplacement.
+var current_slot: int = 1
 
 func _ready() -> void:
 	load_settings()
@@ -27,6 +30,7 @@ func load_settings() -> void:
 	sfx_volume = clampf(float(cfg.get_value("volumes", "sfx", sfx_volume)), 0.0, 1.0)
 	ambient_volume = clampf(float(cfg.get_value("volumes", "ambient", ambient_volume)), 0.0, 1.0)
 	tutorial_seen = bool(cfg.get_value("ui", "tutorial_seen", tutorial_seen))
+	current_slot = clampi(int(cfg.get_value("save", "current_slot", current_slot)), 1, 3)
 	volumes_changed.emit()
 
 func save_settings() -> void:
@@ -35,6 +39,7 @@ func save_settings() -> void:
 	cfg.set_value("volumes", "sfx", sfx_volume)
 	cfg.set_value("volumes", "ambient", ambient_volume)
 	cfg.set_value("ui", "tutorial_seen", tutorial_seen)
+	cfg.set_value("save", "current_slot", current_slot)
 	cfg.save(PATH)
 
 func set_music(v: float) -> void:
@@ -54,4 +59,8 @@ func set_ambient(v: float) -> void:
 
 func mark_tutorial_seen() -> void:
 	tutorial_seen = true
+	save_settings()
+
+func set_current_slot(slot: int) -> void:
+	current_slot = clampi(slot, 1, 3)
 	save_settings()
