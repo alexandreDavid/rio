@@ -10,7 +10,10 @@ const QUEST_SUP: String = "pedro_cagarras_sup"
 func _on_interacted(_by: Node) -> void:
 	if data == null:
 		return
-	var knot: String = data.ink_knot
+	# Fallback : phase de la journée si aucun état narratif ne capture.
+	var knot: String = NPCAffinity.knot_for_tier_or_phase(data.id, data.ink_knot,
+			"", "",
+			"pecheur_chat_morning", "pecheur_chat_afternoon", "pecheur_chat_evening")
 	# Side quest SUP — gating : disponible après l'aide à la famille (pedros_son).
 	if QuestManager.is_active(QUEST_SUP):
 		knot = "pecheur_cagarras_remind"

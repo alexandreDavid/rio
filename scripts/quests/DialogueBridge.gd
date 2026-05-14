@@ -326,6 +326,21 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 		"text": "*verse une seconde tasse, te la tend sans demander* Sobrinho. *fait signe vers la baie* Ferry de seize heures, c'est le mien. Si t'as un truc à passer, dis-le maintenant.",
 		"choices": ["Pas aujourd'hui, Bruno"],
 	},
+	"bruno_chat_morning": {
+		"speaker": "Bruno",
+		"text": "*thermos chaud à la main, regarde le ferry du matin partir* Bom dia. La baie est calme à cette heure, comme une assiette à soupe. Profite avant que le vent du sud arrive.",
+		"choices": ["Bom dia, Bruno"],
+	},
+	"bruno_chat_afternoon": {
+		"speaker": "Bruno",
+		"text": "*chapeau de paille baissé, écaille un poisson sur le bord du ponton* Boa tarde. Cette heure, c'est la sieste — même les mouettes dorment. *te regarde* Sauf si t'as besoin d'un passage urgent.",
+		"choices": ["Pas urgent, Bruno"],
+	},
+	"bruno_chat_evening": {
+		"speaker": "Bruno",
+		"text": "*allume sa pipe, regarde Rio s'illuminer de l'autre côté de la baie* Boa noite. À cette heure, Rio brille comme un collier de filles riches. *cligne de l'œil* Je vois ça depuis cinquante-deux ans, c'est jamais lassant.",
+		"choices": ["Boa noite, Bruno"],
+	},
 	"bruno_chat_familiar": {
 		"speaker": "Bruno",
 		"text": "*te voit, sourit pour la deuxième fois de sa vie* Le sobrinho carioca. *tape la planche à côté de lui* Assieds-toi. *te tend la cachaça déjà décapsulée* Cinquante-deux ans de barcas et personne ne m'a jamais demandé comment je vais. Toi, si.",
@@ -774,6 +789,22 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 		"on_choose": {
 			"0": {"accept_quest": "quest_milho_01"},
 		},
+	},
+	# Variantes phase de la journée (TimeOfDay) — Seu João, fallback stranger.
+	"seu_joao_chat_morning": {
+		"speaker": "Seu João",
+		"text": "*tisonne les braises du grill* Bom dia, sobrinho. Le matin sur le calçadão, c'est mes meilleures ventes — les touristes joggers achètent un milho pour respirer après leur tour.",
+		"choices": ["Bom dia, tio"],
+	},
+	"seu_joao_chat_afternoon": {
+		"speaker": "Seu João",
+		"text": "*essuie la sueur de son front avec un torchon* Boa tarde. Le soleil tape dur, hein ? *te tend un verre d'eau* Bois ça si tu marches encore. La chaleur écrase tout.",
+		"choices": ["Obrigado, tio"],
+	},
+	"seu_joao_chat_evening": {
+		"speaker": "Seu João",
+		"text": "*allume sa petite lampe à pile au-dessus de la charrette* Boa noite, sobrinho. La nuit, les touristes paient plus — ils savent moins compter en cerveja.",
+		"choices": ["Boa noite, tio"],
 	},
 	# Variantes affinité : ces knots remplacent le fallback neutre quand le joueur
 	# a parlé plusieurs fois à Seu João (NPCAffinity).
@@ -1601,6 +1632,22 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 			"1": {"next": "pecheur_fish"},
 			"2": {"next": "pecheur_worried"},
 		},
+	},
+	# Variantes phase de la journée — Seu Pedro.
+	"pecheur_chat_morning": {
+		"speaker": "Seu Pedro",
+		"text": "*prépare ses appâts, lampe frontale encore allumée* Bom dia, sobrinho. La marée du matin, c'est la bonne — les robalos sortent juste avant le soleil. Reviens dans une heure si tu veux du frais.",
+		"choices": ["Bom dia, Pedro"],
+	},
+	"pecheur_chat_afternoon": {
+		"speaker": "Seu Pedro",
+		"text": "*siroterait presque sa cachaça à l'ombre du parasol* Boa tarde. La marée descend, je sors plus la canne avant cinq heures. *sourit* Profite de la plage pendant que t'as la patience.",
+		"choices": ["Obrigado, Pedro"],
+	},
+	"pecheur_chat_evening": {
+		"speaker": "Seu Pedro",
+		"text": "*allume une seconde lampe à pile, range les hameçons* Boa noite. La nuit sur le calçadão, c'est mon moment — pas de touristes, pas de chiens, juste les vagues. Sit-toi un moment si tu veux.",
+		"choices": ["Boa noite, Pedro"],
 	},
 	"pecheur_fish": {
 		"speaker": "Seu Pedro",

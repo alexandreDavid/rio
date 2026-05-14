@@ -31,6 +31,7 @@ func _pick_knot() -> String:
 		return "bruno_remind"
 	if QuestManager.is_available(CARGA_QUEST):
 		return "bruno_offer"
-	# Fallback affinité.
-	return NPCAffinity.knot_for_tier(data.id, "bruno_default",
-			"bruno_chat_warm", "bruno_chat_familiar")
+	# Fallback affinité + phase de la journée.
+	return NPCAffinity.knot_for_tier_or_phase(data.id, "bruno_default",
+			"bruno_chat_warm", "bruno_chat_familiar",
+			"bruno_chat_morning", "bruno_chat_afternoon", "bruno_chat_evening")

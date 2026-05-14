@@ -46,6 +46,33 @@ func knot_for_tier(npc_id: String, base: String, warm: String = "", familiar: St
 				return warm
 	return base
 
+# Variante qui combine affinité + phase de la journée. Priorité :
+# 1. familiar (toutes phases), 2. warm (toutes phases), 3. phase matin/après-midi/soir,
+# 4. base. Permet à un NPC inconnu (stranger) d'avoir des variantes horaires.
+func knot_for_tier_or_phase(npc_id: String, base: String, warm: String, familiar: String,
+		morning: String = "", afternoon: String = "", evening: String = "") -> String:
+	match tier(npc_id):
+		Tier.FAMILIAR:
+			if familiar != "":
+				return familiar
+			if warm != "":
+				return warm
+		Tier.ACQUAINTANCE:
+			if warm != "":
+				return warm
+	# Stranger : phase de la journée si dispo.
+	match TimeOfDay.current_phase:
+		TimeOfDay.Phase.MORNING:
+			if morning != "":
+				return morning
+		TimeOfDay.Phase.AFTERNOON:
+			if afternoon != "":
+				return afternoon
+		TimeOfDay.Phase.EVENING:
+			if evening != "":
+				return evening
+	return base
+
 # --- Persistance ---
 
 func serialize() -> Dictionary:
