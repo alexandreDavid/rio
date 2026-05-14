@@ -538,6 +538,11 @@ text = "Revoir le guide d'accueil"
 custom_minimum_size = Vector2(0, 44)
 theme_override_font_sizes/font_size = 13
 
+[node name="ShowCredits" type="Button" parent="Frame/Screens/Ajustes/Box"]
+text = "✦ Crédits"
+custom_minimum_size = Vector2(0, 44)
+theme_override_font_sizes/font_size = 13
+
 [node name="SlotsHeader" type="Label" parent="Frame/Screens/Ajustes/Box"]
 text = "💾 Sauvegardes"
 theme_override_font_sizes/font_size = 13

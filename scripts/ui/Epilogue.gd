@@ -16,6 +16,7 @@ extends CanvasLayer
 @onready var run_label: Label = $Panel/Margin/Layout/Run
 @onready var replay_button: Button = $Panel/Margin/Layout/Buttons/Replay
 @onready var continue_button: Button = $Panel/Margin/Layout/Buttons/Continue
+@onready var credits_button: Button = $Panel/Margin/Layout/Buttons/Credits
 
 const META_PATH: String = "user://ng_plus.json"
 const QUEST_ID: String = "act4_carnaval_desfile"
@@ -48,6 +49,8 @@ func _ready() -> void:
 		replay_button.pressed.connect(_on_replay)
 	if continue_button:
 		continue_button.pressed.connect(_on_continue)
+	if credits_button:
+		credits_button.pressed.connect(_on_credits)
 	EventBus.quest_completed.connect(_on_quest_completed)
 	# Au chargement d'une save, si la run est terminée (Carnaval done) mais
 	# l'épilogue jamais vu (ex. fermeture pendant l'épilogue), on le re-déclenche.
@@ -85,6 +88,12 @@ func _show_epilogue() -> void:
 func _on_continue() -> void:
 	visible = false
 	get_tree().paused = false
+
+func _on_credits() -> void:
+	var credits: Node = get_tree().current_scene.get_node_or_null("CreditsScreen")
+	if credits and credits.has_method("open"):
+		visible = false  # masque l'épilogue pendant les credits
+		credits.open()
 
 func _on_replay() -> void:
 	# Sauvegarde méta : NG+ count + entrées journal débloquées (pour usage futur).

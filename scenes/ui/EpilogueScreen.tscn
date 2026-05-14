@@ -63,8 +63,12 @@ theme_override_constants/separation = 24
 
 [node name="Replay" type="Button" parent="Panel/Margin/Layout/Buttons"]
 text = "Nouvelle partie+"
-custom_minimum_size = Vector2(220, 44)
+custom_minimum_size = Vector2(200, 44)
+
+[node name="Credits" type="Button" parent="Panel/Margin/Layout/Buttons"]
+text = "✦ Crédits"
+custom_minimum_size = Vector2(160, 44)
 
 [node name="Continue" type="Button" parent="Panel/Margin/Layout/Buttons"]
 text = "Continuer à explorer"
-custom_minimum_size = Vector2(220, 44)
+custom_minimum_size = Vector2(200, 44)

@@ -36,6 +36,7 @@ const REP_AXIS_COLORS: Dictionary = {
 @onready var slider_sfx: HSlider = $Frame/Screens/Ajustes/Box/SfxRow/SfxSlider
 @onready var slider_ambient: HSlider = $Frame/Screens/Ajustes/Box/AmbientRow/AmbientSlider
 @onready var replay_tutorial_btn: Button = $Frame/Screens/Ajustes/Box/ReplayTutorial
+@onready var show_credits_btn: Button = $Frame/Screens/Ajustes/Box/ShowCredits
 @onready var slot_btn_1: Button = $Frame/Screens/Ajustes/Box/SlotRow/Slot1
 @onready var slot_btn_2: Button = $Frame/Screens/Ajustes/Box/SlotRow/Slot2
 @onready var slot_btn_3: Button = $Frame/Screens/Ajustes/Box/SlotRow/Slot3
@@ -111,6 +112,8 @@ func _ready() -> void:
 		slider_ambient.value_changed.connect(func(v): Settings.set_ambient(v))
 	if replay_tutorial_btn:
 		replay_tutorial_btn.pressed.connect(_replay_tutorial)
+	if show_credits_btn:
+		show_credits_btn.pressed.connect(_show_credits)
 	if slot_btn_1:
 		slot_btn_1.pressed.connect(func(): _on_slot_pressed(1))
 	if slot_btn_2:
@@ -982,6 +985,12 @@ func _replay_tutorial() -> void:
 	if t and t.has_method("open"):
 		close()
 		t.open()
+
+func _show_credits() -> void:
+	var c: Node = get_tree().current_scene.get_node_or_null("CreditsScreen")
+	if c and c.has_method("open"):
+		close()
+		c.open()
 
 func _build_news_row(item: Dictionary) -> Control:
 	var card: PanelContainer = PanelContainer.new()
