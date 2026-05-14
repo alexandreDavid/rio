@@ -398,6 +398,81 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 		"text": "*pose deux cafés sur le banc avant même que tu t'assoies* Vous êtes le seul Carioca régulier que j'ai. *te tend une tasse* Bruno parle de vous comme d'un sobrinho. Moi aussi maintenant.",
 		"choices": ["Obrigado, Helena"],
 	},
+	"helena_chat_morning": {
+		"speaker": "Helena",
+		"text": "*ouvre le rideau de fer du MAC, encore une heure avant les visiteurs* Bom dia. *te montre l'intérieur* C'est le seul moment où la sculpture m'appartient. Profitez si vous voulez entrer en avance.",
+		"choices": ["Bom dia, Helena"],
+	},
+	"helena_chat_afternoon": {
+		"speaker": "Helena",
+		"text": "*compte les billets de l'après-midi dans la caisse* Boa tarde. Quinze visiteurs aujourd'hui, dont trois Cariocas — c'est un record. Niterói existe enfin pour les voisins.",
+		"choices": ["Bom record, Helena"],
+	},
+	"helena_chat_evening": {
+		"speaker": "Helena",
+		"text": "*tire le rideau, mais te laisse passer* Boa noite. Le MAC ferme officiellement, mais le toit reste ouvert pour les amis. Allez-y une dernière fois.",
+		"choices": ["Obrigada, Helena"],
+	},
+	"yara_chat_morning": {
+		"speaker": "Yara",
+		"text": "*ouvre son carnet de croquis, lumière dorée du matin* Bom dia. Cette heure, c'est la meilleure pour saisir la courbe — tout est en biais.",
+		"choices": ["Bom dia, Yara"],
+	},
+	"yara_chat_afternoon": {
+		"speaker": "Yara",
+		"text": "*essuie son fusain avec un chiffon* Boa tarde. Le soleil tape trop fort sur le blanc du MAC, je vois plus rien. Pause-café.",
+		"choices": ["Bon repos"],
+	},
+	"yara_chat_evening": {
+		"speaker": "Yara",
+		"text": "*allume une lampe au-dessus de son carnet* Boa noite. Je termine au crayon ce que j'ai commencé à l'aquarelle — la lumière artificielle change les couleurs, mais elle sauve les courbes.",
+		"choices": ["Boa noite, Yara"],
+	},
+	"carlos_chat_morning": {
+		"speaker": "Carlos",
+		"text": "*ouvre le bar, encore en chaussons* Bom dia, sobrinho. Le premier café est sur la maison — j'en bois trois moi-même avant huit heures.",
+		"choices": ["Obrigado, Carlos"],
+	},
+	"carlos_chat_afternoon": {
+		"speaker": "Carlos",
+		"text": "*sert un caldo glacé à un coureur en sueur* Boa tarde. Les joggers de la Lagoa, c'est mon segment de l'après-midi. Tu veux quelque chose ?",
+		"choices": ["Pas pour moi, Carlos"],
+	},
+	"carlos_chat_evening": {
+		"speaker": "Carlos",
+		"text": "*allume les guirlandes au-dessus du bar* Boa noite. C'est la meilleure heure ici — la Lagoa reflète les lumières, les couples viennent danser après dîner.",
+		"choices": ["Bonne soirée, Carlos"],
+	},
+	"padaria_chat_morning": {
+		"speaker": "Seu Tonio",
+		"text": "*sort la première fournée du four, vapeur qui monte* Bom dia ! C'est l'heure du pão fresco, sobrinho. Soixante reais d'ouvriers attendent dehors, mais toi t'as la priorité.",
+		"choices": ["Obrigado, seu Tonio"],
+	},
+	"padaria_chat_afternoon": {
+		"speaker": "Seu Tonio",
+		"text": "*essuie le comptoir avec une lassitude maîtrisée* Boa tarde. Le rush est passé, c'est l'heure des goûters — coxinha et café gelado, le combo carioca.",
+		"choices": ["Tudo bem, seu Tonio"],
+	},
+	"padaria_chat_evening": {
+		"speaker": "Seu Tonio",
+		"text": "*éteint le four, garde la lumière de la vitrine allumée* Boa noite. La nuit, je reste pour les habitués. *te montre une chaise* Tu peux t'asseoir si tu veux pas rentrer tout de suite.",
+		"choices": ["Boa noite, seu Tonio"],
+	},
+	"policier_chat_morning": {
+		"speaker": "Agente Silva",
+		"text": "*café au comptoir, casquette sur la table* Bom dia. La patrouille du matin, c'est la plus tranquille — les voyous dorment encore.",
+		"choices": ["Bom dia, agente"],
+	},
+	"policier_chat_afternoon": {
+		"speaker": "Agente Silva",
+		"text": "*surveille l'avenue Atlântica, mains dans le dos* Boa tarde. C'est l'heure des pickpockets de plage. Tu vois quelque chose, tu me préviens.",
+		"choices": ["Compris, agente"],
+	},
+	"policier_chat_evening": {
+		"speaker": "Agente Silva",
+		"text": "*lampe-torche à la ceinture* Boa noite. La nuit, c'est le shift double — agressions, ivresses, taxis qui refusent les courses. Reste prudent toi-même.",
+		"choices": ["Obrigado, agente"],
+	},
 	"helena_receive_carga": {
 		"speaker": "Helena",
 		"text": "*tu poses la caisse, elle l'ouvre sans hésiter* Ah, enfin. *en sort un châssis enveloppé de papier kraft* La toile de Pape pour l'expo de juin. Bruno m'a appelée hier, paniqué, pensant qu'on l'avait perdue. *signe un reçu en deux exemplaires* Voilà pour vous, et merci. *te tend l'argent* Dites à Bruno que sa caisse était parfaitement emballée — il a toujours eu la main soigneuse.",

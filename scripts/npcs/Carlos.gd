@@ -20,8 +20,9 @@ const LAGOA: String = "carlos_lagoa_volta"
 func _on_interacted(_by: Node) -> void:
 	if data == null:
 		return
-	var knot: String = NPCAffinity.knot_for_tier(data.id, data.ink_knot,
-			"carlos_chat_warm", "carlos_chat_familiar")
+	var knot: String = NPCAffinity.knot_for_tier_or_phase(data.id, data.ink_knot,
+			"carlos_chat_warm", "carlos_chat_familiar",
+			"carlos_chat_morning", "carlos_chat_afternoon", "carlos_chat_evening")
 	# Acte 3 endorsement Prefeito (avant le finale eleicao).
 	if QuestManager.is_active(ENDORSE):
 		var end_state: Dictionary = QuestManager.get_objectives_state(ENDORSE)

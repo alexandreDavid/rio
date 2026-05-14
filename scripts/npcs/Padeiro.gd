@@ -12,8 +12,9 @@ const ENDORSE_OBJ: String = "endorse_padeiro"
 func _on_interacted(_by: Node) -> void:
 	if data == null:
 		return
-	var knot: String = NPCAffinity.knot_for_tier(data.id, data.ink_knot,
-			"padaria_chat_warm", "padaria_chat_familiar")
+	var knot: String = NPCAffinity.knot_for_tier_or_phase(data.id, data.ink_knot,
+			"padaria_chat_warm", "padaria_chat_familiar",
+			"padaria_chat_morning", "padaria_chat_afternoon", "padaria_chat_evening")
 	# Acte 3 : soutien Prefeito (avant la finale eleicao).
 	if QuestManager.is_active(ENDORSE):
 		var end_state: Dictionary = QuestManager.get_objectives_state(ENDORSE)
