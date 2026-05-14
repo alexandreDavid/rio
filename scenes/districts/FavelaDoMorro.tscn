@@ -18,6 +18,50 @@ size = Vector2(16, 1620)
 size = Vector2(800, 64)
 
 [node name="FavelaDoMorroDistrict" type="Node2D"]
+wrap_left = -400.0
+wrap_right = 400.0
+wrap_top = -1280.0
+wrap_bottom = -1000.0
+drift_speed = 6.0
+
+# Vautours qui tournent au-dessus du Morro (drift_east + drift_west pour deux
+# cercles opposés au-dessus de la favela).
+[node name="VautourA" type="ColorRect" parent="." groups=["drift_west"]]
+offset_left = -250.0
+offset_top = -1190.0
+offset_right = -236.0
+offset_bottom = -1186.0
+color = Color(0.18, 0.14, 0.16, 0.85)
+
+[node name="VautourB" type="ColorRect" parent="." groups=["drift_east"]]
+offset_left = 100.0
+offset_top = -1220.0
+offset_right = 114.0
+offset_bottom = -1216.0
+color = Color(0.18, 0.14, 0.16, 0.85)
+
+[node name="VautourC" type="ColorRect" parent="." groups=["drift_west"]]
+offset_left = 280.0
+offset_top = -1170.0
+offset_right = 294.0
+offset_bottom = -1166.0
+color = Color(0.18, 0.14, 0.16, 0.85)
+
+# Fumée de cuisine au sommet du Morro (drift_south très lent, monte avec un
+# wrap après être passée par le haut → effet de vapeur persistante)
+[node name="FumeeA" type="ColorRect" parent="." groups=["drift_west"]]
+offset_left = -180.0
+offset_top = -1240.0
+offset_right = -130.0
+offset_bottom = -1232.0
+color = Color(0.85, 0.85, 0.85, 0.5)
+
+[node name="FumeeB" type="ColorRect" parent="." groups=["drift_west"]]
+offset_left = 60.0
+offset_top = -1260.0
+offset_right = 110.0
+offset_bottom = -1252.0
+color = Color(0.85, 0.85, 0.85, 0.4)
 
 [node name="Sky" type="ColorRect" parent="."]
 offset_left = -400.0

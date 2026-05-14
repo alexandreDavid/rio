@@ -1,7 +1,8 @@
-extends Node2D
+extends AmbientDrifter
 
 # Génère les boîtes de collision pour chaque maison dessinée à la main dans
 # FavelaDoMorro.tscn (les ColorRect des maisons n'ont pas de StaticBody2D).
+# Étend AmbientDrifter pour ajouter le drift décoratif (vautours, fumée).
 # Pour la maison du tio Zé, la boîte est raccourcie en bas afin de laisser
 # l'accès à la TioZeDoor (BuildingDoor) qui se trouve au sud du mur.
 const HOUSE_BOUNDS: Array[Rect2] = [
@@ -26,6 +27,8 @@ const HOUSE_BOUNDS: Array[Rect2] = [
 ]
 
 func _ready() -> void:
+	# Drift décoratif (vautours qui tournent au-dessus du Morro).
+	super._ready()
 	for r in HOUSE_BOUNDS:
 		var body: StaticBody2D = StaticBody2D.new()
 		body.position = r.position + r.size * 0.5
