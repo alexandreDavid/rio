@@ -16,6 +16,12 @@ const STORY_PAGES: Array[String] = [
 @onready var continue_button: Button = $Layout/Continue
 @onready var load_button: Button = $Layout/LoadSave
 @onready var newgame_button: Button = $Layout/NewGame
+@onready var slot_picker_button: Button = $Layout/SlotPicker
+@onready var slots_panel: PanelContainer = $SlotsPanel
+@onready var slot_btn_1: Button = $SlotsPanel/Margin/VBox/Slot1
+@onready var slot_btn_2: Button = $SlotsPanel/Margin/VBox/Slot2
+@onready var slot_btn_3: Button = $SlotsPanel/Margin/VBox/Slot3
+@onready var slots_close: Button = $SlotsPanel/Margin/VBox/SlotsClose
 
 var _page: int = 0
 
@@ -26,6 +32,53 @@ func _ready() -> void:
 		load_button.pressed.connect(_goto_main)
 	if newgame_button:
 		newgame_button.pressed.connect(_start_new_game)
+	if slot_picker_button:
+		slot_picker_button.pressed.connect(_open_slots)
+	if slots_close:
+		slots_close.pressed.connect(_close_slots)
+	if slot_btn_1:
+		slot_btn_1.pressed.connect(func(): _on_slot_selected(1))
+	if slot_btn_2:
+		slot_btn_2.pressed.connect(func(): _on_slot_selected(2))
+	if slot_btn_3:
+		slot_btn_3.pressed.connect(func(): _on_slot_selected(3))
+	_render()
+
+func _open_slots() -> void:
+	_refresh_slot_buttons()
+	if slots_panel:
+		slots_panel.visible = true
+
+func _close_slots() -> void:
+	if slots_panel:
+		slots_panel.visible = false
+
+func _refresh_slot_buttons() -> void:
+	var buttons: Array = [slot_btn_1, slot_btn_2, slot_btn_3]
+	var path_labels: Array[String] = ["Polícia", "Tráfico", "Prefeito"]
+	for i in 3:
+		var slot: int = i + 1
+		var btn: Button = buttons[i]
+		if btn == null:
+			continue
+		var info: Dictionary = SaveSystem.slot_info(slot)
+		var prefix: String = "📍 " if slot == Settings.current_slot else "   "
+		if info.is_empty():
+			btn.text = "%sSlot %d — vide  ·  Démarrer une partie" % [prefix, slot]
+		else:
+			var act: int = info.get("act", 1)
+			var day: int = info.get("day", 1)
+			var debt: int = info.get("debt_paid", 0)
+			var endgame: int = info.get("endgame", 0)
+			var endgame_str: String = ""
+			if endgame >= 1 and endgame <= 3:
+				endgame_str = "  ·  " + path_labels[endgame - 1]
+			btn.text = "%sSlot %d  ·  Jour %d  ·  Acte %d%s  ·  R$ %d payés" % [
+					prefix, slot, day, act, endgame_str, debt]
+
+func _on_slot_selected(slot: int) -> void:
+	Settings.set_current_slot(slot)
+	_close_slots()
 	_render()
 
 func _start_new_game() -> void:
@@ -63,10 +116,15 @@ func _render() -> void:
 			continue_button.text = "Commencer"
 		else:
 			continue_button.text = "Continuer"
-	# Les boutons « Charger » et « Nouvelle partie » ne sont visibles que sur
-	# la 1ère page, pour éviter le bruit visuel sur les pages narratives.
+	# Les boutons « Charger », « Nouvelle partie » et « Slots » ne sont
+	# visibles que sur la 1ère page, pour éviter le bruit visuel sur les
+	# pages narratives. Le label « Charger » indique le slot courant.
 	var has_save: bool = SaveSystem.has_save()
 	if load_button:
 		load_button.visible = _page == 0 and has_save
+		load_button.text = "Charger Slot %d" % Settings.current_slot
 	if newgame_button:
 		newgame_button.visible = _page == 0 and has_save
+		newgame_button.text = "Nouvelle partie (efface Slot %d)" % Settings.current_slot
+	if slot_picker_button:
+		slot_picker_button.visible = _page == 0

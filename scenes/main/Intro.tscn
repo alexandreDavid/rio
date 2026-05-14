@@ -55,3 +55,59 @@ custom_minimum_size = Vector2(0, 48)
 text = "Nouvelle partie (efface la save)"
 theme_override_font_sizes/font_size = 18
 modulate = Color(1, 0.75, 0.75, 1)
+
+[node name="SlotPicker" type="Button" parent="Layout"]
+visible = false
+custom_minimum_size = Vector2(0, 56)
+text = "Choisir un slot de sauvegarde"
+theme_override_font_sizes/font_size = 22
+modulate = Color(0.85, 0.92, 1, 1)
+
+[node name="SlotsPanel" type="PanelContainer" parent="."]
+visible = false
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -260.0
+offset_top = -180.0
+offset_right = 260.0
+offset_bottom = 180.0
+
+[node name="Margin" type="MarginContainer" parent="SlotsPanel"]
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 20
+
+[node name="VBox" type="VBoxContainer" parent="SlotsPanel/Margin"]
+theme_override_constants/separation = 14
+
+[node name="SlotsTitle" type="Label" parent="SlotsPanel/Margin/VBox"]
+text = "Slots de sauvegarde"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
+
+[node name="Slot1" type="Button" parent="SlotsPanel/Margin/VBox"]
+text = "Slot 1"
+custom_minimum_size = Vector2(0, 52)
+theme_override_font_sizes/font_size = 14
+alignment = 0
+
+[node name="Slot2" type="Button" parent="SlotsPanel/Margin/VBox"]
+text = "Slot 2"
+custom_minimum_size = Vector2(0, 52)
+theme_override_font_sizes/font_size = 14
+alignment = 0
+
+[node name="Slot3" type="Button" parent="SlotsPanel/Margin/VBox"]
+text = "Slot 3"
+custom_minimum_size = Vector2(0, 52)
+theme_override_font_sizes/font_size = 14
+alignment = 0
+
+[node name="SlotsClose" type="Button" parent="SlotsPanel/Margin/VBox"]
+text = "Retour"
+custom_minimum_size = Vector2(0, 40)
+theme_override_font_sizes/font_size = 14
