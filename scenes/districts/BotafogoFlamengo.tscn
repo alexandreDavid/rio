@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3]
+[gd_scene load_steps=19 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/props/TaxiStand.tscn" id="1_taxi"]
 [ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="2_wander"]
@@ -14,6 +14,7 @@
 [ext_resource type="PackedScene" path="res://scenes/props/VolleyNet.tscn" id="11_volley"]
 [ext_resource type="PackedScene" path="res://scenes/props/ExerciseStation.tscn" id="12_exercise"]
 [ext_resource type="PackedScene" path="res://scenes/props/DistrictEntrance.tscn" id="13_entrance"]
+[ext_resource type="Script" path="res://scripts/world/AmbientDrifter.gd" id="18_drift"]
 
 [sub_resource type="RectangleShape2D" id="WallH_N"]
 size = Vector2(3900, 12)
@@ -40,6 +41,67 @@ size = Vector2(2900, 64)
 size = Vector2(750, 96)
 
 [node name="BotafogoFlamengoDistrict" type="Node2D"]
+script = ExtResource("18_drift")
+wrap_left = -1500.0
+wrap_right = 2300.0
+drift_speed = 7.0
+
+# Décor animé : 3 nuages + 3 mouettes drift_west + 1 bateau drift_east
+[node name="DriftCloudA" type="ColorRect" parent="." groups=["drift_west"]]
+offset_left = -1300.0
+offset_top = -2600.0
+offset_right = -1180.0
+offset_bottom = -2585.0
+color = Color(0.95, 0.95, 0.92, 0.78)
+
+[node name="DriftCloudB" type="ColorRect" parent="." groups=["drift_west"]]
+offset_left = -200.0
+offset_top = -2620.0
+offset_right = -80.0
+offset_bottom = -2605.0
+color = Color(0.92, 0.92, 0.88, 0.72)
+
+[node name="DriftCloudC" type="ColorRect" parent="." groups=["drift_west"]]
+offset_left = 900.0
+offset_top = -2580.0
+offset_right = 1020.0
+offset_bottom = -2565.0
+color = Color(0.95, 0.95, 0.92, 0.75)
+
+[node name="DriftGullA" type="ColorRect" parent="." groups=["drift_west"]]
+offset_left = -800.0
+offset_top = -2400.0
+offset_right = -790.0
+offset_bottom = -2397.0
+color = Color(0.98, 0.98, 0.95, 1)
+
+[node name="DriftGullB" type="ColorRect" parent="." groups=["drift_west"]]
+offset_left = 400.0
+offset_top = -2380.0
+offset_right = 410.0
+offset_bottom = -2377.0
+color = Color(0.98, 0.98, 0.95, 1)
+
+[node name="DriftGullC" type="ColorRect" parent="." groups=["drift_west"]]
+offset_left = 1500.0
+offset_top = -2420.0
+offset_right = 1510.0
+offset_bottom = -2417.0
+color = Color(0.98, 0.98, 0.95, 1)
+
+[node name="DriftBoat" type="ColorRect" parent="." groups=["drift_east", "drift_bob"]]
+offset_left = -1200.0
+offset_top = -2100.0
+offset_right = -1156.0
+offset_bottom = -2086.0
+color = Color(0.85, 0.55, 0.35, 0.9)
+
+[node name="DriftBoatSail" type="ColorRect" parent="." groups=["drift_east", "drift_bob"]]
+offset_left = -1180.0
+offset_top = -2126.0
+offset_right = -1165.0
+offset_bottom = -2102.0
+color = Color(0.92, 0.88, 0.78, 0.85)
 
 [node name="Sky" type="ColorRect" parent="."]
 offset_left = -1500.0
