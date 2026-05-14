@@ -2006,6 +2006,11 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 		"text": "Merci pour votre coopération, cidadão. Une bonne journée.",
 		"choices": ["Obrigado"],
 	},
+	"dubois_default": {
+		"speaker": "Madame Dubois",
+		"text": "*ajuste son sac à main, regarde l'horizon* Quel vol odieux, monsieur. Le commissariat m'a promis un rapport — j'attends. *te scrute* Vous savez quelque chose ?",
+		"choices": ["Pas encore, madame"],
+	},
 	"dubois_receives_report": {
 		"speaker": "Madame Dubois",
 		"text": "Oh, le rapport de police ? Enfin ! Je commençais à désespérer. Merci beaucoup.",
