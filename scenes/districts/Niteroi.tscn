@@ -450,7 +450,6 @@ position = Vector2(808, -50)
 [node name="ShapeRightN" type="CollisionShape2D" parent="Walls/Right"]
 shape = SubResource("WallV")
 
-# Barrière nord pour empêcher le joueur de marcher dans la baie
 [node name="BayBarrier" type="StaticBody2D" parent="Walls"]
 position = Vector2(0, -36)
 
