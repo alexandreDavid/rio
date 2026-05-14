@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/props/TaxiStand.tscn" id="1_taxi"]
 [ext_resource type="PackedScene" path="res://scenes/props/SupRental.tscn" id="2_sup"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" path="res://scenes/props/StreetVendor.tscn" id="5_vendor"]
 [ext_resource type="PackedScene" path="res://scenes/props/FishingSpot.tscn" id="6_fish"]
 [ext_resource type="PackedScene" path="res://scenes/npcs/Mateus.tscn" id="7_mateus"]
+[ext_resource type="Script" path="res://scripts/world/AmbientDrifter.gd" id="8_drift"]
 
 [sub_resource type="RectangleShape2D" id="WallH"]
 size = Vector2(700, 16)
@@ -15,6 +16,60 @@ size = Vector2(700, 16)
 size = Vector2(16, 360)
 
 [node name="CagarrasDistrict" type="Node2D"]
+script = ExtResource("8_drift")
+wrap_left = -380.0
+wrap_right = 380.0
+drift_speed = 10.0
+
+# Décor animé : mouettes (drift_west), nuage (drift_west lent), bateau (drift_east + bob)
+[node name="GullA" type="ColorRect" parent="." groups=["drift_west"]]
+offset_left = -300.0
+offset_top = -200.0
+offset_right = -290.0
+offset_bottom = -197.0
+color = Color(0.98, 0.98, 0.95, 1)
+
+[node name="GullB" type="ColorRect" parent="." groups=["drift_west"]]
+offset_left = 50.0
+offset_top = -180.0
+offset_right = 60.0
+offset_bottom = -177.0
+color = Color(0.98, 0.98, 0.95, 1)
+
+[node name="GullC" type="ColorRect" parent="." groups=["drift_west"]]
+offset_left = 280.0
+offset_top = -210.0
+offset_right = 290.0
+offset_bottom = -207.0
+color = Color(0.98, 0.98, 0.95, 1)
+
+[node name="CloudA" type="ColorRect" parent="." groups=["drift_west"]]
+offset_left = -200.0
+offset_top = -245.0
+offset_right = -130.0
+offset_bottom = -235.0
+color = Color(0.95, 0.95, 0.92, 0.7)
+
+[node name="CloudB" type="ColorRect" parent="." groups=["drift_west"]]
+offset_left = 140.0
+offset_top = -250.0
+offset_right = 220.0
+offset_bottom = -240.0
+color = Color(0.92, 0.92, 0.88, 0.65)
+
+[node name="FishingBoatHull" type="ColorRect" parent="." groups=["drift_east", "drift_bob"]]
+offset_left = -260.0
+offset_top = -50.0
+offset_right = -228.0
+offset_bottom = -40.0
+color = Color(0.85, 0.55, 0.35, 0.92)
+
+[node name="FishingBoatSail" type="ColorRect" parent="." groups=["drift_east", "drift_bob"]]
+offset_left = -250.0
+offset_top = -68.0
+offset_right = -236.0
+offset_bottom = -52.0
+color = Color(0.92, 0.88, 0.78, 0.85)
 
 [node name="SkyMorning" type="ColorRect" parent="."]
 offset_left = -360.0

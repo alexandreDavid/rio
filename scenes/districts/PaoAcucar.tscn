@@ -1,10 +1,11 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/props/DjBooth.tscn" id="1_dj"]
 [ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="2_wander"]
 [ext_resource type="PackedScene" path="res://scenes/props/Viewpoint.tscn" id="3_view"]
 [ext_resource type="PackedScene" path="res://scenes/props/StreetVendor.tscn" id="4_vendor"]
 [ext_resource type="PackedScene" path="res://scenes/props/DistrictExit.tscn" id="5_exit"]
+[ext_resource type="Script" path="res://scripts/world/AmbientDrifter.gd" id="6_drift"]
 
 [sub_resource type="RectangleShape2D" id="WallH"]
 size = Vector2(700, 16)
@@ -16,6 +17,46 @@ size = Vector2(16, 360)
 size = Vector2(600, 64)
 
 [node name="PaoAcucarDistrict" type="Node2D"]
+script = ExtResource("6_drift")
+wrap_left = -380.0
+wrap_right = 380.0
+drift_speed = 5.0
+
+# Décor animé : nuages haute altitude qui dérivent + 2 oiseaux + 1 cerf-volant
+[node name="CloudPaoA" type="ColorRect" parent="." groups=["drift_west"]]
+offset_left = -280.0
+offset_top = -220.0
+offset_right = -180.0
+offset_bottom = -208.0
+color = Color(0.95, 0.85, 0.78, 0.78)
+
+[node name="CloudPaoB" type="ColorRect" parent="." groups=["drift_west"]]
+offset_left = 60.0
+offset_top = -230.0
+offset_right = 180.0
+offset_bottom = -218.0
+color = Color(0.92, 0.78, 0.72, 0.7)
+
+[node name="CloudPaoC" type="ColorRect" parent="." groups=["drift_west"]]
+offset_left = 240.0
+offset_top = -215.0
+offset_right = 320.0
+offset_bottom = -207.0
+color = Color(0.95, 0.85, 0.78, 0.65)
+
+[node name="BirdPaoA" type="ColorRect" parent="." groups=["drift_west"]]
+offset_left = -100.0
+offset_top = -170.0
+offset_right = -94.0
+offset_bottom = -168.0
+color = Color(0.18, 0.12, 0.14, 0.85)
+
+[node name="BirdPaoB" type="ColorRect" parent="." groups=["drift_west"]]
+offset_left = 180.0
+offset_top = -195.0
+offset_right = 186.0
+offset_bottom = -193.0
+color = Color(0.18, 0.12, 0.14, 0.85)
 
 [node name="SkyHigh" type="ColorRect" parent="."]
 offset_left = -360.0
