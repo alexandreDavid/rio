@@ -62,17 +62,25 @@ const REP_AXIS_COLORS: Dictionary = {
 @onready var viewer_name: Label = $Frame/PhotoViewer/ViewerName
 @onready var viewer_close: Button = $Frame/PhotoViewer/ViewerClose
 
-# App home screen buttons
-@onready var app_taxi: Button = $Frame/Screens/Home/Grid/Taxi
-@onready var app_stats: Button = $Frame/Screens/Home/Grid/Stats
-@onready var app_journal: Button = get_node_or_null("Frame/Screens/Home/Grid/Journal") as Button
-@onready var app_missions: Button = $Frame/Screens/Home/Grid/Missions
-@onready var app_cronica: Button = $Frame/Screens/Home/Grid/Cronica
-@onready var app_photos: Button = $Frame/Screens/Home/Grid/Photos
-@onready var app_noticias: Button = $Frame/Screens/Home/Grid/Noticias
-@onready var app_ajustes: Button = $Frame/Screens/Home/Grid/Ajustes
-@onready var app_conquistas: Button = $Frame/Screens/Home/Grid/Conquistas
-@onready var app_mapa: Button = $Frame/Screens/Home/Grid/Mapa
+# App home screen buttons — Pages multi (page 1 essentielles, page 2 extras)
+@onready var page_1: GridContainer = $Frame/Screens/Home/Pages/Page1
+@onready var page_2: GridContainer = $Frame/Screens/Home/Pages/Page2
+@onready var arrow_left: Button = $Frame/Screens/Home/PageNav/ArrowLeft
+@onready var arrow_right: Button = $Frame/Screens/Home/PageNav/ArrowRight
+@onready var dot_1: Label = $Frame/Screens/Home/PageNav/Dot1
+@onready var dot_2: Label = $Frame/Screens/Home/PageNav/Dot2
+@onready var app_taxi: Button = $Frame/Screens/Home/Pages/Page1/Taxi
+@onready var app_stats: Button = $Frame/Screens/Home/Pages/Page1/Stats
+@onready var app_journal: Button = null  # fusionné dans Crônica
+@onready var app_cronica: Button = $Frame/Screens/Home/Pages/Page1/Cronica
+@onready var app_ajustes: Button = $Frame/Screens/Home/Pages/Page1/Ajustes
+@onready var app_missions: Button = $Frame/Screens/Home/Pages/Page2/Missions
+@onready var app_photos: Button = $Frame/Screens/Home/Pages/Page2/Photos
+@onready var app_noticias: Button = $Frame/Screens/Home/Pages/Page2/Noticias
+@onready var app_conquistas: Button = $Frame/Screens/Home/Pages/Page2/Conquistas
+@onready var app_mapa: Button = $Frame/Screens/Home/Pages/Page2/Mapa
+
+var _current_page: int = 1
 
 const PHOTOS_DIR: String = "user://photos"
 
@@ -103,6 +111,13 @@ func _ready() -> void:
 		app_conquistas.pressed.connect(func(): _show_screen("conquistas"))
 	if app_mapa:
 		app_mapa.pressed.connect(func(): _show_screen("mapa"))
+	if arrow_left:
+		arrow_left.pressed.connect(func(): _switch_page(_current_page - 1))
+	if arrow_right:
+		arrow_right.pressed.connect(func(): _switch_page(_current_page + 1))
+	if home_screen:
+		home_screen.gui_input.connect(_on_home_swipe)
+	_switch_page(1)
 	_setup_app_badges()
 	# Sliders volumes — émettent au glisser, persistés par Settings.
 	if slider_music:
@@ -175,6 +190,50 @@ func close() -> void:
 # ------------------------------------------------------------------
 # Screens
 # ------------------------------------------------------------------
+
+# ------------------------------------------------------------------
+# Pagination home (2 pages × 4-5 apps)
+# ------------------------------------------------------------------
+
+const PAGE_COUNT: int = 2
+const SWIPE_THRESHOLD: float = 50.0
+
+var _swipe_start_x: float = -1.0
+
+func _switch_page(target: int) -> void:
+	target = clampi(target, 1, PAGE_COUNT)
+	_current_page = target
+	if page_1:
+		page_1.visible = target == 1
+	if page_2:
+		page_2.visible = target == 2
+	if dot_1:
+		dot_1.text = "●" if target == 1 else "○"
+		dot_1.add_theme_color_override("font_color",
+				Color(0.95, 0.92, 0.85) if target == 1 else Color(0.6, 0.6, 0.65))
+	if dot_2:
+		dot_2.text = "●" if target == 2 else "○"
+		dot_2.add_theme_color_override("font_color",
+				Color(0.95, 0.92, 0.85) if target == 2 else Color(0.6, 0.6, 0.65))
+	if arrow_left:
+		arrow_left.disabled = target <= 1
+		arrow_left.modulate.a = 1.0 if target > 1 else 0.35
+	if arrow_right:
+		arrow_right.disabled = target >= PAGE_COUNT
+		arrow_right.modulate.a = 1.0 if target < PAGE_COUNT else 0.35
+
+func _on_home_swipe(event: InputEvent) -> void:
+	# Détection swipe horizontal sur la zone Home — mobile (ScreenDrag) ou
+	# desktop (mouse drag).
+	if event is InputEventScreenTouch or event is InputEventMouseButton:
+		var pressed: bool = event.pressed if "pressed" in event else false
+		if pressed:
+			_swipe_start_x = event.position.x
+		elif _swipe_start_x >= 0.0:
+			var dx: float = event.position.x - _swipe_start_x
+			if abs(dx) > SWIPE_THRESHOLD:
+				_switch_page(_current_page + (-1 if dx > 0 else 1))
+			_swipe_start_x = -1.0
 
 func _setup_app_badges() -> void:
 	# Crée un Label rouge attaché en haut-droite de chaque app sujette à
