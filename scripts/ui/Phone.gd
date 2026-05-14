@@ -37,6 +37,7 @@ const REP_AXIS_COLORS: Dictionary = {
 @onready var slider_ambient: HSlider = $Frame/Screens/Ajustes/Box/AmbientRow/AmbientSlider
 @onready var replay_tutorial_btn: Button = $Frame/Screens/Ajustes/Box/ReplayTutorial
 @onready var show_credits_btn: Button = $Frame/Screens/Ajustes/Box/ShowCredits
+@onready var quit_game_btn: Button = $Frame/Screens/Ajustes/Box/QuitGame
 @onready var slot_btn_1: Button = $Frame/Screens/Ajustes/Box/SlotRow/Slot1
 @onready var slot_btn_2: Button = $Frame/Screens/Ajustes/Box/SlotRow/Slot2
 @onready var slot_btn_3: Button = $Frame/Screens/Ajustes/Box/SlotRow/Slot3
@@ -114,6 +115,14 @@ func _ready() -> void:
 		replay_tutorial_btn.pressed.connect(_replay_tutorial)
 	if show_credits_btn:
 		show_credits_btn.pressed.connect(_show_credits)
+	if quit_game_btn:
+		# Sur mobile/web : revenir au menu (quit ferme un onglet web et est
+		# bloqué par les stores mobiles). Sur desktop : quit proprement.
+		if OS.has_feature("mobile") or OS.has_feature("web"):
+			quit_game_btn.text = "Retour au menu"
+			quit_game_btn.pressed.connect(_back_to_menu)
+		else:
+			quit_game_btn.pressed.connect(_quit_game)
 	if slot_btn_1:
 		slot_btn_1.pressed.connect(func(): _on_slot_pressed(1))
 	if slot_btn_2:
@@ -1024,6 +1033,18 @@ func _show_credits() -> void:
 	if c and c.has_method("open"):
 		close()
 		c.open()
+
+func _quit_game() -> void:
+	# Auto-save de courtoisie avant de quitter.
+	SaveSystem.save_game()
+	get_tree().quit()
+
+func _back_to_menu() -> void:
+	# Auto-save puis retour au menu Intro (l'appareil mobile/web n'autorise
+	# pas un vrai quit propre).
+	SaveSystem.save_game()
+	get_tree().paused = false
+	get_tree().change_scene_to_file("res://scenes/main/Intro.tscn")
 
 func _build_news_row(item: Dictionary) -> Control:
 	var card: PanelContainer = PanelContainer.new()
