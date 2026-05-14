@@ -10,6 +10,7 @@ const GALA_OBJ: String = "secured_band"
 const QUEST_DJ: String = "ronaldo_dj_paoacucar"
 const QUEST_TORCIDA: String = "ronaldo_maracana_torcida"
 const QUEST_BASKET: String = "ronaldo_aterro_basket"
+const QUEST_QUIZ: String = "quiz_maracana"
 
 func _on_interacted(_by: Node) -> void:
 	if data == null:
@@ -20,6 +21,17 @@ func _on_interacted(_by: Node) -> void:
 		var orf: Dictionary = QuestManager.get_objectives_state(QUEST_GALA)
 		if not orf.get(GALA_OBJ, false):
 			DialogueBridge.start_dialogue(data.id, "ronaldo_act2_gala")
+			return
+	# Quiz Maracanã — uniquement quand le joueur est à Maracana (chain post-basket).
+	if DistrictManager.current() == "maracana":
+		if QuestManager.is_active(QUEST_QUIZ):
+			DialogueBridge.start_dialogue(data.id, "ronaldo_quiz_remind")
+			return
+		if QuestManager.is_completed(QUEST_QUIZ):
+			DialogueBridge.start_dialogue(data.id, "ronaldo_quiz_done")
+			return
+		if QuestManager.is_available(QUEST_QUIZ) and QuestManager.is_completed(QUEST_BASKET):
+			DialogueBridge.start_dialogue(data.id, "ronaldo_quiz_offer")
 			return
 	# Side quest : basket à l'Aterro do Flamengo (priorité haute si active, dispo après la torcida).
 	if QuestManager.is_active(QUEST_BASKET):

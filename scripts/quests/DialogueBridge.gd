@@ -1920,6 +1920,69 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 		"text": "*tape dans tes mains* Le pot tient encore parole, sobrinho. Tu peux y retourner quand tu veux — les gamins recommencent chaque après-midi.",
 		"choices": ["Valeu, mestre"],
 	},
+	# --- Quiz do Maracanã — 3 questions trivia (SIDE, prereq basket) ---
+	"ronaldo_quiz_offer": {
+		"speaker": "Ronaldo",
+		"text": "*assis sur les gradins du Maracanã, te tend une bière* Pause entre deux torcidas. *sourire malicieux* Tu connais ce stade, sobrinho ? Vraiment ? Allez, trois questions. Chaque bonne réponse = du respect du bairro. Une mauvaise = chambrage public.",
+		"choices": ["J'accepte le défi", "Plus tard"],
+		"on_choose": {
+			"0": {"accept_quest": "quiz_maracana", "next": "ronaldo_quiz_q1"},
+		},
+	},
+	"ronaldo_quiz_remind": {
+		"speaker": "Ronaldo",
+		"text": "*tape sur le siège à côté* Tu reviens pour le quiz, sobrinho ? Trois questions. T'es prêt ?",
+		"choices": ["On y va", "Encore plus tard"],
+		"on_choose": {
+			"0": {"next": "ronaldo_quiz_q1"},
+		},
+	},
+	"ronaldo_quiz_q1": {
+		"speaker": "Ronaldo",
+		"text": "Question 1 : En quelle année le Maracanã a-t-il été inauguré ?",
+		"choices": ["1942", "1950", "1958", "1968"],
+		"on_choose": {
+			"0": {"rep": {4: -1}, "next": "ronaldo_quiz_q2"},
+			"1": {"rep": {4: 3}, "next": "ronaldo_quiz_q2"},
+			"2": {"rep": {4: -1}, "next": "ronaldo_quiz_q2"},
+			"3": {"rep": {4: -1}, "next": "ronaldo_quiz_q2"},
+		},
+	},
+	"ronaldo_quiz_q2": {
+		"speaker": "Ronaldo",
+		"text": "Question 2 : L'attaquant uruguayen qui a marqué le but vainqueur en finale de 1950 ?",
+		"choices": ["Ghiggia", "Schiaffino", "Pelé", "Garrincha"],
+		"on_choose": {
+			"0": {"rep": {4: 3}, "next": "ronaldo_quiz_q3"},
+			"1": {"rep": {4: -1}, "next": "ronaldo_quiz_q3"},
+			"2": {"rep": {4: -1}, "next": "ronaldo_quiz_q3"},
+			"3": {"rep": {4: -1}, "next": "ronaldo_quiz_q3"},
+		},
+	},
+	"ronaldo_quiz_q3": {
+		"speaker": "Ronaldo",
+		"text": "Question 3 : Combien de Coupes du Monde le Brésil a-t-il gagnées ?",
+		"choices": ["3", "5", "7", "9"],
+		"on_choose": {
+			"0": {"rep": {4: -1}, "next": "ronaldo_quiz_close"},
+			"1": {"rep": {4: 3}, "next": "ronaldo_quiz_close"},
+			"2": {"rep": {4: -1}, "next": "ronaldo_quiz_close"},
+			"3": {"rep": {4: -1}, "next": "ronaldo_quiz_close"},
+		},
+	},
+	"ronaldo_quiz_close": {
+		"speaker": "Ronaldo",
+		"text": "*ouvre une autre bière, te la tend* Trois questions, c'est tout. *sourit* Le bairro entendra tes scores, sobrinho — bons ou mauvais. Tu reviens quand tu veux pour la torcida.",
+		"choices": ["Valeu, mestre"],
+		"on_choose": {
+			"0": {"finish_quest": {"quest": "quiz_maracana", "objective": "answer_quiz", "payout": 150}, "rep": {0: 1}},
+		},
+	},
+	"ronaldo_quiz_done": {
+		"speaker": "Ronaldo",
+		"text": "*hoche la tête en signe de complicité* Le quiz est passé, sobrinho. Tu fais partie des connaisseurs maintenant.",
+		"choices": ["Valeu"],
+	},
 	# --- Lucas — duel de surf à Arpoador (ZonaSul) ---
 	"lucas_intro": {
 		"speaker": "Lucas",

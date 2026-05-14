@@ -70,6 +70,7 @@ const QUEST_RESOURCES: Array[String] = [
 	"res://resources/quests/pacto_barra.tres",
 	"res://resources/quests/bruno_carga.tres",
 	"res://resources/quests/bruno_pesca_baia.tres",
+	"res://resources/quests/quiz_maracana.tres",
 ]
 
 const NPC_DATA_DIR: String = "res://resources/npcs/"

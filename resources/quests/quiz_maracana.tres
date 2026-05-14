@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_answer_quiz"]
+script = ExtResource("2_obj")
+id = "answer_quiz"
+description = "Répondre aux trois questions de Ronaldo sur le Maracanã"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "quiz_maracana"
+display_name = "Quiz do Maracanã"
+description = "Ronaldo, entre deux torcidas, organise un quiz informel pour les habitués : trois questions sur l'histoire du Maracanã. Bonnes réponses = respect du quartier, mauvaise réponse = chambrage."
+journal_text = "Trois questions de Ronaldo au Maracanã."
+giver_npc_id = "musicien"
+ink_knot = "ronaldo_quiz_offer"
+objectives = Array[Resource]([SubResource("obj_answer_quiz")])
+money_reward = 150
+reputation_rewards = {}
+required_reputation = {}
+required_act = 0
+prerequisite_quest_ids = Array[String](["ronaldo_aterro_basket"])
