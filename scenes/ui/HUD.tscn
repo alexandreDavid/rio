@@ -100,20 +100,17 @@ text = "📸"
 theme_override_font_sizes/font_size = 28
 tooltip_text = "Photo (F)"
 
-[node name="SaveToast" type="Label" parent="."]
-visible = false
+[node name="ToastStack" type="VBoxContainer" parent="."]
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -240.0
-offset_top = -64.0
+offset_left = -300.0
+offset_top = -260.0
 offset_right = -16.0
 offset_bottom = -16.0
-text = "Sauvegardé"
-horizontal_alignment = 2
-theme_override_font_sizes/font_size = 18
-modulate = Color(0.7, 0.95, 0.7, 1)
+alignment = 2
+theme_override_constants/separation = 4
 
 [node name="CharacterSheet" type="PanelContainer" parent="."]
 visible = false

@@ -15,7 +15,8 @@ extends Control
 @onready var save_button: Button = $SaveButton
 @onready var photo_button: Button = $PhotoButton
 @onready var close_sheet_button: Button = $CharacterSheet/Margin/Layout/Close
-@onready var save_toast: Label = $SaveToast
+@onready var toast_stack: VBoxContainer = $ToastStack
+const MAX_TOASTS: int = 4
 @onready var quest_tracker: PanelContainer = $QuestTracker
 @onready var quest_tracker_name: Label = $QuestTracker/Margin/VBox/QuestName
 @onready var quest_tracker_objective: Label = $QuestTracker/Margin/VBox/QuestObjective
@@ -428,22 +429,32 @@ func _on_dynamic_mission_completed(category: int, money: int, rep: int) -> void:
 	_flash_toast("Mission %s : +R$ %d  ·  +%d %s" % [label, money, rep, label.to_upper()])
 
 func _flash_toast(text: String, color: Color = Color(0.7, 0.95, 0.7, 1), duration: float = 1.2) -> void:
-	if save_toast == null:
+	if toast_stack == null:
 		return
-	save_toast.text = text
-	save_toast.visible = true
-	save_toast.modulate = color
-	# Anim d'entrée : scale 0.85 → 1.0 avec un léger overshoot.
-	save_toast.pivot_offset = save_toast.size / 2.0
-	save_toast.scale = Vector2(0.85, 0.85)
+	# Limite la pile : si on a déjà MAX_TOASTS, supprime le plus ancien.
+	while toast_stack.get_child_count() >= MAX_TOASTS:
+		var oldest: Node = toast_stack.get_child(0)
+		oldest.queue_free()
+		await get_tree().process_frame
+	var label: Label = Label.new()
+	label.text = text
+	label.modulate = color
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	label.add_theme_font_size_override("font_size", 18)
+	label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.7))
+	label.add_theme_constant_override("outline_size", 4)
+	toast_stack.add_child(label)
+	# Anim d'entrée : scale 0.85 → 1.0 avec léger overshoot.
+	label.pivot_offset = label.size / 2.0
+	label.scale = Vector2(0.85, 0.85)
 	var entrance: Tween = create_tween()
 	entrance.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	entrance.tween_property(save_toast, "scale", Vector2.ONE, 0.22)
-	# Fade-out après pause.
-	var tween: Tween = create_tween()
-	tween.tween_interval(duration)
-	tween.tween_property(save_toast, "modulate:a", 0.0, 0.4)
-	tween.tween_callback(func(): save_toast.visible = false)
+	entrance.tween_property(label, "scale", Vector2.ONE, 0.22)
+	# Fade-out + queue_free.
+	var fade: Tween = create_tween()
+	fade.tween_interval(duration)
+	fade.tween_property(label, "modulate:a", 0.0, 0.4)
+	fade.tween_callback(func(): if is_instance_valid(label): label.queue_free())
 
 # ─── Quest tracker (panel haut-droite) ───────────────────────────────────────
 # Affiche la quête MAIN active prioritaire (sinon une SIDE) + son 1er objectif
