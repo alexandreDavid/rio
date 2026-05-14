@@ -2363,6 +2363,16 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 	"conquista_three_familiar": {"speaker": "Crônica", "text": "Trois personnes du bairro me considèrent comme de la famille. C'est plus que je n'avais à mon arrivée. C'est plus que la plupart en accumulent.", "choices": ["Fermer"]},
 	"conquista_first_photo": {"speaker": "Crônica", "text": "J'ai pris ma première photo. Une vague, un détail du calçadão, le mont du Pão de Açúcar en arrière-plan. On garde ce qu'on voit pour ne pas oublier qu'on l'a vu.", "choices": ["Fermer"]},
 	"conquista_pesca_baia": {"speaker": "Crônica", "text": "Bruno m'a tendu sa canne sans rien dire. J'ai sorti un robalo de la baie de Guanabara au troisième essai. Trente-quatre ans qu'il en parlait — et c'est moi qui l'ai sorti.", "choices": ["Fermer"]},
+	"conquista_wealthy_10k": {"speaker": "Crônica", "text": "Dix mille reais versés. La cinquième ligne du carnet noir de Dom Nilton. Il a marqué un trait épais dessous — première étape.", "choices": ["Fermer"]},
+	"conquista_carnaval_complete": {"speaker": "Crônica", "text": "Le défilé du Sambódromo. J'ai mené ma faction sous les projecteurs jusqu'à l'aube. La Sapucaí chante encore mon nom — ou un nom approchant.", "choices": ["Fermer"]},
+	"conquista_chatterbox": {"speaker": "Crônica", "text": "Dix personnes du bairro me reconnaissent et m'ont parlé au moins une fois. À Copacabana, c'est presque une famille élargie.", "choices": ["Fermer"]},
+	"conquista_globetrotter": {"speaker": "Crônica", "text": "Cinq quartiers visités. Du Morro à la Barra, du Corcovado à Niterói. Chaque rue m'a appris quelque chose — surtout celles que je n'aurais pas dû prendre.", "choices": ["Fermer"]},
+	"conquista_respeitado": {"speaker": "Crônica", "text": "Une réputation qui m'a pris des mois à bâtir. Les gens qui me croisent baissent ou hochent la tête — selon ce qu'on dit de moi.", "choices": ["Fermer"]},
+	"conquista_beach_athlete": {"speaker": "Crônica", "text": "J'ai sué sur le sable et dans l'eau. Volley, surf, paddle, basquete — la praia te juge par la sueur, pas par les mots.", "choices": ["Fermer"]},
+	"conquista_niteroi_resident": {"speaker": "Crônica", "text": "Bruno m'a embarqué sur deux missions et m'a tendu une cachaça à la fin. Niterói n'est plus l'autre côté — c'est aussi mon côté.", "choices": ["Fermer"]},
+	"conquista_shutterbug": {"speaker": "Crônica", "text": "Cinq photos prises. Chaque cadre est un souvenir verrouillé, indépendant de ce qu'on raconte autour de moi.", "choices": ["Fermer"]},
+	"conquista_viewpoint_collector": {"speaker": "Crônica", "text": "Trois mirantes admirés. Rio se voit toujours mieux d'en haut — Niemeyer, Christ, Pão. Trois points de vue, trois villes différentes.", "choices": ["Fermer"]},
+	"conquista_escape_artist": {"speaker": "Crônica", "text": "Acte 3 atteint sans avoir alerté de commissaire. Mendonça est resté chez lui — ou bien j'ai évité son couloir. Quoi qu'il en soit, la PM ne connaît pas mon visage.", "choices": ["Fermer"]},
 }
 
 var _active_npc_id: String = ""

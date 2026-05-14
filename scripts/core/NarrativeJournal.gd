@@ -106,6 +106,16 @@ const JOURNAL_ENTRIES: Dictionary = {
 	"conquista_three_familiar":     {"category": "conquistas", "title": "Coração do bairro"},
 	"conquista_first_photo":        {"category": "conquistas", "title": "Carioca documentariste"},
 	"conquista_pesca_baia":         {"category": "conquistas", "title": "Pesca da Baía"},
+	"conquista_wealthy_10k":        {"category": "conquistas", "title": "Dez mil pagos"},
+	"conquista_carnaval_complete":  {"category": "conquistas", "title": "Sapucaí cantou"},
+	"conquista_chatterbox":         {"category": "conquistas", "title": "Quem fala com todos"},
+	"conquista_globetrotter":       {"category": "conquistas", "title": "Conhece a cidade"},
+	"conquista_respeitado":         {"category": "conquistas", "title": "Respeitado"},
+	"conquista_beach_athlete":      {"category": "conquistas", "title": "Atleta da praia"},
+	"conquista_niteroi_resident":   {"category": "conquistas", "title": "Filho da baía"},
+	"conquista_shutterbug":         {"category": "conquistas", "title": "Acervo carioca"},
+	"conquista_viewpoint_collector":{"category": "conquistas", "title": "Vistas da cidade"},
+	"conquista_escape_artist":      {"category": "conquistas", "title": "Sem polícia atrás"},
 }
 
 var _read: Dictionary = {}  # knot_id -> true
