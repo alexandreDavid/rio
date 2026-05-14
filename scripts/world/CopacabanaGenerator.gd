@@ -1,6 +1,8 @@
-extends Node2D
+extends AmbientDrifter
 
 # Génère procéduralement les bâtiments, postes et marqueurs de zone.
+# Étend AmbientDrifter pour faire dériver les mouettes et bateaux décoratifs
+# placés dans Copacabana.tscn (groupes drift_west / drift_east / drift_bob).
 # Géographie réelle : LEME à l'est (droite, x haut), FORTE à l'ouest (gauche, x bas).
 # 5 postes : Posto 1 (près de Leme) à Posto 5 (près du fort).
 
@@ -133,6 +135,8 @@ var _padaria_spawn: Vector2
 var _palace_spawn: Vector2
 
 func _ready() -> void:
+	# Drift décoratif (mouettes, bateaux, kite) hérité d'AmbientDrifter.
+	super._ready()
 	_spawn_interiors()
 	_spawn_sand()
 	_spawn_sea()
