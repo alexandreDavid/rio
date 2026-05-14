@@ -93,16 +93,23 @@ func _start_new_game() -> void:
 func _goto_main() -> void:
 	get_tree().change_scene_to_file(MAIN_SCENE)
 
-func _unhandled_input(event: InputEvent) -> void:
-	# DEBUG : log tous les events pour comprendre où le click se perd.
+func _input(event: InputEvent) -> void:
+	# DEBUG niveau le plus bas : voit TOUS les events avant tout filtrage.
 	if event is InputEventMouseButton:
 		var mb: InputEventMouseButton = event
-		print("[Intro] mouse button %d pressed=%s at %s tree_paused=%s" % [
+		print("[Intro] _input MOUSE btn=%d pressed=%s at %s paused=%s" % [
 				mb.button_index, mb.pressed, mb.position, get_tree().paused])
+	elif event is InputEventKey and event.pressed and not event.echo:
+		print("[Intro] _input KEY %d paused=%s" % [event.physical_keycode, get_tree().paused])
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		var mb: InputEventMouseButton = event
+		print("[Intro] _unhandled MOUSE btn=%d pressed=%s" % [mb.button_index, mb.pressed])
 	# Raccourcis clavier secondaires (desktop) — sur mobile, on passe par le bouton.
 	if event is InputEventKey and event.pressed and not event.echo:
 		var key: int = event.physical_keycode
-		print("[Intro] key pressed %d, tree_paused=%s" % [key, get_tree().paused])
+		print("[Intro] _unhandled KEY %d" % key)
 		if key == KEY_SPACE or key == KEY_ENTER or key == KEY_KP_ENTER:
 			_advance()
 			get_viewport().set_input_as_handled()
