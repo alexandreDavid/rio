@@ -344,11 +344,30 @@ func _on_save_committed() -> void:
 	_flash_toast("Sauvegardé")
 
 func _on_save_loaded() -> void:
-	_flash_toast("Partie chargée")
+	_flash_toast("Partie chargée", Color(0.7, 0.95, 0.7, 1), 1.0)
+	# Message de bienvenue contextualisé après une courte pause, pour laisser
+	# le toast principal partir d'abord. Donne au joueur de quoi se replanter
+	# narrativement à la reprise.
+	call_deferred("_welcome_back_after_load")
 	# Re-seed : on ne veut pas toaster les MAIN déjà connues dans la save chargée.
 	_signaled_main_ids.clear()
 	_main_toast_seeded = false
 	call_deferred("_seed_main_signaled")
+
+func _welcome_back_after_load() -> void:
+	await get_tree().create_timer(1.4).timeout
+	var act: int = CampaignManager.current_act
+	var day: int = TimeOfDay.day_count
+	var debt: int = CampaignManager.debt_remaining()
+	var endgame: int = CampaignManager.chosen_endgame
+	var lines: Array[String] = ["Bem-vindo de volta · Jour %d · Acte %d" % [day, act]]
+	if act >= 4 and endgame != CampaignManager.Endgame.NONE:
+		lines.append("Reinado : %s" % CampaignManager.reign_title())
+	elif debt > 0:
+		lines.append("Dette restante : R$ %d" % debt)
+	else:
+		lines.append("Dette soldée")
+	_flash_toast("\n".join(lines), Color(0.95, 0.88, 0.55, 1), 3.5)
 
 # Marque comme "déjà connues" toutes les MAIN actuellement available/active/completed.
 # Appelé en deferred pour laisser MainBoot._register_quests() finir.
