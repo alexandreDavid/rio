@@ -132,23 +132,123 @@ func _qi_player_nearby() -> bool:
 		return false
 	return global_position.distance_to(GameManager.player.global_position) <= QI_VISIBLE_DISTANCE
 
-# Si vrai, tous les NPCs utilisent le sprite procédural pixel-art généré par
-# CharacterSpriteFactory (config explicite par id, fallback aléatoire stable).
-# Cohérence visuelle : même style que les wanderers.
-const USE_PROCEDURAL_NPC_SPRITES: bool = true
+# Stratégie de sprite, par ordre de priorité :
+# 1. PNG individuel `assets/sprites/npcs/<id>.png` ou `<id>_walk.png` — haute
+#    qualité, fait à la main, utilisé pour les NPCs majeurs (32 existants).
+# 2. Région nommée dans `characters_ai.png` via NAMED_NPC_REGIONS — atlas
+#    16 personnages style joueur, mappée thématiquement (cop→Ramos, chef→Padeiro…)
+# 3. Région hash-pickée dans `characters_ai.png` — déterministe par id, donne
+#    une variété cohérente aux NPCs non-mappés.
+# 4. Fallback ultime : sprite procédural pixel-art via CharacterSpriteFactory
+#    (16×24, plus pixely — utilisé pour les NPCs très secondaires).
+#
+# Objectif : tous les NPCs ressemblent au joueur en qualité d'art, plus de
+# sprites procéduraux 16×24 chunky pour les NPCs scriptés.
+const USE_PROCEDURAL_FALLBACK: bool = true
+
+# Mapping thématique id → cellule dans characters_ai.png (1024×1024, 4×4 de
+# 256×256 chacune). Adapté aux archétypes visuels disponibles.
+const NAMED_NPC_REGIONS: Dictionary = {
+	# Police / cops : casquette bleue (1,0)
+	"ramos":          Rect2(256, 0, 256, 256),
+	"policier":       Rect2(256, 0, 256, 256),
+	"military_pm":    Rect2(256, 0, 256, 256),
+	"pm_patrol":      Rect2(256, 0, 256, 256),
+	# Chef / boulanger : toque blanche (2,0)
+	"padeiro":        Rect2(512, 0, 256, 256),
+	"chef_restaurant":Rect2(512, 0, 256, 256),
+	# Grand-mère / Vovó : chapeau jaune (3,0)
+	"vovo":           Rect2(768, 0, 256, 256),
+	"mae":            Rect2(768, 0, 256, 256),
+	"dona_irene":     Rect2(768, 0, 256, 256),
+	# Casquette rouge / favela : (0,1)
+	"tito":           Rect2(0, 256, 256, 256),
+	"miguel":         Rect2(0, 256, 256, 256),
+	"ze_bar":         Rect2(0, 256, 256, 256),
+	# Costume mafia / consortium : (1,1)
+	"don_vincenzo":   Rect2(256, 256, 256, 256),
+	"consortium":     Rect2(256, 256, 256, 256),
+	"magalhaes":      Rect2(256, 256, 256, 256),
+	"carrasco":       Rect2(256, 256, 256, 256),
+	"mendonca":       Rect2(256, 256, 256, 256),
+	# Costume brun / civic : (2,1)
+	"don_salvatore":  Rect2(512, 256, 256, 256),
+	"otavio":         Rect2(512, 256, 256, 256),
+	"jorge":          Rect2(512, 256, 256, 256),
+	# Padre / religieux : (3,1) chapeau bleu
+	"padre":          Rect2(768, 256, 256, 256),
+	# Blond chemise blanche : (0,2)
+	"lucas":          Rect2(0, 512, 256, 256),
+	"contessa":       Rect2(0, 512, 256, 256),
+	"tourist_vip":    Rect2(0, 512, 256, 256),
+	# Lady headscarf vert : (1,2)
+	"helena_curator": Rect2(256, 512, 256, 256),
+	"yara":           Rect2(256, 512, 256, 256),
+	"olga_mendez":    Rect2(256, 512, 256, 256),
+	"vendeuse_boutique": Rect2(256, 512, 256, 256),
+	# Yellow hat suit : (2,2) — agente Silva / madame Dubois
+	"madame_dubois":  Rect2(512, 512, 256, 256),
+	"beatriz":        Rect2(512, 512, 256, 256),
+	# Bald casquette bleue : (3,2) — Seu João, vieux
+	"seu_joao":       Rect2(768, 512, 256, 256),
+	"bruno":          Rect2(768, 512, 256, 256),
+	"pecheur":        Rect2(768, 512, 256, 256),
+	"mateus":         Rect2(768, 512, 256, 256),
+	"caldeira":       Rect2(768, 512, 256, 256),
+	# Muscle tank blanc : (0,3) — sportifs
+	"diego":          Rect2(0, 768, 256, 256),
+	"musicien":       Rect2(0, 768, 256, 256),
+	"joggeur":        Rect2(0, 768, 256, 256),
+	# Bandana blanc : (1,3) — pêcheurs / outsider
+	"ivan":           Rect2(256, 768, 256, 256),
+	"bandeira":       Rect2(256, 768, 256, 256),
+	"roberto_maia":   Rect2(256, 768, 256, 256),
+	"farmaceutico":   Rect2(256, 768, 256, 256),
+	# Rouge tanné : (2,3) — jeunes femmes
+	"camila":         Rect2(512, 768, 256, 256),
+	"sofia":          Rect2(512, 768, 256, 256),
+	# Vert jaune back : (3,3) — neutre
+	"coconut_vendor": Rect2(768, 768, 256, 256),
+	"concierge":      Rect2(768, 768, 256, 256),
+	"bar_patrao":     Rect2(768, 768, 256, 256),
+}
 
 func _setup_visual_polish() -> void:
 	# Repère le sprite principal pour le scale-punch d'interaction.
 	_sprite = get_node_or_null("Sprite2D")
-	# Mode procédural : génère le sprite via la factory.
-	if USE_PROCEDURAL_NPC_SPRITES and _sprite is Sprite2D and data and data.id != "":
-		_setup_procedural_sprite()
-	else:
-		# Sinon : tente de charger un PNG individuel (fallback historique).
-		_try_load_individual_sprite()
+	if _sprite is Sprite2D and data and data.id != "":
+		# Cascade de stratégies : PNG → région nommée → hash atlas → procédural.
+		if not _try_load_individual_sprite():
+			if not _try_apply_atlas_region():
+				if USE_PROCEDURAL_FALLBACK:
+					_setup_procedural_sprite()
 	if _sprite is Node2D:
 		_sprite_base_scale = (_sprite as Node2D).scale
 	_spawn_shadow()
+
+# Applique une région de characters_ai.png mappée par id, ou hash-pickée
+# parmi les 16 cellules disponibles si non mappée. Garde l'échelle d'origine
+# du Sprite2D dans NPC.tscn (256→48 px = scale 0.1875).
+func _try_apply_atlas_region() -> bool:
+	if not (_sprite is Sprite2D) or data == null or data.id == "":
+		return false
+	var spr: Sprite2D = _sprite as Sprite2D
+	var region: Rect2
+	if NAMED_NPC_REGIONS.has(data.id):
+		region = NAMED_NPC_REGIONS[data.id]
+	else:
+		# Hash-pick déterministe parmi les 16 cellules (4×4 de 256×256).
+		var h: int = abs(data.id.hash())
+		var col: int = (h % 4) * 256
+		var row: int = ((h / 4) % 4) * 256
+		region = Rect2(col, row, 256, 256)
+	spr.region_enabled = true
+	spr.region_rect = region
+	spr.hframes = 1
+	spr.vframes = 1
+	spr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	spr.scale = Vector2(0.1875, 0.1875)
+	return true
 
 # Génère et applique un sprite pixel-art via CharacterSpriteFactory. Le NPC
 # affiche par défaut sa cellule DOWN/idle (1ère colonne, 1ère ligne).
@@ -206,9 +306,9 @@ static func try_load_sprite(sprite: Sprite2D, npc_id: String, target_height: flo
 		sprite.scale = Vector2(s, s)
 	return true
 
-func _try_load_individual_sprite() -> void:
+func _try_load_individual_sprite() -> bool:
 	if data == null or data.id == "" or not (_sprite is Sprite2D):
-		return
+		return false
 	# Priorité : sprite-sheet de marche, sinon sprite idle simple.
 	var walk_path: String = "%s%s_walk.png" % [NPC_SPRITES_DIR, data.id]
 	var idle_path: String = "%s%s.png" % [NPC_SPRITES_DIR, data.id]
@@ -220,10 +320,10 @@ func _try_load_individual_sprite() -> void:
 	elif ResourceLoader.exists(idle_path):
 		path = idle_path
 	else:
-		return
+		return false
 	var tex: Texture2D = load(path) as Texture2D
 	if tex == null:
-		return
+		return false
 	var sprite: Sprite2D = _sprite as Sprite2D
 	sprite.texture = tex
 	sprite.region_enabled = false
@@ -243,6 +343,7 @@ func _try_load_individual_sprite() -> void:
 	if cell_h > 0.0:
 		var s: float = SPRITE_TARGET_HEIGHT / cell_h
 		sprite.scale = Vector2(s, s)
+	return true
 
 func _spawn_shadow() -> void:
 	# Ombre ovale plate sous le NPC pour l'ancrer au sol.

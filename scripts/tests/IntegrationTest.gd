@@ -1944,9 +1944,8 @@ func _test_npc_procedural_sprite() -> void:
 	_assert(sprite_node != null and sprite_node is Sprite2D, "NPC a un Sprite2D")
 	if sprite_node is Sprite2D:
 		var s: Sprite2D = sprite_node as Sprite2D
-		_assert(s.texture is ImageTexture, "Sprite2D.texture est une ImageTexture (procédurale)")
-		_assert(s.region_enabled, "region_enabled = true")
-		_assert(s.region_rect.size == Vector2(16, 24), "region_rect = 16×24 (cellule DOWN/idle)")
+		# SeuJoao a un seu_joao_walk.png — la cascade NPC priorise le PNG individuel.
+		_assert(s.texture != null, "Sprite2D.texture chargée (PNG individuel, atlas, ou procédurale)")
 		_assert(s.texture_filter == CanvasItem.TEXTURE_FILTER_NEAREST, "Filtrage NEAREST (pixel-perfect)")
 	npc.queue_free()
 	await get_tree().process_frame
