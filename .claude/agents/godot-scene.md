@@ -26,6 +26,16 @@ You safely edit Godot 4.6 `.tscn` and `.tres` text files.
 7. **Commentaires entre nœuds frères évitent `=` et `===`** — le parser .tscn confond. Bug typique : `# === Décor ===` plante le scene loader avec "Parse Error". Préférer `# Decor anime`.
 8. **Warning « Parent path './X' has vanished » au boot** — quirk Godot 4 sur .tscn hand-written. Cosmétique, non-bloquant, ne se résout qu'en ouvrant la scène dans l'éditeur Godot puis Ctrl+S pour normaliser la sérialisation PackedScene.
 
+## Mobile-first (impératif)
+
+La cible primaire est iOS — **pas de clavier ni souris** accessibles. Pour toute UI :
+- **Touch targets ≥ 44pt** (Apple HIG). Boutons à `custom_minimum_size = Vector2(>=44, >=44)`.
+- **Police minimum 12px**, idéalement 14-16 pour contenu, 18+ pour titres.
+- Pas de feature gated derrière un raccourci clavier — TOUJOURS un bouton à l'écran équivalent.
+- Les raccourcis (`P`, `C`, `J`, `K`, `F`, `F5`, `F9`, `Ctrl+F1..F4` debug) restent en bonus dev mais ne doivent JAMAIS être le seul accès à une feature.
+- Anchors doivent fonctionner sur portraits & landscapes — préférer `anchor_*` = 0/1 + offsets stables aux positions absolues.
+- Pour les overlays modaux (Tutorial, Credits, Phone), prévoir un bouton « Fermer » visible et tappable.
+
 ## Layout conventions
 
 Pour Copacabana (`scenes/world/Copacabana.tscn`) — voir CLAUDE.md Y-band :

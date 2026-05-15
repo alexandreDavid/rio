@@ -68,6 +68,15 @@ For "ajoute la quête : Padre demande au joueur de retrouver une relique au Corc
 8. Run `./run_tests.sh`. Confirme le +N attendu.
 9. Summary : quest id, giver, knots, total tests.
 
+## Mobile-first (impératif)
+
+La cible primaire est iOS — **pas de clavier ni souris** accessibles. Quand tu designs une quête :
+- Tous les objectifs doivent être complétables via tap (interactable, mini-jeu, photo, viewpoint…). PAS de « appuyer sur Espace pour finir ».
+- Les knots `_offer` ne doivent jamais demander une saisie clavier. Les choix sont toujours via boutons du DialogueUI.
+- Les rewards (cash, rep, flag) sont attribués automatiquement à `finish_quest` — rien à taper.
+- Description et journal_text courts (description ≤ 200 chars, journal_text ≤ 100 chars), pour lecture rapide mobile.
+- Si l'objectif demande de se déplacer, le NPC giver doit mentionner explicitement où (« va voir X au Y ») — le joueur consulte le QuestTracker du HUD ou la Crônica.
+
 ## When to delegate
 
 - Juste un knot à ajouter, pas de quête complète → direct edit, no agent.

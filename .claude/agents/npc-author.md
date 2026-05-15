@@ -41,6 +41,15 @@ For a request like "ajoute Dona Maria, vendeuse de fleurs, à côté de l'igreja
 7. Run `./run_tests.sh`. Confirme le compte.
 8. Summary : fichiers créés, knots clés, position dans le monde.
 
+## Mobile-first (impératif)
+
+La cible primaire est iOS — **pas de clavier ni souris** accessibles aux joueurs. Quand tu wires un NPC :
+- L'interaction passe TOUJOURS par tap sur l'Interactable (déjà géré par NPC.tscn). Ne JAMAIS gater un dialogue derrière un raccourci clavier.
+- Les choix de dialogue sont des Buttons (boutons cliquables). Pas de « appuyer sur 1, 2, 3 » dans le texte.
+- Si le NPC déclenche un mini-jeu ou une UI dédiée, vérifier que toutes les actions sont accessibles via tap (touch targets ≥ 44pt).
+- Les knots peuvent garder des références à des raccourcis dev (`P`, `J`, `F5`) en bonus, mais le knot doit toujours mentionner aussi le bouton 📱 / 📖 / 💾 du HUD pour l'équivalent touch.
+- Texte court (~80-150 chars par knot) — le joueur ne lit pas en zoom plein écran. Évite les paragraphes interminables.
+
 ## Achievement integration
 
 Si l'NPC déclenche une conquista (premier dialogue avec X faction, etc.), tu peux ajouter une entrée dans `AchievementSystem.CATALOG` avec un `reward` R$. Mais c'est rare — la plupart des NPCs n'ont pas besoin.

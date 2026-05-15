@@ -52,6 +52,17 @@ Chaque mini-jeu a 3 files :
 
 Plus une **prop scene** dans `scenes/props/<Name>Stand.tscn` ou `<Name>Court.tscn` qui utilise le Launcher script et est droppée dans le district.
 
+## Mobile-first (impératif)
+
+La cible primaire est iOS — **pas de clavier ni souris** accessibles. Pour tout mini-jeu :
+- Toutes les interactions gameplay doivent être accessibles via tap/touch. **PAS de mini-jeu qui exige clavier-only**.
+- Si le jeu utilise les `move_*`/`jump` du joueur, MobileControls.tscn fournit déjà un joystick virtuel + bouton tap — réutiliser.
+- Pour les rythmes (DJ, capoeira, samba) : préférer des prompts touch (4 zones tap distinctes à l'écran) plutôt que A/S/D/F au clavier — touch reste primary, clavier en bonus dev.
+- Boutons et zones de tap ≥ 44pt.
+- Pas de saisie de texte (le clavier virtuel iOS est laid et lent).
+- Mode portrait friendly : si le jeu force landscape, le préciser dans le knot offer (« incline ton téléphone »).
+- Timer/score lisibles : font 18+ pour les labels critiques.
+
 ## Multi-quest hooks (pattern Fishing)
 
 Si une même mécanique sert plusieurs quêtes (cf. Pesca Mateus + Pesca Bruno), le Launcher tient un dict :
