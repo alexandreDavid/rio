@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_pickup_packet"]
+script = ExtResource("2_obj")
+id = "pickup_packet"
+description = "Récupérer le paquet auprès d'Olga"
+optional = false
+
+[sub_resource type="Resource" id="obj_deliver_packet"]
+script = ExtResource("2_obj")
+id = "deliver_packet"
+description = "Rapporter le paquet à Don Vincenzo"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "baia_smuggle_intro"
+display_name = "Passage discret"
+description = "Don Vincenzo, parrain de la Mafia da Baía, te teste : récupérer un paquet auprès de sa main droite Olga et lui rapporter sans rien dire à personne. Si tu réussis, la suite vient toute seule."
+journal_text = "Olga (Café da Praça, Niterói) → Vincenzo (même café). Discret."
+giver_npc_id = "don_vincenzo"
+ink_knot = "vincenzo_smuggle_offer"
+objectives = Array[Resource]([SubResource("obj_pickup_packet"), SubResource("obj_deliver_packet")])
+money_reward = 400
+reputation_rewards = {2: 4, 1: -2}
+required_reputation = {}
+required_act = 1

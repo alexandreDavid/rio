@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_silence"]
+script = ExtResource("2_obj")
+id = "silence_journalist"
+description = "Convaincre Roberto Maia d'abandonner son enquête (Plaza de Niterói)"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "baia_silence_press"
+display_name = "Faire taire la plume"
+description = "Roberto Maia, journaliste indépendant, enquête sur les passages clandestins via le ferry. Vincenzo veut qu'il ferme son carnet — par tous les moyens. Pay-off, intimidation, ou bargain : à toi de choisir comment éteindre la mèche."
+journal_text = "Roberto au Plaza, Niterói. Trois manières."
+giver_npc_id = "don_vincenzo"
+ink_knot = "vincenzo_silence_offer"
+objectives = Array[Resource]([SubResource("obj_silence")])
+money_reward = 600
+reputation_rewards = {2: 5, 0: -3}
+required_reputation = {}
+required_act = 1
+prerequisite_quest_ids = Array[String](["baia_smuggle_intro"])

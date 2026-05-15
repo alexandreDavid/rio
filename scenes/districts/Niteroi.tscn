@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=14 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/props/TaxiStand.tscn" id="1_taxi"]
 [ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="2_wander"]
@@ -8,6 +8,9 @@
 [ext_resource type="PackedScene" path="res://scenes/npcs/Yara.tscn" id="7_yara"]
 [ext_resource type="PackedScene" path="res://scenes/props/FishingSpot.tscn" id="8_fish"]
 [ext_resource type="Script" path="res://scripts/world/AmbientDrifter.gd" id="9_script"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/DonVincenzo.tscn" id="10_vincenzo"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/OlgaMendez.tscn" id="11_olga"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/RobertoMaia.tscn" id="12_roberto"]
 
 [sub_resource type="RectangleShape2D" id="WallH"]
 size = Vector2(1600, 16)
@@ -601,6 +604,18 @@ position = Vector2(-90, 85)
 # Spot de pêche au bout du ponton (SIDE bruno_pesca_baia)
 [node name="FishingSpot" parent="." instance=ExtResource("8_fish")]
 position = Vector2(470, -40)
+
+# Don Vincenzo — parrain au Café da Praça (chaîne SIDE Mafia da Baía)
+[node name="DonVincenzo" parent="." instance=ExtResource("10_vincenzo")]
+position = Vector2(-720, 110)
+
+# Olga Mendez — main droite, à deux tables du Don
+[node name="OlgaMendez" parent="." instance=ExtResource("11_olga")]
+position = Vector2(-660, 145)
+
+# Roberto Maia — journaliste, sur un banc de la plaza
+[node name="RobertoMaia" parent="." instance=ExtResource("12_roberto")]
+position = Vector2(-320, 90)
 
 # Quelques visiteurs ambient
 [node name="VisitorA" parent="." instance=ExtResource("2_wander")]
