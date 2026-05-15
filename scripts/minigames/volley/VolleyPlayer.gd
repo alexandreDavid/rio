@@ -26,11 +26,18 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 	global_position.x = clamp(global_position.x, court_min_x, court_max_x)
 
-	if Input.is_action_just_pressed("jump") and ball and _hit_cooldown <= 0.0:
-		var dist: float = ball.global_position.distance_to(global_position)
-		if dist < hit_range:
-			# Cloche haute : ratio y/x = 2 pour passer au-dessus du filet
-			var x_component: float = -side_sign * 0.7
-			var dir: Vector2 = Vector2(x_component, -1.5).normalized()
-			ball.apply_hit(dir, hit_power, 0)
-			_hit_cooldown = hit_cooldown_seconds
+	if Input.is_action_just_pressed("jump"):
+		try_hit()
+
+# Public — appelée par le bouton tactile « Frapper » de BeachVolley.tscn en plus
+# du clavier (jump). Logique partagée.
+func try_hit() -> void:
+	if ball == null or _hit_cooldown > 0.0:
+		return
+	var dist: float = ball.global_position.distance_to(global_position)
+	if dist < hit_range:
+		# Cloche haute : ratio y/x = 2 pour passer au-dessus du filet
+		var x_component: float = -side_sign * 0.7
+		var dir: Vector2 = Vector2(x_component, -1.5).normalized()
+		ball.apply_hit(dir, hit_power, 0)
+		_hit_cooldown = hit_cooldown_seconds

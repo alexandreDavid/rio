@@ -33,9 +33,17 @@ func _ready() -> void:
 	_serve_button = get_node_or_null("UI/ServeButton") as Button
 	if _serve_button:
 		_serve_button.pressed.connect(_launch_serve)
+	var hit_btn: Button = get_node_or_null("UI/HitButton") as Button
+	if hit_btn:
+		hit_btn.pressed.connect(_on_hit_pressed)
 	var quit_btn: CanvasLayer = get_node_or_null("MinigameQuitButton")
 	if quit_btn and quit_btn.has_signal("quit_pressed"):
 		quit_btn.quit_pressed.connect(_end_match)
+
+func _on_hit_pressed() -> void:
+	var player: VolleyPlayer = get_node_or_null("Player") as VolleyPlayer
+	if player:
+		player.try_hit()
 
 	# Groupe ground forcé (syntaxe tscn pas fiable)
 	var ground: Node = get_node_or_null("Ground")

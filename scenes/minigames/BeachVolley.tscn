@@ -179,4 +179,20 @@ theme_override_styles/pressed = SubResource("ServeStyle")
 theme_override_font_sizes/font_size = 24
 theme_override_colors/font_color = Color(0.98, 0.98, 0.95, 1)
 
+[node name="HitButton" type="Button" parent="UI"]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -200.0
+offset_top = -160.0
+offset_right = -40.0
+offset_bottom = -40.0
+text = "🏐 FRAPPER"
+theme_override_styles/normal = SubResource("ServeStyle")
+theme_override_styles/hover = SubResource("ServeStyle")
+theme_override_styles/pressed = SubResource("ServeStyle")
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(0.98, 0.98, 0.95, 1)
+
 [node name="MinigameQuitButton" parent="." instance=ExtResource("5_quit")]
