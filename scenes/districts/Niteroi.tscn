@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3]
+[gd_scene load_steps=17 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/props/TaxiStand.tscn" id="1_taxi"]
 [ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="2_wander"]
@@ -11,6 +11,9 @@
 [ext_resource type="PackedScene" path="res://scenes/npcs/DonVincenzo.tscn" id="10_vincenzo"]
 [ext_resource type="PackedScene" path="res://scenes/npcs/OlgaMendez.tscn" id="11_olga"]
 [ext_resource type="PackedScene" path="res://scenes/npcs/RobertoMaia.tscn" id="12_roberto"]
+[ext_resource type="PackedScene" path="res://scenes/props/BuildingDoor.tscn" id="13_door"]
+[ext_resource type="PackedScene" path="res://scenes/interiors/MACInterior.tscn" id="14_mac_int"]
+[ext_resource type="Script" path="res://scripts/districts/NiteroiDistrict.gd" id="15_district"]
 
 [sub_resource type="RectangleShape2D" id="WallH"]
 size = Vector2(1600, 16)
@@ -19,7 +22,7 @@ size = Vector2(1600, 16)
 size = Vector2(16, 700)
 
 [node name="NiteroiDistrict" type="Node2D"]
-script = ExtResource("9_script")
+script = ExtResource("15_district")
 wrap_left = -820.0
 wrap_right = 820.0
 drift_speed = 8.0
@@ -589,9 +592,26 @@ flavor_speaker = "Sobrinho"
 flavor_text = "La baie de Guanabara. Quatre cents kilomètres carrés d'eau salée prise entre Rio et Niterói. Les ferries traversent toutes les vingt minutes. *le vent vient du sud-est, frais* Quand tu vis à Rio, tu oublies que la ville est entourée d'eau. Ici tu t'en souviens."
 money_reward = 50
 
-# NPC Helena — curatrice d'art au MAC (reçoit le colis de Bruno)
-[node name="Helena" parent="." instance=ExtResource("5_helena")]
-position = Vector2(60, 75)
+# Porte d'entrée du MAC (vers l'intérieur de la galerie)
+[node name="DoorMAC" parent="." instance=ExtResource("13_door")]
+position = Vector2(0, -25)
+prompt_text = "Entrer dans le MAC"
+
+[node name="DoorMACLabel" type="Label" parent="."]
+offset_left = -50.0
+offset_top = -15.0
+offset_right = 50.0
+offset_bottom = -3.0
+text = "entrer"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 8
+theme_override_colors/font_color = Color(0.98, 0.95, 0.85, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 2
+
+# Intérieur du MAC (instance déportée, Helena est dedans, accessible via DoorMAC)
+[node name="MACInterior" parent="." instance=ExtResource("14_mac_int")]
+position = Vector2(2000, 0)
 
 # NPC Bruno — vieux capitaine ferry sur le dock (donneur SIDE bruno_carga)
 [node name="Bruno" parent="." instance=ExtResource("6_bruno")]
