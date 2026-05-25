@@ -107,12 +107,8 @@ func _compute_hint() -> String:
 		# Retour à la favela après le premier acompte → revoir la famille.
 		if CampaignManager.has_flag("should_visit_home") and not CampaignManager.has_flag("home_visit_done"):
 			return "🎯 Monte voir tio Zé et la famille"
-		# Acte 1 : Tito habite ici. Si la rencontre est dispo/active, pointe vers lui.
-		if act == 1 and not QuestManager.is_completed("act1_meet_tito"):
-			if QuestManager.is_active("act1_meet_tito"):
-				return "🎯 Tito attend son service — fais-lui confiance"
-			if QuestManager.is_available("act1_meet_tito"):
-				return "🎯 Trouve Tito — il joue plus haut dans le morro"
+		# La rencontre Tito legacy a disparu (act1_meet_tito n'existe plus) —
+		# on pousse simplement vers la sortie sud / Copa.
 		return "🎯 ↓ Descends l'escalier vers Copacabana"
 
 	# --- Acte 1 sur Copacabana ---
@@ -132,23 +128,32 @@ func _compute_hint() -> String:
 			if carrying:
 				return "🎯 Sers les clients du calçadão (R$ %d / %d)" % [money, still_to_pay]
 			return "🎯 Continue de gagner R$ — il manque %d pour l'acompte" % (still_to_pay - money)
-		# Acompte payé : pousser vers les deux mentors (pivots du passage à l'acte 2).
-		var ramos_done: bool = QuestManager.is_completed("act1_meet_ramos")
-		var tito_done: bool = QuestManager.is_completed("act1_meet_tito")
-		if not ramos_done and not tito_done:
-			return "🎯 Acte 1 continue — rencontre Ramos (Bar do Policial) et Tito (↑ Morro)"
-		if not ramos_done:
-			return "🎯 Va voir Capitão Ramos — Bar do Policial (côté Atlântica)"
-		if not tito_done:
-			return "🎯 Monte au Morro rencontrer Tito"
+		# Acompte payé : l'acte 2 devrait s'enclencher dès la prochaine frame
+		# (CampaignManager._check_act_advance). Si on est encore en acte 1,
+		# c'est juste le tick avant la bascule — on pousse déjà vers le choix
+		# du patron pour ne pas laisser le joueur sans direction.
+		return "🎯 Acompte payé — Choisis ton patron : Tito (Morro) / Ramos (Bar do Policial) / Magalhães (Barra) / Padre (chapelle)"
 
-	# --- Acte 2 (chaîne linéaire ramos → padre → miguel) ---
+	# --- Acte 2 (choix du patron + chaîne de voie) ---
 	if act == 2:
 		# Juste après bascule en acte 2 : retour favela pour digérer le moment.
 		if CampaignManager.has_flag("should_visit_home") and not CampaignManager.has_flag("home_visit_done"):
 			if district == "favela_morro":
 				return "🎯 Monte voir tio Zé et la famille"
 			return "🎯 Retourne voir ta famille à la favela"
+		# Acte 2 dirigé : la nuit doit passer dans la maison avant tout pacte.
+		if not CampaignManager.has_flag("act1_closed"):
+			if district == "favela_morro":
+				return "🎯 Rentre chez tio Zé — la nuit doit passer"
+			return "🎯 Remonte à la favela — la nuit doit passer chez tio Zé"
+		# Nuit passée, pas encore de voie, Tito n'est pas encore venu : on
+		# pousse le joueur à ressortir pour que Tito l'aborde, ou à descendre
+		# voir les autres patrons (Ramos, Dom Nilton).
+		if not CampaignManager.has_flag("tito_approached") \
+				and not CampaignManager.has_flag("ratted_on_tito") \
+				and _no_voie_chosen():
+			if district == "favela_morro":
+				return "🎯 Sors de la maison — Tito veut te parler"
 		# La chaîne MAIN guide ; le seuil de dette est complémentaire.
 		var act2_chain_hint: String = _next_main_hint_act2()
 		if act2_chain_hint != "":
@@ -157,120 +162,80 @@ func _compute_hint() -> String:
 			var still: int = CampaignManager.ACT2_THRESHOLD - debt_paid
 			return "🎯 Continue de payer la dette (%s R$ avant l'acte 3)" % still
 
-	# --- Acte 3 : missions intermédiaires par voie (priorité sur "choisis ta voie") ---
-	if act == 3:
-		var inferred_path: int = _infer_act3_path()
-		if inferred_path != CampaignManager.Endgame.NONE:
-			var act3_hint: String = _act3_path_hint(district, inferred_path)
-			if act3_hint != "":
-				return act3_hint
-		else:
-			return "🎯 Choisis ta voie : Prefeito / Polícia / Tráfico"
+	# --- Acte 3 : nudge tant qu'aucune voie n'est scellée ---
+	# Le hinting des missions intermédiaires de l'ancien spine (act3_policia_*,
+	# act3_trafico_*, act3_prefeito_*) a été retiré avec la refonte en voies
+	# A/B/C/D (missions données par les spots, hint pris en charge par les
+	# variantes elles-mêmes via MAIN_NEXT_HINT côté HUD).
+	if act == 3 and CampaignManager.chosen_endgame == CampaignManager.Endgame.NONE:
+		return "🎯 Choisis ta voie : Prefeito / Polícia / Tráfico / Consortium"
 
 	# --- Acte 4 : reinado ---
 	if act == 4:
 		return "🎯 Mène ton règne — défilé du Carnaval au Sambódromo"
 
-	# Fallback
+	# Fallback : si aucun hint MAIN/acte ne s'applique, on surface le prochain
+	# pas d'une quête SIDE active (la 1re trouvée dans QUEST_NEXT_HINT). Aide
+	# le joueur à savoir vers quel quartier aller quand plusieurs SIDE tournent.
+	var side_hint: String = _active_quest_hint()
+	if side_hint != "":
+		return side_hint
 	return ""
 
-# Hint pour la chaîne linéaire d'acte 2 : ramos_operacao → padre_orfanato → miguel_favela.
-# Renvoie la prochaine étape selon la quête active (priorité) puis disponible.
+# Registre des destinations par étape de quête. Clé = "quest_id/obj_id".
+# Couvre les SIDE inter-districts ajoutées récemment + quelques classiques.
+# Les MAIN ont leurs propres toasts via HUD.MAIN_NEXT_HINT à la complétion —
+# on évite de les dupliquer ici.
+const QUEST_NEXT_HINT: Dictionary = {
+	# SIDE acte 1/2 inter-districts récentes
+	"feijoada_bondinho/deliver_summit": "🎯 → Pão de Açúcar : livrer la feijoada (bondinho de Botafogo)",
+	"ipanema_yoga/fetch_mat": "🎯 → Zona Sul (Ipanema/Leblon) : récup' du tapis chez le resto",
+	"cristo_photo/shoot_cristo": "🎯 → Corcovado : déclencher la photo au mirante",
+	"niteroi_envelope/deliver_envelope": "🎯 → Niterói : remettre l'enveloppe face au MAC",
+	"maracana_jersey/find_jersey": "🎯 → Botafogo (Aterro) : maillot 71 chez le revendeur",
+	"maracana_jersey/return_jersey": "🎯 → Maracanã : rendre le maillot à Seu Wanderley",
+	"cagarras_chain/recover_chain": "🎯 → Cagarras : plonger au récif blanc (côté est)",
+	"cagarras_chain/return_chain": "🎯 → Cagarras (Posto 6) : rendre la chaîne à Seu Bento",
+	"sambo_plumes/fetch_plumes": "🎯 → Niterói : récupérer les plumes chez Tomé (face MAC)",
+	"sambo_plumes/deliver_plumes": "🎯 → Sambódromo : ramener les plumes à Dona Lurdes",
+	"barra_brief/deliver_brief": "🎯 → Zona Sul (Leblon) : faire signer Bertoluci",
+	"barra_brief/confirm_back": "🎯 → Barra (Riserva Uno) : retour chez l'avocate",
+	# SIDE existantes inter-districts
+	"beto_lost/find_beto": "🎯 → Copacabana (calçadão) : coincer Beto chez les Ray-Ban",
+	"beto_lost/tell_vizinha": "🎯 → Favela : rapporter à Seu Jorge",
+	"sofia_bondinho_tour/guide_to_summit": "🎯 → Pão de Açúcar : guide Sofia au sommet (bondinho)",
+	"ronaldo_dj_paoacucar/play_set": "🎯 → Pão de Açúcar : jouer le set DJ",
+	"ze_invitation/tell_ronaldo": "🎯 → Copacabana (av. Atlântica) : prévenir Ronaldo",
+	"consortium_airport_pickup/meet_at_airport": "🎯 → Santos Dumont : récupérer Don Salvatore",
+	"consortium_airport_pickup/deliver_to_consortium": "🎯 → Copacabana : ramener à Dom Nilton",
+	"escort_contessa/escort_to_bar": "🎯 → Copacabana : escorter la Contessa jusqu'au bar",
+	"escort_contessa/escort_back_to_palace": "🎯 → Copacabana Palace : raccompagner la Contessa",
+	"bruno_carga/deliver_to_helena": "🎯 → Niterói : livrer la carga à Helena (MAC)",
+}
+
+func _active_quest_hint() -> String:
+	for qid in QuestManager.get_active_ids():
+		var state: Dictionary = QuestManager.get_objectives_state(qid)
+		for obj_id in state:
+			if state[obj_id]:
+				continue  # objectif déjà clos
+			var key: String = "%s/%s" % [qid, obj_id]
+			if QUEST_NEXT_HINT.has(key):
+				return String(QUEST_NEXT_HINT[key])
+	return ""
+
+# Vrai si aucune des 4 voies n'a encore été scellée.
+func _no_voie_chosen() -> bool:
+	for f in CampaignManager.VOIE_FLAGS:
+		if CampaignManager.has_flag(f):
+			return false
+	return true
+
+# Hint d'acte 2 une fois la nuit passée : pousse vers le choix d'un patron tant
+# qu'aucune voie n'est scellée. Une fois la voie scellée, les missions de voie
+# pilotent leur propre hint via HUD.MAIN_NEXT_HINT.
 func _next_main_hint_act2() -> String:
-	# 1. Quête active : pousse vers son giver pour la conclure.
-	for qid_active in ["act2_ramos_operacao", "act2_padre_orfanato", "act2_miguel_favela"]:
-		if QuestManager.is_active(qid_active):
-			return _hint_for_active_act2(qid_active)
-	# 2. Sinon, prochaine disponible.
-	for qid_avail in ["act2_intro", "act2_ramos_operacao", "act2_padre_orfanato", "act2_miguel_favela"]:
-		if QuestManager.is_available(qid_avail):
-			return _hint_for_offer_act2(qid_avail)
-	return ""
+	if not _no_voie_chosen():
+		return ""  # voie engagée : laisser les hints de voie prendre la main
+	return "🎯 Choisis ton patron : Tito (Morro) / Ramos (Bar do Policial) / Magalhães (Barra) / Padre (chapelle)"
 
-func _hint_for_active_act2(qid: String) -> String:
-	match qid:
-		"act2_ramos_operacao":
-			return "🎯 Operação Carnaval : tranche pour Ramos (Bar do Policial)"
-		"act2_padre_orfanato":
-			return "🎯 Pétition Orfanato : trois signatures à recueillir"
-		"act2_miguel_favela":
-			return "🎯 Convoi de Miguel : descends le sac côté Forte"
-	return ""
-
-func _hint_for_offer_act2(qid: String) -> String:
-	match qid:
-		"act2_intro":
-			return "🎯 Va voir le Concierge au Copacabana Palace"
-		"act2_ramos_operacao":
-			return "🎯 Va voir Ramos — Bar do Policial / poste de police"
-		"act2_padre_orfanato":
-			return "🎯 Va voir le Padre — chapelle Nossa Senhora"
-		"act2_miguel_favela":
-			return "🎯 Monte au Morro voir Miguel"
-	return ""
-
-# Détecte la voie engagée à partir de l'état des quêtes intermédiaires/finales.
-# `chosen_endgame` n'est posé qu'à la complétion du finale — trop tard pour piloter
-# la bannière pendant la mission intermédiaire.
-func _infer_act3_path() -> int:
-	if CampaignManager.chosen_endgame != CampaignManager.Endgame.NONE:
-		return CampaignManager.chosen_endgame
-	for qid in ["act3_policia_intel", "act3_policia_madrugada"]:
-		if QuestManager.is_active(qid) or QuestManager.is_completed(qid):
-			return CampaignManager.Endgame.POLICIA
-	for qid in ["act3_trafico_pickup", "act3_trafico_corrida"]:
-		if QuestManager.is_active(qid) or QuestManager.is_completed(qid):
-			return CampaignManager.Endgame.TRAFICO
-	for qid in ["act3_prefeito_endorsements", "act3_prefeito_eleicao"]:
-		if QuestManager.is_active(qid) or QuestManager.is_completed(qid):
-			return CampaignManager.Endgame.PREFEITO
-	return CampaignManager.Endgame.NONE
-
-# Hint contextuel pour la voie engagée en acte 3 : pointe vers le mentor au début,
-# vers les sources d'intel/pickup/endorsements pendant la mission intermédiaire,
-# vers le mentor pour le rapport final, puis vers le finale.
-func _act3_path_hint(district: String, path: int) -> String:
-	if path == CampaignManager.Endgame.POLICIA:
-		var iquest: String = "act3_policia_intel"
-		if QuestManager.is_completed(iquest):
-			return "🎯 Va voir Ramos — l'Operação Madrugada t'attend"
-		if QuestManager.is_active(iquest):
-			var iobjs: Dictionary = QuestManager.get_objectives_state(iquest)
-			var has_v: bool = iobjs.get("intel_vizinha", false)
-			var has_z: bool = iobjs.get("intel_seu_joao", false)
-			if has_v and has_z:
-				return "🎯 Rapporte le dossier à Ramos (poste de police)"
-			if district == "favela_morro":
-				if not has_v:
-					return "🎯 Soutire-lui une info — la voisine du Morro"
-				return "🎯 Recoupe avec ce que sait tio Zé"
-			return "🎯 Monte au Morro — voisine + tio Zé pour Ramos"
-		return "🎯 Va voir Ramos — il a un dossier à monter"
-	if path == CampaignManager.Endgame.TRAFICO:
-		var pquest: String = "act3_trafico_pickup"
-		if QuestManager.is_completed(pquest):
-			return "🎯 Retrouve Miguel — la corrida se prépare"
-		if QuestManager.is_active(pquest):
-			var pobjs: Dictionary = QuestManager.get_objectives_state(pquest)
-			if not pobjs.get("pickup_botafogo", false):
-				return "🎯 → Bondinho de Botafogo : récupère le sac"
-			return "🎯 Rapporte le sac à Miguel (Morro)"
-		return "🎯 Va voir Miguel — il a un test pour toi"
-	if path == CampaignManager.Endgame.PREFEITO:
-		var equest: String = "act3_prefeito_endorsements"
-		if QuestManager.is_completed(equest):
-			return "🎯 Retourne au Padre — la coalition tient"
-		if QuestManager.is_active(equest):
-			var eobjs: Dictionary = QuestManager.get_objectives_state(equest)
-			var has_c: bool = eobjs.get("endorse_carlos", false)
-			var has_p: bool = eobjs.get("endorse_padeiro", false)
-			var has_pa: bool = eobjs.get("endorse_padre", false)
-			if has_c and has_p and not has_pa:
-				return "🎯 Reviens voir le Padre — coalition à sceller"
-			if not has_c:
-				return "🎯 Convaincs Carlos (café ISSIMO) de signer"
-			if not has_p:
-				return "🎯 Convaincs le padeiro (Padaria São Sebastião)"
-			return "🎯 Retourne voir le Padre"
-		return "🎯 Va voir le Padre — coalition à monter"
-	return ""

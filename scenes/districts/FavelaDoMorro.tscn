@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene format=3 uid="uid://doyea8e0mrklj"]
 
 [ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="2_wander"]
 [ext_resource type="PackedScene" path="res://scenes/props/DistrictExit.tscn" id="3_exit"]
@@ -6,7 +6,10 @@
 [ext_resource type="PackedScene" path="res://scenes/props/CornCart.tscn" id="6_cart"]
 [ext_resource type="PackedScene" path="res://scenes/props/ReactiveDialogueSpot.tscn" id="7_reactive"]
 [ext_resource type="PackedScene" path="res://scenes/npcs/Tito.tscn" id="8_tito"]
-[ext_resource type="Script" path="res://scripts/world/FavelaCollisionGenerator.gd" id="9_collisions"]
+[ext_resource type="Script" uid="uid://8dwpva2yro7f" path="res://scripts/world/FavelaCollisionGenerator.gd" id="9_collisions"]
+[ext_resource type="Script" uid="uid://dewo5u8bcqpy5" path="res://scripts/world/MaePrologueTrigger.gd" id="10_maetrig"]
+[ext_resource type="Script" uid="uid://cqvj8bma8k7da" path="res://scripts/world/PedrinhoFollower.gd" id="11_pedfollow"]
+[ext_resource type="Script" path="res://scripts/world/TitoApprocheTrigger.gd" id="12_titotrig"]
 
 [sub_resource type="RectangleShape2D" id="WallH"]
 size = Vector2(820, 16)
@@ -14,1081 +17,1094 @@ size = Vector2(820, 16)
 [sub_resource type="RectangleShape2D" id="WallV"]
 size = Vector2(16, 1620)
 
+[sub_resource type="RectangleShape2D" id="MaeTrigShape"]
+size = Vector2(240, 120)
+
+[sub_resource type="RectangleShape2D" id="TitoTrigShape"]
+size = Vector2(220, 110)
+
 [sub_resource type="RectangleShape2D" id="ExitWideShape"]
 size = Vector2(800, 64)
 
-[node name="FavelaDoMorroDistrict" type="Node2D"]
-wrap_left = -400.0
-wrap_right = 400.0
-wrap_top = -1280.0
-wrap_bottom = -1000.0
-drift_speed = 6.0
+[node name="FavelaDoMorroDistrict" type="Node2D" unique_id=1785760155]
 
-# Vautours qui tournent au-dessus du Morro (drift_east + drift_west pour deux
-# cercles opposés au-dessus de la favela).
-[node name="VautourA" type="ColorRect" parent="." groups=["drift_west"]]
+[node name="VautourA" type="ColorRect" parent="." unique_id=535277899 groups=["drift_west"]]
 offset_left = -250.0
 offset_top = -1190.0
 offset_right = -236.0
 offset_bottom = -1186.0
 color = Color(0.18, 0.14, 0.16, 0.85)
 
-[node name="VautourB" type="ColorRect" parent="." groups=["drift_east"]]
+[node name="VautourB" type="ColorRect" parent="." unique_id=593401998 groups=["drift_east"]]
 offset_left = 100.0
 offset_top = -1220.0
 offset_right = 114.0
 offset_bottom = -1216.0
 color = Color(0.18, 0.14, 0.16, 0.85)
 
-[node name="VautourC" type="ColorRect" parent="." groups=["drift_west"]]
+[node name="VautourC" type="ColorRect" parent="." unique_id=894391432 groups=["drift_west"]]
 offset_left = 280.0
 offset_top = -1170.0
 offset_right = 294.0
 offset_bottom = -1166.0
 color = Color(0.18, 0.14, 0.16, 0.85)
 
-# Fumée de cuisine au sommet du Morro (drift_south très lent, monte avec un
-# wrap après être passée par le haut → effet de vapeur persistante)
-[node name="FumeeA" type="ColorRect" parent="." groups=["drift_west"]]
+[node name="FumeeA" type="ColorRect" parent="." unique_id=1509342507 groups=["drift_west"]]
 offset_left = -180.0
 offset_top = -1240.0
 offset_right = -130.0
 offset_bottom = -1232.0
 color = Color(0.85, 0.85, 0.85, 0.5)
 
-[node name="FumeeB" type="ColorRect" parent="." groups=["drift_west"]]
+[node name="FumeeB" type="ColorRect" parent="." unique_id=161525653 groups=["drift_west"]]
 offset_left = 60.0
 offset_top = -1260.0
 offset_right = 110.0
 offset_bottom = -1252.0
 color = Color(0.85, 0.85, 0.85, 0.4)
 
-[node name="Sky" type="ColorRect" parent="."]
+[node name="Sky" type="ColorRect" parent="." unique_id=2044537898]
 offset_left = -400.0
 offset_top = -1300.0
 offset_right = 400.0
 offset_bottom = -1100.0
 color = Color(0.92, 0.62, 0.35, 1)
 
-[node name="SkyHorizon" type="ColorRect" parent="."]
+[node name="SkyHorizon" type="ColorRect" parent="." unique_id=724219180]
 offset_left = -400.0
 offset_top = -1130.0
 offset_right = 400.0
 offset_bottom = -1100.0
 color = Color(0.95, 0.78, 0.42, 1)
 
-[node name="DistantCorcovadoMorro" type="ColorRect" parent="."]
+[node name="DistantCorcovadoMorro" type="ColorRect" parent="." unique_id=513170360]
 offset_left = -360.0
 offset_top = -1240.0
 offset_right = -120.0
 offset_bottom = -1140.0
 color = Color(0.32, 0.28, 0.32, 1)
 
-[node name="DistantCristoSilhouette" type="ColorRect" parent="."]
+[node name="DistantCristoSilhouette" type="ColorRect" parent="." unique_id=1188334870]
 offset_left = -244.0
 offset_top = -1270.0
 offset_right = -236.0
 offset_bottom = -1240.0
 color = Color(0.28, 0.22, 0.26, 0.9)
 
-[node name="DistantCristoCross" type="ColorRect" parent="."]
+[node name="DistantCristoCross" type="ColorRect" parent="." unique_id=525900483]
 offset_left = -254.0
 offset_top = -1258.0
 offset_right = -226.0
 offset_bottom = -1252.0
 color = Color(0.28, 0.22, 0.26, 0.9)
 
-[node name="DistantPaoAcucarMorro" type="ColorRect" parent="."]
+[node name="DistantPaoAcucarMorro" type="ColorRect" parent="." unique_id=657035978]
 offset_left = 180.0
 offset_top = -1220.0
 offset_right = 360.0
 offset_bottom = -1100.0
 color = Color(0.32, 0.28, 0.34, 1)
 
-[node name="DistantPaoAcucarTop" type="ColorRect" parent="."]
+[node name="DistantPaoAcucarTop" type="ColorRect" parent="." unique_id=1089782519]
 offset_left = 220.0
 offset_top = -1240.0
 offset_right = 320.0
 offset_bottom = -1220.0
 color = Color(0.28, 0.24, 0.3, 1)
 
-[node name="MorroTopGround" type="ColorRect" parent="."]
+[node name="MorroTopGround" type="ColorRect" parent="." unique_id=2120338450]
 offset_left = -400.0
 offset_top = -1100.0
 offset_right = 400.0
 offset_bottom = -1000.0
 color = Color(0.42, 0.32, 0.22, 1)
 
-[node name="CapelaWall" type="ColorRect" parent="."]
+[node name="CapelaWall" type="ColorRect" parent="." unique_id=450429474]
 offset_left = -50.0
 offset_top = -1080.0
 offset_right = 50.0
 offset_bottom = -1010.0
 color = Color(0.95, 0.92, 0.85, 1)
 
-[node name="CapelaRoof" type="ColorRect" parent="."]
+[node name="CapelaRoof" type="ColorRect" parent="." unique_id=534723597]
 offset_left = -56.0
 offset_top = -1098.0
 offset_right = 56.0
 offset_bottom = -1080.0
 color = Color(0.62, 0.32, 0.22, 1)
 
-[node name="CapelaCross" type="ColorRect" parent="."]
+[node name="CapelaCross" type="ColorRect" parent="." unique_id=1369062137]
 offset_left = -3.0
 offset_top = -1118.0
 offset_right = 3.0
 offset_bottom = -1098.0
 color = Color(0.55, 0.45, 0.3, 1)
 
-[node name="CapelaCrossH" type="ColorRect" parent="."]
+[node name="CapelaCrossH" type="ColorRect" parent="." unique_id=693132062]
 offset_left = -10.0
 offset_top = -1112.0
 offset_right = 10.0
 offset_bottom = -1108.0
 color = Color(0.55, 0.45, 0.3, 1)
 
-[node name="CapelaDoor" type="ColorRect" parent="."]
+[node name="CapelaDoor" type="ColorRect" parent="." unique_id=494889038]
 offset_left = -10.0
 offset_top = -1042.0
 offset_right = 10.0
 offset_bottom = -1010.0
 color = Color(0.32, 0.18, 0.12, 1)
 
-[node name="CapelaLabel" type="Label" parent="."]
+[node name="CapelaLabel" type="Label" parent="." unique_id=205478489]
 offset_left = -90.0
 offset_top = -1140.0
 offset_right = 90.0
 offset_bottom = -1122.0
-text = "Capela do Morro"
-horizontal_alignment = 1
-theme_override_font_sizes/font_size = 11
 theme_override_colors/font_color = Color(0.95, 0.92, 0.78, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
 theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 11
+text = "Capela do Morro"
+horizontal_alignment = 1
 
-[node name="MorroAntenna" type="ColorRect" parent="."]
+[node name="MorroAntenna" type="ColorRect" parent="." unique_id=400230854]
 offset_left = 200.0
 offset_top = -1080.0
 offset_right = 204.0
 offset_bottom = -1010.0
 color = Color(0.45, 0.4, 0.36, 1)
 
-[node name="MorroAntennaTop" type="ColorRect" parent="."]
+[node name="MorroAntennaTop" type="ColorRect" parent="." unique_id=158510848]
 offset_left = 196.0
 offset_top = -1090.0
 offset_right = 208.0
 offset_bottom = -1080.0
 color = Color(0.6, 0.5, 0.4, 1)
 
-[node name="MorroTopTreeA" type="ColorRect" parent="."]
+[node name="MorroTopTreeA" type="ColorRect" parent="." unique_id=264924316]
 offset_left = -300.0
 offset_top = -1040.0
 offset_right = -292.0
 offset_bottom = -1010.0
 color = Color(0.32, 0.22, 0.18, 1)
 
-[node name="MorroTopTreeATop" type="ColorRect" parent="."]
+[node name="MorroTopTreeATop" type="ColorRect" parent="." unique_id=1461145579]
 offset_left = -316.0
 offset_top = -1058.0
 offset_right = -276.0
 offset_bottom = -1040.0
 color = Color(0.28, 0.45, 0.28, 1)
 
-[node name="MorroTopTreeB" type="ColorRect" parent="."]
+[node name="MorroTopTreeB" type="ColorRect" parent="." unique_id=1847254889]
 offset_left = 320.0
 offset_top = -1030.0
 offset_right = 326.0
 offset_bottom = -1010.0
 color = Color(0.32, 0.22, 0.18, 1)
 
-[node name="MorroTopTreeBTop" type="ColorRect" parent="."]
+[node name="MorroTopTreeBTop" type="ColorRect" parent="." unique_id=177347939]
 offset_left = 308.0
 offset_top = -1048.0
 offset_right = 338.0
 offset_bottom = -1030.0
 color = Color(0.28, 0.45, 0.28, 1)
 
-[node name="ZoneLabelTop" type="Label" parent="."]
+[node name="ZoneLabelTop" type="Label" parent="." unique_id=1769900681]
 offset_left = -180.0
 offset_top = -1180.0
 offset_right = 180.0
 offset_bottom = -1158.0
-text = "FAVELA DO MORRO"
-horizontal_alignment = 1
-theme_override_font_sizes/font_size = 16
 theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
 theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 16
+text = "FAVELA DO MORRO"
+horizontal_alignment = 1
 
-[node name="HillsideGround" type="ColorRect" parent="."]
+[node name="HillsideGround" type="ColorRect" parent="." unique_id=863713024]
 offset_left = -400.0
 offset_top = -1000.0
 offset_right = 400.0
 offset_bottom = 200.0
 color = Color(0.55, 0.42, 0.32, 1)
 
-[node name="HillsideGroundShadeA" type="ColorRect" parent="."]
+[node name="HillsideGroundShadeA" type="ColorRect" parent="." unique_id=634919154]
 offset_left = -400.0
 offset_top = -800.0
 offset_right = 400.0
 offset_bottom = -796.0
 color = Color(0.45, 0.35, 0.26, 0.6)
 
-[node name="HillsideGroundShadeB" type="ColorRect" parent="."]
+[node name="HillsideGroundShadeB" type="ColorRect" parent="." unique_id=266349619]
 offset_left = -400.0
 offset_top = -400.0
 offset_right = 400.0
 offset_bottom = -396.0
 color = Color(0.45, 0.35, 0.26, 0.6)
 
-[node name="HillsideGroundShadeC" type="ColorRect" parent="."]
+[node name="HillsideGroundShadeC" type="ColorRect" parent="." unique_id=784878819]
 offset_left = -400.0
-offset_top = 0.0
 offset_right = 400.0
 offset_bottom = 4.0
 color = Color(0.45, 0.35, 0.26, 0.6)
 
-[node name="VegetationLeft" type="ColorRect" parent="."]
+[node name="VegetationLeft" type="ColorRect" parent="." unique_id=1272303451]
 offset_left = -400.0
 offset_top = -1000.0
 offset_right = -340.0
 offset_bottom = 200.0
 color = Color(0.32, 0.5, 0.32, 1)
 
-[node name="VegetationRight" type="ColorRect" parent="."]
+[node name="VegetationRight" type="ColorRect" parent="." unique_id=1015973336]
 offset_left = 340.0
 offset_top = -1000.0
 offset_right = 400.0
 offset_bottom = 200.0
 color = Color(0.32, 0.5, 0.32, 1)
 
-[node name="VegetationLeftDetailA" type="ColorRect" parent="."]
+[node name="VegetationLeftDetailA" type="ColorRect" parent="." unique_id=490624438]
 offset_left = -380.0
 offset_top = -800.0
 offset_right = -360.0
 offset_bottom = -780.0
 color = Color(0.28, 0.45, 0.28, 1)
 
-[node name="VegetationLeftDetailB" type="ColorRect" parent="."]
+[node name="VegetationLeftDetailB" type="ColorRect" parent="." unique_id=790010919]
 offset_left = -380.0
 offset_top = -400.0
 offset_right = -360.0
 offset_bottom = -380.0
 color = Color(0.28, 0.45, 0.28, 1)
 
-[node name="VegetationLeftDetailC" type="ColorRect" parent="."]
+[node name="VegetationLeftDetailC" type="ColorRect" parent="." unique_id=323789562]
 offset_left = -380.0
 offset_top = -100.0
 offset_right = -360.0
 offset_bottom = -80.0
 color = Color(0.28, 0.45, 0.28, 1)
 
-[node name="VegetationRightDetailA" type="ColorRect" parent="."]
+[node name="VegetationRightDetailA" type="ColorRect" parent="." unique_id=1248333318]
 offset_left = 360.0
 offset_top = -700.0
 offset_right = 380.0
 offset_bottom = -680.0
 color = Color(0.28, 0.45, 0.28, 1)
 
-[node name="VegetationRightDetailB" type="ColorRect" parent="."]
+[node name="VegetationRightDetailB" type="ColorRect" parent="." unique_id=645494595]
 offset_left = 360.0
 offset_top = -300.0
 offset_right = 380.0
 offset_bottom = -280.0
 color = Color(0.28, 0.45, 0.28, 1)
 
-[node name="VegetationRightDetailC" type="ColorRect" parent="."]
+[node name="VegetationRightDetailC" type="ColorRect" parent="." unique_id=1186684774]
 offset_left = 360.0
 offset_top = 50.0
 offset_right = 380.0
 offset_bottom = 70.0
 color = Color(0.28, 0.45, 0.28, 1)
 
-[node name="StairsCenter" type="ColorRect" parent="."]
+[node name="StairsCenter" type="ColorRect" parent="." unique_id=40839512]
 offset_left = -28.0
 offset_top = -1000.0
 offset_right = 28.0
 offset_bottom = 280.0
 color = Color(0.42, 0.32, 0.22, 1)
 
-[node name="StairsBorderL" type="ColorRect" parent="."]
+[node name="StairsBorderL" type="ColorRect" parent="." unique_id=730825695]
 offset_left = -32.0
 offset_top = -1000.0
 offset_right = -28.0
 offset_bottom = 280.0
 color = Color(0.32, 0.22, 0.18, 1)
 
-[node name="StairsBorderR" type="ColorRect" parent="."]
+[node name="StairsBorderR" type="ColorRect" parent="." unique_id=54849755]
 offset_left = 28.0
 offset_top = -1000.0
 offset_right = 32.0
 offset_bottom = 280.0
 color = Color(0.32, 0.22, 0.18, 1)
 
-[node name="StairLine_n950" type="ColorRect" parent="."]
+[node name="StairLine_n950" type="ColorRect" parent="." unique_id=1619869605]
 offset_left = -28.0
 offset_top = -950.0
 offset_right = 28.0
 offset_bottom = -946.0
 color = Color(0.32, 0.22, 0.18, 1)
 
-[node name="StairLine_n900" type="ColorRect" parent="."]
+[node name="StairLine_n900" type="ColorRect" parent="." unique_id=1945879046]
 offset_left = -28.0
 offset_top = -900.0
 offset_right = 28.0
 offset_bottom = -896.0
 color = Color(0.32, 0.22, 0.18, 1)
 
-[node name="StairLine_n850" type="ColorRect" parent="."]
+[node name="StairLine_n850" type="ColorRect" parent="." unique_id=2045016765]
 offset_left = -28.0
 offset_top = -850.0
 offset_right = 28.0
 offset_bottom = -846.0
 color = Color(0.32, 0.22, 0.18, 1)
 
-[node name="StairLine_n800" type="ColorRect" parent="."]
+[node name="StairLine_n800" type="ColorRect" parent="." unique_id=829216985]
 offset_left = -28.0
 offset_top = -800.0
 offset_right = 28.0
 offset_bottom = -796.0
 color = Color(0.32, 0.22, 0.18, 1)
 
-[node name="StairLine_n750" type="ColorRect" parent="."]
+[node name="StairLine_n750" type="ColorRect" parent="." unique_id=733621523]
 offset_left = -28.0
 offset_top = -750.0
 offset_right = 28.0
 offset_bottom = -746.0
 color = Color(0.32, 0.22, 0.18, 1)
 
-[node name="StairLine_n700" type="ColorRect" parent="."]
+[node name="StairLine_n700" type="ColorRect" parent="." unique_id=708632253]
 offset_left = -28.0
 offset_top = -700.0
 offset_right = 28.0
 offset_bottom = -696.0
 color = Color(0.32, 0.22, 0.18, 1)
 
-[node name="StairLine_n650" type="ColorRect" parent="."]
+[node name="StairLine_n650" type="ColorRect" parent="." unique_id=1059903967]
 offset_left = -28.0
 offset_top = -650.0
 offset_right = 28.0
 offset_bottom = -646.0
 color = Color(0.32, 0.22, 0.18, 1)
 
-[node name="StairLine_n600" type="ColorRect" parent="."]
+[node name="StairLine_n600" type="ColorRect" parent="." unique_id=1425550402]
 offset_left = -28.0
 offset_top = -600.0
 offset_right = 28.0
 offset_bottom = -596.0
 color = Color(0.32, 0.22, 0.18, 1)
 
-[node name="StairLine_n550" type="ColorRect" parent="."]
+[node name="StairLine_n550" type="ColorRect" parent="." unique_id=770719832]
 offset_left = -28.0
 offset_top = -550.0
 offset_right = 28.0
 offset_bottom = -546.0
 color = Color(0.32, 0.22, 0.18, 1)
 
-[node name="StairLine_n500" type="ColorRect" parent="."]
+[node name="StairLine_n500" type="ColorRect" parent="." unique_id=1103769560]
 offset_left = -28.0
 offset_top = -500.0
 offset_right = 28.0
 offset_bottom = -496.0
 color = Color(0.32, 0.22, 0.18, 1)
 
-[node name="StairLine_n450" type="ColorRect" parent="."]
+[node name="StairLine_n450" type="ColorRect" parent="." unique_id=201457098]
 offset_left = -28.0
 offset_top = -450.0
 offset_right = 28.0
 offset_bottom = -446.0
 color = Color(0.32, 0.22, 0.18, 1)
 
-[node name="StairLine_n400" type="ColorRect" parent="."]
+[node name="StairLine_n400" type="ColorRect" parent="." unique_id=1875740802]
 offset_left = -28.0
 offset_top = -400.0
 offset_right = 28.0
 offset_bottom = -396.0
 color = Color(0.32, 0.22, 0.18, 1)
 
-[node name="StairLine_n350" type="ColorRect" parent="."]
+[node name="StairLine_n350" type="ColorRect" parent="." unique_id=952861654]
 offset_left = -28.0
 offset_top = -350.0
 offset_right = 28.0
 offset_bottom = -346.0
 color = Color(0.32, 0.22, 0.18, 1)
 
-[node name="StairLine_n300" type="ColorRect" parent="."]
+[node name="StairLine_n300" type="ColorRect" parent="." unique_id=893717996]
 offset_left = -28.0
 offset_top = -300.0
 offset_right = 28.0
 offset_bottom = -296.0
 color = Color(0.32, 0.22, 0.18, 1)
 
-[node name="StairLine_n250" type="ColorRect" parent="."]
+[node name="StairLine_n250" type="ColorRect" parent="." unique_id=1780568820]
 offset_left = -28.0
 offset_top = -250.0
 offset_right = 28.0
 offset_bottom = -246.0
 color = Color(0.32, 0.22, 0.18, 1)
 
-[node name="StairLine_n200" type="ColorRect" parent="."]
+[node name="StairLine_n200" type="ColorRect" parent="." unique_id=83748221]
 offset_left = -28.0
 offset_top = -200.0
 offset_right = 28.0
 offset_bottom = -196.0
 color = Color(0.32, 0.22, 0.18, 1)
 
-[node name="StairLine_n150" type="ColorRect" parent="."]
+[node name="StairLine_n150" type="ColorRect" parent="." unique_id=1598723655]
 offset_left = -28.0
 offset_top = -150.0
 offset_right = 28.0
 offset_bottom = -146.0
 color = Color(0.32, 0.22, 0.18, 1)
 
-[node name="StairLine_n100" type="ColorRect" parent="."]
+[node name="StairLine_n100" type="ColorRect" parent="." unique_id=637052711]
 offset_left = -28.0
 offset_top = -100.0
 offset_right = 28.0
 offset_bottom = -96.0
 color = Color(0.32, 0.22, 0.18, 1)
 
-[node name="StairLine_n50" type="ColorRect" parent="."]
+[node name="StairLine_n50" type="ColorRect" parent="." unique_id=384112264]
 offset_left = -28.0
 offset_top = -50.0
 offset_right = 28.0
 offset_bottom = -46.0
 color = Color(0.32, 0.22, 0.18, 1)
 
-[node name="StairLine_0" type="ColorRect" parent="."]
+[node name="StairLine_0" type="ColorRect" parent="." unique_id=2050139088]
 offset_left = -28.0
-offset_top = 0.0
 offset_right = 28.0
 offset_bottom = 4.0
 color = Color(0.32, 0.22, 0.18, 1)
 
-[node name="StairLine_50" type="ColorRect" parent="."]
+[node name="StairLine_50" type="ColorRect" parent="." unique_id=1818570314]
 offset_left = -28.0
 offset_top = 50.0
 offset_right = 28.0
 offset_bottom = 54.0
 color = Color(0.32, 0.22, 0.18, 1)
 
-[node name="StairLine_100" type="ColorRect" parent="."]
+[node name="StairLine_100" type="ColorRect" parent="." unique_id=1960476181]
 offset_left = -28.0
 offset_top = 100.0
 offset_right = 28.0
 offset_bottom = 104.0
 color = Color(0.32, 0.22, 0.18, 1)
 
-[node name="StairLine_150" type="ColorRect" parent="."]
+[node name="StairLine_150" type="ColorRect" parent="." unique_id=930246280]
 offset_left = -28.0
 offset_top = 150.0
 offset_right = 28.0
 offset_bottom = 154.0
 color = Color(0.32, 0.22, 0.18, 1)
 
-[node name="StairLine_200" type="ColorRect" parent="."]
+[node name="StairLine_200" type="ColorRect" parent="." unique_id=1243218099]
 offset_left = -28.0
 offset_top = 200.0
 offset_right = 28.0
 offset_bottom = 204.0
 color = Color(0.32, 0.22, 0.18, 1)
 
-[node name="StairLine_250" type="ColorRect" parent="."]
+[node name="StairLine_250" type="ColorRect" parent="." unique_id=1443711087]
 offset_left = -28.0
 offset_top = 250.0
 offset_right = 28.0
 offset_bottom = 254.0
 color = Color(0.32, 0.22, 0.18, 1)
 
-[node name="HousesUpper" type="Node2D" parent="."]
+[node name="HousesUpper" type="Node2D" parent="." unique_id=1822555691]
 
-[node name="House_top_L" type="ColorRect" parent="HousesUpper"]
+[node name="House_top_L" type="ColorRect" parent="HousesUpper" unique_id=1493078786]
 offset_left = -260.0
 offset_top = -990.0
 offset_right = -160.0
 offset_bottom = -900.0
 color = Color(0.85, 0.55, 0.4, 1)
 
-[node name="House_top_L_Roof" type="ColorRect" parent="HousesUpper"]
+[node name="House_top_L_Roof" type="ColorRect" parent="HousesUpper" unique_id=795714300]
 offset_left = -270.0
 offset_top = -1000.0
 offset_right = -150.0
 offset_bottom = -990.0
 color = Color(0.62, 0.32, 0.22, 1)
 
-[node name="House_top_L_Window" type="ColorRect" parent="HousesUpper"]
+[node name="House_top_L_Window" type="ColorRect" parent="HousesUpper" unique_id=528007837]
 offset_left = -230.0
 offset_top = -960.0
 offset_right = -210.0
 offset_bottom = -940.0
 color = Color(0.32, 0.55, 0.78, 0.85)
 
-[node name="House_top_R" type="ColorRect" parent="HousesUpper"]
+[node name="House_top_R" type="ColorRect" parent="HousesUpper" unique_id=1418851007]
 offset_left = 100.0
 offset_top = -980.0
 offset_right = 220.0
 offset_bottom = -880.0
 color = Color(0.95, 0.85, 0.4, 1)
 
-[node name="House_top_R_Roof" type="ColorRect" parent="HousesUpper"]
+[node name="House_top_R_Roof" type="ColorRect" parent="HousesUpper" unique_id=1922119967]
 offset_left = 90.0
 offset_top = -990.0
 offset_right = 230.0
 offset_bottom = -980.0
 color = Color(0.42, 0.32, 0.22, 1)
 
-[node name="House_top_R_Window" type="ColorRect" parent="HousesUpper"]
+[node name="House_top_R_Window" type="ColorRect" parent="HousesUpper" unique_id=1760362103]
 offset_left = 130.0
 offset_top = -950.0
 offset_right = 150.0
 offset_bottom = -930.0
 color = Color(0.32, 0.55, 0.78, 0.85)
 
-[node name="House_900_L" type="ColorRect" parent="HousesUpper"]
+[node name="House_900_L" type="ColorRect" parent="HousesUpper" unique_id=391406851]
 offset_left = -200.0
 offset_top = -880.0
 offset_right = -100.0
 offset_bottom = -800.0
 color = Color(0.55, 0.78, 0.55, 1)
 
-[node name="House_900_L_Roof" type="ColorRect" parent="HousesUpper"]
+[node name="House_900_L_Roof" type="ColorRect" parent="HousesUpper" unique_id=704453207]
 offset_left = -210.0
 offset_top = -890.0
 offset_right = -90.0
 offset_bottom = -880.0
 color = Color(0.62, 0.32, 0.22, 1)
 
-[node name="House_850_R" type="ColorRect" parent="HousesUpper"]
+[node name="House_850_R" type="ColorRect" parent="HousesUpper" unique_id=921626001]
 offset_left = 60.0
 offset_top = -850.0
 offset_right = 180.0
 offset_bottom = -750.0
 color = Color(0.4, 0.65, 0.95, 1)
 
-[node name="House_850_R_Roof" type="ColorRect" parent="HousesUpper"]
+[node name="House_850_R_Roof" type="ColorRect" parent="HousesUpper" unique_id=1871949356]
 offset_left = 50.0
 offset_top = -862.0
 offset_right = 190.0
 offset_bottom = -850.0
 color = Color(0.42, 0.32, 0.22, 1)
 
-[node name="House_850_R_Window" type="ColorRect" parent="HousesUpper"]
+[node name="House_850_R_Window" type="ColorRect" parent="HousesUpper" unique_id=195633082]
 offset_left = 100.0
 offset_top = -820.0
 offset_right = 120.0
 offset_bottom = -800.0
 color = Color(0.95, 0.85, 0.4, 0.85)
 
-[node name="House_750_L" type="ColorRect" parent="HousesUpper"]
+[node name="House_750_L" type="ColorRect" parent="HousesUpper" unique_id=1211174914]
 offset_left = -250.0
 offset_top = -780.0
 offset_right = -130.0
 offset_bottom = -680.0
 color = Color(0.78, 0.42, 0.55, 1)
 
-[node name="House_750_L_Roof" type="ColorRect" parent="HousesUpper"]
+[node name="House_750_L_Roof" type="ColorRect" parent="HousesUpper" unique_id=1506921336]
 offset_left = -260.0
 offset_top = -790.0
 offset_right = -120.0
 offset_bottom = -780.0
 color = Color(0.62, 0.32, 0.22, 1)
 
-[node name="House_750_L_Window" type="ColorRect" parent="HousesUpper"]
+[node name="House_750_L_Window" type="ColorRect" parent="HousesUpper" unique_id=1470279864]
 offset_left = -210.0
 offset_top = -740.0
 offset_right = -190.0
 offset_bottom = -720.0
 color = Color(0.32, 0.55, 0.78, 0.85)
 
-[node name="House_700_R" type="ColorRect" parent="HousesUpper"]
+[node name="House_700_R" type="ColorRect" parent="HousesUpper" unique_id=1728021509]
 offset_left = 80.0
 offset_top = -700.0
 offset_right = 200.0
 offset_bottom = -600.0
 color = Color(0.55, 0.78, 0.85, 1)
 
-[node name="House_700_R_Roof" type="ColorRect" parent="HousesUpper"]
+[node name="House_700_R_Roof" type="ColorRect" parent="HousesUpper" unique_id=2131503832]
 offset_left = 70.0
 offset_top = -710.0
 offset_right = 210.0
 offset_bottom = -700.0
 color = Color(0.62, 0.32, 0.22, 1)
 
-[node name="House_700_R_Window" type="ColorRect" parent="HousesUpper"]
+[node name="House_700_R_Window" type="ColorRect" parent="HousesUpper" unique_id=1085341659]
 offset_left = 130.0
 offset_top = -660.0
 offset_right = 150.0
 offset_bottom = -640.0
 color = Color(0.32, 0.55, 0.78, 0.85)
 
-[node name="HousesMid" type="Node2D" parent="."]
+[node name="HousesMid" type="Node2D" parent="." unique_id=312290567]
 
-[node name="TioZeHouseWall" type="ColorRect" parent="HousesMid"]
+[node name="TioZeHouseWall" type="ColorRect" parent="HousesMid" unique_id=1149075950]
 offset_left = -300.0
 offset_top = -680.0
 offset_right = -120.0
 offset_bottom = -540.0
 color = Color(0.95, 0.65, 0.45, 1)
 
-[node name="TioZeHouseRoof" type="ColorRect" parent="HousesMid"]
+[node name="TioZeHouseRoof" type="ColorRect" parent="HousesMid" unique_id=562547331]
 offset_left = -310.0
 offset_top = -695.0
 offset_right = -110.0
 offset_bottom = -680.0
 color = Color(0.62, 0.32, 0.22, 1)
 
-[node name="TioZeHouseRoof2" type="ColorRect" parent="HousesMid"]
+[node name="TioZeHouseRoof2" type="ColorRect" parent="HousesMid" unique_id=1598428532]
 offset_left = -240.0
 offset_top = -710.0
 offset_right = -180.0
 offset_bottom = -695.0
 color = Color(0.62, 0.32, 0.22, 1)
 
-[node name="TioZeWindowL" type="ColorRect" parent="HousesMid"]
+[node name="TioZeWindowL" type="ColorRect" parent="HousesMid" unique_id=966535229]
 offset_left = -270.0
 offset_top = -640.0
 offset_right = -240.0
 offset_bottom = -610.0
 color = Color(0.95, 0.85, 0.4, 0.92)
 
-[node name="TioZeWindowR" type="ColorRect" parent="HousesMid"]
+[node name="TioZeWindowR" type="ColorRect" parent="HousesMid" unique_id=1497265834]
 offset_left = -180.0
 offset_top = -640.0
 offset_right = -150.0
 offset_bottom = -610.0
 color = Color(0.95, 0.85, 0.4, 0.92)
 
-[node name="TioZeBalcony" type="ColorRect" parent="HousesMid"]
-offset_left = -260.0
-offset_top = -560.0
-offset_right = -130.0
-offset_bottom = -540.0
+[node name="TioZeBalcony" type="ColorRect" parent="HousesMid" unique_id=1402412054]
+offset_left = -222.0
+offset_top = -586.0
+offset_right = -201.0
+offset_bottom = -541.0
 color = Color(0.55, 0.32, 0.22, 1)
 
-[node name="TioZeLabel" type="Label" parent="HousesMid"]
+[node name="TioZeLabel" type="Label" parent="HousesMid" unique_id=2059998471]
 offset_left = -270.0
 offset_top = -728.0
 offset_right = -150.0
 offset_bottom = -710.0
-text = "Casa do tio Zé"
-horizontal_alignment = 1
-theme_override_font_sizes/font_size = 12
 theme_override_colors/font_color = Color(0.95, 0.92, 0.78, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
 theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 12
+text = "Casa do tio Zé"
+horizontal_alignment = 1
 
-[node name="TioZeStairAccess" type="ColorRect" parent="HousesMid"]
+[node name="TioZeStairAccess" type="ColorRect" parent="HousesMid" unique_id=119998192]
 offset_left = -120.0
 offset_top = -560.0
 offset_right = -32.0
 offset_bottom = -540.0
 color = Color(0.45, 0.32, 0.22, 1)
 
-[node name="House_600_R" type="ColorRect" parent="HousesMid"]
+[node name="House_600_R" type="ColorRect" parent="HousesMid" unique_id=782394357]
 offset_left = 80.0
 offset_top = -600.0
 offset_right = 220.0
 offset_bottom = -480.0
 color = Color(0.85, 0.55, 0.4, 1)
 
-[node name="House_600_R_Roof" type="ColorRect" parent="HousesMid"]
+[node name="House_600_R_Roof" type="ColorRect" parent="HousesMid" unique_id=575455024]
 offset_left = 70.0
 offset_top = -612.0
 offset_right = 230.0
 offset_bottom = -600.0
 color = Color(0.42, 0.32, 0.22, 1)
 
-[node name="House_600_R_Window" type="ColorRect" parent="HousesMid"]
+[node name="House_600_R_Window" type="ColorRect" parent="HousesMid" unique_id=1827511373]
 offset_left = 130.0
 offset_top = -560.0
 offset_right = 160.0
 offset_bottom = -530.0
 color = Color(0.32, 0.55, 0.78, 0.85)
 
-[node name="House_500_L" type="ColorRect" parent="HousesMid"]
+[node name="House_500_L" type="ColorRect" parent="HousesMid" unique_id=1388148957]
 offset_left = -260.0
 offset_top = -520.0
 offset_right = -130.0
 offset_bottom = -400.0
 color = Color(0.55, 0.78, 0.55, 1)
 
-[node name="House_500_L_Roof" type="ColorRect" parent="HousesMid"]
+[node name="House_500_L_Roof" type="ColorRect" parent="HousesMid" unique_id=549484765]
 offset_left = -270.0
 offset_top = -532.0
 offset_right = -120.0
 offset_bottom = -520.0
 color = Color(0.62, 0.32, 0.22, 1)
 
-[node name="House_500_L_Window" type="ColorRect" parent="HousesMid"]
+[node name="House_500_L_Window" type="ColorRect" parent="HousesMid" unique_id=98994984]
 offset_left = -210.0
 offset_top = -480.0
 offset_right = -180.0
 offset_bottom = -450.0
 color = Color(0.32, 0.55, 0.78, 0.85)
 
-[node name="BarDoMorroWall" type="ColorRect" parent="HousesMid"]
+[node name="BarDoMorroWall" type="ColorRect" parent="HousesMid" unique_id=1340535847]
 offset_left = 60.0
 offset_top = -460.0
 offset_right = 240.0
 offset_bottom = -340.0
 color = Color(0.95, 0.85, 0.4, 1)
 
-[node name="BarDoMorroRoof" type="ColorRect" parent="HousesMid"]
+[node name="BarDoMorroRoof" type="ColorRect" parent="HousesMid" unique_id=1965203156]
 offset_left = 50.0
 offset_top = -472.0
 offset_right = 250.0
 offset_bottom = -460.0
 color = Color(0.42, 0.32, 0.22, 1)
 
-[node name="BarDoMorroSign" type="ColorRect" parent="HousesMid"]
+[node name="BarDoMorroSign" type="ColorRect" parent="HousesMid" unique_id=301702499]
 offset_left = 80.0
 offset_top = -488.0
 offset_right = 220.0
 offset_bottom = -472.0
 color = Color(0.85, 0.32, 0.32, 1)
 
-[node name="BarDoMorroSignText" type="Label" parent="HousesMid"]
+[node name="BarDoMorroSignText" type="Label" parent="HousesMid" unique_id=276462921]
 offset_left = 80.0
 offset_top = -488.0
 offset_right = 220.0
 offset_bottom = -472.0
-text = "BAR DO MORRO"
-horizontal_alignment = 1
-theme_override_font_sizes/font_size = 11
 theme_override_colors/font_color = Color(0.98, 0.98, 0.92, 1)
 theme_override_colors/font_outline_color = Color(0.32, 0.05, 0.05, 1)
 theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 11
+text = "BAR DO MORRO"
+horizontal_alignment = 1
 
-[node name="BarDoMorroDoor" type="ColorRect" parent="HousesMid"]
+[node name="BarDoMorroDoor" type="ColorRect" parent="HousesMid" unique_id=838740301]
 offset_left = 140.0
 offset_top = -380.0
 offset_right = 160.0
 offset_bottom = -340.0
 color = Color(0.32, 0.18, 0.12, 1)
 
-[node name="BarDoMorroWindow" type="ColorRect" parent="HousesMid"]
+[node name="BarDoMorroWindow" type="ColorRect" parent="HousesMid" unique_id=1433041640]
 offset_left = 90.0
 offset_top = -420.0
 offset_right = 130.0
 offset_bottom = -390.0
 color = Color(0.95, 0.78, 0.32, 0.85)
 
-[node name="HousesLower" type="Node2D" parent="."]
+[node name="HousesLower" type="Node2D" parent="." unique_id=306012220]
 
-[node name="House_350_L" type="ColorRect" parent="HousesLower"]
+[node name="House_350_L" type="ColorRect" parent="HousesLower" unique_id=521783882]
 offset_left = -250.0
 offset_top = -380.0
 offset_right = -120.0
 offset_bottom = -260.0
 color = Color(0.4, 0.65, 0.95, 1)
 
-[node name="House_350_L_Roof" type="ColorRect" parent="HousesLower"]
+[node name="House_350_L_Roof" type="ColorRect" parent="HousesLower" unique_id=1129284658]
 offset_left = -260.0
 offset_top = -392.0
 offset_right = -110.0
 offset_bottom = -380.0
 color = Color(0.42, 0.32, 0.22, 1)
 
-[node name="House_350_L_Window" type="ColorRect" parent="HousesLower"]
+[node name="House_350_L_Window" type="ColorRect" parent="HousesLower" unique_id=522311673]
 offset_left = -200.0
 offset_top = -340.0
 offset_right = -170.0
 offset_bottom = -310.0
 color = Color(0.95, 0.85, 0.4, 0.85)
 
-[node name="House_250_R" type="ColorRect" parent="HousesLower"]
+[node name="House_250_R" type="ColorRect" parent="HousesLower" unique_id=1889537491]
 offset_left = 100.0
 offset_top = -300.0
 offset_right = 220.0
 offset_bottom = -180.0
 color = Color(0.85, 0.55, 0.4, 1)
 
-[node name="House_250_R_Roof" type="ColorRect" parent="HousesLower"]
+[node name="House_250_R_Roof" type="ColorRect" parent="HousesLower" unique_id=1655248271]
 offset_left = 90.0
 offset_top = -312.0
 offset_right = 230.0
 offset_bottom = -300.0
 color = Color(0.62, 0.32, 0.22, 1)
 
-[node name="House_250_R_Window" type="ColorRect" parent="HousesLower"]
+[node name="House_250_R_Window" type="ColorRect" parent="HousesLower" unique_id=1727238011]
 offset_left = 130.0
 offset_top = -260.0
 offset_right = 160.0
 offset_bottom = -230.0
 color = Color(0.32, 0.55, 0.78, 0.85)
 
-[node name="House_180_L" type="ColorRect" parent="HousesLower"]
+[node name="House_180_L" type="ColorRect" parent="HousesLower" unique_id=1997842068]
 offset_left = -240.0
 offset_top = -220.0
 offset_right = -120.0
 offset_bottom = -100.0
 color = Color(0.95, 0.92, 0.85, 1)
 
-[node name="House_180_L_Roof" type="ColorRect" parent="HousesLower"]
+[node name="House_180_L_Roof" type="ColorRect" parent="HousesLower" unique_id=1554670681]
 offset_left = -250.0
 offset_top = -232.0
 offset_right = -110.0
 offset_bottom = -220.0
 color = Color(0.42, 0.32, 0.22, 1)
 
-[node name="House_180_L_Window" type="ColorRect" parent="HousesLower"]
+[node name="House_180_L_Window" type="ColorRect" parent="HousesLower" unique_id=925363745]
 offset_left = -200.0
 offset_top = -180.0
 offset_right = -170.0
 offset_bottom = -150.0
 color = Color(0.32, 0.55, 0.78, 0.85)
 
-[node name="House_180_L_Door" type="ColorRect" parent="HousesLower"]
+[node name="House_180_L_Door" type="ColorRect" parent="HousesLower" unique_id=13582221]
 offset_left = -150.0
 offset_top = -140.0
 offset_right = -130.0
 offset_bottom = -100.0
 color = Color(0.32, 0.18, 0.12, 1)
 
-[node name="House_100_R" type="ColorRect" parent="HousesLower"]
+[node name="House_100_R" type="ColorRect" parent="HousesLower" unique_id=1237926186]
 offset_left = 80.0
 offset_top = -150.0
 offset_right = 200.0
 offset_bottom = -50.0
 color = Color(0.55, 0.78, 0.85, 1)
 
-[node name="House_100_R_Roof" type="ColorRect" parent="HousesLower"]
+[node name="House_100_R_Roof" type="ColorRect" parent="HousesLower" unique_id=716510952]
 offset_left = 70.0
 offset_top = -160.0
 offset_right = 210.0
 offset_bottom = -150.0
 color = Color(0.62, 0.32, 0.22, 1)
 
-[node name="PadariaWall" type="ColorRect" parent="HousesLower"]
+[node name="PadariaWall" type="ColorRect" parent="HousesLower" unique_id=689579861]
 offset_left = -260.0
 offset_top = -80.0
 offset_right = -110.0
 offset_bottom = 30.0
 color = Color(0.95, 0.78, 0.62, 1)
 
-[node name="PadariaRoof" type="ColorRect" parent="HousesLower"]
+[node name="PadariaRoof" type="ColorRect" parent="HousesLower" unique_id=1259685303]
 offset_left = -270.0
 offset_top = -92.0
 offset_right = -100.0
 offset_bottom = -80.0
 color = Color(0.42, 0.32, 0.22, 1)
 
-[node name="PadariaSign" type="ColorRect" parent="HousesLower"]
+[node name="PadariaSign" type="ColorRect" parent="HousesLower" unique_id=272600623]
 offset_left = -240.0
 offset_top = -108.0
 offset_right = -130.0
 offset_bottom = -92.0
 color = Color(0.62, 0.32, 0.22, 1)
 
-[node name="PadariaSignText" type="Label" parent="HousesLower"]
+[node name="PadariaSignText" type="Label" parent="HousesLower" unique_id=1906591031]
 offset_left = -240.0
 offset_top = -108.0
 offset_right = -130.0
 offset_bottom = -92.0
+theme_override_colors/font_color = Color(0.95, 0.92, 0.78, 1)
+theme_override_font_sizes/font_size = 10
 text = "Padaria"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 10
-theme_override_colors/font_color = Color(0.95, 0.92, 0.78, 1)
 
-[node name="PadariaWindow" type="ColorRect" parent="HousesLower"]
+[node name="PadariaWindow" type="ColorRect" parent="HousesLower" unique_id=907541198]
 offset_left = -220.0
 offset_top = -50.0
 offset_right = -180.0
 offset_bottom = -20.0
 color = Color(0.95, 0.78, 0.32, 0.85)
 
-[node name="PadariaDoor" type="ColorRect" parent="HousesLower"]
+[node name="PadariaDoor" type="ColorRect" parent="HousesLower" unique_id=1877509651]
 offset_left = -150.0
 offset_top = -10.0
 offset_right = -130.0
 offset_bottom = 30.0
 color = Color(0.32, 0.18, 0.12, 1)
 
-[node name="House_30_R" type="ColorRect" parent="HousesLower"]
+[node name="House_30_R" type="ColorRect" parent="HousesLower" unique_id=32088430]
 offset_left = 100.0
-offset_top = 0.0
 offset_right = 220.0
 offset_bottom = 100.0
 color = Color(0.78, 0.42, 0.55, 1)
 
-[node name="House_30_R_Roof" type="ColorRect" parent="HousesLower"]
+[node name="House_30_R_Roof" type="ColorRect" parent="HousesLower" unique_id=808173289]
 offset_left = 90.0
 offset_top = -12.0
 offset_right = 230.0
-offset_bottom = 0.0
 color = Color(0.62, 0.32, 0.22, 1)
 
-[node name="House_30_R_Window" type="ColorRect" parent="HousesLower"]
+[node name="House_30_R_Window" type="ColorRect" parent="HousesLower" unique_id=696966686]
 offset_left = 140.0
 offset_top = 30.0
 offset_right = 170.0
 offset_bottom = 60.0
 color = Color(0.32, 0.55, 0.78, 0.85)
 
-[node name="House_140_L" type="ColorRect" parent="HousesLower"]
+[node name="House_140_L" type="ColorRect" parent="HousesLower" unique_id=302972979]
 offset_left = -240.0
 offset_top = 80.0
 offset_right = -120.0
 offset_bottom = 180.0
 color = Color(0.85, 0.78, 0.62, 1)
 
-[node name="House_140_L_Roof" type="ColorRect" parent="HousesLower"]
+[node name="House_140_L_Roof" type="ColorRect" parent="HousesLower" unique_id=1402670658]
 offset_left = -250.0
 offset_top = 68.0
 offset_right = -110.0
 offset_bottom = 80.0
 color = Color(0.42, 0.32, 0.22, 1)
 
-[node name="House_140_L_Window" type="ColorRect" parent="HousesLower"]
+[node name="House_140_L_Window" type="ColorRect" parent="HousesLower" unique_id=905710940]
 offset_left = -200.0
 offset_top = 110.0
 offset_right = -170.0
 offset_bottom = 140.0
 color = Color(0.32, 0.55, 0.78, 0.85)
 
-[node name="PowerLine_n900" type="ColorRect" parent="."]
+[node name="PowerLine_n900" type="ColorRect" parent="." unique_id=356015414]
 offset_left = -200.0
 offset_top = -900.0
 offset_right = 180.0
 offset_bottom = -898.0
 color = Color(0.18, 0.14, 0.12, 0.85)
 
-[node name="PowerLine_n750" type="ColorRect" parent="."]
+[node name="PowerLine_n750" type="ColorRect" parent="." unique_id=1645105706]
 offset_left = -130.0
 offset_top = -740.0
 offset_right = 200.0
 offset_bottom = -738.0
 color = Color(0.18, 0.14, 0.12, 0.85)
 
-[node name="PowerLine_n600" type="ColorRect" parent="."]
+[node name="PowerLine_n600" type="ColorRect" parent="." unique_id=1249736237]
 offset_left = -120.0
 offset_top = -580.0
 offset_right = 220.0
 offset_bottom = -578.0
 color = Color(0.18, 0.14, 0.12, 0.85)
 
-[node name="PowerLine_n450" type="ColorRect" parent="."]
+[node name="PowerLine_n450" type="ColorRect" parent="." unique_id=1267638170]
 offset_left = -130.0
 offset_top = -440.0
 offset_right = 240.0
 offset_bottom = -438.0
 color = Color(0.18, 0.14, 0.12, 0.85)
 
-[node name="PowerLine_n300" type="ColorRect" parent="."]
+[node name="PowerLine_n300" type="ColorRect" parent="." unique_id=166510649]
 offset_left = -120.0
 offset_top = -290.0
 offset_right = 220.0
 offset_bottom = -288.0
 color = Color(0.18, 0.14, 0.12, 0.85)
 
-[node name="PowerLine_n150" type="ColorRect" parent="."]
+[node name="PowerLine_n150" type="ColorRect" parent="." unique_id=1258321310]
 offset_left = -120.0
 offset_top = -130.0
 offset_right = 200.0
 offset_bottom = -128.0
 color = Color(0.18, 0.14, 0.12, 0.85)
 
-[node name="WaterTankUpper" type="ColorRect" parent="."]
+[node name="WaterTankUpper" type="ColorRect" parent="." unique_id=914552025]
 offset_left = 230.0
 offset_top = -880.0
 offset_right = 260.0
 offset_bottom = -850.0
 color = Color(0.42, 0.62, 0.78, 1)
 
-[node name="WaterTankMid" type="ColorRect" parent="."]
+[node name="WaterTankMid" type="ColorRect" parent="." unique_id=242892634]
 offset_left = -310.0
 offset_top = -700.0
 offset_right = -280.0
 offset_bottom = -670.0
 color = Color(0.42, 0.62, 0.78, 1)
 
-[node name="WaterTankLower" type="ColorRect" parent="."]
+[node name="WaterTankLower" type="ColorRect" parent="." unique_id=686932252]
 offset_left = 240.0
 offset_top = -160.0
 offset_right = 270.0
 offset_bottom = -130.0
 color = Color(0.42, 0.62, 0.78, 1)
 
-[node name="ExitSign" type="Label" parent="."]
+[node name="ExitSign" type="Label" parent="." unique_id=939327462]
 offset_left = -120.0
 offset_top = 240.0
 offset_right = 120.0
 offset_bottom = 264.0
-text = "↓ COPACABANA"
-horizontal_alignment = 1
-theme_override_font_sizes/font_size = 14
 theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
 theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 14
+text = "↓ COPACABANA"
+horizontal_alignment = 1
 
-[node name="ExitSignArrow" type="ColorRect" parent="."]
+[node name="ExitSignArrow" type="ColorRect" parent="." unique_id=1162794072]
 offset_left = -8.0
 offset_top = 268.0
 offset_right = 8.0
 offset_bottom = 280.0
 color = Color(0.95, 0.85, 0.4, 0.7)
 
-[node name="Walls" type="Node2D" parent="."]
+[node name="Walls" type="Node2D" parent="." unique_id=1246406217]
 
-[node name="Top" type="StaticBody2D" parent="Walls"]
+[node name="Top" type="StaticBody2D" parent="Walls" unique_id=250003675]
 position = Vector2(0, -1108)
 
-[node name="Shape" type="CollisionShape2D" parent="Walls/Top"]
+[node name="Shape" type="CollisionShape2D" parent="Walls/Top" unique_id=691960230]
 shape = SubResource("WallH")
 
-[node name="Bottom" type="StaticBody2D" parent="Walls"]
+[node name="Bottom" type="StaticBody2D" parent="Walls" unique_id=78144181]
 position = Vector2(0, 290)
 
-[node name="Shape" type="CollisionShape2D" parent="Walls/Bottom"]
+[node name="Shape" type="CollisionShape2D" parent="Walls/Bottom" unique_id=1141145366]
 shape = SubResource("WallH")
 
-[node name="Left" type="StaticBody2D" parent="Walls"]
+[node name="Left" type="StaticBody2D" parent="Walls" unique_id=1571498089]
 position = Vector2(-408, -400)
 
-[node name="Shape" type="CollisionShape2D" parent="Walls/Left"]
+[node name="Shape" type="CollisionShape2D" parent="Walls/Left" unique_id=1179274609]
 shape = SubResource("WallV")
 
-[node name="Right" type="StaticBody2D" parent="Walls"]
+[node name="Right" type="StaticBody2D" parent="Walls" unique_id=1946629781]
 position = Vector2(408, -400)
 
-[node name="Shape" type="CollisionShape2D" parent="Walls/Right"]
+[node name="Shape" type="CollisionShape2D" parent="Walls/Right" unique_id=1022264348]
 shape = SubResource("WallV")
 
-[node name="HouseCollisions" type="Node2D" parent="."]
+[node name="HouseCollisions" type="Node2D" parent="." unique_id=1912571334]
 script = ExtResource("9_collisions")
 
-[node name="PlayerSpawn" type="Marker2D" parent="."]
+[node name="PlayerSpawn" type="Marker2D" parent="." unique_id=605622538]
 position = Vector2(-50, -540)
 
-[node name="TioZeDoor" parent="." instance=ExtResource("5_door")]
-position = Vector2(-130, -560)
-prompt_text = "Entrer chez tio Zé"
-destination = Vector2(7200, -2925)
+[node name="MaePrologueTrigger" type="Area2D" parent="." unique_id=1068048840]
+position = Vector2(60, -470)
+script = ExtResource("10_maetrig")
 
-[node name="ExitToCopa" parent="." instance=ExtResource("3_exit")]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MaePrologueTrigger" unique_id=876811885]
+shape = SubResource("MaeTrigShape")
+
+[node name="PedrinhoFollower" type="Node2D" parent="." unique_id=1871480849]
+position = Vector2(112, -984)
+script = ExtResource("11_pedfollow")
+
+[node name="TioZeDoor" parent="." unique_id=1353016382 instance=ExtResource("5_door")]
+position = Vector2(-213, -558)
+destination = Vector2(7200, -2925)
+prompt_text = "Entrer chez tio Zé"
+
+[node name="TitoApprocheTrigger" type="Area2D" parent="."]
+position = Vector2(-213, -510)
+script = ExtResource("12_titotrig")
+
+[node name="Shape" type="CollisionShape2D" parent="TitoApprocheTrigger"]
+shape = SubResource("TitoTrigShape")
+
+[node name="ExitToCopa" parent="." unique_id=1401711403 instance=ExtResource("3_exit")]
 position = Vector2(0, 250)
-target_district = "copacabana"
 label_text = "↓ COPACABANA"
+require_quest_completed = "prologue_pedrinho"
+block_message = "Tu peux pas laisser le morro comme ça. Retrouve Pedrinho d'abord."
+block_approach_cutscene = true
 
 [node name="CollisionShape2D" parent="ExitToCopa" index="0"]
 shape = SubResource("ExitWideShape")
 
-[node name="CornCart" parent="." instance=ExtResource("6_cart")]
+[node name="CornCart" parent="." unique_id=1488220499 instance=ExtResource("6_cart")]
 position = Vector2(-80, -540)
 
-[node name="CartHint" type="Label" parent="."]
+[node name="CartHint" type="Label" parent="." unique_id=2109001504]
 offset_left = -130.0
 offset_top = -570.0
 offset_right = -30.0
 offset_bottom = -554.0
-text = "Carrocinha de tio Zé"
-horizontal_alignment = 1
-theme_override_font_sizes/font_size = 9
 theme_override_colors/font_color = Color(0.95, 0.92, 0.78, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
 theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 9
+text = "Carrocinha de tio Zé"
+horizontal_alignment = 1
 
-[node name="KidA" parent="." instance=ExtResource("2_wander")]
+[node name="KidA" parent="." unique_id=1807987578 instance=ExtResource("2_wander")]
 position = Vector2(0, -700)
 color = Color(0.95, 0.85, 0.4, 1)
 size = Vector2(7, 12)
@@ -1098,7 +1114,7 @@ pause_at_waypoints = 0.4
 pause_random_jitter = 0.6
 look_at_player_distance = 50.0
 
-[node name="KidB" parent="." instance=ExtResource("2_wander")]
+[node name="KidB" parent="." unique_id=1732626659 instance=ExtResource("2_wander")]
 position = Vector2(0, -300)
 color = Color(0.4, 0.85, 0.55, 1)
 size = Vector2(7, 12)
@@ -1108,9 +1124,8 @@ pause_at_waypoints = 0.5
 pause_random_jitter = 0.6
 look_at_player_distance = 50.0
 
-[node name="LocalA" parent="." instance=ExtResource("2_wander")]
+[node name="LocalA" parent="." unique_id=1548440969 instance=ExtResource("2_wander")]
 position = Vector2(0, -450)
-color = Color(0.85, 0.55, 0.4, 1)
 size = Vector2(10, 17)
 roam_zone = Rect2(-100, -120, 200, 240)
 speed = 14.0
@@ -1118,7 +1133,7 @@ pause_at_waypoints = 2.0
 pause_random_jitter = 1.2
 look_at_player_distance = 60.0
 
-[node name="LocalB" parent="." instance=ExtResource("2_wander")]
+[node name="LocalB" parent="." unique_id=1141127724 instance=ExtResource("2_wander")]
 position = Vector2(0, 50)
 color = Color(0.55, 0.42, 0.32, 1)
 size = Vector2(10, 17)
@@ -1128,18 +1143,18 @@ pause_at_waypoints = 2.4
 pause_random_jitter = 1.4
 look_at_player_distance = 60.0
 
-[node name="Tito" parent="." instance=ExtResource("8_tito")]
+[node name="Tito" parent="." unique_id=1554763142 instance=ExtResource("8_tito")]
 position = Vector2(60, -200)
 
-[node name="LocalC" parent="." instance=ExtResource("2_wander")]
+[node name="LocalC" parent="." unique_id=1444639948 instance=ExtResource("2_wander")]
 position = Vector2(0, -100)
 color = Color(0.62, 0.42, 0.32, 1)
 size = Vector2(10, 17)
 stationary = true
 look_at_player_distance = 50.0
-active_phases = [2]
+active_phases = Array[int]([2])
 
-[node name="DogStreet" parent="." instance=ExtResource("2_wander")]
+[node name="DogStreet" parent="." unique_id=85691462 instance=ExtResource("2_wander")]
 position = Vector2(0, 200)
 color = Color(0.55, 0.42, 0.32, 1)
 size = Vector2(10, 8)
@@ -1148,181 +1163,514 @@ speed = 22.0
 pause_at_waypoints = 0.6
 pause_random_jitter = 1.0
 
-[node name="VizinhaSpot" parent="." instance=ExtResource("7_reactive")]
-position = Vector2(-180, -150)
+[node name="VizinhaWindow" type="ColorRect" parent="." unique_id=2105982986]
+offset_left = -70.0
+offset_top = -470.0
+offset_right = -42.0
+offset_bottom = -440.0
+color = Color(0.35, 0.3, 0.42, 1)
+
+[node name="VizinhaLabel" type="Label" parent="." unique_id=172498647]
+offset_left = -86.0
+offset_top = -462.0
+offset_right = -2.0
+offset_bottom = -448.0
+theme_override_colors/font_color = Color(0.95, 0.92, 0.78, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 9
+text = "A vizinha"
+horizontal_alignment = 1
+
+[node name="VizinhaSpot" parent="." unique_id=1151035877 groups=["mae_prologue"] instance=ExtResource("7_reactive")]
+position = Vector2(-40, -418)
 npc_id = "vizinha"
 prompt = "Parler à la voisine"
-variants = [{
-"id": "act3_intel",
-"flag": "act3_intel_accepted",
-"not_flag": "vizinha_intel_done",
-"set_flag_after": "vizinha_intel_done",
-"actions": {"finish_quest": {"quest": "act3_policia_intel", "objective": "intel_vizinha", "payout": 0}},
-"speaker": "Vizinha",
-"text": "*regarde par la fenêtre, parle bas* Ramos t'envoie ? *soupire* Bom. Je vais te dire ce que je vois passer. Trois mecs descendent par l'escalier vers Copa chaque mardi à l'aube — sacs noirs, mêmes baskets blanches. Le quatrième porte une chaîne, c'est lui qui paie le silence. *te serre le bras* Ne dis jamais d'où ça vient.",
-"choices": ["Tu peux compter sur moi"]
+variants = Array[Dictionary]([{
+"actions": {
+"finish_quest": {
+"objective": "bring_home",
+"payout": 0,
+"quest": "prologue_pedrinho"
+},
+"rep": {
+0: 6
+}
+},
+"choices": ["Prends soin de lui."],
+"id": "prologue_reunion",
+"objective_done": ["prologue_pedrinho", "find_pedrinho"],
+"objective_pending": ["prologue_pedrinho", "bring_home"],
+"set_flag_after": "pedrinho_home",
+"speaker": "Mère de Pedrinho",
+"text": "*te voit arriver avec Pedrinho derrière toi — elle lâche son linge, dévale les marches et l'écrase contre elle en sanglotant* Meu filho... meu filho ! *elle l'ausculte partout, l'embrasse, puis lève les yeux vers toi, la voix changée — plus une supplique, une dette* Tu me l'as ramené. Le morro n'oublie pas ça, sobrinho. *serre ta main dans les deux siennes* Tant que je vis, cette maison est la tienne. Maintenant descends à Copa la tête haute — Zé serait fier."
 }, {
-"id": "thanked",
-"flag": "vizinha_quest_done",
-"speaker": "Vizinha",
-"text": "*joue de la guitare doucement, Beto endormi sur ses genoux* Sobrinho. Tu fais partie du morro maintenant. Si t'as besoin d'un toit la nuit, frappe ici. La porte est sans clé.",
-"choices": ["Obrigada, vizinha"]
+"actions": {
+"finish_quest": {
+"objective": "ask_mae",
+"payout": 0,
+"quest": "prologue_pedrinho"
+}
+},
+"choices": ["Je vais la voir"],
+"id": "prologue_mae",
+"objective_pending": ["prologue_pedrinho", "ask_mae"],
+"speaker": "Mère de Pedrinho",
+"text": "*t'agrippe les deux mains, les yeux rouges, la voix en lambeaux* Sobrinho ! Mon Pedrinho, sept ans... il n'est pas rentré cette nuit. La PM dit qu'un gosse du morro qui fugue c'est pas leur affaire. *renifle* Hier un homme est venu — costume clair, propre, des questions sur ce que je dois au consortium. Et ce matin, plus de Pedrinho. *te serre fort* La vieille qui tricote, là-haut — elle voit tout du morro depuis son banc. Va lui demander. Pitié, sobrinho."
 }, {
-"id": "found",
-"flag": "beto_found",
-"set_flag_after": "vizinha_quest_done",
-"actions": {"finish_quest": {"quest": "beto_lost", "objective": "tell_vizinha", "payout": 80}, "rep": {0: 3}},
-"speaker": "Vizinha",
-"text": "*Beto se jette dans ses bras, elle l'écrase contre sa poitrine, sanglote* Beto, meu bem... *te tend trois billets froissés, sans lever la tête* C'est tout ce que j'ai mis de côté. Prends. Prends, sobrinho. Tu m'as rendu ma vie.",
-"choices": ["Obrigado, vizinha"]
+"choices": ["Je continue, ne bouge pas d'ici"],
+"id": "prologue_searching",
+"quest_active": "prologue_pedrinho",
+"speaker": "Mère de Pedrinho",
+"text": "*fait les cent pas devant sa porte, se tord les mains* Tu l'as retrouvé ? *guette l'escalier* Demande à la vovó, au petit Juca — quelqu'un l'a forcément vu. Ramène-le-moi, sobrinho, je t'en supplie."
 }, {
-"id": "in_progress",
-"flag": "vizinha_quest_taken",
-"speaker": "Vizinha",
-"text": "*tord son tablier* T'as trouvé Beto, sobrinho ? Il aime traîner près des vendeurs de cocos sur le calçadão... il oublie l'heure, il oublie la maison, il oublie sa mère.",
-"choices": ["Je continue de chercher"]
-}, {
+"choices": ["Obrigado, vizinha"],
 "id": "default",
-"set_flag_after": "vizinha_quest_taken",
-"actions": {"accept_quest": "beto_lost"},
-"speaker": "Vizinha",
-"text": "*t'attrape le bras, paniquée, voix tremblante* Sobrinho ! Tu redescends à Copa ? Mon fils Beto, neuf ans, il est parti ce matin sans dire où. *montre l'escalier* Il porte un t-shirt jaune, des sandalias bleues. *baisse la voix* Si la PM le ramasse... s'il te plaît. Trouve-le-moi.",
-"choices": ["Je le cherche"]
-}]
+"speaker": "Mère de Pedrinho",
+"text": "*berce Pedrinho à moitié endormi contre elle, te sourit, les yeux encore rouges* Sobrinho. Tant que tu seras du morro, cette porte n'aura pas de clé pour toi. Descends à Copa la tête haute — Zé serait fier de toi."
+}])
+character_seed = 70411
 
-[node name="VovoTricot" parent="." instance=ExtResource("2_wander")]
-position = Vector2(180, -200)
+[node name="JorgeSpot" parent="." unique_id=646533189 instance=ExtResource("7_reactive")]
+position = Vector2(-150, -340)
+npc_id = "vizinho_jorge"
+prompt = "Parler à Seu Jorge"
+variants = Array[Dictionary]([{
+"actions": {
+"finish_quest": {
+"objective": "tell_vizinha",
+"payout": 80,
+"quest": "beto_lost"
+},
+"rep": {
+0: 3
+}
+},
+"choices": ["De rien, Seu Jorge"],
+"flag": "beto_found",
+"id": "return",
+"objective_pending": ["beto_lost", "tell_vizinha"],
+"set_flag_after": "beto_returned",
+"speaker": "Seu Jorge",
+"text": "*assis sur un tabouret bancal, il répare une nasse* Alors ? *te scrute par-dessus ses lunettes* Le morveux remonte ? *grogne, mais le coin de l'œil se plisse* Bom. Tiens — c'est pas grand-chose, mais un service se paie au morro. Et merci, sobrinho. Ce gosse a la tête dure, comme son grand-père."
+}, {
+"choices": ["À bientôt, Seu Jorge"],
+"flag": "beto_returned",
+"id": "done",
+"speaker": "Seu Jorge",
+"text": "*ressserre un nœud sans lever les yeux* Beto trie le poisson à l'heure, maintenant. Presque. *petit rire rauque* Si t'as encore besoin d'un vieux qui connaît tout le monde ici, tu sais où je pêche."
+}, {
+"choices": ["J'y retourne"],
+"flag": "beto_quest_taken",
+"id": "in_progress",
+"speaker": "Seu Jorge",
+"text": "*crache à côté* Toujours pas remonté ? Il traîne sur le calçadão, près des serviettes des touristes, à fourguer ses lunettes pourries. Secoue-le bien, qu'il comprenne."
+}, {
+"actions": {
+"accept_quest": "beto_lost"
+},
+"choices": ["Je m'en occupe, Seu Jorge"],
+"id": "offer",
+"quest_completed": "prologue_pedrinho",
+"quest_not_active": "beto_lost",
+"quest_not_completed": "beto_lost",
+"set_flag_after": "beto_quest_taken",
+"speaker": "Seu Jorge",
+"text": "*pose sa nasse, t'attrape la manche* Eh, le neveu de Zé. Tu redescends à Copa ? Rends-moi un service. Mon petit-fils Beto, quinze ans, tête de mule — il sèche encore pour vendre des lunettes de contrefaçon sur le calçadão. *serre la mâchoire* S'il continue, c'est le morro qui le récupère comme guetteur. Va le secouer et fais-le remonter."
+}, {
+"choices": ["Toi aussi, Seu Jorge"],
+"id": "default",
+"speaker": "Seu Jorge",
+"text": "*répare sa nasse, marmonne* Le morro change, sobrinho. Avant on connaissait chaque gosse par son prénom. Maintenant... *hausse les épaules* Fais attention à toi en bas."
+}])
+character_seed = 70444
+
+[node name="VovoTricot" parent="." unique_id=1501304788 instance=ExtResource("2_wander")]
+position = Vector2(180, -179)
 color = Color(0.85, 0.75, 0.68, 1)
 size = Vector2(10, 17)
 stationary = true
 bob_strength = 0.6
 look_at_player_distance = 50.0
 
-[node name="VovoStoolShadow" type="ColorRect" parent="."]
+[node name="VovoStoolShadow" type="ColorRect" parent="." unique_id=1200546089]
 offset_left = 172.0
 offset_top = -184.0
 offset_right = 188.0
 offset_bottom = -180.0
 color = Color(0, 0, 0, 0.32)
 
-[node name="VovoStool" type="ColorRect" parent="."]
+[node name="VovoStool" type="ColorRect" parent="." unique_id=29039319]
 offset_left = 174.0
 offset_top = -188.0
 offset_right = 186.0
 offset_bottom = -180.0
 color = Color(0.42, 0.28, 0.18, 1)
 
-[node name="VovoKnitting" type="ColorRect" parent="."]
+[node name="VovoKnitting" type="ColorRect" parent="." unique_id=710191687]
 offset_left = 184.0
 offset_top = -200.0
 offset_right = 192.0
 offset_bottom = -194.0
 color = Color(0.92, 0.78, 0.42, 0.9)
 
-[node name="VovoSpot" parent="." instance=ExtResource("7_reactive")]
-position = Vector2(180, -200)
+[node name="VovoSpot" parent="." unique_id=289418179 instance=ExtResource("7_reactive")]
+position = Vector2(40, -360)
 npc_id = "vovo_morro"
 prompt = "Parler à la vovó"
-variants = [{
+variants = Array[Dictionary]([{
+"actions": {
+"finish_quest": {
+"objective": "ask_vovo",
+"payout": 0,
+"quest": "prologue_pedrinho"
+}
+},
+"choices": ["Je remonte chercher Juca"],
+"id": "prologue_vovo",
+"objective_done": ["prologue_pedrinho", "ask_mae"],
+"objective_pending": ["prologue_pedrinho", "ask_vovo"],
+"speaker": "Vovó do morro",
+"text": "*pose son tricot, te fixe par-dessus ses lunettes* Le petit Pedrinho. *hoche lentement la tête* Je l'ai vu filer vers le haut, vers la chapelle, avant l'aube — comme s'il avait le diable au cul. Et l'homme en costume clair derrière, qui demandait après lui et après les dettes de sa mère. *reprend une maille* Le petit Juca jouait avec lui hier — c'est lui qui sait où Pedrinho se terre. Tu le trouveras sur les marches, en remontant le morro, avec sa balle."
+}, {
+"choices": ["Obrigado, vovó"],
 "id": "after_envelope",
 "quest_completed": "zona_sul_envelope",
 "speaker": "Vovó do morro",
-"text": "*pose son tricot, te scrute par-dessus ses lunettes* Sobrinho. *baisse la voix* Une de mes cousines fait des ménages à Leblon — chez les Caldeira, justement. *reprend une maille très lentement* Elle a entendu ton prénom dans la bouche de la veuve. Pas en mal, hein, au contraire. *léger sourire édenté* La rumeur monte ici comme la fumée du milho — elle ressort en haut. Mais fais gaffe, mon petit. Les gens chic se rappellent les visages utiles. Tu vas en revoir d'autres, des enveloppes.",
-"choices": ["Obrigado, vovó"]
+"text": "*pose son tricot, te scrute par-dessus ses lunettes* Sobrinho. *baisse la voix* Une de mes cousines fait des ménages à Leblon — chez les Caldeira, justement. *reprend une maille très lentement* Elle a entendu ton prénom dans la bouche de la veuve. Pas en mal, hein, au contraire. *léger sourire édenté* La rumeur monte ici comme la fumée du milho — elle ressort en haut. Mais fais gaffe, mon petit. Les gens chic se rappellent les visages utiles. Tu vas en revoir d'autres, des enveloppes."
 }, {
+"choices": ["Boa noite, vovó"],
 "id": "evening",
 "phase": 2,
 "speaker": "Vovó do morro",
-"text": "*allume une lanterne à pétrole, tricote toujours dans le halo orange* Sobrinho. *voix plus douce que d'habitude* Le soir, le morro chante autrement. Tu entends ? *un chien aboie au loin, une radio passe Garota de Ipanema deux blocs plus bas* C'est l'heure où les vieilles tricotent et où les jeunes vont commencer à perdre leurs sous au bar. Rentre pas trop tard chez ta mère, elle s'inquiète.",
-"choices": ["Boa noite, vovó"]
+"text": "*allume une lanterne à pétrole, tricote toujours dans le halo orange* Sobrinho. *voix plus douce que d'habitude* Le soir, le morro chante autrement. Tu entends ? *un chien aboie au loin, une radio passe Garota de Ipanema deux blocs plus bas* C'est l'heure où les vieilles tricotent et où les jeunes vont commencer à perdre leurs sous au bar. Rentre pas trop tard chez ta mère, elle s'inquiète."
 }, {
+"choices": ["Belo, vovó"],
 "id": "default",
 "speaker": "Vovó do morro",
-"text": "*tricote sans lever les yeux, voix douce* Sobrinho, t'as vu mes mains ? Soixante-douze ans qu'elles tricotent. Si elles s'arrêtent, c'est que je suis morte. *rit silencieusement* Tu reviens t'asseoir quand tu veux. Y'a toujours du café.",
-"choices": ["Belo, vovó"]
-}]
+"text": "*tricote sans lever les yeux, voix douce* Sobrinho, t'as vu mes mains ? Soixante-douze ans qu'elles tricotent. Si elles s'arrêtent, c'est que je suis morte. *rit silencieusement* Tu reviens t'asseoir quand tu veux. Y'a toujours du café."
+}])
+character_seed = 70412
 
-# ─── Lampadaires nuit ─────────────────────────────────────────────────────────
-[node name="LampF1Pole" type="ColorRect" parent="."]
+[node name="JucaBall" type="ColorRect" parent="." unique_id=1654770606]
+offset_left = 56.0
+offset_top = -614.0
+offset_right = 64.0
+offset_bottom = -606.0
+color = Color(0.9, 0.5, 0.2, 1)
+
+[node name="GarotoSpot" parent="." unique_id=1013554818 instance=ExtResource("7_reactive")]
+position = Vector2(44, -626)
+npc_id = "juca_morro"
+prompt = "Parler au gamin (Juca)"
+variants = Array[Dictionary]([{
+"actions": {
+"finish_quest": {
+"objective": "ask_garoto",
+"payout": 0,
+"quest": "prologue_pedrinho"
+}
+},
+"choices": ["Merci, Juca — je monte"],
+"id": "prologue_juca",
+"objective_done": ["prologue_pedrinho", "ask_vovo"],
+"objective_pending": ["prologue_pedrinho", "ask_garoto"],
+"speaker": "Juca",
+"text": "*arrête de taper dans sa balle, se mord la lèvre* Pedrinho ? *baisse la voix, regarde autour* Le monsieur en costume lui faisait peur. Il disait que si sa mère payait pas, ils prendraient la maison. *pointe tout en haut des escaliers* Quand il a peur, Pedrinho se planque dans la vieille citerne, juste à côté de la chapelle, tout en haut du morro. Personne monte là-haut. Mais dis pas que c'est moi."
+}, {
+"choices": ["Plus tard"],
+"id": "default",
+"speaker": "Juca",
+"text": "*shoote dans une balle crevée contre un mur* T'as cinq reais ? Non ? *hausse les épaules, recommence à jouer* Bah, reviens quand t'as cinq reais."
+}])
+character_seed = 70422
+
+[node name="CisterneShadow" type="ColorRect" parent="." unique_id=1630851132]
+offset_left = 92.0
+offset_top = -974.0
+offset_right = 132.0
+offset_bottom = -966.0
+color = Color(0, 0, 0, 0.3)
+
+[node name="CisterneRing" type="ColorRect" parent="." unique_id=1715981647]
+offset_left = 94.0
+offset_top = -998.0
+offset_right = 130.0
+offset_bottom = -972.0
+color = Color(0.5, 0.48, 0.45, 1)
+
+[node name="CisterneHole" type="ColorRect" parent="." unique_id=1652982597]
+offset_left = 100.0
+offset_top = -994.0
+offset_right = 124.0
+offset_bottom = -976.0
+color = Color(0.06, 0.05, 0.07, 1)
+
+[node name="CisterneLabel" type="Label" parent="." unique_id=102523696]
+offset_left = 78.0
+offset_top = -1014.0
+offset_right = 146.0
+offset_bottom = -1000.0
+theme_override_colors/font_color = Color(0.95, 0.92, 0.78, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 9
+text = "Velha cisterna"
+horizontal_alignment = 1
+
+[node name="PedrinhoSpot" parent="." unique_id=525478666 instance=ExtResource("7_reactive")]
+position = Vector2(112, -984)
+npc_id = "pedrinho"
+prompt = "Inspecter la citerne"
+variants = Array[Dictionary]([{
+"actions": {
+"finish_quest": {
+"objective": "find_pedrinho",
+"payout": 0,
+"quest": "prologue_pedrinho"
+},
+"rep": {
+0: 4
+}
+},
+"choices": ["Viens, petit. Reste derrière moi."],
+"id": "prologue_found",
+"objective_done": ["prologue_pedrinho", "ask_garoto"],
+"objective_pending": ["prologue_pedrinho", "find_pedrinho"],
+"set_flag_after": "pedrinho_following",
+"speaker": "Pedrinho",
+"text": "*recroquevillé au fond de la citerne, sale, tremblant* …Va-t'en. Le monsieur a dit qu'il revenait. *te reconnaît, la lèvre tremble* T'es le neveu de Seu João ? *éclate en sanglots, s'accroche à toi* J'veux ma mãe. J'voulais pas qu'ils prennent la maison. *tu le hisses hors du trou ; il essuie ses yeux et s'agrippe à ta manche.* …Tu me ramènes chez maman ? Reste devant, j'te suis."
+}, {
+"choices": ["M'éloigner"],
+"id": "default",
+"speaker": "Narrateur",
+"text": "*La vieille citerne sèche, à côté de la chapelle. Vide pour l'instant. Des traces de pas trop petites pour un adulte y mènent — mais tu ne sais pas encore qui se cache ici. Fais parler le morro d'abord.*"
+}])
+
+[node name="TraficoIntimSpot" parent="." unique_id=1773870891 instance=ExtResource("7_reactive")]
+position = Vector2(-30, -300)
+npc_id = "trafico_intim"
+prompt = "Le voisin bavard"
+variants = Array[Dictionary]([{
+"actions": {
+"finish_quest": {
+"objective": "silence_voisin",
+"payout": 300,
+"quest": "trafico_a5_intim"
+},
+"rep": {
+0: -2,
+2: 5
+}
+},
+"choices": ["Que ça reste comme ça"],
+"id": "a5_close",
+"objective_pending": ["trafico_a5_intim", "silence_voisin"],
+"set_flag_after": "trafico_a5_done",
+"speaker": "Le voisin",
+"text": "*il rit fort avec deux gars, une bière à la main — il te voit, le sourire tombe* Eh, eh, du calme, je disais rien de mal… *recule contre le mur* J'ai rien vu à Ipanema, t'entends ? Rien. *baisse les yeux, la voix éteinte* Personne saura. Je le jure sur ma mère. *les autres s'éclipsent ; le morro a compris le message — toi aussi.*"
+}, {
+"actions": {
+"accept_quest": "trafico_a6_cagarras"
+},
+"choices": ["Aux Cagarras, alors"],
+"flag": "trafico_a5_done",
+"id": "a6_offer",
+"quest_not_active": "trafico_a6_cagarras",
+"quest_not_completed": "trafico_a6_cagarras",
+"speaker": "Le voisin",
+"text": "*te parle bas, soumis maintenant, presque utile* Si tu veux te faire bien voir de Tito… j'ai entendu qu'un arrivage entre par la mer. Les Cagarras, au large du Posto 6. Faut quelqu'un de confiance pour réceptionner. Prends le bateau. Dis pas que ça vient de moi."
+}, {
+"choices": ["…"],
+"id": "default",
+"speaker": "Le voisin",
+"text": "*rit trop fort avec ses potes au bar* …et là je lui dis : le morro c'est pas la plage, mon gars ! *t'aperçoit, baisse d'un ton*"
+}])
+character_seed = 70433
+
+[node name="GuetShadow" type="ColorRect" parent="." unique_id=2025516361]
+offset_left = 14.0
+offset_top = -476.0
+offset_right = 38.0
+offset_bottom = -470.0
+color = Color(0, 0, 0, 0.3)
+
+[node name="GuetCrate" type="ColorRect" parent="." unique_id=1763656962]
+offset_left = 16.0
+offset_top = -498.0
+offset_right = 36.0
+offset_bottom = -476.0
+color = Color(0.42, 0.32, 0.22, 1)
+
+[node name="GuetMark" type="ColorRect" parent="." unique_id=938304565]
+offset_left = 20.0
+offset_top = -506.0
+offset_right = 32.0
+offset_bottom = -498.0
+color = Color(0.4, 0.55, 0.85, 1)
+
+[node name="PoliciaFilatureSpot" parent="." unique_id=185039548 instance=ExtResource("7_reactive")]
+position = Vector2(26, -486)
+npc_id = "policia_filature"
+prompt = "Observer le réseau (planque)"
+variants = Array[Dictionary]([{
+"actions": {
+"finish_quest": {
+"objective": "map_network",
+"payout": 200,
+"quest": "policia_b2_filature"
+},
+"rep": {
+1: 5,
+2: -4
+}
+},
+"choices": ["Rapporter à Ramos"],
+"id": "b2_close",
+"objective_pending": ["policia_b2_filature", "map_network"],
+"set_flag_after": "policia_b2_done",
+"speaker": "Narrateur",
+"text": "*Depuis ce recoin, tu vois tout : le guetteur sur les marches, la planque derrière le bar, qui monte les sacs et à quelle heure. Tu notes chaque visage, chaque horaire. Des gens qui t'ont vu grandir. Tu plies le carnet. C'est fait — et ça ne se défait pas. Le morro ne le sait pas encore.*"
+}, {
+"actions": {
+"accept_quest": "policia_b3_escorte"
+},
+"choices": ["En route pour Botafogo"],
+"flag": "policia_b2_done",
+"id": "b3_offer",
+"quest_not_active": "policia_b3_escorte",
+"quest_not_completed": "policia_b3_escorte",
+"speaker": "Contact (radio)",
+"text": "*la radio grésille, voix de l'agent* Bien reçu, le carnet est en or. Ramos veut que tu conduises une patrouille en planque — Botafogo, sous le Bondinho. Discrète. File."
+}, {
+"choices": ["M'éloigner"],
+"id": "default",
+"speaker": "Narrateur",
+"text": "*Un recoin tranquille du morro. D'ici on voit les marches monter et descendre. Rien à signaler pour l'instant.*"
+}])
+character_seed = 80107
+
+[node name="PrefeitoFavelaSpot" parent="." unique_id=1439209239 instance=ExtResource("7_reactive")]
+position = Vector2(-60, -260)
+npc_id = "prefeito_favela"
+prompt = "La famille en conflit"
+variants = Array[Dictionary]([{
+"actions": {
+"finish_quest": {
+"objective": "defuse_conflict",
+"payout": 250,
+"quest": "prefeito_d3_mediation"
+},
+"rep": {
+0: 5,
+2: 1
+}
+},
+"choices": ["Que la paix tienne"],
+"id": "d3_close",
+"objective_pending": ["prefeito_d3_mediation", "defuse_conflict"],
+"set_flag_after": "prefeito_d3_done",
+"speaker": "La mère de famille",
+"text": "*sur le pas de sa porte, un homme de Tito en face, la tension palpable — tu te places entre les deux, tu parles bas, longtemps. Pas de menace, pas de promesse : juste de quoi laisser chacun reculer sans perdre la face.* …*l'homme crache, tourne les talons. La mère expire enfin.* Tu as évité un mort ce soir, sobrinho. Le morro s'en souviendra."
+}, {
+"actions": {
+"accept_quest": "prefeito_d4_procession"
+},
+"choices": ["Je protégerai la procession"],
+"flag": "prefeito_d3_done",
+"id": "d4_offer",
+"quest_not_active": "prefeito_d4_procession",
+"quest_not_completed": "prefeito_d4_procession",
+"speaker": "La mère de famille",
+"text": "*te retient par la manche* Le Padre m'a dit de te prévenir : une procession descend en Zona Sul demain, et des hommes du consortium ont reçu un « contrat » pour la disperser. Si tu la protèges, tu choisis un camp aux yeux de tous. Mais il faut bien que quelqu'un les protège."
+}, {
+"choices": ["…"],
+"id": "default",
+"speaker": "Habitante du morro",
+"text": "*étend du linge entre deux fenêtres* Tudo em paz por aqui hoje, graças a Deus. *te salue de la tête*"
+}])
+character_seed = 70403
+
+[node name="LampF1Pole" type="ColorRect" parent="." unique_id=248506528]
 offset_left = 50.0
 offset_top = -460.0
 offset_right = 54.0
 offset_bottom = -430.0
-color = Color(0.32, 0.30, 0.30, 1)
+color = Color(0.32, 0.3, 0.3, 1)
 
-[node name="LampF1Halo" type="ColorRect" parent="." groups=["nightlight"]]
+[node name="LampF1Halo" type="ColorRect" parent="." unique_id=2010245659 groups=["nightlight"]]
 offset_left = 38.0
 offset_top = -470.0
 offset_right = 66.0
 offset_bottom = -450.0
-color = Color(1.0, 0.88, 0.50, 0.5)
+color = Color(1, 0.88, 0.5, 0.5)
 
-[node name="LampF1Bulb" type="ColorRect" parent="." groups=["nightlight"]]
+[node name="LampF1Bulb" type="ColorRect" parent="." unique_id=2077570081 groups=["nightlight"]]
 offset_left = 49.0
 offset_top = -463.0
 offset_right = 55.0
 offset_bottom = -457.0
-color = Color(1.0, 0.95, 0.62, 1)
+color = Color(1, 0.95, 0.62, 1)
 
-[node name="LampF2Pole" type="ColorRect" parent="."]
+[node name="LampF2Pole" type="ColorRect" parent="." unique_id=1418454821]
 offset_left = -90.0
 offset_top = -250.0
 offset_right = -86.0
 offset_bottom = -220.0
-color = Color(0.32, 0.30, 0.30, 1)
+color = Color(0.32, 0.3, 0.3, 1)
 
-[node name="LampF2Halo" type="ColorRect" parent="." groups=["nightlight"]]
+[node name="LampF2Halo" type="ColorRect" parent="." unique_id=194456143 groups=["nightlight"]]
 offset_left = -102.0
 offset_top = -260.0
 offset_right = -74.0
 offset_bottom = -240.0
-color = Color(1.0, 0.88, 0.50, 0.5)
+color = Color(1, 0.88, 0.5, 0.5)
 
-[node name="LampF2Bulb" type="ColorRect" parent="." groups=["nightlight"]]
+[node name="LampF2Bulb" type="ColorRect" parent="." unique_id=1012426714 groups=["nightlight"]]
 offset_left = -91.0
 offset_top = -253.0
 offset_right = -85.0
 offset_bottom = -247.0
-color = Color(1.0, 0.95, 0.62, 1)
+color = Color(1, 0.95, 0.62, 1)
 
-[node name="LampF3Pole" type="ColorRect" parent="."]
+[node name="LampF3Pole" type="ColorRect" parent="." unique_id=1230624270]
 offset_left = 60.0
 offset_top = 30.0
 offset_right = 64.0
 offset_bottom = 60.0
-color = Color(0.32, 0.30, 0.30, 1)
+color = Color(0.32, 0.3, 0.3, 1)
 
-[node name="LampF3Halo" type="ColorRect" parent="." groups=["nightlight"]]
+[node name="LampF3Halo" type="ColorRect" parent="." unique_id=2045765812 groups=["nightlight"]]
 offset_left = 48.0
 offset_top = 20.0
 offset_right = 76.0
 offset_bottom = 40.0
-color = Color(1.0, 0.88, 0.50, 0.5)
+color = Color(1, 0.88, 0.5, 0.5)
 
-[node name="LampF3Bulb" type="ColorRect" parent="." groups=["nightlight"]]
+[node name="LampF3Bulb" type="ColorRect" parent="." unique_id=2036082482 groups=["nightlight"]]
 offset_left = 59.0
 offset_top = 27.0
 offset_right = 65.0
 offset_bottom = 33.0
-color = Color(1.0, 0.95, 0.62, 1)
+color = Color(1, 0.95, 0.62, 1)
 
-[node name="LampF4Pole" type="ColorRect" parent="."]
+[node name="LampF4Pole" type="ColorRect" parent="." unique_id=2013862445]
 offset_left = -60.0
 offset_top = 160.0
 offset_right = -56.0
 offset_bottom = 190.0
-color = Color(0.32, 0.30, 0.30, 1)
+color = Color(0.32, 0.3, 0.3, 1)
 
-[node name="LampF4Halo" type="ColorRect" parent="." groups=["nightlight"]]
+[node name="LampF4Halo" type="ColorRect" parent="." unique_id=1693747286 groups=["nightlight"]]
 offset_left = -72.0
 offset_top = 150.0
 offset_right = -44.0
 offset_bottom = 170.0
-color = Color(1.0, 0.88, 0.50, 0.5)
+color = Color(1, 0.88, 0.5, 0.5)
 
-[node name="LampF4Bulb" type="ColorRect" parent="." groups=["nightlight"]]
+[node name="LampF4Bulb" type="ColorRect" parent="." unique_id=1555677682 groups=["nightlight"]]
 offset_left = -61.0
 offset_top = 157.0
 offset_right = -55.0
 offset_bottom = 163.0
-color = Color(1.0, 0.95, 0.62, 1)
+color = Color(1, 0.95, 0.62, 1)

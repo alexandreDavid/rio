@@ -26,6 +26,33 @@ signal dialogue_finished()
 #   {"return_cart": true}          → cart.drop_off(inventory)
 #   {"rep": {axis_int: delta}}     → ReputationSystem.modify(...)
 const PLACEHOLDER_DIALOGUES: Dictionary = {
+	# --- OUVERTURE — joué une fois en début de partie, par-dessus le décor ---
+	# (HouseInterior visible en fond, dialogue overlay). MainBoot fire la chaîne
+	# via CutsceneRunner sur nouvelle partie tant que `narrative_intro_seen`
+	# n'est pas posé. Chaque page chaîne sur la suivante via `next`.
+	"game_intro_open": {
+		"speaker": "Narrateur",
+		"text": "Ce matin, tu te réveilles avec un sentiment étrange.\n\nLe studio du Morro est trop silencieux. Le lit de tio Zé est froid, la porte entrouverte. Dehors, Rio s'éveille déjà — un coq, une radio lointaine, la rumeur de Copacabana en contrebas.\n\nTu ne sais pas encore pourquoi. Mais quelque chose, aujourd'hui, ne tourne pas rond.",
+		"choices": ["Continuer"],
+		"on_choose": {"0": {"next": "game_intro_disparu"}},
+	},
+	"game_intro_disparu": {
+		"speaker": "Narrateur",
+		"text": "Rio de Janeiro. Copacabana. Un matin comme les autres, sauf que Zé — ton oncle, ton parrain, ton problème — a disparu.\n\nIl t'a laissé trois choses : sa carrocinha de milho, les clefs d'un studio au Morro, et une dette de cinquante mille reais.\n\nLe Carnaval est dans un mois. Tu ferais mieux d'avoir réglé la note d'ici là.",
+		"choices": ["Continuer"],
+		"on_choose": {"0": {"next": "game_intro_voies"}},
+	},
+	"game_intro_voies": {
+		"speaker": "Narrateur",
+		"text": "À toi de choisir comment t'en sortir.\n\nDeviens un pilier de la communauté. Entre dans la police. Prends la rue. Ou signe avec le consortium.\n\nSelon les gens que tu aides, les gens que tu trahis, et la tête que tu gardes quand tout dérape, tu finiras Prefeito, Chefe de Polícia, Rei do Tráfico — ou sócio do Consórcio.",
+		"choices": ["Continuer"],
+		"on_choose": {"0": {"next": "game_intro_controles"}},
+	},
+	"game_intro_controles": {
+		"speaker": "Narrateur",
+		"text": "Contrôles :\n\n• Joystick en bas à gauche — se déplacer\n• Bouton E en bas à droite — interagir (parler, prendre, acheter…)\n• Bouton ☰ en haut à droite — voir tes caractéristiques\n\nLes dialogues ont souvent plusieurs choix. Chaque choix modifie tes stats (Respect, Voyou, Police, Touristes, Charisma).\n\nBoa sorte, parceiro.",
+		"choices": ["C'est parti"],
+	},
 	# --- META : Run+ (joueur a déjà bouclé une voie au moins une fois) ---
 	"seu_joao_ng_plus_intro": {
 		"speaker": "Seu João",
@@ -62,6 +89,46 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 		"speaker": "Seu João",
 		"text": "*pose sa main sur ton épaule* La carrocinha est dehors, à côté de la maison. Charge-la, descends l'escalier vers Copacabana, vends du milho au calçadão. Le consortium veut 500 reais d'acompte cette semaine. Cinquante mille au Carnaval. Boa sorte, sobrinho. Et reviens dîner.",
 		"choices": ["Obrigado, tio"],
+	},
+	# --- PROLOGUE : l'enfant disparu ---
+	# La quête n'est plus donnée par Seu João : la mère de Pedrinho aborde le
+	# joueur dehors (cutscene MaeAborde). Si le joueur reparle à Seu João avant
+	# de l'avoir croisée, il le pousse simplement à descendre.
+	"seu_joao_prologue_nudge": {
+		"speaker": "Seu João",
+		"text": "*te pousse doucement vers la porte* Ne traîne pas ici, sobrinho. La mère du petit Pedrinho t'attend dehors — elle a passé la nuit à hurler dans le morro. Va la voir avant tout le reste. Et personne ne descend à Copa tant que l'enfant n'est pas retrouvé.",
+		"choices": ["J'y vais, tio"],
+	},
+	"seu_joao_prologue_remind": {
+		"speaker": "Seu João",
+		"text": "*scrute l'escalier vers Copa, inquiet* Le petit Pedrinho, sobrinho. Sa mère ne tient plus. Parle à la vieille qui tricote là-haut, elle voit tout du morro. Et personne ne quitte le morro tant que l'enfant n'est pas là.",
+		"choices": ["J'y retourne, tio"],
+	},
+	# La mère aborde le joueur (cutscene MaeAborde mode "offer"). 2 répliques :
+	# la 1re accepte la quête + flag, la 2nde clôt l'objectif ask_mae (elle
+	# vient de tout raconter — pas besoin de la recliquer).
+	"mae_prologue_offer": {
+		"speaker": "Mère de Pedrinho",
+		"text": "*surgit d'une ruelle et t'agrippe les deux mains, les yeux rouges, la voix en lambeaux* Sobrinho ! Toi, le neveu de Zé — pitié. Mon Pedrinho, sept ans... il n'est pas rentré cette nuit. La PM dit qu'un gosse du morro qui fugue c'est pas leur affaire. *renifle* Hier un homme est venu — costume clair, propre, des questions sur ce que je dois au consortium. Et ce matin, plus de Pedrinho.",
+		"choices": ["Calme-toi. Je le retrouve."],
+		"on_choose": {
+			"0": {"accept_quest": "prologue_pedrinho", "set_flag": "prologue_started", "next": "mae_prologue_offer_b"},
+		},
+	},
+	"mae_prologue_offer_b": {
+		"speaker": "Mère de Pedrinho",
+		"text": "*te serre fort, ravale un sanglot* Que Dieu te garde. La vieille qui tricote, là-haut sur le morro — elle voit tout depuis son banc, jour et nuit. Va lui demander, elle l'aura vu passer. Et ne descends pas à Copa sans mon petit, je t'en supplie.",
+		"choices": ["Je monte la voir."],
+		"on_choose": {
+			"0": {"finish_quest": {"quest": "prologue_pedrinho", "objective": "ask_mae", "payout": 0}},
+		},
+	},
+	# La mère rattrape le joueur à la sortie du morro (cutscene MaeAborde
+	# mode "plea") — remplace le panneau texte de DistrictExit.
+	"mae_prologue_plea": {
+		"speaker": "Mère de Pedrinho",
+		"text": "*te barre le passage, à bout de souffle, le visage défait* Non — non, tu ne descends pas. Pas toi aussi. Mon fils est quelque part dans ce morro, seul, et toi tu t'en vas vers Copa ? *t'agrippe la manche* Retrouve Pedrinho d'abord. Après, tu descendras la tête haute. Pas avant.",
+		"choices": ["Tu as raison. Je le cherche."],
 	},
 	# --- Soirée 1 : Seu João félicite le 1er acompte (set_flag first_payment_done) ---
 	"seu_joao_evening_first_payment": {
@@ -110,14 +177,6 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 		"choices": ["Obrigado, tio"],
 	},
 	# --- Acte 3 : tio Zé recoupe l'intel pour Ramos ---
-	"seu_joao_act3_intel": {
-		"speaker": "Seu João",
-		"text": "*pose le balai, baisse la voix* Ramos veut savoir qui monte au Morro. Je vais te dire ce que les bombeiros voient quand ils éteignent un feu là-haut. *te chuchote trois noms et un horaire* Voilà. Maintenant tu redescends, et tu n'as jamais entendu ces noms de ma bouche. Compris ?",
-		"choices": ["Entendu, tio"],
-		"on_choose": {
-			"0": {"finish_quest": {"quest": "act3_policia_intel", "objective": "intel_seu_joao", "payout": 0}},
-		},
-	},
 	# --- Soirée 4 : la veille du Carnaval (acte 4) ---
 	"seu_joao_evening_carnaval_eve": {
 		"speaker": "Seu João",
@@ -622,76 +681,16 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 		"text": "*sourit avec retenue* Tu as bien travaillé, ragazzo. Si je repasse à Rio, je demanderai expressément ton service. Buona fortuna.",
 		"choices": ["Buon viaggio"],
 	},
-	"ramos_intro": {
-		"speaker": "Capitão Ramos",
-		"text": "*flexion devant le miroir* Toi ! Le neveu de Zé. On surveille la famille, tu sais. Si jamais tu veux aider la Lei et l'Ordem… viens me voir. J'ai peut-être quelque chose pour toi.",
-		"choices": ["Ça m'intéresse", "Pas vraiment", "Tu soulèves combien ?"],
-		"on_choose": {
-			"0": {"accept_quest": "act1_meet_ramos", "set_flag": "met_ramos", "rep": {1: 2}},
-			"2": {"next": "ramos_bench", "set_flag": "met_ramos"},
-		},
-	},
 	"ramos_bench": {
 		"speaker": "Capitão Ramos",
 		"text": "120 au développé. Et je fais encore un peu de jiu-jitsu. Un vrai capitão, tu vois. Bon, si tu changes d'avis, je suis là.",
 		"choices": ["Salut"],
-	},
-	"ramos_active": {
-		"speaker": "Capitão Ramos",
-		"text": "*fait semblant de ranger son flingue* Bon. Tu veux entrer dans mes bonnes grâces ? Une petite 'cotisation à la caisse de solidarité du poste'. 30 reais. Tu comprends hein ? *clin d'œil*",
-		"choices": ["Cotiser (R$ 30)", "Plus tard"],
-		"on_choose": {
-			"0": {"finish_quest": {"quest": "act1_meet_ramos", "objective": "report_to_ramos", "payout": 0}, "pay_bribe": 30, "rep": {1: 5, 2: -2}},
-		},
-	},
-	"ramos_thanks": {
-		"speaker": "Capitão Ramos",
-		"text": "Eh, mon gars ! T'es officiellement dans la famille bleue. Si tu vois des choses louches, tu sais où me trouver.",
-		"choices": ["Compris"],
-	},
-	"tito_favor_ask": {
-		"speaker": "Tito",
-		"text": "Simple : tu descends au Bar do Policial et tu glisses 40 reais à Jorge de ma part. Sans discuter. Ensuite tu reviens.",
-		"choices": ["OK (R$ 40)", "Je réfléchis"],
-		"on_choose": {
-			"0": {"finish_quest": {"quest": "act1_meet_tito", "objective": "do_tito_favor", "payout": 0}, "pay_bribe": 40, "rep": {2: 5, 1: -2}},
-		},
-	},
-	"tito_thanks": {
-		"speaker": "Tito",
-		"text": "Beleza, parceiro. T'es un des nôtres maintenant. Si t'as besoin d'un coup de main dans le Morro, tu sais où taper.",
-		"choices": ["Valeu"],
 	},
 	# --- ACTE 2 : test de loyauté Tito (avant d'ouvrir la voie tráfico finale) ---
 	# Tito propose au joueur de défier le consortium en se posant comme protecteur
 	# de Dona Vânia, une cliente du consortium en bas du morro. Choix engageant :
 	# il faut soit casser avec le consortium publiquement, soit décliner et perdre
 	# un peu de crédit dans le morro.
-	"tito_act2_loyalty_offer": {
-		"speaker": "Tito",
-		"text": "*tape dans tes mains, à mi-voix* Sobrinho. Miguel m'a dit que t'as livré le sac sans broncher. Bien joué. *te fixe* Mais y'a une dernière chose avant que la maison te confie une corrida. Le consortium descend collecter chez Dona Vânia, en bas du morro. Va devant, dis-leur que Vânia, c'est nous qui s'en occupons maintenant. Pas un coup, pas de couteau — juste leur dire \"Tito a parlé pour Vânia\". Tu te poses contre Nilton publiquement. Y'a pas de demi-mesure.",
-		"choices": ["J'y vais — Tito a parlé", "Trop chaud", "Plus tard"],
-		"on_choose": {
-			"0": {"set_flag": "tito_loyalty_proven", "rep": {2: 8, 3: -3}},
-			"1": {"set_flag": "tito_loyalty_declined", "rep": {2: -3}},
-		},
-	},
-	"tito_act2_loyalty_done": {
-		"speaker": "Tito",
-		"text": "*te tape l'épaule, fort* T'as parlé à Nilton, j'ai eu le retour. Vânia a pleuré de soulagement et le consortium a perdu une cliente. *sort un billet froissé, te le glisse* Pour la veuve. Le morro te connaît maintenant, sobrinho. Quand la corrida arrive, c'est toi qui la mènes.",
-		"choices": ["Valeu, Tito"],
-		"on_choose": {
-			"0": {"earn": 200, "set_flag": "tito_loyalty_done_seen"},
-		},
-	},
-	"tito_act2_loyalty_declined": {
-		"speaker": "Tito",
-		"text": "*hausse les épaules, te tourne à moitié le dos* T'as choisi le confort, sobrinho. Tu reviendras quand t'auras compris où le morro tient debout. La corrida t'attendra peut-être. Peut-être pas.",
-		"choices": ["Plus tard, Tito"],
-		"on_choose": {
-			"0": {"set_flag": "tito_loyalty_decline_seen"},
-		},
-	},
 	"carlos_intro": {
 		"speaker": "Carlos",
 		"text": "E aí ! Tu vois mon café, là ? J'ai dix commandes en retard et mon coursier a disparu. 50 reais la livraison si tu prends le vélo derrière moi.",
@@ -849,21 +848,111 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 			"1": {"finish_quest": {"quest": "escort_contessa", "objective": "escort_to_bar", "payout": 0}},
 		},
 	},
-	"tito_meet": {
+	# --- VOIE TRÁFICO : pacte avec Tito (après le 1er acompte) ---
+	"tito_pacto_trafico_offer": {
 		"speaker": "Tito",
-		"text": "Ton oncle Zé, il bossait pour nous aussi, tu sais. Je peux te filer un coup de main si tu rendresservice. Rien de compliqué.",
-		"choices": ["Je suis intéressé", "Pas maintenant"],
+		"text": "*te jauge longuement, recrache la fumée* T'as payé tes 500 au consortium. Bom. Mais 50 000 avant le Carnaval, sobrinho, tu les feras pas en vendant du milho. *pose une main lourde sur ton épaule* Le morro, c'est une famille. Tu portes un paquet pour moi, tu fermes ta gueule, et la famille te porte. Comme ton oncle Zé, avant qu'il se dégonfle. Alors ? T'es du morro, ou t'es un touriste ?",
+		"choices": ["Je suis du morro, Tito", "Plus tard — je réfléchis encore"],
 		"on_choose": {
-			"0": {"accept_quest": "act1_meet_tito", "set_flag": "met_tito", "rep": {2: 2}},
+			"0": {"accept_quest": "trafico_a1_livraison", "set_flag": "voie_trafico", "rep": {2: 4}},
+			"1": {"set_flag": "tito_approached"},
 		},
 	},
+	"tito_pacto_trafico_remind": {
+		"speaker": "Tito",
+		"text": "*sans lever les yeux de ses dominos* Le paquet, sobrinho. Calçadão de Copa, mon contact t'attend près des cocos. Tu le donnes, tu reviens. Le morro regarde.",
+		"choices": ["J'y vais, Tito"],
+	},
+	"tito_trafico_corrida": {
+		"speaker": "Tito",
+		"text": "*se lève, pose les mains sur tes épaules, grave* Tu as fait tout le chemin, sobrinho. Le consortium est presque payé, la baie est à nous, le morro te respecte. *te regarde droit dans les yeux* Il reste la dernière corrida — celle du Carnaval. Tu la mènes, et le Morro n'a plus de roi : il t'a, toi. Ton oncle Zé a eu cette chance et il a fui. Pas toi. *te tend les clés* Vai, Patrão.",
+		"choices": ["Je mène la corrida"],
+		"on_choose": {
+			"0": {"set_endgame": "TRAFICO", "finish_quest": {"quest": "trafico_a9_corrida", "objective": "execute_run", "payout": 5000}, "rep": {2: 10}},
+		},
+	},
+	# --- VOIE POLÍCIA : pacte avec le Capitão Ramos ---
+	"ramos_pacto_policia_offer": {
+		"speaker": "Capitão Ramos",
+		"text": "*te jauge par-dessus son café, au comptoir du Bar do Policial* T'as payé tes 500 au consortium. Un môme du morro qui paie à temps, ça m'intéresse. *pose sa tasse* J'ai pas besoin d'un voyou de plus. J'ai besoin d'yeux. Tu bosses pour moi, tu me ramènes ce que je demande, et je te couvre — la dette, le bairro, tout. Le morro t'a fait. La loi peut te refaire. Alors ?",
+		"choices": ["Je suis votre homme, Capitão"],
+		"on_choose": {
+			"0": {"accept_quest": "policia_b1_intel", "set_flag": "voie_policia", "rep": {1: 5, 2: -2}},
+		},
+	},
+	"ramos_pacto_policia_remind": {
+		"speaker": "Capitão Ramos",
+		"text": "*tapote la table* Le visage, sobrinho. Calçadão de Copa, mon contact en civil traîne près des cocos. Tu repères, tu rapportes. La loi attend.",
+		"choices": ["J'y vais, Capitão"],
+	},
+	"ramos_policia_madrugada": {
+		"speaker": "Capitão Ramos",
+		"text": "*boucle son ceinturon, te regarde dans le blanc des yeux* Cette nuit, sobrinho. Le mandat est signé. La PM monte sur le morro à la madrugada et on coupe la tête du réseau. Si tu es là-haut avec moi, le bairro saura à qui il doit sa paix : à toi. Chefe de Polícia honoraire. Ton oncle Zé aurait jamais eu ce cran. *te tend un gilet* On y va.",
+		"choices": ["On lance l'Operação Madrugada"],
+		"on_choose": {
+			"0": {"set_endgame": "POLICIA", "finish_quest": {"quest": "policia_b9_madrugada", "objective": "complete_madrugada", "payout": 5000}, "rep": {1: 10}},
+		},
+	},
+	# --- VOIE CONSORTIUM : pacte avec Sr. Magalhães ---
+	"magalhaes_pacto_consortium_offer": {
+		"speaker": "Sr. Magalhães",
+		"text": "*costume clair, vue mer, te fait asseoir dans un fauteuil trop profond* Le garçon qui a payé ses 500 reais à l'heure. *fait tourner un whisky* Tu vois, les autres te proposeront un flingue ou une matraque. Moi je te propose un stylo. Le Consórcio ne casse pas les jambes — il fait signer. Tu travailles pour la maison, tu apprends à recouvrer poliment, et ta dette devient une rente. Dans l'autre sens. *te tend le verre* Alors, sócio ?",
+		"choices": ["Je signe, Sr. Magalhães"],
+		"on_choose": {
+			"0": {"accept_quest": "consortium_c1_recouvrement", "set_flag": "voie_consortium", "rep": {4: 5, 0: -2}},
+		},
+	},
+	"magalhaes_pacto_consortium_remind": {
+		"speaker": "Sr. Magalhães",
+		"text": "*sans lever les yeux de ses dossiers* Le recouvrement, mon cher. Calçadão de Copa — un commerçant a pris du retard. Un mot, un sourire, une signature. La maison déteste attendre.",
+		"choices": ["Je m'en occupe"],
+	},
+	"magalhaes_consortium_pacto": {
+		"speaker": "Sr. Magalhães",
+		"text": "*pose un dossier relié devant toi, dévisse son stylo en or* Tout est là. Trois condomínios alignés, le calçadão sous contrat, la baie blanchie. Le Pacto da Barra : rente mensuelle officielle, endossement politique en réserve, et ta dette… effacée d'un trait. *te tend le stylo* Ton oncle Zé a refusé ce stylo, jadis. Il a préféré fuir et balayer un hall. Toi, tu es plus malin. Signe, et tu es la maison.",
+		"choices": ["Je signe le Pacto da Barra"],
+		"on_choose": {
+			"0": {"set_endgame": "CONSORTIUM", "finish_quest": {"quest": "consortium_c9_pacto", "objective": "seal_pacto", "payout": 5000}, "rep": {4: 10}},
+		},
+	},
+	# Knot uniquement déclenché par Act3FinaleCutscenes (clôture voie Consortium) —
+	# pas routé via Magalhaes._pick_knot(). Ne pas s'attendre à le voir en dialogue
+	# d'approche standard.
+	"magalhaes_consortium_done": {
+		"speaker": "Sr. Magalhães",
+		"text": "*range le dossier signé dans un coffre, te serre la main longuement* Bienvenue dans la maison, sócio. La casa sempre ganha — et désormais, tu es la casa.",
+		"choices": ["…"],
+	},
+	# --- VOIE PREFEITO : pacte avec le Padre ---
+	"padre_pacto_prefeito_offer": {
+		"speaker": "Padre Anselmo",
+		"text": "*range les bancs de la chapelle, te regarde avec douceur* Le garçon qui a payé sa dette à temps sans voler personne. *pose un cierge* Les autres te proposeront un flingue, une matraque, un stylo de banquier. Moi, je n'ai rien à te donner — que le bairro. Aide-le, et il te portera. Pas de patron, pas de maison : des voisins. Ton oncle Zé a fui parce qu'il croyait qu'il n'y avait que les trois autres voies. Il avait tort. Tu m'aides à sauver l'orfanato ?",
+		"choices": ["Pour le bairro, mon Père"],
+		"on_choose": {
+			"0": {"accept_quest": "prefeito_d1_peticao", "set_flag": "voie_prefeito", "rep": {0: 6}},
+		},
+	},
+	"padre_pacto_prefeito_remind": {
+		"speaker": "Padre Anselmo",
+		"text": "*joint les mains* La pétition, mon enfant. Trois commerçants du calçadão hésitent encore. Une signature, c'est un toit pour vingt orphelins. Va leur parler — ils t'écouteront, toi.",
+		"choices": ["J'y retourne, mon Père"],
+	},
+	"padre_prefeito_eleicao": {
+		"speaker": "Padre Anselmo",
+		"text": "*pose la main sur ton épaule, ému, devant la foule du bairro* Le scrutin est ce soir, mon enfant. Le calçadão, le morro, l'orfanato — tous derrière toi. Pas par peur : par confiance. Si tu l'emportes, tu seras le Coronel do Bairro, et la dette de ton oncle s'effacera au grand jour, par la vérité. Va. Le peuple t'attend aux urnes.",
+		"choices": ["On gagne cette élection"],
+		"on_choose": {
+			"0": {"set_endgame": "PREFEITO", "finish_quest": {"quest": "prefeito_d9_eleicao", "objective": "win_election", "payout": 5000}, "rep": {0: 10}},
+		},
+	},
+	# Knot de base (NPCData.ink_knot) — fallback défensif si le dispatch tombe à
+	# travers (jamais en pratique : SeuJoao._pick_knot couvre tous les états).
+	# L'ancienne version proposait la quête milho, désormais auto-pilotée par
+	# CornCart.gd : on garde une réplique neutre, sans action.
 	"seu_joao_intro": {
 		"speaker": "Seu João",
-		"text": "E aí, parceiro ! Tá querendo ganhar um troco ?",
-		"choices": ["Aceitar", "Refuser"],
-		"on_choose": {
-			"0": {"accept_quest": "quest_milho_01"},
-		},
+		"text": "E aí, sobrinho ! Le morro tient debout, le calçadão tourne. Repasse quand tu veux.",
+		"choices": ["Valeu, tio"],
 	},
 	# Variantes phase de la journée (TimeOfDay) — Seu João, fallback stranger.
 	"seu_joao_chat_morning": {
@@ -894,6 +983,31 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 		"choices": ["Obrigado, tio"],
 	},
 	# --- Variantes affinité (NPCAffinity) pour les NPCs majeurs récurrents ---
+	# Acte 1 → 2 : la nuit qui passe à la maison du tio Zé après les 500 R$.
+	# Joué par Act1NightCutscene quand le joueur rentre dans la maison en
+	# acte 2 sans `act1_closed`. À la fin, set_flag pose `act1_closed` qui
+	# déverrouille les pactes de voie et le trigger d'approche de Tito.
+	"act1_night_fall": {
+		"speaker": "Narrateur",
+		"text": "Tu remontes au morro avec les 500 reais en moins et la dette qui pèse toujours. Le soleil se couche derrière le Pão de Açúcar, la maison du tio Zé est silencieuse. Tu fermes la porte. Pour la première fois depuis que Zé a disparu, tu sens combien sa charrette pèse — vraiment.",
+		"choices": ["Pousser jusqu'au lit"],
+		"on_choose": {"0": {"next": "act1_night_wake"}},
+	},
+	"act1_night_wake": {
+		"speaker": "Narrateur",
+		"text": "Matin. Tu as dormi par à-coups. Le morro s'éveille, en bas le calçadão vibre déjà. T'as fait tes preuves face au consortium — au morro les nouvelles montent vite, Tito doit déjà le savoir. Tu te lèves : il est temps de choisir un camp.",
+		"choices": ["Sortir"],
+		"on_choose": {"0": {"set_flag": "act1_closed"}},
+	},
+	# Knot de base (data.ink_knot) : 1re rencontre / fallback quand aucune voie
+	# ne s'applique. SANS lui, start_dialogue ne montre rien et le jeu se fige
+	# (_active_npc_id reste "ramos"). Ne propose rien tant que l'acompte n'est
+	# pas payé — Ramos jauge, c'est tout.
+	"ramos_intro": {
+		"speaker": "Capitão Ramos",
+		"text": "*accoudé au comptoir du Bar do Policial, il te détaille sans se lever* Le neveu du vieux Zé. *souffle sur son café* J'entends des choses sur toi, garoto. Reviens me voir quand t'auras réglé tes affaires avec le consortium — un homme qui paie ses dettes, ça, ça se respecte. D'ici là, t'es juste un visage de plus sur le calçadão.",
+		"choices": ["À bientôt, Capitão"],
+	},
 	"ramos_chat_warm": {
 		"speaker": "Capitão Ramos",
 		"text": "*hoche la tête vers la chaise vide en face* Reposes-toi, sobrinho. Le café est tiède mais il tient debout — comme nous deux.",
@@ -1067,112 +1181,8 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 		"choices": ["OK"],
 	},
 	# --- ACTE 2 : Convoi favela (voie Tráfico) ---
-	"miguel_act2_offer": {
-		"speaker": "Miguel",
-		"text": "Sobrinho, tu m'as trouvé là-haut. Bonne nouvelle : la maison te connaît maintenant. J'ai un sac à faire descendre jusqu'au terrain vague côté Forte. Six cents reais cash à la livraison. Tu prends ?",
-		"choices": ["Six cents reais ? J'embarque", "C'est quoi dedans ?", "Trop chaud pour moi"],
-		"on_choose": {
-			"0": {"accept_quest": "act2_miguel_favela"},
-			"1": {"next": "miguel_act2_warning"},
-		},
-	},
-	"miguel_act2_warning": {
-		"speaker": "Miguel",
-		"text": "*il te fixe sans cligner* Justement, tu poses pas la question. Tu portes, tu poses, tu rentres. Si t'as un doute, tu refuses maintenant — après c'est trop tard.",
-		"choices": ["OK, j'embarque", "Je laisse tomber"],
-		"on_choose": {
-			"0": {"accept_quest": "act2_miguel_favela"},
-		},
-	},
-	"miguel_act2_remind": {
-		"speaker": "Miguel",
-		"text": "Le terrain vague, sobrinho. Côté Forte, derrière les rochers. Tu déposes, tu pars. Pas de selfie.",
-		"choices": ["J'y vais"],
-	},
-	"miguel_act2_done": {
-		"speaker": "Miguel",
-		"text": "Beleza, parceiro. Le patron est content. Repose-toi, je te recontacte quand y'aura un autre coup.",
-		"choices": ["Valeu"],
-	},
 	# --- ACTE 2 : Operação Carnaval (voie Polícia) ---
-	"ramos_act2_offer": {
-		"speaker": "Capitão Ramos",
-		"text": "*pose son haltère* Sobrinho, j'ai besoin d'un service décisif. Tito du Morro — tu le connais maintenant. Il prépare un gros coup pour la semaine du Carnaval. Sa position, et on coupe court. 800 reais et tu rentres dans la maison bleue. Sinon, on saura que t'as choisi la rue.",
-		"choices": ["Je donne Tito (R$ 800)", "Non, je couvre Tito", "Plus tard"],
-		"on_choose": {
-			"0": {"accept_quest": "act2_ramos_operacao", "next": "ramos_act2_rat"},
-			"1": {"accept_quest": "act2_ramos_operacao", "next": "ramos_act2_protect"},
-		},
-	},
-	"ramos_act2_rat": {
-		"speaker": "Capitão Ramos",
-		"text": "Bom garoto. La maison bleue te paye, et la maison bleue n'oublie pas. *te tend une enveloppe* Tito ne reverra pas le sable cette saison. Tu viens d'acheter un peu de respect.",
-		"choices": ["Que justiça seja feita."],
-		"on_choose": {
-			"0": {"finish_quest": {"quest": "act2_ramos_operacao", "objective": "answer_ramos", "payout": 800}, "set_flag": "ratted_on_tito", "rep": {1: 8, 2: -8}},
-		},
-	},
-	"ramos_act2_protect": {
-		"speaker": "Capitão Ramos",
-		"text": "*croise les bras* Choix de petit. Tu portes le maillot du Morro maintenant, garoto. Cette porte est fermée pour toi. Bonne chance dehors.",
-		"choices": ["J'assume."],
-		"on_choose": {
-			"0": {"finish_quest": {"quest": "act2_ramos_operacao", "objective": "answer_ramos", "payout": 0}, "rep": {1: -3, 2: 3}},
-		},
-	},
-	"ramos_act2_done_loyal": {
-		"speaker": "Capitão Ramos",
-		"text": "Sobrinho ! La maison bleue parle de toi. Continue à payer ta dette propre, on te tient l'épaule.",
-		"choices": ["Compreendido"],
-	},
-	"ramos_act2_done_cold": {
-		"speaker": "Capitão Ramos",
-		"text": "*ne te regarde pas* Tu cherches quoi ici, garoto ? File ailleurs.",
-		"choices": ["…"],
-	},
 	# --- ACTE 2 : Salvem o Orfanato (voie Prefeito) ---
-	"padre_act2_offer": {
-		"speaker": "Padre Anselmo",
-		"text": "Meu filho, le bairro a besoin de toi. La mairie veut raser l'orfanato Nossa Senhora pour un parking. Trois commerçants doivent signer la pétition pour qu'on bloque le projet : Carlos du café, Beatriz de Rio Style, Dona Carmen de la pharmacie. Quatre cents reais sur la cagnotte de la paroisse pour ta peine.",
-		"choices": ["J'accepte, padre", "Plus tard"],
-		"on_choose": {
-			"0": {"accept_quest": "act2_padre_orfanato"},
-		},
-	},
-	"padre_act2_remind": {
-		"speaker": "Padre Anselmo",
-		"text": "Carlos, Beatriz, Dona Carmen. Trois signatures. La cloche sonne, meu filho.",
-		"choices": ["J'y vais"],
-	},
-	"padre_act2_done": {
-		"speaker": "Padre Anselmo",
-		"text": "L'orfanato est sauvé, meu filho. Les enfants prient pour toi à chaque messe. Le quartier saura à qui il doit ça.",
-		"choices": ["Amen"],
-	},
-	"carlos_act2_petition": {
-		"speaker": "Carlos",
-		"text": "*lit la pétition* Le Padre m'envoie un héros maintenant ? Bon. Si on perd l'orfanato, on perd les gamins qui me ramènent les vélos. Je signe. *gribouille*",
-		"choices": ["Obrigado, Carlos"],
-		"on_choose": {
-			"0": {"finish_quest": {"quest": "act2_padre_orfanato", "objective": "signed_carlos", "payout": 0}},
-		},
-	},
-	"beatriz_act2_petition": {
-		"speaker": "Beatriz",
-		"text": "Une pétition pour l'orfanato ? *prend le stylo* Mon frère y a grandi avant de partir à São Paulo. Voilà. Et dis au Padre que Rio Style donnera dix maillots pour la kermesse.",
-		"choices": ["Tu es la meilleure"],
-		"on_choose": {
-			"0": {"finish_quest": {"quest": "act2_padre_orfanato", "objective": "signed_beatriz", "payout": 0}},
-		},
-	},
-	"carmen_act2_petition": {
-		"speaker": "Dona Carmen",
-		"text": "Le maire veut un parking, c'est ça ? *signe sans hésiter* Tito m'a parlé de toi, mon grand. Tu fais bien. Voilà ma signature, et un sirop pour la toux des enfants.",
-		"choices": ["Que Dieu vous garde"],
-		"on_choose": {
-			"0": {"finish_quest": {"quest": "act2_padre_orfanato", "objective": "signed_carmen", "payout": 0}},
-		},
-	},
 	# --- ACTE 2 : O que vi no mar (Pêcheur) ---
 	"pecheur_act2_offer": {
 		"speaker": "Seu Pedro",
@@ -1375,287 +1385,19 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 		},
 	},
 	# --- ACTE 3 : Le carnet do Capitão (intel intermédiaire, voie Polícia) ---
-	"ramos_act3_intel_offer": {
-		"speaker": "Capitão Ramos",
-		"text": "*pose un dossier vide sur le bar* Sobrinho, l'opération demande des noms, des horaires, des routes. Pas de preuves, pas de mandat. Va voir la voisine du Morro, elle voit tout passer. Recoupe avec ce que sait tio Zé sur les bombeiros qui montent là-haut. Rapporte-moi le tout — ensuite on parle de la grande nuit.",
-		"choices": ["J'y vais, Capitão", "Plus tard"],
-		"on_choose": {
-			"0": {"accept_quest": "act3_policia_intel", "set_flag": "act3_intel_accepted"},
-		},
-	},
-	"ramos_act3_intel_remind": {
-		"speaker": "Capitão Ramos",
-		"text": "*tape le dossier* Voisine du Morro, tio Zé. Deux sources, je te demande pas la lune. Reviens quand tu auras les deux.",
-		"choices": ["Compris"],
-	},
-	"ramos_act3_intel_close": {
-		"speaker": "Capitão Ramos",
-		"text": "*ouvre le dossier, prend des notes serrées* Bom. Réseau confirmé, planque identifiée, créneau ouvert. Tu viens de me donner ce qu'il fallait. Repose-toi — la prochaine fois qu'on se voit, je te parle de la nuit.",
-		"choices": ["Salut, Capitão"],
-		"on_choose": {
-			"0": {"finish_quest": {"quest": "act3_policia_intel", "objective": "report_ramos", "payout": 0}},
-		},
-	},
 	# --- ACTE 3 : Operação Madrugada (voie Polícia) ---
-	"ramos_act3_offer": {
-		"speaker": "Capitão Ramos",
-		"text": "*regard sec* Sobrinho, le mandat est signé. Cette nuit, on entre dans le Morro. Si tu m'accompagnes, demain Copacabana se réveille avec un nouveau Chefe — toi à mes côtés. Cinq mille reais, et la maison bleue reconnaît son sang. Tu signes ?",
-		"choices": ["J'y vais avec toi (FIN POLÍCIA)", "Plus tard"],
-		"on_choose": {
-			"0": {"accept_quest": "act3_policia_madrugada", "next": "ramos_act3_close"},
-		},
-	},
-	"ramos_act3_close": {
-		"speaker": "Capitão Ramos",
-		"text": "*serre la main* Bem-vindo à la famille bleue, Chefe. La sirène sonne dans dix minutes. Que les caïds dorment mal cette nuit.",
-		"choices": ["Por Copacabana"],
-		"on_choose": {
-			"0": {"set_endgame": "POLICIA", "finish_quest": {"quest": "act3_policia_madrugada", "objective": "complete_madrugada", "payout": 5000}, "rep": {1: 10}},
-		},
-	},
-	"ramos_act3_done": {
-		"speaker": "Capitão Ramos",
-		"text": "*salue* Chefe. Tout le poste est à toi.",
-		"choices": ["Continue à veiller"],
-	},
 	# --- ACTE 3 : Le sac de Botafogo (test pickup, voie Tráfico) ---
-	"miguel_act3_pickup_offer": {
-		"speaker": "Miguel",
-		"text": "*tire sur sa cigarette* Sobrinho. Avant la grande corrida, je teste tes nerfs. Mon gars laisse un sac au pied du Bondinho de Botafogo, côté gare. Tu le récupères, tu reviens vite, tu regardes derrière toi tout le chemin. Si tout est clean, on parle de la nuit du Carnaval.",
-		"choices": ["Beleza, j'y vais", "Plus tard"],
-		"on_choose": {
-			"0": {"accept_quest": "act3_trafico_pickup"},
-		},
-	},
-	"miguel_act3_pickup_remind": {
-		"speaker": "Miguel",
-		"text": "*tape la table* Bondinho de Botafogo. Sac noir, à côté du banc. Pas de questions, tu rapportes. Andiamo.",
-		"choices": ["J'y retourne"],
-	},
-	"miguel_act3_pickup_close": {
-		"speaker": "Miguel",
-		"text": "*soupèse le sac, sourit* Parfait. Pas une éraflure, pas un retard. T'es prêt pour la nuit qui vient. Reviens me voir, on fixe les détails du convoi.",
-		"choices": ["Valeu, parceiro"],
-		"on_choose": {
-			"0": {"finish_quest": {"quest": "act3_trafico_pickup", "objective": "pickup_deliver", "payout": 200}},
-		},
-	},
 	# --- ACTE 3 : Última corrida (voie Tráfico) ---
-	"miguel_act3_offer": {
-		"speaker": "Miguel",
-		"text": "*pose son béret* Sobrinho. C'est la course de l'année — un convoi du Morro à Niterói pendant le Carnaval. Si tu pilotes, le Morro te remet les clés. Cinq mille en cash, et Copacabana saura qu'un nouveau roi tient la rue. Tu prends le volant ?",
-		"choices": ["Je pilote (FIN TRÁFICO)", "Pas ce soir"],
-		"on_choose": {
-			"0": {"accept_quest": "act3_trafico_corrida", "next": "miguel_act3_close"},
-		},
-	},
-	"miguel_act3_close": {
-		"speaker": "Miguel",
-		"text": "*tape ton épaule* Beleza, parceiro. La caravane part à minuit. Quand le soleil se lève, Niterói est à nous.",
-		"choices": ["Vamos."],
-		"on_choose": {
-			"0": {"set_endgame": "TRAFICO", "finish_quest": {"quest": "act3_trafico_corrida", "objective": "execute_run", "payout": 5000}, "rep": {2: 10}},
-		},
-	},
-	"miguel_act3_done": {
-		"speaker": "Miguel",
-		"text": "*lève la bière* Roi du Morro. Os caras te suivent maintenant.",
-		"choices": ["Valeu, parceiro"],
-	},
 	# --- ACTE 3 : Trois signatures (endorsements, voie Prefeito) ---
-	"padre_act3_endorse_offer": {
-		"speaker": "Padre Anselmo",
-		"text": "Meu filho, le scrutin se joue dans la rue, pas à la mairie. Il me faut trois soutiens publics avant la fin de la semaine : Carlos à la Lagoa pour les commerces, le padeiro de la Padaria pour les ouvriers, et moi-même pour la paroisse. Va leur parler, ramène les voix. C'est une coalition que je te demande, pas un favor.",
-		"choices": ["Je m'en occupe, padre", "Plus tard"],
-		"on_choose": {
-			"0": {"accept_quest": "act3_prefeito_endorsements"},
-		},
-	},
-	"padre_act3_endorse_remind": {
-		"speaker": "Padre Anselmo",
-		"text": "Carlos, le padeiro, et moi. Trois signatures, trois quartiers. Sans ça, le candidat civique n'existe pas.",
-		"choices": ["J'y travaille"],
-	},
-	"padre_act3_endorse_close": {
-		"speaker": "Padre Anselmo",
-		"text": "*pose la main sur l'épaule, sourire grave* Tu as Carlos et le padeiro. Tu as ma bénédiction. La coalition tient. Reviens me voir quand tu seras prêt — le scrutin, c'est l'autre chose qu'on va préparer ensemble.",
-		"choices": ["Amen, padre"],
-		"on_choose": {
-			"0": {"finish_quest": {"quest": "act3_prefeito_endorsements", "objective": "endorse_padre", "payout": 0}},
-		},
-	},
-	"carlos_act3_endorse": {
-		"speaker": "Carlos",
-		"text": "*essuie le comptoir* Le candidat du Padre ? *réfléchit* Honnête, pas voleur, et il connaît les commerçants. Bom, tu peux mettre l'enseigne d'ISSIMO sur l'affiche officielle. Ça vaut signature.",
-		"choices": ["Obrigado, Carlos"],
-		"on_choose": {
-			"0": {"finish_quest": {"quest": "act3_prefeito_endorsements", "objective": "endorse_carlos", "payout": 0}},
-		},
-	},
-	"padeiro_act3_endorse": {
-		"speaker": "Seu Tonio",
-		"text": "*saupoudre le pão de queijo* Une signature pour le candidat civique ? Le quartier en a besoin, sobrinho. Mes ouvriers et moi, on signe — affiche-le sur la vitrine, ça parle plus que mille tracts.",
-		"choices": ["Valeu, seu Tonio"],
-		"on_choose": {
-			"0": {"finish_quest": {"quest": "act3_prefeito_endorsements", "objective": "endorse_padeiro", "payout": 0}},
-		},
-	},
 	# Variante Pacto da Barra : Magalhães a déjà glissé une enveloppe au Padre,
 	# qui la rétrocède comme « contribution civique ». Routée par Padre.gd
 	# quand barra_pacto_sealed est vrai.
-	"padre_act3_endorse_close_with_barra": {
-		"speaker": "Padre Anselmo",
-		"text": "*pose la main sur ton épaule, sourit largement* Tu as Carlos, le padeiro, et ma bénédiction. *sort une enveloppe de cuir noir, sceau de Riserva Uno* Et ceci. Magalhães me l'a fait porter avant-hier — il a écrit « Pacto da Barra » au dos. *te tend une liasse* Sa contribution à la coalition : trois mille reais. La Barra avec la paroisse, c'est rare. Tu sais quoi faire de ça.",
-		"choices": ["Amen, padre"],
-		"on_choose": {
-			"0": {"finish_quest": {"quest": "act3_prefeito_endorsements", "objective": "endorse_padre", "payout": 3000}, "rep": {0: 2, 4: 2}},
-		},
-	},
 	# --- ACTE 3 : Coronel do Bairro (voie Prefeito) ---
-	"padre_act3_offer": {
-		"speaker": "Padre Anselmo",
-		"text": "Meu filho, le bairro a confiance en toi. Le scrutin pour la sous-préfecture est dans trois jours — notre candidat civique a besoin d'un visage qui parle aux quatre rues. Si tu fais campagne avec lui, Copacabana te reconnaît Coronel do Bairro. Cinq mille reais de la cagnotte, et plus jamais personne ne te marchera sur les pieds.",
-		"choices": ["Je fais campagne (FIN PREFEITO)", "Plus tard"],
-		"on_choose": {
-			"0": {"accept_quest": "act3_prefeito_eleicao", "next": "padre_act3_close"},
-		},
-	},
-	"padre_act3_close": {
-		"speaker": "Padre Anselmo",
-		"text": "*pose la main sur ton épaule* Que la paix descend sur toi, meu Coronel. Les voix sont scellées. Le quartier respire grâce à toi.",
-		"choices": ["Amen, padre"],
-		"on_choose": {
-			"0": {"set_endgame": "PREFEITO", "finish_quest": {"quest": "act3_prefeito_eleicao", "objective": "win_election", "payout": 5000}, "rep": {0: 10}},
-		},
-	},
 	# Variante Pacto da Barra : la Barra alimente la cagnotte. Routée par
 	# Padre.gd quand barra_pacto_sealed est vrai.
-	"padre_act3_offer_with_barra": {
-		"speaker": "Padre Anselmo",
-		"text": "Meu filho, le bairro a confiance en toi — Copacabana, et désormais la Barra via l'enveloppe de Magalhães. Le scrutin pour la sous-préfecture est dans trois jours. Si tu fais campagne, Copacabana te reconnaît Coronel do Bairro, et la Barra te doit le silence. Sept mille reais cette fois — Magalhães a doublé la cagnotte. Ce qu'il appelle 'investissement'.",
-		"choices": ["Je fais campagne (FIN PREFEITO)", "Plus tard"],
-		"on_choose": {
-			"0": {"accept_quest": "act3_prefeito_eleicao", "next": "padre_act3_close_with_barra"},
-		},
-	},
-	"padre_act3_close_with_barra": {
-		"speaker": "Padre Anselmo",
-		"text": "*pose la main sur ton épaule, sourit* Coronel. Le quartier respire grâce à toi, et la Barra te respecte. Magalhães l'a écrit lui-même : « le sobrinho a tenu son mot ». *signe le contrat de cagnotte* La paix descend sur toi.",
-		"choices": ["Amen, padre"],
-		"on_choose": {
-			"0": {"set_endgame": "PREFEITO", "finish_quest": {"quest": "act3_prefeito_eleicao", "objective": "win_election", "payout": 7000}, "rep": {0: 10, 4: 5}},
-		},
-	},
-	"padre_act3_done": {
-		"speaker": "Padre Anselmo",
-		"text": "*sourit largement* Coronel ! Le bairro chante ton nom à la messe.",
-		"choices": ["Que Dieu te garde"],
-	},
 	# --- ACTE 4 : Audiência do Coronel (voie Prefeito) ---
-	"padre_act4_audiencia": {
-		"speaker": "Padre Anselmo",
-		"text": "Coronel, le bairro a confiance en toi. Trois commerçants demandent une audience publique : Carlos, Beatriz, Dona Carmen. Écoute leurs doléances — chacun te confortera dans ton règne.",
-		"choices": ["Je tiens audience", "Plus tard"],
-		"on_choose": {
-			"0": {"accept_quest": "act4_prefeito_audiencia"},
-		},
-	},
-	"padre_act4_remind": {
-		"speaker": "Padre Anselmo",
-		"text": "Carlos, Beatriz, Dona Carmen — chacun a une doléance. Va les recevoir.",
-		"choices": ["J'y vais"],
-	},
-	"padre_act4_done": {
-		"speaker": "Padre Anselmo",
-		"text": "*joint les mains* Tu as écouté le bairro. Voilà la cagnotte de la paroisse. Le règne grandit.",
-		"choices": ["Obrigado, padre"],
-	},
-	"carlos_act4_audiencia": {
-		"speaker": "Carlos",
-		"text": "Coronel ! La mairie veut nous taxer les terrasses. Tu peux faire pression ? Ça étoufferait la moitié des cafés du bairro.",
-		"choices": ["Je vais m'en occuper"],
-		"on_choose": {
-			"0": {"finish_quest": {"quest": "act4_prefeito_audiencia", "objective": "heard_carlos", "payout": 0}},
-		},
-	},
-	"beatriz_act4_audiencia": {
-		"speaker": "Beatriz",
-		"text": "Coronel, mon loyer triple parce que le syndic a vendu à un promoteur. On va perdre Rio Style. Tu peux parler au consortium des bâtiments ?",
-		"choices": ["Je m'en charge"],
-		"on_choose": {
-			"0": {"finish_quest": {"quest": "act4_prefeito_audiencia", "objective": "heard_beatriz", "payout": 0}},
-		},
-	},
-	"carmen_act4_audiencia": {
-		"speaker": "Dona Carmen",
-		"text": "Coronel, le service municipal retient mes médicaments à la douane depuis trois semaines. Le Morro toussera fort cet hiver si rien ne bouge.",
-		"choices": ["Je débloque ça"],
-		"on_choose": {
-			"0": {"finish_quest": {"quest": "act4_prefeito_audiencia", "objective": "heard_carmen", "payout": 0}},
-		},
-	},
 	# --- ACTE 4 : Purga da Madrugada (voie Polícia) ---
-	"ramos_act4_purga": {
-		"speaker": "Capitão Ramos",
-		"text": "Chefe, trois nids restent à boucler avant la fin du mois. Morro, calçadão, Av. Atlântica. Tu passes, tu marques le terrain, on ferme. Un signe à chaque point pour confirmer ta présence.",
-		"choices": ["J'y vais", "Plus tard"],
-		"on_choose": {
-			"0": {"accept_quest": "act4_policia_purga"},
-		},
-	},
-	"ramos_act4_remind": {
-		"speaker": "Capitão Ramos",
-		"text": "Trois points marqués sur la carte. Tu sais où aller. Reviens quand c'est plié.",
-		"choices": ["Compris"],
-	},
-	"ramos_act4_done": {
-		"speaker": "Capitão Ramos",
-		"text": "*salue* Trois nids fermés, Chefe. Le bairro respire. La maison bleue te paie.",
-		"choices": ["Por Copacabana"],
-	},
 	# --- ACTE 4 : Coleta do Patrão (voie Tráfico) ---
-	"miguel_act4_tributo": {
-		"speaker": "Miguel",
-		"text": "Patrão, les commerçants doivent te connaître maintenant. Carlos, Beatriz, le Chef. Passe les voir, encaisse le tribut. Pas de violence — juste un rappel.",
-		"choices": ["Je passe les voir", "Plus tard"],
-		"on_choose": {
-			"0": {"accept_quest": "act4_trafico_tributo"},
-		},
-	},
-	"miguel_act4_remind": {
-		"speaker": "Miguel",
-		"text": "Carlos, Beatriz, le Chef. Chacun te doit sa part. Reviens avec le tout.",
-		"choices": ["OK"],
-	},
-	"miguel_act4_done": {
-		"speaker": "Miguel",
-		"text": "*tape ton épaule* Beleza, Patrão. Le Morro te suit. Continue à tenir la rue.",
-		"choices": ["Valeu, parceiro"],
-	},
-	"carlos_act4_tributo": {
-		"speaker": "Carlos",
-		"text": "*sort une enveloppe sans broncher* Patrão. Voilà la part de la semaine. On respecte les règles.",
-		"choices": ["Sage décision"],
-		"on_choose": {
-			"0": {"finish_quest": {"quest": "act4_trafico_tributo", "objective": "tribute_carlos", "payout": 0}},
-		},
-	},
-	"beatriz_act4_tributo": {
-		"speaker": "Beatriz",
-		"text": "*ton sec* Le Patrão. Voilà ce qui te revient. J'attends que la rue reste calme en échange.",
-		"choices": ["Tu peux dormir tranquille"],
-		"on_choose": {
-			"0": {"finish_quest": {"quest": "act4_trafico_tributo", "objective": "tribute_beatriz", "payout": 0}},
-		},
-	},
-	"chef_act4_tributo": {
-		"speaker": "Chef",
-		"text": "*essuie ses mains* Patrão. Tiens, la part du restaurant. La moqueca reste à l'abri.",
-		"choices": ["Bien"],
-		"on_choose": {
-			"0": {"finish_quest": {"quest": "act4_trafico_tributo", "objective": "tribute_chef", "payout": 0}},
-		},
-	},
 	"concierge_intro": {
 		"speaker": "Concierge",
 		"text": "Bem-vindo ao Copacabana Palace. Vous êtes attendu ?",
@@ -1839,7 +1581,7 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 	},
 	"ze_offer": {
 		"speaker": "Zé",
-		"text": "Ronaldo devait jouer ce soir. Va lui rappeler qu'on démarre à 20h. 20 reais pour toi.",
+		"text": "Ronaldo devait jouer ce soir. Va lui rappeler qu'on démarre à 20h. Y a un cachet à la clé pour toi.",
 		"choices": ["J'y vais", "Plus tard"],
 		"on_choose": {
 			"0": {"accept_quest": "ze_invitation"},
@@ -2363,48 +2105,6 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 		"choices": ["Valeu, Otávio"],
 	},
 	# --- ACTE 2 : Os verdadeiros rostos ---
-	"concierge_act2_reveal": {
-		"speaker": "Concierge",
-		"text": "*il te dévisage longuement, baisse la voix* Sobrinho. Pose ta carte, on va parler. Tu me reconnais maintenant ?",
-		"choices": ["Tio… Zé ?!", "Vous me confondez."],
-		"on_choose": {
-			"0": {"next": "concierge_act2_explain"},
-			"1": {"next": "concierge_act2_force"},
-		},
-	},
-	"concierge_act2_force": {
-		"speaker": "Concierge",
-		"text": "*sourit tristement* Allez, tombe pas dans le panneau, je suis ton oncle. Le Concierge, c'était mon couvert. Le consortium me croit mort, et c'est très bien comme ça.",
-		"choices": ["Tu m'as fait porter ta dette ?!"],
-		"on_choose": {
-			"0": {"next": "concierge_act2_explain"},
-		},
-	},
-	"concierge_act2_explain": {
-		"speaker": "tio Zé",
-		"text": "Pas porter — partager. Cette dette c'est la mienne, mais Dom Nilton t'aurait égorgé si je m'étais rendu. Tu as gagné du temps, et tu m'as trouvé. Maintenant écoute : trois portes sont ouvertes pour finir le travail. Ramos pour la Polícia, Tito pour le Tráfico, le Padre pour le Prefeito. Choisis bien — Copacabana se souvient longtemps.",
-		"choices": ["Tu vas où, toi ?", "Et la dette ?"],
-		"on_choose": {
-			"0": {"next": "concierge_act2_farewell"},
-			"1": {"next": "concierge_act2_debt"},
-		},
-	},
-	"concierge_act2_debt": {
-		"speaker": "tio Zé",
-		"text": "Tu continues. Verse encore au consortium jusqu'à 25 000 reais et Dom Nilton lâchera la pression. Après ça, on règlera la fin ensemble. Mais d'abord — choisis ton camp.",
-		"choices": ["D'accord, tio."],
-		"on_choose": {
-			"0": {"next": "concierge_act2_farewell"},
-		},
-	},
-	"concierge_act2_farewell": {
-		"speaker": "tio Zé",
-		"text": "*il glisse derrière le comptoir et disparaît par une porte de service* Je te recontacterai. Joga limpo, sobrinho.",
-		"choices": ["Até logo, tio."],
-		"on_choose": {
-			"0": {"finish_quest": {"quest": "act2_intro", "objective": "uncover_tio_ze", "payout": 0}, "set_flag": "tio_ze_revealed", "rep": {4: 5, 0: 3}},
-		},
-	},
 	# --- Side quest : zona_sul_envelope — Sra. Caldeira (cobertura Leblon) ---
 	"caldeira_offer": {
 		"speaker": "Sra. Caldeira",
@@ -2643,7 +2343,10 @@ var _active_npc_id: String = ""
 var _active_knot: String = ""
 var _loader: InkStoryLoader = null
 
-# Dialogues injectés à la volée (Viewpoint, StreetVendor, StreetEvent...).
+# Dialogues injectés à la volée (Viewpoint, StreetVendor, StreetEvent…), plus
+# les knots `spot_<npc_id>_<variant>` construits par ReactiveDialogueSpot pour
+# toutes les missions de voie (A/B/C/D) : eux n'apparaissent JAMAIS dans
+# PLACEHOLDER_DIALOGUES — toute analyse statique qui les y cherche se trompe.
 # Godot 4 interdit l'index-assignment sur un const Dictionary, donc les knots
 # dynamiques passent par ce dico runtime à part.
 var _runtime_dialogues: Dictionary = {}
@@ -2691,8 +2394,11 @@ func choose(choice_index: int) -> void:
 	if _loader and _loader.is_ready():
 		_loader.choose(choice_index)
 		return
-	# Placeholder : chaîne les knots si l'action a "next", sinon applique et termine.
-	var dlg: Dictionary = PLACEHOLDER_DIALOGUES.get(_active_knot, {})
+	# Placeholder : chaîne les knots si l'action a "next", sinon applique et
+	# termine. _get_placeholder couvre AUSSI les dialogues runtime (spots
+	# ReactiveDialogueSpot) — sinon leurs actions finish_quest/accept_quest
+	# ne s'appliquent jamais en jeu (prologue + voies en dépendent).
+	var dlg: Dictionary = _get_placeholder(_active_knot)
 	var on_choose: Dictionary = dlg.get("on_choose", {})
 	var action = on_choose.get(str(choice_index), null)
 	if action != null and action.has("next"):
@@ -2963,4 +2669,5 @@ func _endgame_path_for_string(s: String) -> int:
 		"PREFEITO": return CampaignManager.Endgame.PREFEITO
 		"POLICIA":  return CampaignManager.Endgame.POLICIA
 		"TRAFICO":  return CampaignManager.Endgame.TRAFICO
+		"CONSORTIUM": return CampaignManager.Endgame.CONSORTIUM
 		_:          return CampaignManager.Endgame.NONE

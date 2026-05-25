@@ -1,10 +1,11 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/props/BuildingDoor.tscn" id="1_door"]
 [ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="2_wander"]
 [ext_resource type="PackedScene" path="res://scenes/npcs/SeuJoao.tscn" id="3_seu_joao"]
 [ext_resource type="PackedScene" path="res://scenes/props/DialogueSpot.tscn" id="4_spot"]
 [ext_resource type="PackedScene" path="res://scenes/props/ReactiveDialogueSpot.tscn" id="5_reactive"]
+[ext_resource type="Script" path="res://scripts/world/HouseNightTrigger.gd" id="6_night"]
 
 [sub_resource type="RectangleShape2D" id="WallH"]
 size = Vector2(360, 12)
@@ -14,6 +15,9 @@ size = Vector2(12, 220)
 
 [sub_resource type="RectangleShape2D" id="FurnShape"]
 size = Vector2(60, 32)
+
+[sub_resource type="RectangleShape2D" id="NightTriggerShape"]
+size = Vector2(180, 100)
 
 [node name="HouseInterior" type="Node2D"]
 
@@ -219,6 +223,13 @@ theme_override_constants/outline_size = 3
 [node name="SpawnPoint" type="Marker2D" parent="."]
 position = Vector2(0, 75)
 
+[node name="NightTrigger" type="Area2D" parent="."]
+position = Vector2(0, 70)
+script = ExtResource("6_night")
+
+[node name="Shape" type="CollisionShape2D" parent="NightTrigger"]
+shape = SubResource("NightTriggerShape")
+
 [node name="GrandmaInRocker" parent="." instance=ExtResource("2_wander")]
 position = Vector2(-130, -30)
 color = Color(0.62, 0.55, 0.5, 1)
@@ -256,6 +267,7 @@ position = Vector2(-60, 50)
 position = Vector2(120, -50)
 npc_id = "mae"
 prompt = "Parler à Mãe"
+character_seed = 70411
 variants = [{
 "id": "carnaval",
 "act": 4,
@@ -316,6 +328,7 @@ variants = [{
 position = Vector2(-130, -30)
 npc_id = "vovo"
 prompt = "Parler à Vovó"
+character_seed = 70412
 variants = [{
 "id": "carnaval",
 "act": 4,

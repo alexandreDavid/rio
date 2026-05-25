@@ -1,15 +1,13 @@
 extends NPC
 
-# Padre Anselmo : statue (acte 1), orfanato (acte 2), élection (acte 3), audiences (acte 4 Prefeito).
+# Padre Anselmo — patron de la VOIE PREFEITO (missions D1–D9). Le détail passe
+# par les spots ; le Padre offre le pacte, rappelle D1, scelle le couronnement
+# (l'élection). Conserve aussi ses SIDE : statue + relique du Corcovado.
 
 const QUEST_STATUE: String = "church_statue"
 const OBJ_FIND: String = "find_statue"
 const OBJ_RETURN: String = "return_statue"
 const QUEST_CORCOVADO: String = "padre_corcovado_relic"
-const QUEST_ORFANATO: String = "act2_padre_orfanato"
-const QUEST_ENDORSE: String = "act3_prefeito_endorsements"
-const QUEST_ELEICAO: String = "act3_prefeito_eleicao"
-const QUEST_AUDIENCIA: String = "act4_prefeito_audiencia"
 
 func _on_interacted(_by: Node) -> void:
 	if data == null:
@@ -17,46 +15,27 @@ func _on_interacted(_by: Node) -> void:
 	await _approach_player_if_far()
 	var knot: String = NPCAffinity.knot_for_tier(data.id, data.ink_knot,
 			"padre_chat_warm", "padre_chat_familiar")
-	# Acte 4 : règne du Coronel.
-	if CampaignManager.current_act >= 4 and CampaignManager.chosen_endgame == CampaignManager.Endgame.PREFEITO:
-		if QuestManager.is_completed(QUEST_AUDIENCIA):
-			knot = "padre_act4_done"
-		elif QuestManager.is_active(QUEST_AUDIENCIA):
-			knot = "padre_act4_remind"
-		elif QuestManager.is_available(QUEST_AUDIENCIA):
-			knot = "padre_act4_audiencia"
-		DialogueBridge.start_dialogue(data.id, knot)
-		return
-	# Acte 3 : trois soutiens (endorsements) puis finale Prefeito (eleicao).
-	if CampaignManager.current_act >= 3 and _eligible_for_act3():
-		# Pacto da Barra (MAIN) — variantes Padre avec contribution de Magalhães.
-		var with_barra: bool = CampaignManager.has_flag("barra_pacto_sealed")
-		if QuestManager.is_completed(QUEST_ELEICAO):
-			knot = "padre_act3_done"
-		elif QuestManager.is_active(QUEST_ELEICAO):
-			knot = "padre_act3_offer_with_barra" if with_barra else "padre_act3_offer"
-		elif QuestManager.is_available(QUEST_ELEICAO) and QuestManager.is_completed(QUEST_ENDORSE):
-			knot = "padre_act3_offer_with_barra" if with_barra else "padre_act3_offer"
-		elif QuestManager.is_active(QUEST_ENDORSE):
-			var eobjs: Dictionary = QuestManager.get_objectives_state(QUEST_ENDORSE)
-			if eobjs.get("endorse_carlos", false) and eobjs.get("endorse_padeiro", false) \
-					and not eobjs.get("endorse_padre", false):
-				knot = "padre_act3_endorse_close_with_barra" if with_barra else "padre_act3_endorse_close"
-			else:
-				knot = "padre_act3_endorse_remind"
-		elif QuestManager.is_available(QUEST_ENDORSE):
-			knot = "padre_act3_endorse_offer"
-		DialogueBridge.start_dialogue(data.id, knot)
-		return
-	# Acte 2 : pétition orfanato.
-	if QuestManager.is_active(QUEST_ORFANATO):
-		knot = "padre_act2_remind"
-	elif QuestManager.is_completed(QUEST_ORFANATO):
-		knot = "padre_act2_done"
-	elif QuestManager.is_available(QUEST_ORFANATO):
-		knot = "padre_act2_offer"
-	# Side quest : bénédiction de la relique au Corcovado (après la statue).
-	elif QuestManager.is_active(QUEST_CORCOVADO):
+
+	# --- VOIE PREFEITO : pacte avec le Padre ---
+	# Le pacte attend que l'acte 1 ait été fermé (nuit passée — `act1_closed`).
+	if QuestManager.is_completed("prologue_pedrinho") \
+			and QuestManager.is_completed("act1_heritage") \
+			and CampaignManager.has_flag("act1_closed") \
+			and not CampaignManager.has_flag("voie_trafico") \
+			and not CampaignManager.has_flag("voie_policia") \
+			and not CampaignManager.has_flag("voie_consortium"):
+		if not CampaignManager.has_flag("voie_prefeito"):
+			DialogueBridge.start_dialogue(data.id, "padre_pacto_prefeito_offer")
+			return
+		if QuestManager.is_active("prefeito_d9_eleicao"):
+			DialogueBridge.start_dialogue(data.id, "padre_prefeito_eleicao")
+			return
+		if QuestManager.is_active("prefeito_d1_peticao"):
+			DialogueBridge.start_dialogue(data.id, "padre_pacto_prefeito_remind")
+			return
+
+	# Side quest : relique au Corcovado (après la statue).
+	if QuestManager.is_active(QUEST_CORCOVADO):
 		var c_objs: Dictionary = QuestManager.get_objectives_state(QUEST_CORCOVADO)
 		if c_objs.get("bless_at_corcovado", false) and not c_objs.get("return_relic", false):
 			knot = "padre_corcovado_receives"
@@ -73,9 +52,3 @@ func _on_interacted(_by: Node) -> void:
 		else:
 			knot = "padre_remind"
 	DialogueBridge.start_dialogue(data.id, knot)
-
-func _eligible_for_act3() -> bool:
-	if QuestManager.is_completed(QUEST_ORFANATO):
-		return true
-	# Fallback : dette soldée en acte 3 sans verrouillage → le Padre accueille.
-	return CampaignManager.current_act >= 3 and CampaignManager.debt_remaining() == 0

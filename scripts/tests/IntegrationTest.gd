@@ -12,10 +12,45 @@ extends Node
 # Sortie : exit code 0 si tout passe, 1 sinon. Log lisible à l'écran.
 
 const QUEST_RESOURCES: Array[String] = [
+	"res://resources/quests/prologue_pedrinho.tres",
+	"res://resources/quests/trafico_a1_livraison.tres",
+	"res://resources/quests/trafico_a2_pickup.tres",
+	"res://resources/quests/trafico_a3_chauffeur.tres",
+	"res://resources/quests/trafico_a4_ipanema.tres",
+	"res://resources/quests/trafico_a5_intim.tres",
+	"res://resources/quests/trafico_a6_cagarras.tres",
+	"res://resources/quests/trafico_a7_tioze.tres",
+	"res://resources/quests/trafico_a8_baia.tres",
+	"res://resources/quests/trafico_a9_corrida.tres",
+	"res://resources/quests/policia_b1_intel.tres",
+	"res://resources/quests/policia_b2_filature.tres",
+	"res://resources/quests/policia_b3_escorte.tres",
+	"res://resources/quests/policia_b4_descente.tres",
+	"res://resources/quests/policia_b5_reperage.tres",
+	"res://resources/quests/policia_b6_tioze.tres",
+	"res://resources/quests/policia_b7_saisie.tres",
+	"res://resources/quests/policia_b8_seguranca.tres",
+	"res://resources/quests/policia_b9_madrugada.tres",
+	"res://resources/quests/consortium_c1_recouvrement.tres",
+	"res://resources/quests/consortium_c2_loyers.tres",
+	"res://resources/quests/consortium_c3_partenariat.tres",
+	"res://resources/quests/consortium_c4_vip.tres",
+	"res://resources/quests/consortium_c5_mac.tres",
+	"res://resources/quests/consortium_c6_tioze.tres",
+	"res://resources/quests/consortium_c7_condos.tres",
+	"res://resources/quests/consortium_c8_menace.tres",
+	"res://resources/quests/consortium_c9_pacto.tres",
+	"res://resources/quests/prefeito_d1_peticao.tres",
+	"res://resources/quests/prefeito_d2_basquete.tres",
+	"res://resources/quests/prefeito_d3_mediation.tres",
+	"res://resources/quests/prefeito_d4_procession.tres",
+	"res://resources/quests/prefeito_d5_rally.tres",
+	"res://resources/quests/prefeito_d6_mac.tres",
+	"res://resources/quests/prefeito_d7_tioze.tres",
+	"res://resources/quests/prefeito_d8_campagne.tres",
+	"res://resources/quests/prefeito_d9_eleicao.tres",
 	"res://resources/quests/act1_heritage.tres",
-	"res://resources/quests/act1_meet_ramos.tres",
-	"res://resources/quests/act1_meet_tito.tres",
-	"res://resources/quests/milho_01.tres",
+	"res://resources/quests/quest_milho_01.tres",
 	"res://resources/quests/deliver_package_01.tres",
 	"res://resources/quests/find_bracelet_01.tres",
 	"res://resources/quests/ze_invitation.tres",
@@ -32,21 +67,8 @@ const QUEST_RESOURCES: Array[String] = [
 	"res://resources/quests/padaria_delivery.tres",
 	"res://resources/quests/padaria_baking.tres",
 	"res://resources/quests/valet_palace.tres",
-	"res://resources/quests/act2_intro.tres",
-	"res://resources/quests/act2_miguel_favela.tres",
-	"res://resources/quests/act2_ramos_operacao.tres",
-	"res://resources/quests/act2_padre_orfanato.tres",
 	"res://resources/quests/act2_pecheur_secret.tres",
 	"res://resources/quests/act2_contessa_gala.tres",
-	"res://resources/quests/act3_policia_intel.tres",
-	"res://resources/quests/act3_trafico_pickup.tres",
-	"res://resources/quests/act3_prefeito_endorsements.tres",
-	"res://resources/quests/act3_policia_madrugada.tres",
-	"res://resources/quests/act3_trafico_corrida.tres",
-	"res://resources/quests/act3_prefeito_eleicao.tres",
-	"res://resources/quests/act4_prefeito_audiencia.tres",
-	"res://resources/quests/act4_policia_purga.tres",
-	"res://resources/quests/act4_trafico_tributo.tres",
 	"res://resources/quests/padre_corcovado_relic.tres",
 	"res://resources/quests/ronaldo_dj_paoacucar.tres",
 	"res://resources/quests/carlos_lagoa_volta.tres",
@@ -63,6 +85,14 @@ const QUEST_RESOURCES: Array[String] = [
 	"res://resources/quests/mateus_cagarras_pesca.tres",
 	"res://resources/quests/act4_carnaval_desfile.tres",
 	"res://resources/quests/beto_lost.tres",
+	"res://resources/quests/feijoada_bondinho.tres",
+	"res://resources/quests/ipanema_yoga.tres",
+	"res://resources/quests/cristo_photo.tres",
+	"res://resources/quests/niteroi_envelope.tres",
+	"res://resources/quests/maracana_jersey.tres",
+	"res://resources/quests/cagarras_chain.tres",
+	"res://resources/quests/sambo_plumes.tres",
+	"res://resources/quests/barra_brief.tres",
 	"res://resources/quests/zona_sul_envelope.tres",
 	"res://resources/quests/consortium_barra_security.tres",
 	"res://resources/quests/consortium_le_parc.tres",
@@ -93,32 +123,43 @@ func _ready() -> void:
 	_test_dialogue_graph()
 	_test_dialogue_choices_consistency()
 	_test_npc_dispatch_knots()
+	await _test_interiors_no_overlap()
+	await _test_mac_door_destination_wired()
+	await _test_vehicles_follow_player_on_district_change()
+	await _test_copacabana_palace_declutter()
+	await _test_reactive_spots_visible()
+	await _test_spot_actions_reference_valid_quests()
+	await _test_beto_via_spots_end_to_end()
+	await _test_district_spawn_clear_of_exits()
+	await _test_walk_entries_clear_of_exits()
+	_test_npc_base_knots_exist()
 	_test_cutscene_dependencies()
 	await _test_intro_bump_flow()
 	_test_reactive_spots_default_variant()
+	_test_runtime_spot_action_applies()
 	_test_quest_objectives_reachable()
-	_test_campaign_progression()
-	_test_act_pivot_gating()
-	_test_dialogue_locked_refusal()
-	_test_act2_milestones()
-	_test_quest_completion_paths()
+	await _test_mobile_controls_invariants()
+	_test_act1_to_act2_transition()
+	await _test_act2_directed_flow()
+	await _test_prologue_end_to_end()
+	await _test_voie_trafico_end_to_end()
+	await _test_voie_policia_end_to_end()
+	await _test_voie_consortium_end_to_end()
+	await _test_voie_prefeito_end_to_end()
 	_test_beto_quest_chain()
 	_test_pmpatrol_act_dispatch()
 	_test_reactive_variant_matching()
 	_test_epilogue_paths_present()
-	_test_act4_transition()
-	_test_full_path_policia()
-	_test_full_path_trafico()
-	_test_full_path_prefeito()
-	_test_full_path_via_dialogues()
 	_test_save_load_roundtrip()
 	_test_wanderer_greeting_logic()
 	await _test_wanderer_full_init()
 	await _test_wanderer_render_toggle()
 	await _test_sprite_factory()
 	await _test_wanderer_pixel_sheet()
+	await _test_wanderer_stationary_atlas()
 	await _test_wanderer_4dir_facing()
 	await _test_npc_procedural_sprite()
+	await _test_player_appearance()
 	_test_home_visit_clears_on_favela_entry()
 	await _test_npc_quest_indicator()
 	await _test_district_exit_geometry()
@@ -219,257 +260,6 @@ func _test_dialogue_graph() -> void:
 						obj_ids.append(obj.id)
 					_assert(obj_ids.has(fq.get("objective", "")),
 						"knot '%s' objectif '%s' existe sur quête '%s'" % [knot, fq.get("objective", ""), fq.get("quest", "")])
-
-func _test_campaign_progression() -> void:
-	_section("Progression des actes (dette + pivot quests)")
-	# Reset état
-	_reset_for_path_simulation()
-
-	_assert(CampaignManager.current_act == 1, "départ acte 1")
-	_assert(CampaignManager.debt_remaining() == CampaignManager.DEBT_TOTAL, "dette initiale = %d" % CampaignManager.DEBT_TOTAL)
-
-	# Paiement partiel qui ne franchit pas le seuil acte 1
-	CampaignManager.pay_debt(100)
-	_assert(CampaignManager.current_act == 1, "100 payés → toujours acte 1")
-
-	# Payer le seuil sans avoir complété les pivot quests : ne doit PAS avancer.
-	CampaignManager.pay_debt(400)
-	_assert(CampaignManager.debt_paid == 500, "cumul = 500")
-	_assert(CampaignManager.current_act == 1, "seuil atteint mais pivot manquant → toujours acte 1")
-
-	# Compléter les pivot quests acte 1 → bascule auto vers acte 2.
-	_complete_quest_all_objectives("act1_heritage")
-	_complete_quest_all_objectives("act1_meet_ramos")
-	_complete_quest_all_objectives("act1_meet_tito")
-	_assert(CampaignManager.current_act == 2, "pivots acte 1 complétés + seuil → acte 2")
-
-	# Continue jusqu'à ACT2_THRESHOLD : sans la chaîne acte 2, ne doit pas avancer.
-	CampaignManager.pay_debt(CampaignManager.ACT2_THRESHOLD - 500)
-	_assert(CampaignManager.debt_paid == CampaignManager.ACT2_THRESHOLD, "cumul = %d" % CampaignManager.ACT2_THRESHOLD)
-	_assert(CampaignManager.current_act == 2, "25k payés mais chaîne acte 2 pas faite → toujours acte 2")
-
-	# Compléter la chaîne acte 2 (linéaire : intro → ramos → padre → miguel) → bascule acte 3.
-	_complete_quest_all_objectives("act2_intro")
-	_assert(CampaignManager.current_act == 2, "act2_intro seule ne suffit plus")
-	_complete_quest_all_objectives("act2_ramos_operacao")
-	_complete_quest_all_objectives("act2_padre_orfanato")
-	_complete_quest_all_objectives("act2_miguel_favela")
-	_assert(CampaignManager.current_act == 3, "chaîne acte 2 complétée + seuil → acte 3")
-
-	# Solde le reste
-	CampaignManager.pay_debt(CampaignManager.DEBT_TOTAL)  # dépassement autorisé, clampé
-	_assert(CampaignManager.debt_remaining() == 0, "dette soldée (remaining=0)")
-
-	# Endgame
-	CampaignManager.set_endgame(CampaignManager.Endgame.PREFEITO)
-	_assert(CampaignManager.chosen_endgame == CampaignManager.Endgame.PREFEITO, "endgame Prefeito posé")
-
-func _test_act_pivot_gating() -> void:
-	_section("Gating narratif MAIN/SIDE et pivots d'acte")
-	_reset_for_path_simulation()
-
-	# Quête MAIN avec prereqs : prerequisite_quest_ids non vide doit bloquer is_available.
-	_assert(not QuestManager.is_available("act1_meet_ramos"),
-			"act1_meet_ramos verrouillée tant que act1_heritage pas faite")
-	_assert(QuestManager.missing_prerequisites("act1_meet_ramos") == ["act1_heritage"],
-			"missing_prerequisites pointe le manquant")
-
-	# Compléter le prereq débloque la disponibilité.
-	_complete_quest_all_objectives("act1_heritage")
-	_assert(QuestManager.is_available("act1_meet_ramos"),
-			"act1_meet_ramos dispo après act1_heritage")
-
-	# Pivot d'avancement d'acte : payer le seuil seul ne suffit pas.
-	CampaignManager.pay_debt(CampaignManager.ACT1_THRESHOLD)
-	_assert(CampaignManager.current_act == 1,
-			"seuil payé mais Ramos+Tito pas faits → toujours acte 1")
-
-	_complete_quest_all_objectives("act1_meet_ramos")
-	_assert(CampaignManager.current_act == 1, "un seul mentor → encore acte 1")
-
-	_complete_quest_all_objectives("act1_meet_tito")
-	_assert(CampaignManager.current_act == 2,
-			"trois pivots acte 1 complétés → bascule auto en acte 2")
-
-	# Chaîne pivot acte 2 (linéaire) : sans elle complète, payer 25k n'avance pas.
-	CampaignManager.pay_debt(CampaignManager.ACT2_THRESHOLD - CampaignManager.ACT1_THRESHOLD)
-	_assert(CampaignManager.current_act == 2,
-			"25k payés mais chaîne acte 2 pas faite → toujours acte 2")
-
-	# Vérifie que la chaîne est strictement linéaire (padre prereq sur ramos, etc.).
-	_assert(not QuestManager.is_available("act2_padre_orfanato"),
-			"act2_padre_orfanato verrouillée tant que ramos_operacao pas faite")
-	_assert(not QuestManager.is_available("act2_miguel_favela"),
-			"act2_miguel_favela verrouillée tant que padre_orfanato pas faite")
-	_complete_quest_all_objectives("act2_intro")
-	_complete_quest_all_objectives("act2_ramos_operacao")
-	_assert(QuestManager.is_available("act2_padre_orfanato"),
-			"padre_orfanato dispo après ramos_operacao")
-	_assert(not QuestManager.is_available("act2_miguel_favela"),
-			"miguel_favela toujours verrouillée à mi-chaîne")
-	_complete_quest_all_objectives("act2_padre_orfanato")
-	_complete_quest_all_objectives("act2_miguel_favela")
-	_assert(CampaignManager.current_act == 3,
-			"chaîne complète + 25k → bascule acte 3")
-
-	# Une SIDE n'a pas le quest_type MAIN — vérifie le tag.
-	var milho: Quest = QuestManager._quests.get("quest_milho_01")
-	_assert(milho != null and milho.quest_type == Quest.QuestType.SIDE,
-			"milho_01 taggée SIDE")
-
-	var heritage: Quest = QuestManager._quests.get("act1_heritage")
-	_assert(heritage != null and heritage.quest_type == Quest.QuestType.MAIN,
-			"act1_heritage taggée MAIN")
-
-func _test_dialogue_locked_refusal() -> void:
-	_section("Dialogue refuse proprement quand prereq manque")
-	_reset_for_path_simulation()
-
-	# act1_meet_ramos a prereq act1_heritage (non complétée ici).
-	_assert(not QuestManager.is_available("act1_meet_ramos"),
-			"act1_meet_ramos verrouillée au départ")
-
-	# Capture les signaux pour vérifier le fallback locked.
-	var captured_lines: Array = []
-	var captured_choices: Array = []
-	var line_cb: Callable = func(speaker: String, text: String):
-		captured_lines.append({"speaker": speaker, "text": text})
-	var choices_cb: Callable = func(choices: Array):
-		captured_choices.append(choices)
-	DialogueBridge.line_shown.connect(line_cb)
-	DialogueBridge.choices_presented.connect(choices_cb)
-
-	# Force le knot ramos_intro qui propose accept_quest: act1_meet_ramos.
-	# Sans prereq satisfait, le choice 0 doit déclencher _show_locked_message.
-	DialogueBridge.start_dialogue("ramos", "ramos_intro")
-	_assert(captured_lines.size() >= 1, "knot initial joué")
-	captured_lines.clear()
-	captured_choices.clear()
-
-	DialogueBridge.choose(0)  # "Ça m'intéresse" → tente accept_quest
-	_assert(captured_lines.size() == 1, "une ligne fallback émise")
-	if captured_lines.size() == 1:
-		var fallback: String = captured_lines[0].text
-		_assert(fallback.begins_with("Pas encore le bon moment"),
-				"texte fallback : « %s »" % fallback)
-		_assert("L'héritage" in fallback or "act1_heritage" in fallback,
-				"fallback nomme la quête prereq manquante")
-	_assert(not QuestManager.is_active("act1_meet_ramos"),
-			"quête bloquée non acceptée malgré le choice")
-
-	DialogueBridge.line_shown.disconnect(line_cb)
-	DialogueBridge.choices_presented.disconnect(choices_cb)
-	DialogueBridge.end_dialogue()
-
-func _test_quest_completion_paths() -> void:
-	_section("Complétion des quêtes clés")
-	# Reset état quêtes + campagne
-	QuestManager._state.clear()
-	QuestManager._objectives.clear()
-	CampaignManager.current_act = 1
-	CampaignManager.debt_paid = 0
-	CampaignManager.flags.clear()
-	# Re-register (les quêtes ont été clear indirectement)
-	for path in QUEST_RESOURCES:
-		if ResourceLoader.exists(path):
-			var q: Resource = load(path)
-			if q is Quest:
-				QuestManager.register_quest(q)
-
-	# act1_heritage
-	_assert(QuestManager.accept("act1_heritage"), "accept act1_heritage")
-	_assert(QuestManager.is_active("act1_heritage"), "act1_heritage actif")
-	QuestManager.complete_objective("act1_heritage", "meet_consortium")
-	_assert(QuestManager.is_active("act1_heritage"), "encore actif après 1 objectif")
-	QuestManager.complete_objective("act1_heritage", "earn_seed_money")
-	QuestManager.complete_objective("act1_heritage", "first_payment")
-	_assert(QuestManager.is_completed("act1_heritage"), "act1_heritage complétée")
-
-	# act1_meet_ramos
-	_assert(QuestManager.accept("act1_meet_ramos"), "accept act1_meet_ramos")
-	QuestManager.complete_objective("act1_meet_ramos", "report_to_ramos")
-	_assert(QuestManager.is_completed("act1_meet_ramos"), "act1_meet_ramos complétée")
-
-	# act1_meet_tito
-	_assert(QuestManager.accept("act1_meet_tito"), "accept act1_meet_tito")
-	QuestManager.complete_objective("act1_meet_tito", "do_tito_favor")
-	_assert(QuestManager.is_completed("act1_meet_tito"), "act1_meet_tito complétée")
-
-	# milho_01 (quête tuto)
-	_assert(QuestManager.accept("quest_milho_01"), "accept quest_milho_01")
-	QuestManager.complete_objective("quest_milho_01", "pickup_cart")
-	QuestManager.complete_objective("quest_milho_01", "return_cart")
-	# sell_all est optionnel
-	_assert(QuestManager.is_completed("quest_milho_01"), "quest_milho_01 complétée")
-
-	# find_bracelet_01
-	_assert(QuestManager.accept("find_bracelet_01"), "accept find_bracelet_01")
-	QuestManager.complete_objective("find_bracelet_01", "find_bracelet")
-	QuestManager.complete_objective("find_bracelet_01", "return_bracelet")
-	_assert(QuestManager.is_completed("find_bracelet_01"), "find_bracelet_01 complétée")
-
-	# flowers_for_beatriz
-	_assert(QuestManager.accept("flowers_for_beatriz"), "accept flowers_for_beatriz")
-	QuestManager.complete_objective("flowers_for_beatriz", "deliver_flowers")
-	_assert(QuestManager.is_completed("flowers_for_beatriz"), "flowers_for_beatriz complétée")
-
-	# bike_delivery
-	_assert(QuestManager.accept("bike_delivery"), "accept bike_delivery")
-	QuestManager.complete_objective("bike_delivery", "one_delivery")
-	_assert(QuestManager.is_completed("bike_delivery"), "bike_delivery complétée")
-
-	# church_statue
-	_assert(QuestManager.accept("church_statue"), "accept church_statue")
-	QuestManager.complete_objective("church_statue", "find_statue")
-	QuestManager.complete_objective("church_statue", "return_statue")
-	_assert(QuestManager.is_completed("church_statue"), "church_statue complétée")
-
-	# pharmacy_tito
-	_assert(QuestManager.accept("pharmacy_tito"), "accept pharmacy_tito")
-	QuestManager.complete_objective("pharmacy_tito", "receive_medicine")
-	QuestManager.complete_objective("pharmacy_tito", "deliver_medicine")
-	_assert(QuestManager.is_completed("pharmacy_tito"), "pharmacy_tito complétée")
-
-	# escort_contessa : gatée par CHARISMA >= 10
-	ReputationSystem.set_value(ReputationSystem.Axis.CHARISMA, 15)
-	_assert(QuestManager.accept("escort_contessa"), "accept escort_contessa (charisma ok)")
-	QuestManager.complete_objective("escort_contessa", "escort_to_bar")
-	QuestManager.complete_objective("escort_contessa", "escort_back_to_palace")
-	_assert(QuestManager.is_completed("escort_contessa"), "escort_contessa complétée")
-	# Vérifie que le gating CHARISMA bloque quand trop bas
-	QuestManager._state["escort_contessa"] = QuestManager.State.AVAILABLE
-	ReputationSystem.set_value(ReputationSystem.Axis.CHARISMA, 5)
-	_assert(not QuestManager.accept("escort_contessa"), "refus accept escort_contessa (charisma < 10)")
-
-func _test_act4_transition() -> void:
-	_section("Transition acte 3 → 4 + acte 4 jouable")
-	# Reset complet puis simule le parcours minimal jusqu'en acte 3 (avec pivots).
-	_reset_for_path_simulation()
-	_drive_to_act3()
-	_assert(CampaignManager.current_act == 3, "acte 3 atteint via pivot")
-	# Voie Polícia : compléter intel + madrugada (chaîne MAIN d'acte 3).
-	_complete_quest_all_objectives("act3_policia_intel")
-	_complete_quest_all_objectives("act3_policia_madrugada")
-	# Avant la finale : pas en acte 4, pas d'endgame.
-	_assert(CampaignManager.current_act == 3, "encore acte 3 avant finale")
-	_assert(CampaignManager.chosen_endgame == CampaignManager.Endgame.NONE, "pas d'endgame")
-	# Déclenche la finale Polícia → doit basculer acte 4 + scellement endgame + dette purgée.
-	CampaignManager.complete_endgame(CampaignManager.Endgame.POLICIA)
-	_assert(CampaignManager.current_act == 4, "acte 4 atteint après finale")
-	_assert(CampaignManager.chosen_endgame == CampaignManager.Endgame.POLICIA, "endgame Polícia scellé")
-	_assert(CampaignManager.debt_remaining() == 0, "dette purgée par finale")
-	_assert(CampaignManager.reign_title() == "Chefe de Polícia", "titre de règne correct")
-	# Acte 4 : la quête Polícia est dispo (prereq act3_policia_madrugada complétée).
-	_assert(QuestManager.is_available("act4_policia_purga"), "act4_policia_purga dispo en acte 4")
-	# Les voies non engagées restent verrouillées par leurs prereqs (gating narratif).
-	_assert(not QuestManager.is_available("act4_prefeito_audiencia"), "voie Prefeito verrouillée (prereq)")
-	_assert(not QuestManager.is_available("act4_trafico_tributo"), "voie Tráfico verrouillée (prereq)")
-	# Acceptation et complétion d'une quête acte 4.
-	_assert(QuestManager.accept("act4_policia_purga"), "accept purga")
-	QuestManager.complete_objective("act4_policia_purga", "purge_morro")
-	QuestManager.complete_objective("act4_policia_purga", "purge_calcadao")
-	QuestManager.complete_objective("act4_policia_purga", "purge_atlantica")
-	_assert(QuestManager.is_completed("act4_policia_purga"), "purga complétée (3 points)")
 
 func _test_valet_minigame() -> void:
 	_section("Mini-jeu Valet — boucle complète")
@@ -618,20 +408,40 @@ func _test_dialogue_choices_consistency() -> void:
 # inexistant, le dialogue se ferme silencieusement et le joueur est perdu —
 # c'est le scénario soft-lock le plus pernicieux. On vérifie en dur que tous
 # sont présents dans PLACEHOLDER_DIALOGUES.
+# Knots de routing post-refonte : pactes de voie + SIDE conservés. Le légacy
+# act1_meet/act2/act3/act4 a été supprimé (voies A/B/C/D via spots).
 const NPC_DISPATCH_KNOTS: Dictionary = {
 	"seu_joao": [
 		"seu_joao_heritage", "seu_joao_intro_tutorial", "seu_joao_intro",
 		"seu_joao_reminder", "seu_joao_return",
+		"seu_joao_prologue_nudge", "seu_joao_prologue_remind",
 		"seu_joao_carnaval_offer", "seu_joao_carnaval_remind", "seu_joao_carnaval_done",
-		"seu_joao_evening_first_payment", "seu_joao_evening_act2_reveal",
-		"seu_joao_evening_path_chosen", "seu_joao_evening_carnaval_eve",
-		"seu_joao_act3_intel",
+		"seu_joao_evening_first_payment", "seu_joao_evening_carnaval_eve",
 		"seu_joao_ng_plus_intro",
 	],
+	"vizinha": [
+		"mae_prologue_offer", "mae_prologue_offer_b", "mae_prologue_plea",
+	],
 	"tito": [
-		"tito_playing", "tito_encounter", "tito_favor_ask", "tito_thanks",
-		"tito_act2_loyalty_offer", "tito_act2_loyalty_done", "tito_act2_loyalty_declined",
-		"tito_receives_medicine",
+		"tito_encounter", "tito_receives_medicine",
+		"tito_pacto_trafico_offer", "tito_pacto_trafico_remind", "tito_trafico_corrida",
+	],
+	"ramos": [
+		"ramos_intro", "ramos_chat_warm", "ramos_chat_familiar",
+		"ramos_commissaire_alerted",
+		"ramos_pacto_policia_offer", "ramos_pacto_policia_remind", "ramos_policia_madrugada",
+	],
+	"padre": [
+		"padre_receives", "padre_remind", "padre_thanks",
+		"padre_corcovado_offer", "padre_corcovado_remind", "padre_corcovado_receives",
+		"padre_pacto_prefeito_offer", "padre_pacto_prefeito_remind", "padre_prefeito_eleicao",
+	],
+	"magalhaes": [
+		"magalhaes_pacto_consortium_offer", "magalhaes_pacto_consortium_remind",
+		"magalhaes_consortium_pacto", "magalhaes_consortium_done",
+	],
+	"miguel": [
+		"miguel_waiting", "miguel_done",
 	],
 	"pm": [
 		"cop_shakedown",
@@ -642,32 +452,6 @@ const NPC_DISPATCH_KNOTS: Dictionary = {
 		"consortium_after_threshold", "consortium_settled",
 		"consortium_airport_offer", "consortium_airport_remind", "consortium_airport_done",
 		"consortium_act3_intro",
-	],
-	"ramos": [
-		"ramos_intro", "ramos_active", "ramos_thanks",
-		"ramos_act2_offer", "ramos_act2_rat", "ramos_act2_protect",
-		"ramos_act3_intel_offer", "ramos_act3_intel_remind", "ramos_act3_intel_close",
-		"ramos_act3_offer", "ramos_act3_done",
-	],
-	"miguel": [
-		"miguel_offer", "miguel_act2_offer", "miguel_act2_warning",
-		"miguel_act2_remind", "miguel_act2_done",
-		"miguel_act3_pickup_offer", "miguel_act3_pickup_remind", "miguel_act3_pickup_close",
-		"miguel_act3_offer", "miguel_act3_done",
-	],
-	"padre": [
-		"padre_intro", "padre_act2_offer",
-		"padre_act3_endorse_offer", "padre_act3_endorse_remind", "padre_act3_endorse_close",
-		"padre_act3_offer", "padre_act3_done",
-	],
-	"carlos": [
-		"carlos_act3_endorse",
-	],
-	"padeiro": [
-		"padeiro_act3_endorse",
-	],
-	"concierge": [
-		"concierge_act2_reveal",
 	],
 	"caldeira": [
 		"caldeira_offer", "caldeira_remind_deliver", "caldeira_remind_verify",
@@ -681,6 +465,414 @@ const NPC_DISPATCH_KNOTS: Dictionary = {
 	],
 }
 
+# Spots quêteurs visibles : un ReactiveDialogueSpot sans character_seed ni
+# character_appearance ne dessine RIEN — le joueur ne peut pas le trouver
+# (cas « le contact du capitão est introuvable »). Tout spot est censé être un
+# personnage SAUF ceux explicitement logiques (un lieu qu'on inspecte).
+const _LOGICAL_SPOTS: Array = ["PedrinhoSpot"]  # « Inspecter la citerne » (lieu)
+
+func _test_reactive_spots_visible() -> void:
+	_section("ReactiveDialogueSpot — spots quêteurs visibles (anti-introuvable)")
+	var scenes: Array = ["res://scenes/world/Copacabana.tscn"]
+	var dir: DirAccess = DirAccess.open("res://scenes/districts/")
+	if dir:
+		dir.list_dir_begin()
+		var fn: String = dir.get_next()
+		while fn != "":
+			if fn.ends_with(".tscn"):
+				scenes.append("res://scenes/districts/" + fn)
+			fn = dir.get_next()
+	for sc in scenes:
+		var packed: PackedScene = load(sc) as PackedScene
+		if packed == null:
+			continue
+		var root: Node = packed.instantiate()
+		add_child(root)
+		await get_tree().process_frame
+		_check_spots_visible(root, sc.get_file())
+		root.queue_free()
+		await get_tree().process_frame
+
+func _check_spots_visible(root: Node, scene: String) -> void:
+	for node in _all_descendants(root):
+		if not (node is ReactiveDialogueSpot):
+			continue
+		if _LOGICAL_SPOTS.has(String(node.name)):
+			continue
+		var visible_sprite: bool = int(node.character_seed) != 0 \
+				or not (node.character_appearance as Dictionary).is_empty()
+		_assert(visible_sprite,
+			"%s : spot '%s' (npc=%s) a un sprite (sinon introuvable)"
+				% [scene, node.name, String(node.npc_id)])
+
+func _all_descendants(n: Node) -> Array:
+	var out: Array = [n]
+	for c in n.get_children():
+		out.append_array(_all_descendants(c))
+	return out
+
+# Palace décongestionné : les 4 « tio Zé concierge » (un par voie) doivent
+# être gated par required_flag (sinon 4 figures identiques en permanence devant
+# le Palace) et Beto doit être visible (character_seed) et hors du cluster
+# Palace (sinon mission beto_lost injouable — il était invisible et noyé).
+# Garde-fou général : toute action `accept_quest` / `finish_quest` portée par
+# une variante de ReactiveDialogueSpot doit pointer vers une quête réellement
+# enregistrée, et l'objectif (pour finish_quest) doit exister sur cette quête.
+# Aurait attrapé C1 de l'audit (act3_policia_intel/intel_vizinha morts).
+func _test_spot_actions_reference_valid_quests() -> void:
+	_section("Spots — actions accept_quest/finish_quest valides")
+	# Re-registre des quêtes pour garantir QuestManager._quests peuplé.
+	for path in QUEST_RESOURCES:
+		if ResourceLoader.exists(path):
+			var q: Resource = load(path)
+			if q is Quest:
+				QuestManager.register_quest(q)
+	var scenes: Array = ["res://scenes/world/Copacabana.tscn"]
+	var dir: DirAccess = DirAccess.open("res://scenes/districts/")
+	if dir:
+		dir.list_dir_begin()
+		var fn: String = dir.get_next()
+		while fn != "":
+			if fn.ends_with(".tscn"):
+				scenes.append("res://scenes/districts/" + fn)
+			fn = dir.get_next()
+	for sc in scenes:
+		var packed: PackedScene = load(sc) as PackedScene
+		if packed == null:
+			continue
+		var root: Node = packed.instantiate()
+		add_child(root)
+		await get_tree().process_frame
+		_check_spot_actions(root, sc.get_file())
+		root.queue_free()
+		await get_tree().process_frame
+
+func _check_spot_actions(root: Node, scene: String) -> void:
+	for node in _all_descendants(root):
+		if not (node is ReactiveDialogueSpot):
+			continue
+		for variant in (node.variants as Array):
+			var v: Dictionary = variant as Dictionary
+			var actions: Dictionary = v.get("actions", {})
+			if actions.has("accept_quest"):
+				var qid: String = String(actions["accept_quest"])
+				_assert(QuestManager._quests.has(qid),
+					"%s/%s : accept_quest '%s' existe"
+						% [scene, node.name, qid])
+			if actions.has("finish_quest"):
+				var info: Dictionary = actions["finish_quest"]
+				var qid2: String = String(info.get("quest", ""))
+				var oid: String = String(info.get("objective", ""))
+				var q: Quest = QuestManager._quests.get(qid2) as Quest
+				_assert(q != null,
+					"%s/%s : finish_quest quête '%s' existe"
+						% [scene, node.name, qid2])
+				if q != null:
+					var found: bool = false
+					for o in q.objectives:
+						if String(o.id) == oid:
+							found = true
+							break
+					_assert(found,
+						"%s/%s : objectif '%s' existe sur '%s'"
+							% [scene, node.name, oid, qid2])
+
+# Beto end-to-end via les vrais spots (Seu Jorge favela → Beto calçadão →
+# retour Jorge). Verrouille le découplage : VizinhaSpot ne donne plus la quête,
+# Jorge oui ; flags renommés proprement.
+func _test_beto_via_spots_end_to_end() -> void:
+	_section("Beto — chaîne complète via les spots (Jorge → Beto → retour)")
+	_reset_campaign_state()
+	# Prérequis : Jorge n'offre la quête qu'après le prologue résolu.
+	QuestManager.accept("prologue_pedrinho")
+	for obj_id in ["ask_mae", "ask_vovo", "ask_garoto", "find_pedrinho", "bring_home"]:
+		QuestManager.complete_objective("prologue_pedrinho", obj_id)
+	_assert(QuestManager.is_completed("prologue_pedrinho"), "prérequis prologue OK")
+	var fav: Node = (load(_FAVELA) as PackedScene).instantiate()
+	add_child(fav)
+	var cop: Node = (load(_COPA) as PackedScene).instantiate()
+	add_child(cop)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var jorge: Node = _find_by_name_in(fav, "JorgeSpot")
+	var beto: Node = _find_by_name_in(cop, "BetoSpot")
+	_assert(jorge != null and beto != null, "JorgeSpot et BetoSpot présents")
+	# 1) Seu Jorge propose la quête.
+	if jorge:
+		jorge._on_interacted(null)
+		if DialogueBridge.is_active():
+			DialogueBridge.choose(0)
+	_assert(QuestManager.is_active("beto_lost"),
+		"beto_lost accepté via Seu Jorge (pas VizinhaSpot)")
+	_assert(CampaignManager.has_flag("beto_quest_taken"),
+		"flag beto_quest_taken posé")
+	# 2) Beto sur le calçadão : objectif find_beto.
+	if beto:
+		beto._on_interacted(null)
+		if DialogueBridge.is_active():
+			DialogueBridge.choose(0)
+	_assert(QuestManager.get_objectives_state("beto_lost").get("find_beto", false),
+		"find_beto clos via BetoSpot")
+	_assert(CampaignManager.has_flag("beto_found"),
+		"flag beto_found posé")
+	# 3) Retour chez Jorge : quête complétée.
+	if jorge:
+		jorge._on_interacted(null)
+		if DialogueBridge.is_active():
+			DialogueBridge.choose(0)
+	_assert(QuestManager.is_completed("beto_lost"),
+		"beto_lost complétée via retour chez Jorge")
+	_assert(CampaignManager.has_flag("beto_returned"),
+		"flag beto_returned posé")
+	fav.queue_free()
+	cop.queue_free()
+	await get_tree().process_frame
+	await get_tree().process_frame
+	_reset_campaign_state()
+
+# Garde-fou : les intérieurs hors-monde (positions y≈-3000 dans Copacabana)
+# doivent rester distants l'un de l'autre, sinon ils se rendent les uns sur
+# les autres (cas réel : ForteColombo placé sur TioZeHouseInterior à (7200,
+# -3000)). Pairwise distance ≥ MIN_DIST.
+func _test_interiors_no_overlap() -> void:
+	_section("Intérieurs hors monde — pas de chevauchement")
+	var packed: PackedScene = load("res://scenes/world/Copacabana.tscn") as PackedScene
+	if packed == null:
+		_assert(false, "Copacabana.tscn charge")
+		return
+	var root: Node = packed.instantiate()
+	add_child(root)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var interiors: Array = []
+	for n in _all_descendants(root):
+		if not (n is Node2D):
+			continue
+		if String(n.name).ends_with("Interior"):
+			interiors.append(n)
+	const MIN_DIST: float = 500.0
+	for i in interiors.size():
+		for j in range(i + 1, interiors.size()):
+			var a: Node2D = interiors[i] as Node2D
+			var b: Node2D = interiors[j] as Node2D
+			var d: float = a.global_position.distance_to(b.global_position)
+			_assert(d >= MIN_DIST,
+				"intérieurs '%s' et '%s' distants de %.0f px (min %.0f)"
+					% [a.name, b.name, d, MIN_DIST])
+	root.queue_free()
+	await get_tree().process_frame
+
+# Garde-fou véhicules : après un changement de district (taxi ou piéton),
+# les Rideables doivent être téléportés près du joueur — sans ça, la voiture
+# garée à Copa reste à Copa quand le joueur taxi à Botafogo (cas réel signalé).
+func _test_vehicles_follow_player_on_district_change() -> void:
+	_section("Véhicules — suivent le joueur lors d'un changement de district")
+	var packed: PackedScene = load("res://scenes/world/Copacabana.tscn") as PackedScene
+	if packed == null:
+		_assert(false, "Copacabana.tscn charge")
+		return
+	var root: Node = packed.instantiate()
+	add_child(root)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	# Au démarrage le joueur est à Copa ; on attrape sa pos initiale et celle
+	# d'un véhicule pour les comparer après changement.
+	var player: Node = GameManager.player
+	_assert(player != null, "GameManager.player présent")
+	if player == null:
+		root.queue_free(); return
+	# Sanity : il existe au moins un Rideable enregistré dans le groupe "vehicle".
+	var vehicles: Array = get_tree().get_nodes_in_group("vehicle")
+	_assert(vehicles.size() >= 1, "Au moins un Rideable (groupe 'vehicle')")
+	# On simule un changement de district : déplace le joueur loin (ex. Niterói
+	# world ≈ (-18500, -2900)) puis émet district_changed via travel_to. travel_to
+	# paie la course → on donne du cash et on bypass via _resolve_spawn direct.
+	var fare: int = DistrictManager.get_fare("niteroi")
+	var inv: Node = (player as Node).get_node_or_null("Inventory")
+	if inv:
+		inv.call("add_money", fare + 100)
+	DistrictManager.travel_to("niteroi")
+	# Laisse les transforms se propager.
+	await get_tree().process_frame
+	# Vérifie que chaque véhicule non monté est près du joueur.
+	for v in get_tree().get_nodes_in_group("vehicle"):
+		if not (v is Node2D):
+			continue
+		if v is Rideable and (v as Rideable).is_ridden():
+			continue
+		var d: float = (v as Node2D).global_position.distance_to((player as Node2D).global_position)
+		_assert(d < 300.0,
+			"véhicule '%s' à %.0f px du joueur après travel_to (suit le déplacement)"
+				% [v.name, d])
+	root.queue_free()
+	await get_tree().process_frame
+
+# Garde-fou : la porte d'entrée du MAC (Niterói) doit avoir une destination
+# correctement câblée à runtime (vers MACInterior/SpawnPoint). Si le wiring
+# silencieux échoue, destination reste Vector2.ZERO → joueur téléporté au
+# monde origin = Copacabana. Cas réel signalé en jeu.
+func _test_mac_door_destination_wired() -> void:
+	_section("Niterói — DoorMAC.destination câblée vers MACInterior")
+	var packed: PackedScene = load("res://scenes/world/Copacabana.tscn") as PackedScene
+	if packed == null:
+		_assert(false, "Copacabana.tscn charge")
+		return
+	var root: Node = packed.instantiate()
+	add_child(root)
+	# Attendre 2 frames pour laisser le call_deferred du wiring de Niterói
+	# s'exécuter (NiteroiDistrict._ready fait call_deferred("_wire_mac_doors")).
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var niteroi: Node = _find_by_name_in(root, "NiteroiDistrict")
+	_assert(niteroi != null, "NiteroiDistrict instancié")
+	if niteroi != null:
+		var door: Node = niteroi.get_node_or_null("DoorMAC")
+		var spawn: Node = niteroi.get_node_or_null("MACInterior/SpawnPoint")
+		_assert(door != null, "DoorMAC présent")
+		_assert(spawn != null, "MACInterior/SpawnPoint présent")
+		if door != null and "destination" in door:
+			var dest: Vector2 = door.destination
+			_assert(dest != Vector2.ZERO,
+				"DoorMAC.destination câblée (≠ (0,0) — sinon téléport au monde origin = Copa)")
+			if spawn is Node2D:
+				var expected: Vector2 = (spawn as Node2D).global_position
+				_assert(dest.distance_to(expected) < 5.0,
+					"DoorMAC.destination = MAC SpawnPoint (delta < 5 px)")
+	root.queue_free()
+	await get_tree().process_frame
+
+func _test_copacabana_palace_declutter() -> void:
+	_section("Copacabana — Palace décongestionné + Beto visible/atteignable")
+	var packed: PackedScene = load("res://scenes/world/Copacabana.tscn") as PackedScene
+	if packed == null:
+		_assert(false, "Copacabana.tscn charge")
+		return
+	var root: Node = packed.instantiate()
+	add_child(root)
+	await get_tree().process_frame
+	for nm in ["TraficoTioZeSpot", "PoliciaTioZeSpot", "ConsortiumTioZeSpot", "PrefeitoTioZeSpot"]:
+		var s: Node = _find_by_name_in(root, nm)
+		_assert(s != null and "required_flag" in s and String(s.required_flag) != "",
+			"%s : required_flag posé (pas de foule fantôme au Palace)" % nm)
+	var beto: Node = _find_by_name_in(root, "BetoSpot")
+	_assert(beto != null, "BetoSpot présent")
+	if beto != null:
+		_assert(int(beto.character_seed) != 0,
+			"Beto visible (character_seed ≠ 0 — sinon introuvable)")
+		var bp: Vector2 = (beto as Node2D).global_position
+		for nm2 in ["Concierge", "TouristVIP", "MadameDubois", "RenatoSpot", "TraficoTioZeSpot"]:
+			var o: Node = _find_by_name_in(root, nm2)
+			if o is Node2D:
+				_assert(bp.distance_to((o as Node2D).global_position) > 120.0,
+					"BetoSpot éloigné de '%s' (mission jouable)" % nm2)
+	root.queue_free()
+	await get_tree().process_frame
+
+# Anti ping-pong : un Marker2D de spawn placé DANS l'Area2D d'un DistrictExit
+# fait re-déclencher la sortie dès l'arrivée → le joueur est renvoyé en boucle
+# et le quartier devient inatteignable (cas PaoAcucar : on n'arrivait jamais au
+# pão, on finissait à Barra). On vérifie chaque district : aucun spawn ne doit
+# tomber dans un exit (marge = demi-corps joueur).
+const _SPAWN_EXIT_MARGIN: float = 24.0
+
+func _test_district_spawn_clear_of_exits() -> void:
+	_section("Districts — spawns hors des Area2D de sortie (anti ping-pong)")
+	var dir: DirAccess = DirAccess.open("res://scenes/districts/")
+	if dir == null:
+		_assert(false, "ouverture scenes/districts/")
+		return
+	dir.list_dir_begin()
+	var fname: String = dir.get_next()
+	while fname != "":
+		if fname.ends_with(".tscn"):
+			var packed: PackedScene = load("res://scenes/districts/" + fname) as PackedScene
+			if packed:
+				var root: Node = packed.instantiate()
+				add_child(root)
+				await get_tree().process_frame
+				_check_spawns_vs_exits(root, fname)
+				root.queue_free()
+				await get_tree().process_frame
+		fname = dir.get_next()
+
+func _check_spawns_vs_exits(root: Node, scene: String) -> void:
+	var spawns: Array = []
+	var exits: Array = []
+	for child in root.get_children():
+		if child is Marker2D and String(child.name).begins_with("PlayerSpawn"):
+			spawns.append(child)
+		if child is DistrictExit:
+			exits.append(child)
+	for spawn in spawns:
+		var sp: Vector2 = (spawn as Marker2D).global_position
+		for exit in exits:
+			var cs: CollisionShape2D = exit.get_node_or_null("CollisionShape2D")
+			if cs == null or not (cs.shape is RectangleShape2D):
+				continue
+			var half: Vector2 = (cs.shape as RectangleShape2D).size * 0.5
+			var c: Vector2 = cs.global_position
+			var inside: bool = absf(sp.x - c.x) < half.x + _SPAWN_EXIT_MARGIN \
+					and absf(sp.y - c.y) < half.y + _SPAWN_EXIT_MARGIN
+			_assert(not inside, "%s : spawn '%s' hors de '%s'"
+					% [scene, spawn.name, exit.name])
+
+# Anti ping-pong piéton : un WALK_ENTRY (point d'arrivée à pied) qui tombe DANS
+# l'Area2D de la sortie pointant vers le district source renvoie immédiatement
+# le joueur d'où il vient. Cas réel : passage Botafogo↔ZonaSul / Barra↔ZonaSul.
+# Pour chaque district avec WALK_ENTRIES, on vérifie que chaque point d'arrivée
+# est hors de la sortie qui pointe vers le from_id correspondant.
+const _DISTRICT_SCENE_PATHS: Dictionary = {
+	"favela_morro":      "res://scenes/districts/FavelaDoMorro.tscn",
+	"zona_sul":          "res://scenes/districts/ZonaSul.tscn",
+	"botafogo_flamengo": "res://scenes/districts/BotafogoFlamengo.tscn",
+	"corcovado":         "res://scenes/districts/Corcovado.tscn",
+	"maracana":          "res://scenes/districts/Maracana.tscn",
+	"santos_dumont":     "res://scenes/districts/SantosDumont.tscn",
+	"pao_acucar":        "res://scenes/districts/PaoAcucar.tscn",
+	"cagarras":          "res://scenes/districts/Cagarras.tscn",
+	"sambodromo":        "res://scenes/districts/Sambodromo.tscn",
+	"barra_tijuca":      "res://scenes/districts/BarraDaTijuca.tscn",
+	"niteroi":           "res://scenes/districts/Niteroi.tscn",
+}
+
+func _test_walk_entries_clear_of_exits() -> void:
+	_section("WALK_ENTRIES — points d'arrivée hors des sorties (anti ping-pong piéton)")
+	for target_id in DistrictManager.WALK_ENTRIES:
+		if target_id == "copacabana":
+			continue  # arrivées en world-space, audit séparé
+		var scene_path: String = String(_DISTRICT_SCENE_PATHS.get(target_id, ""))
+		if scene_path == "":
+			continue
+		var packed: PackedScene = load(scene_path) as PackedScene
+		if packed == null:
+			continue
+		var root: Node = packed.instantiate()
+		add_child(root)
+		await get_tree().process_frame
+		# Index exits by target_district pour retrouver « la sortie qui revient
+		# vers le from_id de WALK_ENTRY ».
+		var exits_by_target: Dictionary = {}
+		for child in root.get_children():
+			if child is DistrictExit:
+				exits_by_target[String(child.target_district)] = child
+		for from_id in DistrictManager.WALK_ENTRIES[target_id]:
+			var local: Vector2 = DistrictManager.WALK_ENTRIES[target_id][from_id]
+			var exit: DistrictExit = exits_by_target.get(from_id)
+			if exit == null:
+				continue  # sortie symétrique pas modélisée — pas de risque ping-pong
+			var cs: CollisionShape2D = exit.get_node_or_null("CollisionShape2D")
+			if cs == null or not (cs.shape is RectangleShape2D):
+				continue
+			var half: Vector2 = (cs.shape as RectangleShape2D).size * 0.5
+			var c: Vector2 = exit.position + cs.position  # tous deux en local
+			var inside: bool = absf(local.x - c.x) < half.x + _SPAWN_EXIT_MARGIN \
+					and absf(local.y - c.y) < half.y + _SPAWN_EXIT_MARGIN
+			_assert(not inside,
+				"WALK_ENTRIES[%s][%s] %s hors de '%s' (sinon retour immédiat vers %s)"
+					% [target_id, from_id, local, exit.name, from_id])
+		root.queue_free()
+		await get_tree().process_frame
+
 func _test_npc_dispatch_knots() -> void:
 	_section("NPC dispatchers — tous les knots référencés existent")
 	var dialogues: Dictionary = DialogueBridge.PLACEHOLDER_DIALOGUES
@@ -689,19 +881,38 @@ func _test_npc_dispatch_knots() -> void:
 		for knot in knots:
 			_assert(dialogues.has(knot), "NPC '%s' knot '%s' présent" % [npc_id, knot])
 
+# Garde-fou général : le knot de base (NPCData.ink_knot) est le fallback de
+# _on_interacted. S'il manque dans PLACEHOLDER_DIALOGUES, start_dialogue
+# n'émet ni ligne ni choix mais garde _active_npc_id → le jeu se fige (cas
+# ramos_intro). On vérifie TOUS les NPCData, pas juste une liste manuelle.
+func _test_npc_base_knots_exist() -> void:
+	_section("NPC — knot de base (ink_knot) défini pour chaque NPCData")
+	var dialogues: Dictionary = DialogueBridge.PLACEHOLDER_DIALOGUES
+	var dir: DirAccess = DirAccess.open(NPC_DATA_DIR)
+	if dir == null:
+		_assert(false, "ouverture %s" % NPC_DATA_DIR)
+		return
+	dir.list_dir_begin()
+	var fname: String = dir.get_next()
+	while fname != "":
+		if fname.ends_with(".tres"):
+			var res: Resource = load(NPC_DATA_DIR + fname)
+			if res is NPCData:
+				var nd: NPCData = res as NPCData
+				_assert(nd.ink_knot != "" and dialogues.has(nd.ink_knot),
+					"NPCData '%s' : knot de base '%s' présent (anti-freeze)"
+						% [nd.id, nd.ink_knot])
+		fname = dir.get_next()
+
 # Cinématiques scriptées : chacune utilise walk_npc_to(npc_id) + say(npc_id, knot).
 # Si le knot disparaît ou si le NPCData n'a pas l'id attendu, la cutscene se
 # bloque silencieusement. On vérifie ici les dépendances connues.
 const CUTSCENE_REQUIREMENTS: Array = [
 	{"name": "IntroSeuJoao", "npcs": ["seu_joao"], "knots": ["seu_joao_heritage", "seu_joao_intro_tutorial", "seu_joao_ng_plus_intro"]},
-	{"name": "Act2RevealCutscene", "npcs": ["concierge"], "knots": ["concierge_act2_reveal"]},
 	{"name": "Act3IntroCutscene", "npcs": ["consortium"], "knots": ["consortium_act3_intro"]},
 	# FirstShakedownCutscene : PMPatrol n'a pas de NPCData (id "pm" attribué directement
 	# dans DialogueBridge.start_dialogue), on vérifie juste le knot.
 	{"name": "FirstShakedownCutscene", "npcs": [], "knots": ["cop_shakedown"]},
-	{"name": "Act3FinaleCutscenes/Polícia", "npcs": ["ramos"], "knots": ["ramos_act3_done"]},
-	{"name": "Act3FinaleCutscenes/Tráfico", "npcs": ["miguel"], "knots": ["miguel_act3_done"]},
-	{"name": "Act3FinaleCutscenes/Prefeito", "npcs": ["padre"], "knots": ["padre_act3_done"]},
 ]
 
 func _test_cutscene_dependencies() -> void:
@@ -787,8 +998,6 @@ const SCRIPT_COMPLETED_OBJECTIVES: Dictionary = {
 	"quest_milho_01": ["pickup_cart", "return_cart", "sell_all"],
 	# DeliveryPoint nodes (scenes/world/Copacabana.tscn)
 	"deliver_package_01": ["deliver"],
-	"act2_miguel_favela": ["deliver_convoy"],
-	"act4_policia_purga": ["purge_morro", "purge_calcadao", "purge_atlantica"],
 	# Pickable nodes (Bracelet, Statue, LostDog) — completion à l'interaction
 	"find_bracelet_01": ["find_bracelet"],
 	"church_statue": ["find_statue"],
@@ -813,17 +1022,439 @@ const SCRIPT_COMPLETED_OBJECTIVES: Dictionary = {
 	"padre_corcovado_relic": ["bless_at_corcovado"],
 	# MainBoot._on_district_changed coche les étapes du tour à l'arrivée.
 	"tourist_vip_tour": ["see_corcovado", "see_paoacucar", "see_lagoa"],
+	# Prologue — enfant disparu, objectifs complétés via ReactiveDialogueSpot
+	# (mère/vovó/Juca/Pedrinho), pas dans PLACEHOLDER.
+	"prologue_pedrinho": ["ask_mae", "ask_vovo", "ask_garoto", "find_pedrinho", "bring_home"],
+	# Voie Tráfico A1–A3 : drop/pickup via TraficoContactSpot (runtime),
+	# drive_botafogo auto-coché par MainBoot à l'arrivée à Botafogo.
+	"trafico_a1_livraison": ["drop_calcadao"],
+	"trafico_a2_pickup": ["pickup_palace"],
+	"trafico_a3_chauffeur": ["drive_botafogo"],
+	# A4–A8 : objectifs complétés via ReactiveDialogueSpot (Zona Sul / favela /
+	# Cagarras / Palace / Niterói). A9 execute_run via knot PLACEHOLDER Tito.
+	"trafico_a4_ipanema": ["deal_ipanema"],
+	"trafico_a5_intim": ["silence_voisin"],
+	"trafico_a6_cagarras": ["receive_cargo"],
+	"trafico_a7_tioze": ["heed_warning"],
+	"trafico_a8_baia": ["cross_baia"],
+	# Voie Polícia B1–B8 : objectifs via ReactiveDialogueSpot. B9
+	# complete_madrugada via knot PLACEHOLDER ramos_policia_madrugada.
+	"policia_b1_intel": ["report_face"],
+	"policia_b2_filature": ["map_network"],
+	"policia_b3_escorte": ["escort_patrol"],
+	"policia_b4_descente": ["bust_dealer"],
+	"policia_b5_reperage": ["scout_corcovado"],
+	"policia_b6_tioze": ["hear_concierge"],
+	"policia_b7_saisie": ["seize_cargo"],
+	"policia_b8_seguranca": ["secure_crowd"],
+	# Voie Consortium C1–C8 : objectifs via ReactiveDialogueSpot. C9 seal_pacto
+	# via knot PLACEHOLDER magalhaes_consortium_pacto.
+	"consortium_c1_recouvrement": ["collect_calcadao"],
+	"consortium_c2_loyers": ["collect_condos"],
+	"consortium_c3_partenariat": ["force_signature"],
+	"consortium_c4_vip": ["drive_vip"],
+	"consortium_c5_mac": ["launder_mac"],
+	"consortium_c6_tioze": ["hear_concierge"],
+	"consortium_c7_condos": ["align_condos"],
+	"consortium_c8_menace": ["break_holdout"],
+	# Voie Prefeito D1–D8 : objectifs via ReactiveDialogueSpot. D9 win_election
+	# via knot PLACEHOLDER padre_prefeito_eleicao.
+	"prefeito_d1_peticao": ["gather_signatures"],
+	"prefeito_d2_basquete": ["run_tournament"],
+	"prefeito_d3_mediation": ["defuse_conflict"],
+	"prefeito_d4_procession": ["escort_procession"],
+	"prefeito_d5_rally": ["lead_rally"],
+	"prefeito_d6_mac": ["inaugurate_expo"],
+	"prefeito_d7_tioze": ["receive_dossier"],
+	"prefeito_d8_campagne": ["flip_calcadao"],
 	# Side quest favela — ReactiveDialogueSpot actions.
 	"beto_lost": ["find_beto", "tell_vizinha"],
+	"feijoada_bondinho": ["deliver_summit"],
+	"ipanema_yoga": ["fetch_mat"],
+	"cristo_photo": ["shoot_cristo"],
+	"niteroi_envelope": ["deliver_envelope"],
+	"maracana_jersey": ["find_jersey", "return_jersey"],
+	"cagarras_chain": ["recover_chain", "return_chain"],
+	"sambo_plumes": ["fetch_plumes", "deliver_plumes"],
+	"barra_brief": ["deliver_brief", "confirm_back"],
 	# Side quest Barra Riserva Uno — Magalhães script + Nilton dialog actions.
 	"consortium_barra_security": ["intimidate_magalhaes", "close_deal"],
 	"consortium_le_parc": ["intimidate_carrasco", "close_deal_carrasco"],
 	"consortium_peninsula": ["intimidate_mendonca", "close_deal_mendonca"],
-	# Acte 3 Polícia — intel via VizinhaSpot (variante runtime, pas dans PLACEHOLDER).
-	"act3_policia_intel": ["intel_vizinha"],
-	# Acte 3 Tráfico — pickup auto-coché par MainBoot district_changed (Botafogo).
-	"act3_trafico_pickup": ["pickup_botafogo"],
 }
+
+func _test_runtime_spot_action_applies() -> void:
+	_section("ReactiveDialogueSpot — action runtime appliquée via choose()")
+	# Régression : choose() lisait PLACEHOLDER_DIALOGUES et ignorait les
+	# dialogues runtime → finish_quest/accept_quest des spots ne
+	# s'appliquaient JAMAIS en jeu (prologue + 3 voies bloqués).
+	if QuestManager._quests.get("prologue_pedrinho") == null:
+		var q: Quest = load("res://resources/quests/prologue_pedrinho.tres") as Quest
+		if q:
+			QuestManager.register_quest(q)
+	# Repart d'un état AVAILABLE propre (erase seul → UNAVAILABLE → accept refuse).
+	QuestManager._objectives.erase("prologue_pedrinho")
+	QuestManager._state["prologue_pedrinho"] = QuestManager.State.AVAILABLE
+	_assert(QuestManager.accept("prologue_pedrinho"), "prologue_pedrinho accepté")
+	DialogueBridge.register_runtime_dialogue("spot_regress_runtime", {
+		"speaker": "Test",
+		"text": "...",
+		"choices": ["ok"],
+		"on_choose": {"0": {"finish_quest": {"quest": "prologue_pedrinho", "objective": "ask_mae", "payout": 0}}},
+	})
+	DialogueBridge.start_dialogue("regress_runtime", "spot_regress_runtime")
+	DialogueBridge.choose(0)
+	_assert(QuestManager.is_objective_done("prologue_pedrinho", "ask_mae"),
+		"finish_quest d'un knot runtime complète l'objectif via choose()")
+	# Laisse l'état neutre (AVAILABLE, non démarré) pour les tests suivants.
+	QuestManager._objectives.erase("prologue_pedrinho")
+	QuestManager._state["prologue_pedrinho"] = QuestManager.State.AVAILABLE
+
+# --- Vérifications « le jeu est jouable en mobile » ---
+
+# Tout le gameplay doit être atteignable au doigt : déplacement (joystick
+# virtuel), interaction (bouton à l'écran), téléphone (bouton 📱 du HUD),
+# choix de dialogue (boutons ≥ 44 pt). Aucune feature gated derrière le clavier.
+func _test_mobile_controls_invariants() -> void:
+	_section("Mobile — contrôles tactiles et cibles ≥ 44 pt")
+	# Actions d'input présentes (le bouton tactile InteractButton émet l'action
+	# "interact" ; le joystick pilote move_*).
+	for act in ["interact", "move_forward", "move_back", "move_left", "move_right"]:
+		_assert(InputMap.has_action(act), "action input '%s' définie" % act)
+	# MobileControls : joystick + bouton interact tactile, dimensionnés ≥ 44 pt.
+	var mc_packed: PackedScene = load("res://scenes/ui/MobileControls.tscn") as PackedScene
+	_assert(mc_packed != null, "MobileControls.tscn charge")
+	if mc_packed:
+		var mc: Node = mc_packed.instantiate()
+		add_child(mc)
+		await get_tree().process_frame
+		var ib: Button = mc.get_node_or_null("InteractButton") as Button
+		var joy: Node = mc.get_node_or_null("Joystick")
+		_assert(ib != null, "InteractButton (tactile) présent")
+		_assert(joy != null, "Joystick virtuel présent")
+		if ib:
+			var sz: Vector2 = ib.size
+			_assert(sz.x >= 44.0 and sz.y >= 44.0,
+				"InteractButton ≥ 44×44 pt (actuel %dx%d)" % [sz.x, sz.y])
+		mc.queue_free()
+		await get_tree().process_frame
+	# Mini-jeux : contrôles tactiles dédiés disponibles.
+	_assert(ResourceLoader.exists("res://scenes/ui/MinigameTouchControls.tscn"),
+		"MinigameTouchControls.tscn présent (mini-jeux jouables au doigt)")
+	# HUD : bouton 📱 d'ouverture du téléphone (entrée tactile vers les apps).
+	var hud_packed: PackedScene = load("res://scenes/ui/HUD.tscn") as PackedScene
+	_assert(hud_packed != null, "HUD.tscn charge")
+	if hud_packed:
+		var hud: Node = hud_packed.instantiate()
+		add_child(hud)
+		await get_tree().process_frame
+		var phone_btn: Button = hud.get_node_or_null("MenuButton") as Button
+		_assert(phone_btn != null and phone_btn.text.find("📱") >= 0,
+			"HUD : bouton 📱 (ouvre le téléphone au doigt)")
+		hud.queue_free()
+		await get_tree().process_frame
+	# DialogueUI : les choix sont des Button tappables ≥ 44 pt de haut.
+	var du_packed: PackedScene = load("res://scenes/ui/DialogueUI.tscn") as PackedScene
+	_assert(du_packed != null, "DialogueUI.tscn charge")
+	if du_packed:
+		var du: Node = du_packed.instantiate()
+		add_child(du)
+		await get_tree().process_frame
+		# Appel direct du handler (déterministe — évite la flakiness du
+		# round-trip de signal global selon l'ordre des tests).
+		du._on_choices_presented(["Choix A", "Choix B"])
+		await get_tree().process_frame
+		var cont: Node = du.get_node_or_null("Panel/Choices")
+		var ok_btn: bool = false
+		if cont and cont.get_child_count() >= 2:
+			var b0: Button = cont.get_child(0) as Button
+			ok_btn = b0 != null and b0.custom_minimum_size.y >= 44.0
+		_assert(ok_btn, "choix de dialogue = Button ≥ 44 pt de haut")
+		du.queue_free()
+		await get_tree().process_frame
+
+# Réinitialise l'état campagne/quêtes pour une simulation propre.
+func _reset_campaign_state() -> void:
+	QuestManager._state.clear()
+	QuestManager._objectives.clear()
+	CampaignManager.current_act = 1
+	CampaignManager.debt_paid = 0
+	CampaignManager.chosen_endgame = CampaignManager.Endgame.NONE
+	CampaignManager.flags.clear()
+	for path in QUEST_RESOURCES:
+		if ResourceLoader.exists(path):
+			var q: Resource = load(path)
+			if q is Quest:
+				QuestManager.register_quest(q)
+	for i in ReputationSystem.Axis.size():
+		ReputationSystem.set_value(i, 0)
+
+# Pilote un ReactiveDialogueSpot comme le ferait un joueur au doigt :
+# interaction → choix 0, en boucle, jusqu'à ce que `done` soit vrai.
+func _drive_spot(scene_root: Node, spot_name: String, done: Callable, label: String) -> void:
+	var spot: Node = _find_by_name_in(scene_root, spot_name)
+	if spot == null:
+		_assert(false, "%s : spot '%s' trouvé" % [label, spot_name])
+		return
+	var safety: int = 12
+	while not done.call() and safety > 0:
+		spot._on_interacted(null)
+		if DialogueBridge.is_active():
+			DialogueBridge.choose(0)
+		safety -= 1
+	_assert(done.call(), "%s (via spot tactile)" % label)
+
+# Bascule acte 1 → 2 via les vrais mécanismes : accepter act1_heritage,
+# rencontrer le consortium (flag met_consortium), payer 500 R$ → l'acte doit
+# basculer à 2 automatiquement. A déjà été cassé par des pivots quêtes morts
+# (act1_meet_ramos/tito) — ce test verrouille la classe « blocage après 500 ».
+func _test_act1_to_act2_transition() -> void:
+	_section("Acte 1 → 2 : basculement automatique après 500 R$")
+	_reset_campaign_state()
+	_assert(QuestManager.accept("act1_heritage"), "act1_heritage acceptée")
+	_assert(CampaignManager.current_act == 1, "départ acte 1")
+	# Simule la rencontre Dom Nilton : pose met_consortium via DialogueBridge
+	# pour déclencher _link_quest_on_flag (qui clôt meet_consortium).
+	DialogueBridge.set_flag("met_consortium")
+	_assert(QuestManager.get_objectives_state("act1_heritage").get("meet_consortium", false),
+		"meet_consortium clos par le flag")
+	# Simule l'acompte au niveau campagne (CampaignManager.pay_debt ne dépend
+	# pas du joueur — il maj debt_paid + déclenche _check_act_advance) puis
+	# clôt les deux objectifs que DialogueBridge.pay_debt closerait en jeu.
+	CampaignManager.pay_debt(CampaignManager.ACT1_THRESHOLD)
+	QuestManager.complete_objective("act1_heritage", "earn_seed_money")
+	QuestManager.complete_objective("act1_heritage", "first_payment")
+	_assert(QuestManager.is_completed("act1_heritage"),
+		"act1_heritage complétée après acompte (3 objectifs OK)")
+	_assert(CampaignManager.current_act == 2,
+		"acte 2 enclenché automatiquement (current_act == 2)")
+	_reset_campaign_state()
+
+# Acte 2 dirigé : la nuit doit passer dans la maison (HouseNightTrigger →
+# Act1NightCutscene → flag `act1_closed`) AVANT que les patrons (Tito, Ramos,
+# Padre, Magalhães) ne proposent leur pacte. À la sortie, TitoApprocheTrigger
+# pousse Tito vers le joueur.
+func _test_act2_directed_flow() -> void:
+	_section("Acte 2 dirigé — nuit, pact gating, Tito aborde")
+	_reset_campaign_state()
+	_complete_quest_all_objectives("prologue_pedrinho")
+	_complete_quest_all_objectives("act1_heritage")
+	CampaignManager.pay_debt(CampaignManager.ACT1_THRESHOLD)
+	_assert(CampaignManager.current_act == 2, "acte 2 atteint")
+	_assert(not CampaignManager.has_flag("act1_closed"),
+		"act1_closed pas encore posé tant que la nuit n'est pas passée")
+
+	# Pacte refusé tant que act1_closed=false (Tito ne propose pas l'offer).
+	# On vérifie via la cinématique : on appelle directement les knots et on
+	# regarde si le pacte est engagé. Tito.gd contient le gating ; pour le
+	# tester sans NPC instancié, on rejoue la logique d'Act1NightCutscene.
+	_assert(not CampaignManager.has_flag("voie_trafico"),
+		"voie_trafico inactive avant act1_closed")
+
+	# Joue la cinématique de nuit via DialogueBridge directement.
+	DialogueBridge.start_dialogue("narrateur", "act1_night_fall")
+	DialogueBridge.choose(0)  # next → act1_night_wake
+	DialogueBridge.choose(0)  # set_flag act1_closed
+	_assert(CampaignManager.has_flag("act1_closed"),
+		"act1_closed posé après la cinématique de nuit (set_flag chain)")
+
+	# Une fois act1_closed posé, le pacte Tito est jouable.
+	DialogueBridge.start_dialogue("tito", "tito_pacto_trafico_offer")
+	# Choix 1 : "Plus tard" → tito_approached seulement (pas de voie scellée).
+	DialogueBridge.choose(1)
+	_assert(CampaignManager.has_flag("tito_approached"),
+		"choix 'plus tard' pose tito_approached")
+	_assert(not CampaignManager.has_flag("voie_trafico"),
+		"choix 'plus tard' ne scelle pas la voie")
+	_reset_campaign_state()
+
+# Prologue JOUABLE de bout en bout : Seu João donne la quête, puis le joueur
+# enquête en interagissant les vrais spots de la favela (mère → vovó → Juca →
+# citerne). Couvre l'accessibilité/position/gating des spots du prologue.
+func _test_prologue_end_to_end() -> void:
+	_section("Jouabilité — prologue « Cadê o Pedrinho? » (spots réels favela)")
+	_reset_campaign_state()
+	# La mère aborde le joueur (cutscene MaeAborde) — chaîne 2 répliques :
+	# accept_quest + flag, puis clôt l'objectif ask_mae.
+	CampaignManager.set_flag("intro_bump_seen")
+	DialogueBridge.start_dialogue("vizinha", "mae_prologue_offer")
+	DialogueBridge.choose(0)  # accept_quest + prologue_started + next
+	DialogueBridge.choose(0)  # finish_quest ask_mae
+	_assert(QuestManager.is_active("prologue_pedrinho")
+			or QuestManager.is_completed("prologue_pedrinho"),
+		"prologue accepté via la mère (cutscene MaeAborde)")
+	_assert(CampaignManager.has_flag("prologue_started"),
+		"flag prologue_started posé par la mère")
+	_assert(QuestManager.get_objectives_state("prologue_pedrinho").get("ask_mae", false),
+		"objectif ask_mae clos par la mère (plus besoin de la recliquer)")
+	var fav: Node = (load(_FAVELA) as PackedScene).instantiate()
+	add_child(fav)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var spots: Array = []
+	for sn in ["VizinhaSpot", "VovoSpot", "GarotoSpot", "PedrinhoSpot"]:
+		var n: Node = _find_by_name_in(fav, sn)
+		_assert(n != null, "prologue : spot '%s' présent et accessible (in-game)" % sn)
+		if n:
+			spots.append(n)
+	var cycles: int = 16
+	while not QuestManager.is_completed("prologue_pedrinho") and cycles > 0:
+		for spot in spots:
+			spot._on_interacted(null)
+			if DialogueBridge.is_active():
+				DialogueBridge.choose(0)
+		cycles -= 1
+	_assert(QuestManager.is_completed("prologue_pedrinho"),
+		"prologue résolu via les spots (mère→vovó→Juca→citerne→retour mère)")
+	var ost: Dictionary = QuestManager.get_objectives_state("prologue_pedrinho")
+	_assert(bool(ost.get("find_pedrinho", false)),
+		"find_pedrinho clos (citerne)")
+	_assert(bool(ost.get("bring_home", false)),
+		"bring_home clos (Pedrinho rendu à sa mère — discours change)")
+	_assert(CampaignManager.has_flag("pedrinho_following"),
+		"flag pedrinho_following posé (Pedrinho a suivi)")
+	_assert(CampaignManager.has_flag("pedrinho_home"),
+		"flag pedrinho_home posé (retrouvailles)")
+	_assert(_find_by_name_in(fav, "PedrinhoFollower") != null,
+		"PedrinhoFollower présent dans la favela (suiveur)")
+	fav.queue_free()
+	# Deux frames : laisse les call_deferred des nodes favela libérés se vider
+	# avant que le prochain test n'émette des signaux globaux.
+	await get_tree().process_frame
+	await get_tree().process_frame
+
+# Driver générique : joue une voie de bout en bout via les VRAIS mécanismes
+# (knot du pacte → ReactiveDialogueSpots pilotés au doigt → hooks d'arrivée →
+# knot du couronnement → Carnaval → Épilogue). Le joueur « erre » : à chaque
+# cycle on interagit tous les spots de la voie ; chaque spot n'agit que si sa
+# variante matche l'état courant → robuste à l'ordre close/offer.
+func _run_voie_e2e(cfg: Dictionary) -> void:
+	_section("Jouabilité — voie %s de bout en bout (mécanismes réels)" % cfg.name)
+	_reset_campaign_state()
+	_complete_quest_all_objectives("prologue_pedrinho")
+	_complete_quest_all_objectives("act1_heritage")
+	_assert(QuestManager.is_completed("prologue_pedrinho"), "%s : prologue résolu" % cfg.name)
+	_assert(QuestManager.is_completed("act1_heritage"), "%s : 1er acompte payé" % cfg.name)
+
+	# Pacte avec le patron (knot PLACEHOLDER, comme au doigt dans le dialogue).
+	DialogueBridge.start_dialogue(cfg.pact_npc, cfg.pact_knot)
+	DialogueBridge.choose(0)
+	_assert(CampaignManager.has_flag(cfg.voie_flag), "%s : pacte engagé" % cfg.name)
+	_assert(QuestManager.is_active(cfg.q1), "%s : 1re mission acceptée via le pacte" % cfg.name)
+
+	# Instancie chaque scène utilisée une seule fois, met en cache les spots.
+	var inst: Dictionary = {}
+	var spots: Array = []
+	for st in cfg.stations:
+		var sp: String = st[0]
+		if not inst.has(sp):
+			inst[sp] = (load(sp) as PackedScene).instantiate()
+			add_child(inst[sp])
+	await get_tree().process_frame
+	await get_tree().process_frame
+	for st in cfg.stations:
+		var node: Node = _find_by_name_in(inst[st[0]], st[1])
+		_assert(node != null, "%s : spot '%s' présent (in-game)" % [cfg.name, st[1]])
+		if node:
+			spots.append(node)
+
+	# Boucle « joueur qui circule » : interagit tous les spots jusqu'à ce que
+	# la dernière mission (Q9) soit acceptée (prête pour le couronnement).
+	var cycles: int = 26
+	while not (QuestManager.is_active(cfg.q9) or QuestManager.is_completed(cfg.q9)) and cycles > 0:
+		for spot in spots:
+			spot._on_interacted(null)
+			if DialogueBridge.is_active():
+				DialogueBridge.choose(0)
+		for ar in cfg.get("arrival", []):
+			if QuestManager.is_active(ar[0]):
+				var os: Dictionary = QuestManager.get_objectives_state(ar[0])
+				if not os.get(ar[1], false):
+					QuestManager.complete_objective(ar[0], ar[1])
+		cycles -= 1
+	_assert(QuestManager.is_active(cfg.q9) or QuestManager.is_completed(cfg.q9),
+		"%s : chaîne parcourue jusqu'au couronnement (Q9)" % cfg.name)
+	for sp in inst:
+		inst[sp].queue_free()
+	await get_tree().process_frame
+
+	# Couronnement : knot du patron → set_endgame.
+	DialogueBridge.start_dialogue(cfg.pact_npc, cfg.crown_knot)
+	DialogueBridge.choose(0)
+	_assert(CampaignManager.chosen_endgame == cfg.endgame,
+		"%s : couronnement → endgame scellé" % cfg.name)
+	_assert(CampaignManager.current_act == 4, "%s : acte 4 atteint (règne)" % cfg.name)
+
+	# Finale : Carnaval → Épilogue (jeu terminable).
+	_assert(QuestManager.is_available("act4_carnaval_desfile"),
+		"%s : act4_carnaval_desfile disponible" % cfg.name)
+	QuestManager.accept("act4_carnaval_desfile")
+	QuestManager.complete_objective("act4_carnaval_desfile", "lead_samba")
+	_assert(QuestManager.is_completed("act4_carnaval_desfile"),
+		"%s : Carnaval mené → Épilogue débloqué" % cfg.name)
+	_reset_campaign_state()
+
+const _COPA: String = "res://scenes/world/Copacabana.tscn"
+const _FAVELA: String = "res://scenes/districts/FavelaDoMorro.tscn"
+const _BOTAFOGO: String = "res://scenes/districts/BotafogoFlamengo.tscn"
+const _ZONASUL: String = "res://scenes/districts/ZonaSul.tscn"
+const _CORCOVADO: String = "res://scenes/districts/Corcovado.tscn"
+const _NITEROI: String = "res://scenes/districts/Niteroi.tscn"
+const _MARACANA: String = "res://scenes/districts/Maracana.tscn"
+const _BARRA: String = "res://scenes/districts/BarraDaTijuca.tscn"
+const _SANTOS: String = "res://scenes/districts/SantosDumont.tscn"
+const _CAGARRAS: String = "res://scenes/districts/Cagarras.tscn"
+
+func _test_voie_trafico_end_to_end() -> void:
+	await _run_voie_e2e({
+		"name": "Tráfico", "pact_npc": "tito", "pact_knot": "tito_pacto_trafico_offer",
+		"voie_flag": "voie_trafico", "q1": "trafico_a1_livraison", "q9": "trafico_a9_corrida",
+		"crown_knot": "tito_trafico_corrida", "endgame": CampaignManager.Endgame.TRAFICO,
+		"arrival": [["trafico_a3_chauffeur", "drive_botafogo"]],
+		"stations": [
+			[_COPA, "TraficoContactSpot"], [_COPA, "TraficoTioZeSpot"],
+			[_ZONASUL, "TraficoZonaSulSpot"], [_FAVELA, "TraficoIntimSpot"],
+			[_CAGARRAS, "TraficoCagarrasSpot"], [_NITEROI, "TraficoNiteroiSpot"],
+		],
+	})
+
+func _test_voie_policia_end_to_end() -> void:
+	await _run_voie_e2e({
+		"name": "Polícia", "pact_npc": "ramos", "pact_knot": "ramos_pacto_policia_offer",
+		"voie_flag": "voie_policia", "q1": "policia_b1_intel", "q9": "policia_b9_madrugada",
+		"crown_knot": "ramos_policia_madrugada", "endgame": CampaignManager.Endgame.POLICIA,
+		"stations": [
+			[_COPA, "PoliciaContactSpot"], [_COPA, "PoliciaTioZeSpot"],
+			[_FAVELA, "PoliciaFilatureSpot"], [_BOTAFOGO, "PoliciaEscorteSpot"],
+			[_ZONASUL, "PoliciaDescenteSpot"], [_CORCOVADO, "PoliciaReperageSpot"],
+			[_NITEROI, "PoliciaSaisieSpot"], [_MARACANA, "PoliciaSegurancaSpot"],
+		],
+	})
+
+func _test_voie_consortium_end_to_end() -> void:
+	await _run_voie_e2e({
+		"name": "Consortium", "pact_npc": "magalhaes", "pact_knot": "magalhaes_pacto_consortium_offer",
+		"voie_flag": "voie_consortium", "q1": "consortium_c1_recouvrement", "q9": "consortium_c9_pacto",
+		"crown_knot": "magalhaes_consortium_pacto", "endgame": CampaignManager.Endgame.CONSORTIUM,
+		"stations": [
+			[_COPA, "ConsortiumContactSpot"], [_COPA, "ConsortiumTioZeSpot"],
+			[_BARRA, "ConsortiumBarraSpot"], [_ZONASUL, "ConsortiumZonaSulSpot"],
+			[_SANTOS, "ConsortiumAeroportoSpot"], [_NITEROI, "ConsortiumNiteroiSpot"],
+		],
+	})
+
+func _test_voie_prefeito_end_to_end() -> void:
+	await _run_voie_e2e({
+		"name": "Prefeito", "pact_npc": "padre", "pact_knot": "padre_pacto_prefeito_offer",
+		"voie_flag": "voie_prefeito", "q1": "prefeito_d1_peticao", "q9": "prefeito_d9_eleicao",
+		"crown_knot": "padre_prefeito_eleicao", "endgame": CampaignManager.Endgame.PREFEITO,
+		"stations": [
+			[_COPA, "PrefeitoContactSpot"], [_COPA, "PrefeitoTioZeSpot"],
+			[_BOTAFOGO, "PrefeitoAterroSpot"], [_FAVELA, "PrefeitoFavelaSpot"],
+			[_ZONASUL, "PrefeitoZonaSulSpot"], [_MARACANA, "PrefeitoMaracanaSpot"],
+			[_NITEROI, "PrefeitoNiteroiSpot"],
+		],
+	})
 
 func _test_quest_objectives_reachable() -> void:
 	_section("Chaque objectif est complétable (dialogue OU script connu)")
@@ -863,38 +1494,6 @@ func _test_quest_objectives_reachable() -> void:
 # attendu, vérifie qu'on atteint le moment épilogue (act4_carnaval_desfile
 # is_completed). Trois sims distinctes pour les trois voies.
 
-func _reset_for_path_simulation() -> void:
-	QuestManager._state.clear()
-	QuestManager._objectives.clear()
-	CampaignManager.current_act = 1
-	CampaignManager.debt_paid = 0
-	CampaignManager.chosen_endgame = CampaignManager.Endgame.NONE
-	CampaignManager.flags.clear()
-	for path in QUEST_RESOURCES:
-		if ResourceLoader.exists(path):
-			var q: Resource = load(path)
-			if q is Quest:
-				QuestManager.register_quest(q)
-	# Réputations à 0 par défaut.
-	for i in ReputationSystem.Axis.size():
-		ReputationSystem.set_value(i, 0)
-
-func _drive_to_act3() -> void:
-	# Le gating narratif demande, en plus du seuil de dette, que les quêtes pivots
-	# soient complétées. Acte 2 = chaîne linéaire (intro → ramos → padre → miguel),
-	# il faut compléter toute la chaîne pour franchir vers l'acte 3.
-	_complete_quest_all_objectives("act1_heritage")
-	_complete_quest_all_objectives("act1_meet_ramos")
-	_complete_quest_all_objectives("act1_meet_tito")
-	CampaignManager.pay_debt(CampaignManager.ACT1_THRESHOLD)
-	_complete_quest_all_objectives("act2_intro")
-	_complete_quest_all_objectives("act2_ramos_operacao")
-	_complete_quest_all_objectives("act2_padre_orfanato")
-	_complete_quest_all_objectives("act2_miguel_favela")
-	CampaignManager.pay_debt(CampaignManager.ACT2_THRESHOLD - CampaignManager.ACT1_THRESHOLD)
-
-# Helper : accepte une quête puis complète tous ses objectifs non-optionnels.
-# Tolérant : si déjà acceptée/complétée, no-op partiel.
 func _complete_quest_all_objectives(quest_id: String) -> void:
 	if QuestManager.is_completed(quest_id):
 		return
@@ -907,223 +1506,6 @@ func _complete_quest_all_objectives(quest_id: String) -> void:
 		if not obj.optional:
 			QuestManager.complete_objective(quest_id, obj.id)
 
-func _complete_carnaval_quest() -> void:
-	_assert(QuestManager.is_available("act4_carnaval_desfile"), "act4_carnaval_desfile dispo en acte 4")
-	_assert(QuestManager.accept("act4_carnaval_desfile"), "accept act4_carnaval_desfile")
-	QuestManager.complete_objective("act4_carnaval_desfile", "lead_samba")
-	_assert(QuestManager.is_completed("act4_carnaval_desfile"), "act4_carnaval_desfile complétée → épilogue prêt")
-
-# Helper : déroule un knot via DialogueBridge en simulant un joueur qui choisit
-# l'option `choice_index` à chaque step. Continue tant qu'il y a une "next"
-# dans on_choose. Retourne quand le dialogue est terminé.
-func _play_dialogue_choice(npc_id: String, knot: String, choice_index: int = 0) -> void:
-	DialogueBridge.start_dialogue(npc_id, knot)
-	# Boucle : tant que le dialogue chaîne sur next, on choisit l'option index.
-	# Quand un knot ne chaîne pas, choose() applique l'action et end_dialogue.
-	var safety: int = 12
-	while DialogueBridge.is_active() and safety > 0:
-		DialogueBridge.choose(choice_index)
-		safety -= 1
-
-# Helper : tout l'Acte 1 via DialogueBridge (couvre la chaîne action+bribe+
-# finish_quest qui est précisément ce que le bug pay_bribe-avant-finish_quest
-# cassait silencieusement). Utilise DialogueBridge.pay_debt (pas le raw
-# CampaignManager.pay_debt) pour que les objectifs heritage soient cochés.
-func _drive_act1_via_dialogues() -> void:
-	# 1. Heritage via dialogue (seu_joao_heritage → debt_who → accept).
-	_play_dialogue_choice("seu_joao", "seu_joao_heritage", 0)
-	_assert(QuestManager.is_active("act1_heritage"), "heritage active après dialogue")
-	# 2. Met flag consortium → complète meet_consortium (via _link_quest_on_flag).
-	DialogueBridge.set_flag("met_consortium")
-	# 3. Pay 500 R$ via DialogueBridge (qui complète earn_seed + first_payment).
-	DialogueBridge.pay_debt(CampaignManager.ACT1_THRESHOLD)
-	_assert(QuestManager.is_completed("act1_heritage"), "heritage complétée après dialog+flag+pay")
-	# 4. Ramos : intro (accept) puis report (bribe + finish_quest).
-	_play_dialogue_choice("ramos", "ramos_intro", 0)
-	_assert(QuestManager.is_active("act1_meet_ramos"), "ramos active après intro")
-	_play_dialogue_choice("ramos", "ramos_active", 0)
-	_assert(QuestManager.is_completed("act1_meet_ramos"), "ramos complétée via report+bribe")
-	# 5. Tito : meet (accept) puis favor (bribe + finish_quest).
-	_play_dialogue_choice("tito", "tito_meet", 0)
-	_assert(QuestManager.is_active("act1_meet_tito"), "tito active après meet")
-	_play_dialogue_choice("tito", "tito_favor_ask", 0)
-	_assert(QuestManager.is_completed("act1_meet_tito"), "tito complétée via favor+bribe")
-
-# Test bout-en-bout via dialogues (couvre les actions dialog combinant
-# pay_bribe + finish_quest, accept_quest + next, set_endgame + finish_quest).
-# Prouve que les 3 voies passent end-to-end via les knots du PLACEHOLDER_DIALOGUES.
-func _test_full_path_via_dialogues() -> void:
-	_section("Voies complètes via DialogueBridge — Polícia / Tráfico / Prefeito")
-	# Simule un joueur fauché → riche : on lui donne du cash pour éviter que
-	# pay_bribe échoue silencieusement et bloque la quête.
-	if GameManager.player == null:
-		# Crée un faux joueur avec inventaire pour les tests dialog.
-		var fake_player: CharacterBody2D = CharacterBody2D.new()
-		fake_player.name = "FakePlayer"
-		add_child(fake_player)
-		var fake_inv: Inventory = Inventory.new()
-		fake_inv.name = "Inventory"
-		fake_player.add_child(fake_inv)
-		GameManager.register_player(fake_player)
-	var inv: Inventory = GameManager.player.get_node_or_null("Inventory") as Inventory
-	if inv == null:
-		_assert(false, "Player inventory dispo")
-		return
-
-	# --- Voie POLÍCIA via dialogues ---
-	_reset_for_path_simulation()
-	inv.add_money(10000)
-	_drive_act1_via_dialogues()
-	_assert(CampaignManager.current_act == 2, "POLÍCIA : passage Acte 2 via dialogues")
-
-	# Acte 2 : drive via les helpers (les knots intermédiaires sont déjà couverts ailleurs).
-	_complete_quest_all_objectives("act2_intro")
-	_complete_quest_all_objectives("act2_ramos_operacao")
-	_complete_quest_all_objectives("act2_padre_orfanato")
-	_complete_quest_all_objectives("act2_miguel_favela")
-	CampaignManager.pay_debt(CampaignManager.ACT2_THRESHOLD - CampaignManager.ACT1_THRESHOLD)
-	_assert(CampaignManager.current_act == 3, "POLÍCIA : passage Acte 3")
-
-	# Acte 3 voie POLÍCIA : intel + madrugada via QuestManager direct (les knots
-	# de cette chaîne sont nombreux, l'objectif ici est de prouver la fin).
-	_complete_quest_all_objectives("act3_policia_intel")
-	_complete_quest_all_objectives("act3_policia_madrugada")
-	CampaignManager.complete_endgame(CampaignManager.Endgame.POLICIA)
-	_assert(CampaignManager.current_act == 4, "POLÍCIA : Acte 4 atteint")
-	_assert(CampaignManager.chosen_endgame == CampaignManager.Endgame.POLICIA, "POLÍCIA : endgame scellée")
-	_complete_quest_all_objectives("act4_policia_purga")
-	_complete_carnaval_quest()
-	_assert(QuestManager.is_completed("act4_carnaval_desfile"), "POLÍCIA : Carnaval finalisé — épilogue prêt")
-
-	# --- Voie TRÁFICO via dialogues ---
-	_reset_for_path_simulation()
-	inv.add_money(10000)
-	_drive_act1_via_dialogues()
-	_assert(CampaignManager.current_act == 2, "TRÁFICO : Acte 2 via dialogues")
-	_complete_quest_all_objectives("act2_intro")
-	_complete_quest_all_objectives("act2_ramos_operacao")
-	_complete_quest_all_objectives("act2_padre_orfanato")
-	_complete_quest_all_objectives("act2_miguel_favela")
-	CampaignManager.pay_debt(CampaignManager.ACT2_THRESHOLD - CampaignManager.ACT1_THRESHOLD)
-	_assert(CampaignManager.current_act == 3, "TRÁFICO : Acte 3")
-	_complete_quest_all_objectives("act3_trafico_pickup")
-	_complete_quest_all_objectives("act3_trafico_corrida")
-	CampaignManager.complete_endgame(CampaignManager.Endgame.TRAFICO)
-	_assert(CampaignManager.current_act == 4, "TRÁFICO : Acte 4 atteint")
-	_assert(CampaignManager.chosen_endgame == CampaignManager.Endgame.TRAFICO, "TRÁFICO : endgame scellée")
-	_complete_quest_all_objectives("act4_trafico_tributo")
-	_complete_carnaval_quest()
-	_assert(QuestManager.is_completed("act4_carnaval_desfile"), "TRÁFICO : Carnaval finalisé")
-
-	# --- Voie PREFEITO via dialogues ---
-	_reset_for_path_simulation()
-	inv.add_money(10000)
-	_drive_act1_via_dialogues()
-	_assert(CampaignManager.current_act == 2, "PREFEITO : Acte 2")
-	_complete_quest_all_objectives("act2_intro")
-	_complete_quest_all_objectives("act2_ramos_operacao")
-	_complete_quest_all_objectives("act2_padre_orfanato")
-	_complete_quest_all_objectives("act2_miguel_favela")
-	CampaignManager.pay_debt(CampaignManager.ACT2_THRESHOLD - CampaignManager.ACT1_THRESHOLD)
-	_assert(CampaignManager.current_act == 3, "PREFEITO : Acte 3")
-	# Endorsements + finale eleicao via dialogues : Carlos / Beatriz / Padeiro signent,
-	# puis Padre offre la coalition (set_endgame PREFEITO + finish_quest dans la même action).
-	_play_dialogue_choice("padre", "padre_act3_endorse_offer", 0)
-	_assert(QuestManager.is_active("act3_prefeito_endorsements"), "PREFEITO : endorsements active")
-	# Les signataires individuels ne sont pas dans des knots dédiés ici (carlos_act3_endorse, etc.) —
-	# on complète manuellement les objectifs + on retourne au Padre pour le sceau.
-	QuestManager.complete_objective("act3_prefeito_endorsements", "endorse_carlos")
-	QuestManager.complete_objective("act3_prefeito_endorsements", "endorse_padeiro")
-	QuestManager.complete_objective("act3_prefeito_endorsements", "endorse_padre")
-	_assert(QuestManager.is_completed("act3_prefeito_endorsements"), "PREFEITO : endorsements complétée")
-	# Padre offre eleicao + chaîne sur padre_act3_close (set_endgame + finish_quest).
-	_play_dialogue_choice("padre", "padre_act3_offer", 0)
-	_assert(CampaignManager.chosen_endgame == CampaignManager.Endgame.PREFEITO, "PREFEITO : endgame scellée via dialogue")
-	_assert(CampaignManager.current_act == 4, "PREFEITO : Acte 4 atteint via dialogue")
-	_assert(QuestManager.is_completed("act3_prefeito_eleicao"), "PREFEITO : eleicao complétée via finish_quest dans set_endgame")
-	_complete_quest_all_objectives("act4_prefeito_audiencia")
-	_complete_carnaval_quest()
-	_assert(QuestManager.is_completed("act4_carnaval_desfile"), "PREFEITO : Carnaval finalisé")
-
-func _test_full_path_policia() -> void:
-	_section("Voie complète — Polícia (Capitão Ramos)")
-	_reset_for_path_simulation()
-	_drive_to_act3()
-	_assert(CampaignManager.current_act == 3, "acte 3 atteint")
-	# Acte 3 — Polícia : intel intermédiaire (Le carnet do Capitão).
-	_assert(QuestManager.accept("act3_policia_intel"), "accept act3_policia_intel")
-	QuestManager.complete_objective("act3_policia_intel", "intel_vizinha")
-	QuestManager.complete_objective("act3_policia_intel", "intel_seu_joao")
-	QuestManager.complete_objective("act3_policia_intel", "report_ramos")
-	_assert(QuestManager.is_completed("act3_policia_intel"), "act3_policia_intel complétée")
-	# Acte 3 — Polícia : Operação Madrugada.
-	_assert(QuestManager.accept("act3_policia_madrugada"), "accept act3_policia_madrugada")
-	QuestManager.complete_objective("act3_policia_madrugada", "complete_madrugada")
-	_assert(QuestManager.is_completed("act3_policia_madrugada"), "act3 complétée")
-	# Bascule officielle en acte 4 + scellement endgame.
-	CampaignManager.complete_endgame(CampaignManager.Endgame.POLICIA)
-	_assert(CampaignManager.current_act == 4, "acte 4 atteint")
-	_assert(CampaignManager.chosen_endgame == CampaignManager.Endgame.POLICIA, "endgame Polícia")
-	# Acte 4 — Purga.
-	_assert(QuestManager.accept("act4_policia_purga"), "accept act4_policia_purga")
-	QuestManager.complete_objective("act4_policia_purga", "purge_morro")
-	QuestManager.complete_objective("act4_policia_purga", "purge_calcadao")
-	QuestManager.complete_objective("act4_policia_purga", "purge_atlantica")
-	_assert(QuestManager.is_completed("act4_policia_purga"), "act4_policia_purga complétée")
-	# Carnaval (clôture épilogue).
-	_complete_carnaval_quest()
-
-func _test_full_path_trafico() -> void:
-	_section("Voie complète — Tráfico (Tito / Miguel)")
-	_reset_for_path_simulation()
-	_drive_to_act3()
-	# Acte 3 — Tráfico : pickup intermédiaire (Le sac de Botafogo).
-	_assert(QuestManager.accept("act3_trafico_pickup"), "accept act3_trafico_pickup")
-	QuestManager.complete_objective("act3_trafico_pickup", "pickup_botafogo")
-	QuestManager.complete_objective("act3_trafico_pickup", "pickup_deliver")
-	_assert(QuestManager.is_completed("act3_trafico_pickup"), "act3_trafico_pickup complétée")
-	_assert(QuestManager.accept("act3_trafico_corrida"), "accept act3_trafico_corrida")
-	QuestManager.complete_objective("act3_trafico_corrida", "execute_run")
-	_assert(QuestManager.is_completed("act3_trafico_corrida"), "act3 complétée")
-	CampaignManager.complete_endgame(CampaignManager.Endgame.TRAFICO)
-	_assert(CampaignManager.current_act == 4, "acte 4 atteint")
-	_assert(CampaignManager.chosen_endgame == CampaignManager.Endgame.TRAFICO, "endgame Tráfico")
-	_assert(QuestManager.accept("act4_trafico_tributo"), "accept act4_trafico_tributo")
-	# Itère sur tous les objectifs non-optionnels (cf .tres : collect_calcadao, etc.)
-	var q: Quest = QuestManager._quests.get("act4_trafico_tributo")
-	if q:
-		for obj in q.objectives:
-			if not obj.optional:
-				QuestManager.complete_objective("act4_trafico_tributo", obj.id)
-	_assert(QuestManager.is_completed("act4_trafico_tributo"), "act4_trafico_tributo complétée")
-	_complete_carnaval_quest()
-
-func _test_full_path_prefeito() -> void:
-	_section("Voie complète — Prefeito (Padre)")
-	_reset_for_path_simulation()
-	_drive_to_act3()
-	# Acte 3 — Prefeito : trois soutiens publics (endorsements).
-	_assert(QuestManager.accept("act3_prefeito_endorsements"), "accept act3_prefeito_endorsements")
-	QuestManager.complete_objective("act3_prefeito_endorsements", "endorse_carlos")
-	QuestManager.complete_objective("act3_prefeito_endorsements", "endorse_padeiro")
-	QuestManager.complete_objective("act3_prefeito_endorsements", "endorse_padre")
-	_assert(QuestManager.is_completed("act3_prefeito_endorsements"), "act3_prefeito_endorsements complétée")
-	_assert(QuestManager.accept("act3_prefeito_eleicao"), "accept act3_prefeito_eleicao")
-	QuestManager.complete_objective("act3_prefeito_eleicao", "win_election")
-	_assert(QuestManager.is_completed("act3_prefeito_eleicao"), "act3 complétée")
-	CampaignManager.complete_endgame(CampaignManager.Endgame.PREFEITO)
-	_assert(CampaignManager.current_act == 4, "acte 4 atteint")
-	_assert(CampaignManager.chosen_endgame == CampaignManager.Endgame.PREFEITO, "endgame Prefeito")
-	_assert(QuestManager.accept("act4_prefeito_audiencia"), "accept act4_prefeito_audiencia")
-	var q: Quest = QuestManager._quests.get("act4_prefeito_audiencia")
-	if q:
-		for obj in q.objectives:
-			if not obj.optional:
-				QuestManager.complete_objective("act4_prefeito_audiencia", obj.id)
-	_assert(QuestManager.is_completed("act4_prefeito_audiencia"), "act4_prefeito_audiencia complétée")
-	_complete_carnaval_quest()
-
-# Roundtrip save: sérialise état non-trivial → désérialise → vérifie.
 func _test_save_load_roundtrip() -> void:
 	_section("Sauvegarde/chargement — état restauré identique")
 	# Pose un état repérable.
@@ -1147,30 +1529,6 @@ func _test_save_load_roundtrip() -> void:
 	_assert(CampaignManager.has_flag("flag_b"), "deserialize flag_b")
 
 # --- Tests pour pivots narratifs récents ---
-
-func _test_act2_milestones() -> void:
-	_section("Paliers narratifs acte 2 (5k / 10k / 15k / 20k)")
-	# Reset propre + complétion des pivots acte 1 pour pouvoir basculer.
-	_reset_for_path_simulation()
-	_complete_quest_all_objectives("act1_heritage")
-	_complete_quest_all_objectives("act1_meet_ramos")
-	_complete_quest_all_objectives("act1_meet_tito")
-
-	# Acte 1 : aucun palier ne se pose (les milestones gatent sur act >= 2).
-	CampaignManager.pay_debt(500)
-	_assert(CampaignManager.current_act == 2, "500 R$ + pivots → acte 2")
-	# Le 5k premier palier : on paye juste assez.
-	CampaignManager.pay_debt(4500)
-	_assert(CampaignManager.has_flag("mae_letter_triggered"), "5k payés → flag mae_letter_triggered")
-	_assert(not CampaignManager.has_flag("mae_consortium_revisit_triggered"), "5k → revisit pas encore posé")
-
-	# Saut de 10k → 20k en un seul versement (cas joueur qui paye d'un coup gros) :
-	# tous les paliers franchis doivent se poser en cascade.
-	CampaignManager.pay_debt(15000)
-	_assert(CampaignManager.debt_paid == 20000, "cumul = 20k")
-	_assert(CampaignManager.has_flag("mae_consortium_revisit_triggered"), "10k → revisit posé")
-	_assert(CampaignManager.has_flag("mae_sick_triggered"), "15k → sick posé")
-	_assert(CampaignManager.has_flag("tio_ze_letter_triggered"), "20k → letter Zé posé")
 
 func _test_beto_quest_chain() -> void:
 	_section("Side quest favela : O Beto sumiu")
@@ -1372,6 +1730,8 @@ func _test_wanderer_full_init() -> void:
 #      finit coincé sans déclencher la trigger (le bug de la favela).
 const EXIT_MIN_AREA: float = 8000.0
 const EXIT_MIN_COVERAGE_RATIO: float = 0.5
+# Exits narratifs étroits (départ SUP, etc.) — exemptés du test de couverture.
+const _NARRATIVE_EXITS: Array = ["ExitToCagarras"]
 
 # Districts piétons-marchables (cf. DistrictManager.WALK_ENTRIES). Les autres
 # (Corcovado, PaoAcucar, etc.) sont accédés uniquement en taxi par design —
@@ -1413,12 +1773,14 @@ func _test_district_exit_geometry() -> void:
 			# (3) Couverture : au moins UN axe (x ou y) doit couvrir ≥ 50% du
 			# mur perpendiculaire le plus proche. Suffit pour piéger un joueur
 			# descendant en biais (l'axe de l'exit le rattrape sur sa direction
-			# principale).
-			var coverage_ok: bool = _exit_covers_blocking_wall_one_axis(exit_node, size, walls)
-			_assert(coverage_ok,
-				"%s/%s : couvre ≥ %d%% du mur de fond sur au moins un axe" % [
-					fname, exit_node.name,
-					int(EXIT_MIN_COVERAGE_RATIO * 100)])
+			# principale). Allowlist : les sorties « narratives » (ex. départ
+			# SUP vers les Cagarras) sont délibérément étroites — on les exempte.
+			if not _NARRATIVE_EXITS.has(String(exit_node.name)):
+				var coverage_ok: bool = _exit_covers_blocking_wall_one_axis(exit_node, size, walls)
+				_assert(coverage_ok,
+					"%s/%s : couvre ≥ %d%% du mur de fond sur au moins un axe" % [
+						fname, exit_node.name,
+						int(EXIT_MIN_COVERAGE_RATIO * 100)])
 		instance.queue_free()
 		await get_tree().process_frame
 
@@ -1556,6 +1918,22 @@ func _test_district_walk_to_exit() -> void:
 			scene_root.queue_free()
 			await get_tree().process_frame
 			continue
+		# Verrou narratif : si la sortie exige une quête complétée (prologue),
+		# on vérifie qu'elle bloque tant que non résolue, puis on la satisfait
+		# pour pouvoir tester le cheminement physique normal.
+		var gate_q: String = String(exit_node.get("require_quest_completed"))
+		if gate_q != "":
+			var qpath: String = "res://resources/quests/%s.tres" % gate_q
+			if ResourceLoader.exists(qpath):
+				var gq: Quest = load(qpath) as Quest
+				if gq and QuestManager._quests.get(gq.id) == null:
+					QuestManager.register_quest(gq)
+			_assert(exit_node._is_locked(),
+				"%s/ExitToCopa : verrouillé tant que '%s' non complétée" % [fname, gate_q])
+			_complete_quest_all_objectives(gate_q)
+			_assert(not exit_node._is_locked(),
+				"%s/ExitToCopa : déverrouillé après '%s'" % [fname, gate_q])
+
 		var spawn_pos: Vector2 = (spawn_node as Node2D).global_position
 		var exit_pos: Vector2 = (exit_node as Node2D).global_position
 
@@ -1736,16 +2114,22 @@ func _test_sprite_factory() -> void:
 	# Texture aux bonnes dimensions.
 	if t1 != null:
 		var sz: Vector2 = t1.get_size()
-		_assert(int(sz.x) == 48 and int(sz.y) == 72, "Texture 48×72 (3 dirs × 3 frames de 16×24)")
+		var fcw: int = int(consts.get("CELL_W", 32))
+		var fch: int = int(consts.get("CELL_H", 48))
+		_assert(int(sz.x) == fcw * 3 and int(sz.y) == fch * 3,
+			"Texture %dx%d (3 dirs × 3 frames de %dx%d)" % [fcw * 3, fch * 3, fcw, fch])
 
 func _test_wanderer_pixel_sheet() -> void:
-	_section("AmbientWanderer — sheet pixel-art procédurale 16×24")
+	_section("AmbientWanderer — sheet pixel-art procédurale (factory)")
 	var script: GDScript = load("res://scripts/world/AmbientWanderer.gd")
 	var consts: Dictionary = script.get_script_constant_map()
+	var factory: GDScript = load("res://scripts/world/CharacterSpriteFactory.gd")
+	var fconsts: Dictionary = factory.get_script_constant_map()
 	var px_w: int = int(consts.get("PX_CELL_W", 0))
 	var px_h: int = int(consts.get("PX_CELL_H", 0))
-	_assert(px_w == 16, "PX_CELL_W = 16")
-	_assert(px_h == 24, "PX_CELL_H = 24")
+	# PX_CELL_* doit rester synchronisé sur la factory (source unique).
+	_assert(px_w == int(fconsts.get("CELL_W", -1)), "PX_CELL_W = factory CELL_W")
+	_assert(px_h == int(fconsts.get("CELL_H", -1)), "PX_CELL_H = factory CELL_H")
 	if not bool(consts.get("RENDER_DEFAULT", false)) or not bool(consts.get("RENDER_PIXEL_ART", false)):
 		# Mode désactivé : pas la peine de tester l'instantiation Sprite2D.
 		return
@@ -1765,10 +2149,39 @@ func _test_wanderer_pixel_sheet() -> void:
 		if s.texture is ImageTexture:
 			var sz: Vector2i = (s.texture as ImageTexture).get_size()
 			_assert(sz.x == px_w * 3 and sz.y == px_h * 3,
-				"Texture 48×72 (3×3 cellules de %dx%d)" % [px_w, px_h])
+				"Texture %dx%d (3×3 cellules de %dx%d)" % [px_w * 3, px_h * 3, px_w, px_h])
 		_assert(s.region_enabled, "region_enabled = true")
 		_assert(s.region_rect.size == Vector2(px_w, px_h),
 			"region_rect taille = %dx%d" % [px_w, px_h])
+	w.queue_free()
+	await get_tree().process_frame
+
+func _test_wanderer_stationary_atlas() -> void:
+	_section("AmbientWanderer — figurant stationnaire rendu via la factory")
+	var script: GDScript = load("res://scripts/world/AmbientWanderer.gd")
+	var consts: Dictionary = script.get_script_constant_map()
+	if not bool(consts.get("RENDER_DEFAULT", false)) or not bool(consts.get("RENDER_PIXEL_ART", false)):
+		return
+	var packed: PackedScene = load("res://scenes/props/AmbientWanderer.tscn") as PackedScene
+	if packed == null:
+		_assert(false, "AmbientWanderer.tscn charge")
+		return
+	var w: Node = packed.instantiate()
+	w.set("stationary", true)
+	add_child(w)
+	await get_tree().process_frame
+	# Rendu unifié : même un stationnaire passe par CharacterSpriteFactory
+	# (PixelSprite LINEAR) — plus d'AtlasSprite « hors style ».
+	var atlas: Node = w.find_child("AtlasSprite", true, false)
+	var pixel: Node = w.find_child("PixelSprite", true, false)
+	_assert(atlas == null, "Plus d'AtlasSprite (style unifié factory)")
+	_assert(pixel != null, "PixelSprite factory créé pour un stationnaire")
+	if pixel is Sprite2D:
+		var s: Sprite2D = pixel as Sprite2D
+		_assert(s.texture != null, "PixelSprite a une texture (factory)")
+		_assert(s.region_enabled, "region_enabled = true")
+		_assert(s.texture_filter == CanvasItem.TEXTURE_FILTER_LINEAR,
+			"texture_filter = LINEAR (même style que les NPCs)")
 	w.queue_free()
 	await get_tree().process_frame
 
@@ -1949,6 +2362,81 @@ func _test_npc_procedural_sprite() -> void:
 		_assert(s.texture_filter == CanvasItem.TEXTURE_FILTER_NEAREST, "Filtrage NEAREST (pixel-perfect)")
 	npc.queue_free()
 	await get_tree().process_frame
+
+func _test_player_appearance() -> void:
+	_section("Apparence joueur — éditeur de perso (factory + persistance)")
+	var factory: GDScript = load("res://scripts/world/CharacterSpriteFactory.gd")
+	# default_indices : toutes les clés ATTRIBUTES, chaque valeur dans la plage.
+	var consts: Dictionary = factory.get_script_constant_map()
+	var attrs: Array = consts.get("ATTRIBUTES", [])
+	_assert(attrs.size() == 8, "8 attributs éditables")
+	var def: Dictionary = factory.default_indices()
+	for a in attrs:
+		_assert(def.has(a), "default_indices a la clé '%s'" % a)
+		var n: int = factory.option_count(a)
+		_assert(int(def[a]) >= 0 and int(def[a]) < n, "'%s' default dans [0,%d)" % [a, n])
+	# sanitize_indices borne les valeurs hors plage et complète les manquantes.
+	var dirty: Dictionary = {"skin": 999, "hair_color": -5}
+	var clean: Dictionary = factory.sanitize_indices(dirty)
+	_assert(int(clean["skin"]) == factory.option_count("skin") - 1, "skin=999 clampé au max")
+	_assert(int(clean["hair_color"]) == 0, "hair_color=-5 clampé à 0")
+	_assert(clean.size() == attrs.size(), "sanitize complète toutes les clés")
+	# config_from_indices : types corrects pour la factory.
+	var cfg: Dictionary = factory.config_from_indices(def)
+	_assert(cfg["skin"] is Color, "config.skin est une Color")
+	_assert(cfg["hair_style"] is String, "config.hair_style est une String")
+	_assert(cfg["hat_style"] is String, "config.hat_style est une String")
+	# build_sheet : feuille 3×3 cellules.
+	var cw: int = int(consts.get("CELL_W", 16))
+	var ch: int = int(consts.get("CELL_H", 24))
+	var sheet: Texture2D = factory.build_sheet(cfg)
+	_assert(sheet != null and sheet.get_size() == Vector2(cw * 3, ch * 3),
+		"build_sheet → %dx%d" % [cw * 3, ch * 3])
+	# GameManager : effective_appearance défaut quand vide, round-trip set.
+	var saved_appr: Dictionary = GameManager.player_appearance.duplicate(true)
+	GameManager.player_appearance = {}
+	_assert(GameManager.effective_appearance() == factory.default_indices(),
+		"effective_appearance vide → défaut")
+	var custom: Dictionary = {"skin": 3, "hair_style": 2, "hair_color": 4,
+		"shirt_color": 7, "shirt_pattern": 1, "pants_color": 2,
+		"hat_style": 1, "hat_color": 3}
+	GameManager.player_appearance = factory.sanitize_indices(custom)
+	# Round-trip JSON (comme la save).
+	var roundtrip: Dictionary = JSON.parse_string(JSON.stringify(GameManager.player_appearance))
+	_assert(factory.sanitize_indices(roundtrip) == GameManager.player_appearance,
+		"Apparence survit au round-trip JSON (save)")
+	GameManager.player_appearance = saved_appr
+	# CharacterCreator : scène charge, 8 lignes construites, méthode open.
+	var cc_packed: PackedScene = load("res://scenes/ui/CharacterCreator.tscn") as PackedScene
+	_assert(cc_packed != null, "CharacterCreator.tscn charge")
+	if cc_packed:
+		var cc: Node = cc_packed.instantiate()
+		add_child(cc)
+		await get_tree().process_frame
+		_assert(cc.has_method("open"), "CharacterCreator a open()")
+		var rows: Node = cc.get_node_or_null("Panel/Margin/Layout/Scroll/Rows")
+		_assert(rows != null and rows.get_child_count() == 8,
+			"8 lignes d'attribut construites")
+		cc.queue_free()
+		await get_tree().process_frame
+	# PlayerController : applique une texture factory au _ready.
+	var p_packed: PackedScene = load("res://scenes/player/Player.tscn") as PackedScene
+	_assert(p_packed != null, "Player.tscn charge")
+	if p_packed:
+		var pl: Node = p_packed.instantiate()
+		add_child(pl)
+		await get_tree().process_frame
+		var spr: Node = pl.get_node_or_null("Visual/Sprite2D")
+		_assert(spr is Sprite2D, "Player a un Visual/Sprite2D")
+		if spr is Sprite2D:
+			var s: Sprite2D = spr as Sprite2D
+			_assert(s.texture != null, "Sprite joueur a une texture factory")
+			_assert(s.region_rect.size == Vector2(cw, ch),
+				"region = cellule %dx%d" % [cw, ch])
+			_assert(s.texture_filter == CanvasItem.TEXTURE_FILTER_LINEAR,
+				"Filtrage LINEAR (rendu lissé)")
+		pl.queue_free()
+		await get_tree().process_frame
 
 func _test_npc_quest_indicator() -> void:
 	_section("NPC — indicateur de quête $$ ('!' au-dessus de la tête)")
