@@ -2441,11 +2441,13 @@ func _apply_placeholder_action(action: Dictionary) -> void:
 		var path: int = _endgame_path_for_string(String(action.set_endgame))
 		if action.has("finish_quest"):
 			var info: Dictionary = action.finish_quest
-			if inv and info.get("payout", 0) > 0:
-				inv.add_money(info.payout)
-			# Le dialogue a déjà versé `payout` → on demande à QuestManager de
-			# ne pas re-payer `money_reward` (évite le double paiement).
-			QuestManager.complete_objective(info.quest, info.objective, false)
+			var dlg_payout: int = int(info.get("payout", 0))
+			if inv and dlg_payout > 0:
+				inv.add_money(dlg_payout)
+			# Si le dialogue a versé > 0, c'est lui qui paie → coupe l'auto-pay
+			# QuestManager pour éviter le double paiement. Sinon le payout est
+			# 0 par convention et c'est `money_reward` de la .tres qui paie.
+			QuestManager.complete_objective(info.quest, info.objective, dlg_payout <= 0)
 		if action.has("rep"):
 			for axis_key in action.rep:
 				ReputationSystem.modify(int(axis_key), action.rep[axis_key])
@@ -2459,11 +2461,13 @@ func _apply_placeholder_action(action: Dictionary) -> void:
 			if inv == null or not inv.spend_money(int(action.pay_bribe)):
 				push_warning("[DialogueBridge] pay_bribe %d failed — quest not completed" % int(action.pay_bribe))
 				return
-		if inv and info.get("payout", 0) > 0:
-			inv.add_money(info.payout)
-		# Le dialogue a déjà versé `payout` → on demande à QuestManager de
-		# ne pas re-payer `money_reward` (évite le double paiement).
-		QuestManager.complete_objective(info.quest, info.objective, false)
+		var dlg_payout: int = int(info.get("payout", 0))
+		if inv and dlg_payout > 0:
+			inv.add_money(dlg_payout)
+		# Si le dialogue a versé > 0, c'est lui qui paie → coupe l'auto-pay
+		# QuestManager pour éviter le double paiement. Sinon (payout = 0 par
+		# convention), on laisse `money_reward` de la .tres faire le paiement.
+		QuestManager.complete_objective(info.quest, info.objective, dlg_payout <= 0)
 		if action.has("rep"):
 			for axis_key in action.rep:
 				ReputationSystem.modify(int(axis_key), action.rep[axis_key])
