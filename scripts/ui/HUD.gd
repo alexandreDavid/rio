@@ -12,6 +12,10 @@ extends Control
 @onready var abilities: VBoxContainer = $CharacterSheet/Margin/Layout/Abilities
 @onready var menu_button: Button = $MenuButton
 var _phone_badge: Label = null
+# Pour le flash `+R$ X` à chaque gain : on garde la dernière valeur vue pour
+# calculer le delta. L'init évite un faux flash au chargement de partie.
+var _last_money_shown: int = 0
+var _money_init_done: bool = false
 @onready var journal_button: Button = $JournalButton
 @onready var save_button: Button = $SaveButton
 @onready var photo_button: Button = $PhotoButton
@@ -210,6 +214,34 @@ func _process(_delta: float) -> void:
 func _on_money_changed(amount: int) -> void:
 	if money_label:
 		money_label.text = "R$ %d" % amount
+	# Flash visible à chaque gain (positif uniquement, et > 0 R$ après init).
+	# Évite qu'un gain de quête/achievement/district paraisse `tomber du ciel` —
+	# le joueur voit toujours le delta qui s'affiche au-dessus du compteur.
+	var delta: int = amount - _last_money_shown
+	_last_money_shown = amount
+	if not _money_init_done:
+		_money_init_done = true
+		return
+	if delta > 0:
+		_flash_money_delta(delta)
+
+func _flash_money_delta(delta: int) -> void:
+	if money_label == null:
+		return
+	var lbl: Label = Label.new()
+	lbl.text = "+R$ %d" % delta
+	lbl.add_theme_color_override("font_color", Color(0.55, 0.95, 0.55, 1))
+	lbl.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.85))
+	lbl.add_theme_constant_override("outline_size", 3)
+	lbl.add_theme_font_size_override("font_size", 14)
+	lbl.position = Vector2(0, 24)
+	lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	money_label.add_child(lbl)
+	var tween: Tween = create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(lbl, "position:y", 44.0, 1.1)
+	tween.tween_property(lbl, "modulate:a", 0.0, 1.1)
+	tween.chain().tween_callback(lbl.queue_free)
 
 func _on_interaction_available(node: Node) -> void:
 	if node and not _active_interactables.has(node):
