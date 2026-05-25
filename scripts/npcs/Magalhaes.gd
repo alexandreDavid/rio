@@ -18,18 +18,23 @@ func _on_interacted(_by: Node) -> void:
 	DialogueBridge.start_dialogue(data.id, _pick_knot())
 
 func _pick_knot() -> String:
-	# --- VOIE CONSORTIUM : pacte avec Magalhães (priorité une fois le 1er
-	# acompte payé, l'enfant retrouvé et la nuit passée — `act1_closed` —
-	# tant qu'aucune autre voie n'est scellée). Les spots prennent le relais
-	# (C1+) ; Magalhães offre, rappelle C1, puis scelle le couronnement
-	# (Pacto da Barra → endgame CONSORTIUM).
+	# --- VOIE CONSORTIUM : intro acte 2 puis pacte acte 3 ---
+	# Disponible après `act1_closed`. Les spots prennent le relais (C1+) ;
+	# Magalhães offre, rappelle C1, puis scelle le couronnement (Pacto da Barra).
 	if QuestManager.is_completed("prologue_pedrinho") \
 			and QuestManager.is_completed("act1_heritage") \
 			and CampaignManager.has_flag("act1_closed") \
 			and not CampaignManager.has_flag("voie_trafico") \
 			and not CampaignManager.has_flag("voie_policia") \
 			and not CampaignManager.has_flag("voie_prefeito"):
-		if not CampaignManager.has_flag("voie_consortium"):
+		# Acte 2 = échantillon : offre C1 sans sceller la voie.
+		if CampaignManager.current_act == 2 \
+				and not CampaignManager.has_flag("voie_consortium") \
+				and not QuestManager.is_active("consortium_c1_recouvrement") \
+				and not QuestManager.is_completed("consortium_c1_recouvrement"):
+			return "magalhaes_intro_c1_offer"
+		# Acte 3+ = pacte formel.
+		if CampaignManager.current_act >= 3 and not CampaignManager.has_flag("voie_consortium"):
 			return "magalhaes_pacto_consortium_offer"
 		if QuestManager.is_active("consortium_c9_pacto"):
 			return "magalhaes_consortium_pacto"

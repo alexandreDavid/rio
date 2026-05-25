@@ -16,15 +16,23 @@ func _on_interacted(_by: Node) -> void:
 	var knot: String = NPCAffinity.knot_for_tier(data.id, data.ink_knot,
 			"padre_chat_warm", "padre_chat_familiar")
 
-	# --- VOIE PREFEITO : pacte avec le Padre ---
-	# Le pacte attend que l'acte 1 ait été fermé (nuit passée — `act1_closed`).
+	# --- VOIE PREFEITO : intro acte 2 puis pacte acte 3 ---
+	# Disponible après que l'acte 1 ait été fermé (`act1_closed`).
 	if QuestManager.is_completed("prologue_pedrinho") \
 			and QuestManager.is_completed("act1_heritage") \
 			and CampaignManager.has_flag("act1_closed") \
 			and not CampaignManager.has_flag("voie_trafico") \
 			and not CampaignManager.has_flag("voie_policia") \
 			and not CampaignManager.has_flag("voie_consortium"):
-		if not CampaignManager.has_flag("voie_prefeito"):
+		# Acte 2 = échantillon : offre D1 sans sceller la voie.
+		if CampaignManager.current_act == 2 \
+				and not CampaignManager.has_flag("voie_prefeito") \
+				and not QuestManager.is_active("prefeito_d1_peticao") \
+				and not QuestManager.is_completed("prefeito_d1_peticao"):
+			DialogueBridge.start_dialogue(data.id, "padre_intro_d1_offer")
+			return
+		# Acte 3+ = pacte formel (scelle voie_prefeito).
+		if CampaignManager.current_act >= 3 and not CampaignManager.has_flag("voie_prefeito"):
 			DialogueBridge.start_dialogue(data.id, "padre_pacto_prefeito_offer")
 			return
 		if QuestManager.is_active("prefeito_d9_eleicao"):

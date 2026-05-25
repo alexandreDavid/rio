@@ -25,17 +25,25 @@ func _on_interacted(_by: Node) -> void:
 	var knot: String = NPCAffinity.knot_for_tier(data.id, data.ink_knot,
 			"tito_chat_warm", "tito_chat_familiar")
 
-	# --- VOIE TRÁFICO : pacte avec Tito ---
+	# --- VOIE TRÁFICO : intro acte 2 puis pacte acte 3 ---
 	# Le pacte n'est accessible qu'après que l'acte 1 ait été fermé
 	# (nuit passée dans la maison du tio Zé — flag `act1_closed`).
 	if QuestManager.is_completed("prologue_pedrinho") \
 			and QuestManager.is_completed("act1_heritage") \
 			and CampaignManager.has_flag("act1_closed") \
 			and not CampaignManager.has_flag("ratted_on_tito"):
-		if not CampaignManager.has_flag("voie_trafico") \
+		var no_voie: bool = not CampaignManager.has_flag("voie_trafico") \
 				and not CampaignManager.has_flag("voie_policia") \
 				and not CampaignManager.has_flag("voie_consortium") \
-				and not CampaignManager.has_flag("voie_prefeito"):
+				and not CampaignManager.has_flag("voie_prefeito")
+		# Acte 2 = échantillon : offre A1 sans sceller la voie.
+		if CampaignManager.current_act == 2 and no_voie \
+				and not QuestManager.is_active("trafico_a1_livraison") \
+				and not QuestManager.is_completed("trafico_a1_livraison"):
+			DialogueBridge.start_dialogue(data.id, "tito_intro_a1_offer")
+			return
+		# Acte 3+ = pacte formel (scelle voie_trafico, mutuellement exclusif).
+		if CampaignManager.current_act >= 3 and no_voie:
 			DialogueBridge.start_dialogue(data.id, "tito_pacto_trafico_offer")
 			return
 		if QuestManager.is_active("trafico_a9_corrida"):

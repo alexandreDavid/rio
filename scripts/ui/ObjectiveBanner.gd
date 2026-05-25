@@ -134,33 +134,29 @@ func _compute_hint() -> String:
 		# du patron pour ne pas laisser le joueur sans direction.
 		return "🎯 Acompte payé — Choisis ton patron : Tito (Morro) / Ramos (Bar do Policial) / Magalhães (Barra) / Padre (chapelle)"
 
-	# --- Acte 2 (choix du patron + chaîne de voie) ---
+	# --- Acte 2 (échantillon libre : tous les patrons jusqu'aux 5k) ---
 	if act == 2:
 		# Juste après bascule en acte 2 : retour favela pour digérer le moment.
 		if CampaignManager.has_flag("should_visit_home") and not CampaignManager.has_flag("home_visit_done"):
 			if district == "favela_morro":
 				return "🎯 Monte voir tio Zé et la famille"
 			return "🎯 Retourne voir ta famille à la favela"
-		# Acte 2 dirigé : la nuit doit passer dans la maison avant tout pacte.
+		# La nuit doit passer dans la maison avant tout patron.
 		if not CampaignManager.has_flag("act1_closed"):
 			if district == "favela_morro":
 				return "🎯 Rentre chez tio Zé — la nuit doit passer"
 			return "🎯 Remonte à la favela — la nuit doit passer chez tio Zé"
-		# Nuit passée, pas encore de voie, Tito n'est pas encore venu : on
-		# pousse le joueur à ressortir pour que Tito l'aborde, ou à descendre
-		# voir les autres patrons (Ramos, Dom Nilton).
+		# Tito vient aborder le joueur à la sortie de la maison (1ère fois).
 		if not CampaignManager.has_flag("tito_approached") \
 				and not CampaignManager.has_flag("ratted_on_tito") \
 				and _no_voie_chosen():
 			if district == "favela_morro":
 				return "🎯 Sors de la maison — Tito veut te parler"
-		# La chaîne MAIN guide ; le seuil de dette est complémentaire.
-		var act2_chain_hint: String = _next_main_hint_act2()
-		if act2_chain_hint != "":
-			return act2_chain_hint
+		# Échantillon : 4 patrons à goûter (Tito, Ramos, Magalhães, Padre),
+		# puis 5000 R$ pour ouvrir l'acte 3 (vrai choix de voie).
 		if debt_paid < CampaignManager.ACT2_THRESHOLD:
 			var still: int = CampaignManager.ACT2_THRESHOLD - debt_paid
-			return "🎯 Continue de payer la dette (%s R$ avant l'acte 3)" % still
+			return "🎯 Goûte aux 4 patrons (Tito / Ramos / Magalhães / Padre) — %s R$ avant le vrai choix" % still
 
 	# --- Acte 3 : nudge tant qu'aucune voie n'est scellée ---
 	# Le hinting des missions intermédiaires de l'ancien spine (act3_policia_*,
@@ -168,7 +164,8 @@ func _compute_hint() -> String:
 	# A/B/C/D (missions données par les spots, hint pris en charge par les
 	# variantes elles-mêmes via MAIN_NEXT_HINT côté HUD).
 	if act == 3 and CampaignManager.chosen_endgame == CampaignManager.Endgame.NONE:
-		return "🎯 Choisis ta voie : Prefeito / Polícia / Tráfico / Consortium"
+		if _no_voie_chosen():
+			return "🎯 Le vrai choix : va sceller un pacte (Tito / Ramos / Magalhães / Padre)"
 
 	# --- Acte 4 : reinado ---
 	if act == 4:
@@ -268,12 +265,4 @@ func _no_voie_chosen() -> bool:
 		if CampaignManager.has_flag(f):
 			return false
 	return true
-
-# Hint d'acte 2 une fois la nuit passée : pousse vers le choix d'un patron tant
-# qu'aucune voie n'est scellée. Une fois la voie scellée, les missions de voie
-# pilotent leur propre hint via HUD.MAIN_NEXT_HINT.
-func _next_main_hint_act2() -> String:
-	if not _no_voie_chosen():
-		return ""  # voie engagée : laisser les hints de voie prendre la main
-	return "🎯 Choisis ton patron : Tito (Morro) / Ramos (Bar do Policial) / Magalhães (Barra) / Padre (chapelle)"
 

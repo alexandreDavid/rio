@@ -4,14 +4,19 @@ extends Node
 # progression vers l'un des trois endgames (Prefeito / Polícia / Tráfico).
 # Autoload name: CampaignManager.
 
-enum Endgame { NONE, PREFEITO, POLICIA, TRAFICO }
+# CONSORTIUM ajouté en dernier : préserve les valeurs int existantes
+# (NONE=0, PREFEITO=1, POLICIA=2, TRAFICO=3, CONSORTIUM=4) pour les saves.
+enum Endgame { NONE, PREFEITO, POLICIA, TRAFICO, CONSORTIUM }
 
 # Somme totale due à la fin de l'acte 1 pour le consortium.
 const DEBT_TOTAL: int = 50000
 # Acompte à verser pour déclencher le passage à l'acte 2 (facilement atteignable).
 const ACT1_THRESHOLD: int = 500
+# Acte 2 = échantillon libre : chaque patron offre sa mission intro (A1/B1/C1/D1)
+# sans pacte. Le joueur cumule jusqu'à 5000 R$, puis l'acte 3 enclenche le vrai
+# choix de voie (mutuellement exclusive).
 # Acompte cumulé nécessaire à l'acte 3 (dernière ligne droite avant remboursement final).
-const ACT2_THRESHOLD: int = 25000
+const ACT2_THRESHOLD: int = 5000
 
 var current_act: int = 1
 var debt_paid: int = 0
@@ -79,20 +84,24 @@ func pay_debt(amount: int) -> int:
 # Le gating narratif force le joueur à suivre la trame, pas seulement à farmer.
 # Acte 2 est linéaire : intro (cutscene) → ramos → padre → miguel. Le pivot vers
 # l'acte 3 attend la fin de la chaîne complète (act2_miguel_favela).
+# Pivots requis pour avancer (en plus du seuil de dette). Post-refonte : les
+# quêtes legacy act1_meet_*, act2_intro, act2_ramos/padre/miguel_* n'existent
+# plus. Le passage à l'acte 3 est désormais gated par le choix d'un patron
+# (cf. VOIE_FLAGS dans can_advance_to_act).
 const ACT_PIVOT_QUESTS: Dictionary = {
-	2: ["act1_heritage", "act1_meet_ramos", "act1_meet_tito"],  # acompte + 2 mentors
-	3: ["act2_intro", "act2_ramos_operacao", "act2_padre_orfanato", "act2_miguel_favela"],
+	2: ["act1_heritage"],
 }
 
+const VOIE_FLAGS: Array[String] = ["voie_trafico", "voie_policia", "voie_consortium", "voie_prefeito"]
+
 func can_advance_to_act(n: int) -> bool:
-	if not ACT_PIVOT_QUESTS.has(n):
-		return false
-	for pivot_id in ACT_PIVOT_QUESTS[n]:
-		if not QuestManager.is_completed(pivot_id):
-			return false
 	if n == 2:
+		if not QuestManager.is_completed("act1_heritage"):
+			return false
 		return current_act == 1 and debt_paid >= ACT1_THRESHOLD
 	if n == 3:
+		# Avancement libre au seuil dette : pas besoin d'avoir scellé une voie en
+		# acte 2 — c'est justement en acte 3 que le pacte se signe.
 		return current_act == 2 and debt_paid >= ACT2_THRESHOLD
 	return false
 
@@ -135,6 +144,7 @@ func reign_title() -> String:
 		Endgame.PREFEITO: return "Coronel do Bairro"
 		Endgame.POLICIA:  return "Chefe de Polícia"
 		Endgame.TRAFICO:  return "Patrão do Morro"
+		Endgame.CONSORTIUM: return "Sócio do Consórcio"
 		_: return ""
 
 func endgame_name() -> String:
@@ -142,12 +152,17 @@ func endgame_name() -> String:
 		Endgame.PREFEITO: return "Prefeito"
 		Endgame.POLICIA:  return "Chefe de Polícia"
 		Endgame.TRAFICO:  return "Rei do Tráfico"
+		Endgame.CONSORTIUM: return "Sócio do Consórcio"
 		_: return "Indéterminé"
 
 # --- Flags narratifs ---
 
 func set_flag(key: String, value: Variant = true) -> void:
 	flags[key] = value
+	# Le pacte d'une voie (voie_* flag) déclenche le passage à l'acte 3 si la
+	# dette est franchie. Sans ça, le joueur reste figé à l'acte 2 après le pact.
+	if value and VOIE_FLAGS.has(key):
+		_check_act_advance()
 
 func has_flag(key: String) -> bool:
 	return flags.has(key) and flags[key]

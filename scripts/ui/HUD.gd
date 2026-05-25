@@ -435,7 +435,7 @@ const MAIN_NEXT_HINT: Dictionary = {
 		"hide_signals": ["act1_heritage"],
 	},
 	"trafico_a1_livraison": {
-		"text": "✓ Paquet livré — Reparle au contact du calçadão (Copacabana)",
+		"text": "✓ Paquet livré — Si tu veux la suite, signe le pacte avec Tito (acte 3)",
 		"hide_signals": ["trafico_a2_pickup"],
 	},
 	"trafico_a2_pickup": {
@@ -471,7 +471,7 @@ const MAIN_NEXT_HINT: Dictionary = {
 		"hide_signals": [],
 	},
 	"policia_b1_intel": {
-		"text": "✓ Visage rapporté — Reparle à l'agent en civil (calçadão, Copa)",
+		"text": "✓ Visage rapporté — Si tu veux porter le badge, scelle avec Ramos (acte 3)",
 		"hide_signals": ["policia_b2_filature"],
 	},
 	"policia_b2_filature": {
@@ -507,7 +507,7 @@ const MAIN_NEXT_HINT: Dictionary = {
 		"hide_signals": [],
 	},
 	"consortium_c1_recouvrement": {
-		"text": "✓ Recouvrement effectué — Va voir Magalhães à Barra (tournée des loyers)",
+		"text": "✓ Recouvrement effectué — Pour la maison, scelle avec Magalhães (acte 3)",
 		"hide_signals": ["consortium_c2_loyers"],
 	},
 	"consortium_c2_loyers": {
@@ -543,7 +543,7 @@ const MAIN_NEXT_HINT: Dictionary = {
 		"hide_signals": [],
 	},
 	"prefeito_d1_peticao": {
-		"text": "✓ Pétition signée — Organise le tournoi de basket à l'Aterro",
+		"text": "✓ Pétition signée — Pour porter la cause, scelle avec le Padre (acte 3)",
 		"hide_signals": ["prefeito_d2_basquete"],
 	},
 	"prefeito_d2_basquete": {

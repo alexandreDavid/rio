@@ -357,13 +357,23 @@ npc_id = "trafico_contact"
 prompt = "Le contact du calçadão"
 character_seed = 80101
 variants = [{
-"id": "a1_drop",
+"id": "a1_drop_pacto",
+"flag": "voie_trafico",
 "objective_pending": ["trafico_a1_livraison", "drop_calcadao"],
 "set_flag_after": "trafico_a1_done",
 "actions": {"finish_quest": {"quest": "trafico_a1_livraison", "objective": "drop_calcadao", "payout": 120}, "accept_quest": "trafico_a2_pickup", "rep": {2: 2}},
 "speaker": "Contact",
 "text": "*assis sur un banc face à la mer, ne te regarde pas* Le paquet de Tito. *tend la main, le fait disparaître sous une serviette* T'as les mains qui tremblent pas, gamin. *glisse des billets* Bien. Miguel veut te tester maintenant — une sacoche t'attend au Copacabana Palace, le groom la garde. Tu la prends, tu la ramènes ici. Tu poses pas de questions sur ce qu'y a dedans.",
 "choices": ["J'y vais"]
+}, {
+"id": "a1_drop_sample",
+"not_flag": "voie_trafico",
+"objective_pending": ["trafico_a1_livraison", "drop_calcadao"],
+"set_flag_after": "trafico_a1_done",
+"actions": {"finish_quest": {"quest": "trafico_a1_livraison", "objective": "drop_calcadao", "payout": 120}, "rep": {2: 1}},
+"speaker": "Contact",
+"text": "*assis sur un banc face à la mer, ne te regarde pas* Le paquet de Tito. *tend la main, le fait disparaître sous une serviette* T'as les mains qui tremblent pas, gamin. *glisse des billets* Bien. Reviens si tu décides de signer avec Tito — pour l'instant tu as juste rendu un service, gamin.",
+"choices": ["À bientôt"]
 }, {
 "id": "a2_close",
 "objective_pending": ["trafico_a2_pickup", "pickup_palace"],
@@ -426,13 +436,23 @@ npc_id = "policia_contact"
 prompt = "L'agent en civil"
 character_seed = 80102
 variants = [{
-"id": "b1_close",
+"id": "b1_close_pacto",
+"flag": "voie_policia",
 "objective_pending": ["policia_b1_intel", "report_face"],
 "set_flag_after": "policia_b1_done",
 "actions": {"finish_quest": {"quest": "policia_b1_intel", "objective": "report_face", "payout": 120}, "accept_quest": "policia_b2_filature", "rep": {1: 3}},
 "speaker": "Agent en civil",
 "text": "*lit un journal sans le lire, lunettes noires* Ramos t'envoie. *tourne une page* Le type au maillot rayé, près des cocos — c'est un guetteur du morro. T'as bien vu. *note un truc* Le Capitão aime les yeux comme les tiens. *plie son journal* Maintenant le vrai travail : Ramos veut le plan du réseau de Tito — qui livre, qui guette, où. Tu remontes au morro. Ton morro. *te regarde par-dessus ses lunettes* T'as plus de quartier, gamin. T'as un Capitão.",
 "choices": ["Je remonte au morro"]
+}, {
+"id": "b1_close_sample",
+"not_flag": "voie_policia",
+"objective_pending": ["policia_b1_intel", "report_face"],
+"set_flag_after": "policia_b1_done",
+"actions": {"finish_quest": {"quest": "policia_b1_intel", "objective": "report_face", "payout": 120}, "rep": {1: 1}},
+"speaker": "Agent en civil",
+"text": "*lit un journal sans le lire, lunettes noires* Ramos t'envoie. *tourne une page* Le type au maillot rayé, près des cocos — c'est un guetteur du morro. T'as bien vu. *note un truc* Bonne observation, gamin. Si tu décides de bosser pour le Capitão pour de vrai, repasse-le voir au Bar do Policial.",
+"choices": ["À bientôt"]
 }, {
 "id": "default",
 "speaker": "Agent en civil",
@@ -466,13 +486,23 @@ npc_id = "consortium_contact"
 prompt = "Le recouvreur de la maison"
 character_seed = 80103
 variants = [{
-"id": "c1_close",
+"id": "c1_close_pacto",
+"flag": "voie_consortium",
 "objective_pending": ["consortium_c1_recouvrement", "collect_calcadao"],
 "set_flag_after": "consortium_c1_done",
 "actions": {"finish_quest": {"quest": "consortium_c1_recouvrement", "objective": "collect_calcadao", "payout": 150}, "accept_quest": "consortium_c2_loyers", "rep": {4: 3}},
 "speaker": "Le commerçant",
 "text": "*essuie son comptoir, blêmit en te voyant* Vous êtes de chez Magalhães… *sort une enveloppe d'un tiroir, les mains qui tremblent* Tenez. Tout est là, et un petit supplément pour le retard. Dites-leur que ça n'arrivera plus. *te tend un stylo* Et… je signe où, déjà ? *Pas un mot plus haut que l'autre. C'est ça, la maison. Plus loin, le recouvreur plie l'enveloppe dans sa veste :* « Propre. Maintenant tu montes en grade — la tournée des loyers à Barra, le Riserva Uno. Présente-toi à Sr. Magalhães là-bas. »",
 "choices": ["Direction Barra"]
+}, {
+"id": "c1_close_sample",
+"not_flag": "voie_consortium",
+"objective_pending": ["consortium_c1_recouvrement", "collect_calcadao"],
+"set_flag_after": "consortium_c1_done",
+"actions": {"finish_quest": {"quest": "consortium_c1_recouvrement", "objective": "collect_calcadao", "payout": 150}, "rep": {4: 1}},
+"speaker": "Le commerçant",
+"text": "*essuie son comptoir, blêmit en te voyant* Vous êtes de chez Magalhães… *sort une enveloppe d'un tiroir, les mains qui tremblent* Tenez. Tout est là. Dites-leur que ça n'arrivera plus. *Pas un mot plus haut que l'autre. Si tu veux passer pro pour la maison, repasse voir Sr. Magalhães au Riserva Uno.*",
+"choices": ["À bientôt"]
 }, {
 "id": "c8_close",
 "objective_pending": ["consortium_c8_menace", "break_holdout"],
@@ -514,13 +544,23 @@ npc_id = "prefeito_contact"
 prompt = "La table de la pétition"
 character_seed = 70401
 variants = [{
-"id": "d1_close",
+"id": "d1_close_pacto",
+"flag": "voie_prefeito",
 "objective_pending": ["prefeito_d1_peticao", "gather_signatures"],
 "set_flag_after": "prefeito_d1_done",
 "actions": {"finish_quest": {"quest": "prefeito_d1_peticao", "objective": "gather_signatures", "payout": 120}, "accept_quest": "prefeito_d2_basquete", "rep": {0: 4}},
 "speaker": "Bénévole de l'orfanato",
 "text": "*une table pliante, une pétition, des gosses qui jouent autour* Trois commerçants manquaient — Carlos, la pharmacienne, le kiosque. *tu les as convaincus un par un, sans rien promettre que ta parole* Ils ont signé pour toi, pas pour la mairie. Le Padre va pleurer de joie. *range la pétition précieusement* Le Padre a une autre idée : un tournoi de basket à l'Aterro do Flamengo, pour sortir les gamins de la rue. Du concret, et une belle image pour la campagne. Tu sais parler aux jeunes.",
 "choices": ["Direction l'Aterro"]
+}, {
+"id": "d1_close_sample",
+"not_flag": "voie_prefeito",
+"objective_pending": ["prefeito_d1_peticao", "gather_signatures"],
+"set_flag_after": "prefeito_d1_done",
+"actions": {"finish_quest": {"quest": "prefeito_d1_peticao", "objective": "gather_signatures", "payout": 120}, "rep": {0: 1}},
+"speaker": "Bénévole de l'orfanato",
+"text": "*une table pliante, une pétition, des gosses qui jouent autour* Trois commerçants manquaient. *tu les as convaincus un par un* Ils ont signé pour toi. Le Padre va t'attendre à la chapelle si tu veux porter la cause plus loin.",
+"choices": ["À bientôt"]
 }, {
 "id": "d8_close",
 "objective_pending": ["prefeito_d8_campagne", "flip_calcadao"],

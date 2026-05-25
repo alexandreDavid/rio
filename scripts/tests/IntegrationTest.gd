@@ -244,8 +244,16 @@ func _test_dialogue_graph() -> void:
 				_assert(dialogues.has(action.next),
 					"knot '%s' choix %s : next '%s' existe" % [knot, idx_str, action.next])
 			if action.has("accept_quest"):
-				_assert(quest_ids.has(action.accept_quest),
-					"knot '%s' choix %s : accept_quest '%s' enregistré" % [knot, idx_str, action.accept_quest])
+				# accept_quest peut être String ou Array (les pactes acte 3 tentent
+				# A1 puis A2 selon l'état). On vérifie chaque ID séparément.
+				var accept_payload = action.accept_quest
+				if accept_payload is Array:
+					for qid in accept_payload:
+						_assert(quest_ids.has(String(qid)),
+							"knot '%s' choix %s : accept_quest '%s' enregistré (array)" % [knot, idx_str, qid])
+				else:
+					_assert(quest_ids.has(accept_payload),
+						"knot '%s' choix %s : accept_quest '%s' enregistré" % [knot, idx_str, accept_payload])
 			if action.has("finish_quest"):
 				var fq = action.finish_quest
 				_assert(quest_ids.has(fq.get("quest", "")),

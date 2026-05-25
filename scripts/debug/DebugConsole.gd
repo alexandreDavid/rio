@@ -7,7 +7,7 @@ extends Node
 # Hotkeys (Ctrl ou Cmd-on-Mac pour ne pas conflicter avec F5/F9 du SaveSystem) :
 #   Ctrl/Cmd + F1 ou 1 : reset complet → Acte 1, dette 0, quêtes vierges, flags clear
 #   Ctrl/Cmd + F2 ou 2 : skip → Acte 2 (complète act1_heritage + meet_ramos + meet_tito + paie 500)
-#   Ctrl/Cmd + F3 ou 3 : skip → Acte 3 (+ act2_intro + paie 25k)
+#   Ctrl/Cmd + F3 ou 3 : skip → Acte 3 (paie 5k, pas de pacte voie scellée)
 #   Ctrl/Cmd + F4 ou 4 : skip → Acte 4 voie POLÍCIA (+ chaîne act3_policia + endgame)
 #   Ctrl/Cmd + Shift + F4 ou 4 : Acte 4 voie TRÁFICO
 #   Ctrl/Cmd + Alt + F4 ou 4   : Acte 4 voie PREFEITO
@@ -96,14 +96,12 @@ func _skip_to_act(target: int) -> void:
 		CampaignManager.set_flag("intro_bump_seen")
 		CampaignManager.set_flag("intro_seen")
 		_complete_quest("act1_heritage")
-		_complete_quest("act1_meet_ramos")
-		_complete_quest("act1_meet_tito")
 		_pay_up_to(CampaignManager.ACT1_THRESHOLD)
-	# Acte 2 → 3
+	# Acte 2 → 3 (nuit chez tio Zé puis 5k payés, pas de pacte voie scellée)
 	if target >= 3 and CampaignManager.current_act < 3:
 		for f in _PAYLOADS["act2_skip_flags"]:
 			CampaignManager.set_flag(f)
-		_complete_quest("act2_intro")
+		CampaignManager.set_flag("act1_closed")
 		_pay_up_to(CampaignManager.ACT2_THRESHOLD)
 	# Force la persistance immédiate (set_flag ne trigger pas auto-save, donc
 	# si l'utilisateur Cmd+Q juste après, l'état serait perdu).
@@ -111,17 +109,10 @@ func _skip_to_act(target: int) -> void:
 	_toast_msg("Skip → Acte %d" % CampaignManager.current_act)
 
 func _skip_to_act4(endgame: int) -> void:
+	# Saute directement à l'acte 4 : complete_endgame purge la dette, pose
+	# l'endgame et bascule current_act. La refonte en voies (A/B/C/D) a remplacé
+	# l'ancien spine act3_* — pas de quêtes intermédiaires à compléter ici.
 	_skip_to_act(3)
-	match endgame:
-		CampaignManager.Endgame.POLICIA:
-			_complete_quest("act3_policia_intel")
-			_complete_quest("act3_policia_madrugada")
-		CampaignManager.Endgame.TRAFICO:
-			_complete_quest("act3_trafico_pickup")
-			_complete_quest("act3_trafico_corrida")
-		CampaignManager.Endgame.PREFEITO:
-			_complete_quest("act3_prefeito_endorsements")
-			_complete_quest("act3_prefeito_eleicao")
 	CampaignManager.complete_endgame(endgame)
 	var labels: Dictionary = {
 		CampaignManager.Endgame.POLICIA: "Polícia",

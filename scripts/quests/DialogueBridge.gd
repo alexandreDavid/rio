@@ -848,13 +848,23 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 			"1": {"finish_quest": {"quest": "escort_contessa", "objective": "escort_to_bar", "payout": 0}},
 		},
 	},
-	# --- VOIE TRÁFICO : pacte avec Tito (après le 1er acompte) ---
+	# --- VOIE TRÁFICO : intro acte 2 (échantillon, pas de pacte voie scellé) ---
+	"tito_intro_a1_offer": {
+		"speaker": "Tito",
+		"text": "*te jauge, recrache la fumée* T'as payé tes 500 au consortium. Bom. Tu veux comprendre comment le morro paie ? Porte un paquet pour mon contact du calçadão. Une seule course. Tu fermes ta gueule, tu reviens. Après tu décides — moi, Ramos, le Padre, Magalhães. Mais d'abord tu portes.",
+		"choices": ["Je porte ton paquet", "Plus tard"],
+		"on_choose": {
+			"0": {"accept_quest": "trafico_a1_livraison", "rep": {2: 1}},
+			"1": {"set_flag": "tito_approached"},
+		},
+	},
+	# --- VOIE TRÁFICO : pacte officiel acte 3 (la voie se scelle) ---
 	"tito_pacto_trafico_offer": {
 		"speaker": "Tito",
-		"text": "*te jauge longuement, recrache la fumée* T'as payé tes 500 au consortium. Bom. Mais 50 000 avant le Carnaval, sobrinho, tu les feras pas en vendant du milho. *pose une main lourde sur ton épaule* Le morro, c'est une famille. Tu portes un paquet pour moi, tu fermes ta gueule, et la famille te porte. Comme ton oncle Zé, avant qu'il se dégonfle. Alors ? T'es du morro, ou t'es un touriste ?",
+		"text": "*te jauge longuement, recrache la fumée* Tu as goûté à tous les camps, sobrinho. Maintenant faut signer. Le morro, c'est une famille — tu portes pour moi, tu fermes ta gueule, et la famille te porte. Comme ton oncle Zé, avant qu'il se dégonfle. *pose une main lourde sur ton épaule* Alors ? T'es du morro, ou t'es un touriste ?",
 		"choices": ["Je suis du morro, Tito", "Plus tard — je réfléchis encore"],
 		"on_choose": {
-			"0": {"accept_quest": "trafico_a1_livraison", "set_flag": "voie_trafico", "rep": {2: 4}},
+			"0": {"accept_quest": ["trafico_a1_livraison", "trafico_a2_pickup"], "set_flag": "voie_trafico", "rep": {2: 4}},
 			"1": {"set_flag": "tito_approached"},
 		},
 	},
@@ -879,13 +889,23 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 			"0": {"set_endgame": "TRAFICO", "finish_quest": {"quest": "trafico_a9_corrida", "objective": "execute_run", "payout": 5000}, "rep": {2: 10}},
 		},
 	},
-	# --- VOIE POLÍCIA : pacte avec le Capitão Ramos ---
+	# --- VOIE POLÍCIA : intro acte 2 ---
+	"ramos_intro_b1_offer": {
+		"speaker": "Capitão Ramos",
+		"text": "*te jauge par-dessus son café* T'as payé tes 500 au consortium. Un môme du morro ponctuel, c'est rare. *pose sa tasse* Je te demande un seul service avant qu'on parle vraiment : repère un visage utile sur le calçadão et reviens me le rapporter. Pas d'uniforme, pas d'engagement. Après, on verra.",
+		"choices": ["Compris, Capitão", "Plus tard"],
+		"on_choose": {
+			"0": {"accept_quest": "policia_b1_intel", "rep": {1: 1}},
+			"1": {"set_flag": "ramos_approached"},
+		},
+	},
+	# --- VOIE POLÍCIA : pacte officiel acte 3 ---
 	"ramos_pacto_policia_offer": {
 		"speaker": "Capitão Ramos",
-		"text": "*te jauge par-dessus son café, au comptoir du Bar do Policial* T'as payé tes 500 au consortium. Un môme du morro qui paie à temps, ça m'intéresse. *pose sa tasse* J'ai pas besoin d'un voyou de plus. J'ai besoin d'yeux. Tu bosses pour moi, tu me ramènes ce que je demande, et je te couvre — la dette, le bairro, tout. Le morro t'a fait. La loi peut te refaire. Alors ?",
+		"text": "*te jauge par-dessus son café, au comptoir du Bar do Policial* Tu as tâté de tous les camps, garoto. Le morro, le consortium, le Padre. Mais c'est moi qui te file le badge. *pose sa tasse* J'ai pas besoin d'un voyou de plus. J'ai besoin d'yeux. Tu bosses pour moi, tu me ramènes ce que je demande, et je te couvre — la dette, le bairro, tout. Alors ?",
 		"choices": ["Je suis votre homme, Capitão"],
 		"on_choose": {
-			"0": {"accept_quest": "policia_b1_intel", "set_flag": "voie_policia", "rep": {1: 5, 2: -2}},
+			"0": {"accept_quest": ["policia_b1_intel", "policia_b2_filature"], "set_flag": "voie_policia", "rep": {1: 5, 2: -2}},
 		},
 	},
 	"ramos_pacto_policia_remind": {
@@ -901,13 +921,23 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 			"0": {"set_endgame": "POLICIA", "finish_quest": {"quest": "policia_b9_madrugada", "objective": "complete_madrugada", "payout": 5000}, "rep": {1: 10}},
 		},
 	},
-	# --- VOIE CONSORTIUM : pacte avec Sr. Magalhães ---
+	# --- VOIE CONSORTIUM : intro acte 2 ---
+	"magalhaes_intro_c1_offer": {
+		"speaker": "Sr. Magalhães",
+		"text": "*costume clair, vue mer* Le garçon qui a payé ses 500 à l'heure. *fait tourner un whisky* Une simple démonstration avant qu'on parle vraiment : un commerçant du calçadão a pris du retard. Va le « rappeler poliment ». Pas de menace, juste un sourire et une signature. La maison apprécie l'élégance.",
+		"choices": ["J'y vais, Sr. Magalhães", "Plus tard"],
+		"on_choose": {
+			"0": {"accept_quest": "consortium_c1_recouvrement", "rep": {4: 1}},
+			"1": {"set_flag": "magalhaes_approached"},
+		},
+	},
+	# --- VOIE CONSORTIUM : pacte officiel acte 3 ---
 	"magalhaes_pacto_consortium_offer": {
 		"speaker": "Sr. Magalhães",
-		"text": "*costume clair, vue mer, te fait asseoir dans un fauteuil trop profond* Le garçon qui a payé ses 500 reais à l'heure. *fait tourner un whisky* Tu vois, les autres te proposeront un flingue ou une matraque. Moi je te propose un stylo. Le Consórcio ne casse pas les jambes — il fait signer. Tu travailles pour la maison, tu apprends à recouvrer poliment, et ta dette devient une rente. Dans l'autre sens. *te tend le verre* Alors, sócio ?",
+		"text": "*costume clair, vue mer, te fait asseoir dans un fauteuil trop profond* Tu as goûté à toutes les chapelles, sócio. Et tu es revenu chez moi. *fait tourner un whisky* Les autres te proposent un flingue ou une matraque. Moi je te propose un stylo. Le Consórcio ne casse pas les jambes — il fait signer. Tu travailles pour la maison, tu apprends à recouvrer poliment, et ta dette devient une rente. Dans l'autre sens. *te tend le verre*",
 		"choices": ["Je signe, Sr. Magalhães"],
 		"on_choose": {
-			"0": {"accept_quest": "consortium_c1_recouvrement", "set_flag": "voie_consortium", "rep": {4: 5, 0: -2}},
+			"0": {"accept_quest": ["consortium_c1_recouvrement", "consortium_c2_loyers"], "set_flag": "voie_consortium", "rep": {4: 5, 0: -2}},
 		},
 	},
 	"magalhaes_pacto_consortium_remind": {
@@ -931,13 +961,23 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 		"text": "*range le dossier signé dans un coffre, te serre la main longuement* Bienvenue dans la maison, sócio. La casa sempre ganha — et désormais, tu es la casa.",
 		"choices": ["…"],
 	},
-	# --- VOIE PREFEITO : pacte avec le Padre ---
+	# --- VOIE PREFEITO : intro acte 2 ---
+	"padre_intro_d1_offer": {
+		"speaker": "Padre Anselmo",
+		"text": "*range les bancs de la chapelle* Le garçon qui a payé sa dette sans voler personne. *pose un cierge* Une seule chose avant qu'on parle vraiment : trois commerçants du calçadão ont oublié de signer la pétition pour l'orfanato. Trois signatures, une parole douce. Va leur parler — ils t'écouteront, toi.",
+		"choices": ["J'y vais, mon Père", "Plus tard"],
+		"on_choose": {
+			"0": {"accept_quest": "prefeito_d1_peticao", "rep": {0: 1}},
+			"1": {"set_flag": "padre_approached"},
+		},
+	},
+	# --- VOIE PREFEITO : pacte officiel acte 3 ---
 	"padre_pacto_prefeito_offer": {
 		"speaker": "Padre Anselmo",
-		"text": "*range les bancs de la chapelle, te regarde avec douceur* Le garçon qui a payé sa dette à temps sans voler personne. *pose un cierge* Les autres te proposeront un flingue, une matraque, un stylo de banquier. Moi, je n'ai rien à te donner — que le bairro. Aide-le, et il te portera. Pas de patron, pas de maison : des voisins. Ton oncle Zé a fui parce qu'il croyait qu'il n'y avait que les trois autres voies. Il avait tort. Tu m'aides à sauver l'orfanato ?",
+		"text": "*range les bancs de la chapelle, te regarde avec douceur* Tu as vu les trois autres faces du Rio, mon enfant. *pose un cierge* Les autres te proposeront un flingue, une matraque, un stylo de banquier. Moi, je n'ai rien à te donner — que le bairro. Aide-le, et il te portera. Pas de patron, pas de maison : des voisins. Ton oncle Zé a fui parce qu'il croyait qu'il n'y avait que les trois autres voies. Il avait tort. Tu m'aides à sauver l'orfanato ?",
 		"choices": ["Pour le bairro, mon Père"],
 		"on_choose": {
-			"0": {"accept_quest": "prefeito_d1_peticao", "set_flag": "voie_prefeito", "rep": {0: 6}},
+			"0": {"accept_quest": ["prefeito_d1_peticao", "prefeito_d2_basquete"], "set_flag": "voie_prefeito", "rep": {0: 6}},
 		},
 	},
 	"padre_pacto_prefeito_remind": {
@@ -2367,7 +2407,7 @@ func choose(choice_index: int) -> void:
 		# Effets latéraux applicables avant de chaîner sur le knot suivant.
 		# Si l'acceptation échoue (prereq manquant), on saute aussi les autres side effects
 		# pour ne pas laisser un état partiel — et on bascule vers un knot de refus.
-		if action.has("accept_quest") and not _try_accept(action.accept_quest):
+		if action.has("accept_quest") and not _try_accept_any(action.accept_quest):
 			_show_locked_message(action.accept_quest)
 			return
 		if action.has("set_flag"):
@@ -2409,7 +2449,7 @@ func _apply_placeholder_action(action: Dictionary) -> void:
 	# souvent de la quête à clôre (prereq), donc on délègue à la branche
 	# finish_quest qui ordonne complete → accept correctement (voies A/B/C/D).
 	if action.has("accept_quest") and not action.has("finish_quest"):
-		if not _try_accept(action.accept_quest):
+		if not _try_accept_any(action.accept_quest):
 			_show_locked_message(action.accept_quest)
 			return
 		if action.has("rep"):
@@ -2481,7 +2521,7 @@ func _apply_placeholder_action(action: Dictionary) -> void:
 		# au joueur de devoir réinteragir avec le même NPC pour la suite —
 		# motif des voies A/B/C/D, ex. trafico a1→a2 sur le même contact).
 		if action.has("accept_quest"):
-			_try_accept(action.accept_quest)
+			_try_accept_any(action.accept_quest)
 		return
 	if action.has("pay_bribe"):
 		# Bribe pure (sans finish_quest) : ex. flic qui demande de l'argent.
@@ -2528,6 +2568,18 @@ func _try_accept(quest_id: String) -> bool:
 		push_warning("[DialogueBridge] accept '%s' refusé (acte/réputation insuffisants)" % quest_id)
 	else:
 		push_warning("[DialogueBridge] accept '%s' refusé — prereqs manquants : %s" % [quest_id, ", ".join(missing)])
+	return false
+
+# `accept_quest` peut être un String simple ou un Array de quest_ids — on tente
+# chaque ID dans l'ordre, le 1er qui réussit suffit. Utile pour les pactes acte
+# 3 qui veulent accepter A1 si pas fait, ou A2 si A1 déjà bouclée en acte 2.
+func _try_accept_any(payload) -> bool:
+	if payload is String:
+		return _try_accept(payload)
+	if payload is Array:
+		for qid in payload:
+			if _try_accept(String(qid)):
+				return true
 	return false
 
 # Affiche un message générique de refus puis termine le dialogue. Évite que le joueur
