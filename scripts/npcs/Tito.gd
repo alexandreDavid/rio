@@ -44,6 +44,14 @@ func _on_interacted(_by: Node) -> void:
 		if QuestManager.is_active("trafico_a1_livraison"):
 			DialogueBridge.start_dialogue(data.id, "tito_pacto_trafico_remind")
 			return
+		# Entre A1 (terminé) et A9 (couronnement) : Tito redirige vers le maillon
+		# suivant de la chaîne. Sans ça, le joueur peut perdre le fil après avoir
+		# livré le 1er paquet — Tito reste muet, le contact n'a pas été repéré.
+		if CampaignManager.has_flag("voie_trafico") \
+				and CampaignManager.has_flag("trafico_a1_done") \
+				and not QuestManager.is_completed("trafico_a8_baia"):
+			DialogueBridge.start_dialogue(data.id, "tito_voie_active")
+			return
 
 	# SIDE : livraison du médicament (priorité si active et pas livrée).
 	if QuestManager.is_active(QUEST_PHARMA):

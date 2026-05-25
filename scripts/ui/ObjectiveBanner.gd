@@ -183,10 +183,50 @@ func _compute_hint() -> String:
 	return ""
 
 # Registre des destinations par étape de quête. Clé = "quest_id/obj_id".
-# Couvre les SIDE inter-districts ajoutées récemment + quelques classiques.
-# Les MAIN ont leurs propres toasts via HUD.MAIN_NEXT_HINT à la complétion —
-# on évite de les dupliquer ici.
+# Couvre les SIDE inter-districts ET les voies A/B/C/D — le toast HUD jalon
+# n'apparaît qu'au moment de la complétion d'une étape, la bannière prend
+# le relais en permanence pour le « où aller maintenant ».
 const QUEST_NEXT_HINT: Dictionary = {
+	# --- VOIE TRÁFICO (A1 → A9) ---
+	"trafico_a1_livraison/drop_calcadao": "🎯 → Copa (calçadão, face mer) : déposer le paquet au contact",
+	"trafico_a2_pickup/pickup_palace": "🎯 → Copa Palace : récupérer la sacoche chez le groom",
+	"trafico_a3_chauffeur/drive_botafogo": "🎯 → Botafogo (Bondinho) : conduire le coffre",
+	"trafico_a4_ipanema/deal_ipanema": "🎯 → Zona Sul (Ipanema, posto 9) : refourguer la marchandise",
+	"trafico_a5_intim/silence_voisin": "🎯 → Favela : faire taire le voisin qui t'a vu",
+	"trafico_a6_cagarras/receive_cargo": "🎯 → Cagarras : réceptionner le chargement",
+	"trafico_a7_tioze/heed_warning": "🎯 → Copa Palace : écouter le vieux concierge",
+	"trafico_a8_baia/cross_baia": "🎯 → Niterói : traverser la baie avec la grosse livraison",
+	"trafico_a9_corrida/execute_run": "🎯 → Favela : retrouver Tito pour la corrida finale",
+	# --- VOIE POLÍCIA (B1 → B9) ---
+	"policia_b1_intel/report_face": "🎯 → Copa (calçadão) : rapporter le visage à l'agent en civil",
+	"policia_b2_filature/map_network": "🎯 → Copa : cartographier le réseau avec l'agent",
+	"policia_b3_escorte/escort_patrol": "🎯 → Botafogo : conduire la patrouille",
+	"policia_b4_descente/bust_dealer": "🎯 → Zona Sul (Arpoador) : descendre sur le dealer",
+	"policia_b5_reperage/scout_corcovado": "🎯 → Corcovado : repérer la remise",
+	"policia_b6_tioze/hear_concierge": "🎯 → Copa Palace : écouter le concierge",
+	"policia_b7_saisie/seize_cargo": "🎯 → Niterói : saisir la cargaison",
+	"policia_b8_seguranca/secure_crowd": "🎯 → Maracanã : sécuriser la foule",
+	"policia_b9_madrugada/complete_madrugada": "🎯 → Bar do Policial : rejoindre Ramos pour la Madrugada",
+	# --- VOIE CONSORTIUM (C1 → C9) ---
+	"consortium_c1_recouvrement/collect_calcadao": "🎯 → Copa (calçadão) : recouvrer auprès des vendeurs",
+	"consortium_c2_loyers/collect_condos": "🎯 → Copa (av. Atlântica) : encaisser chez les commerçants",
+	"consortium_c3_partenariat/force_signature": "🎯 → Barra (Riserva Uno) : forcer la signature",
+	"consortium_c4_vip/drive_vip": "🎯 → Zona Sul (Leblon) : conduire le VIP",
+	"consortium_c5_mac/launder_mac": "🎯 → Santos Dumont : blanchir via le MAC",
+	"consortium_c6_tioze/hear_concierge": "🎯 → Copa Palace : écouter le concierge",
+	"consortium_c7_condos/align_condos": "🎯 → Copa (Atlântica) : aligner les copros",
+	"consortium_c8_menace/break_holdout": "🎯 → Niterói : briser le récalcitrant",
+	"consortium_c9_pacto/seal_pacto": "🎯 → Barra : sceller le pacte avec Magalhães",
+	# --- VOIE PREFEITO (D1 → D9) ---
+	"prefeito_d1_peticao/gather_signatures": "🎯 → Copa : faire signer la pétition au calçadão",
+	"prefeito_d2_basquete/run_tournament": "🎯 → Aterro (Botafogo) : organiser le tournoi de basket",
+	"prefeito_d3_mediation/defuse_conflict": "🎯 → Aterro (Botafogo) : désamorcer le conflit",
+	"prefeito_d4_procession/escort_procession": "🎯 → Favela : escorter la procession du Padre",
+	"prefeito_d5_rally/lead_rally": "🎯 → Zona Sul (Ipanema) : mener le rallye",
+	"prefeito_d6_mac/inaugurate_expo": "🎯 → Maracanã : inaugurer l'expo officielle",
+	"prefeito_d7_tioze/receive_dossier": "🎯 → Niterói : recevoir le dossier du concierge",
+	"prefeito_d8_campagne/flip_calcadao": "🎯 → Copa (calçadão) : retourner les commerçants",
+	"prefeito_d9_eleicao/win_election": "🎯 → Copa : remporter l'élection",
 	# SIDE acte 1/2 inter-districts récentes
 	"feijoada_bondinho/deliver_summit": "🎯 → Pão de Açúcar : livrer la feijoada (bondinho de Botafogo)",
 	"ipanema_yoga/fetch_mat": "🎯 → Zona Sul (Ipanema/Leblon) : récup' du tapis chez le resto",

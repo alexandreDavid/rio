@@ -863,6 +863,14 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 		"text": "*sans lever les yeux de ses dominos* Le paquet, sobrinho. Calçadão de Copa, mon contact t'attend près des cocos. Tu le donnes, tu reviens. Le morro regarde.",
 		"choices": ["J'y vais, Tito"],
 	},
+	# Entre A1 livré et A9 (corrida), Tito ne donne plus de missions directes —
+	# c'est le contact du calçadão (puis la chaîne de spots) qui prend la main.
+	# Ce knot évite qu'il devienne muet et redirige le joueur vers son réseau.
+	"tito_voie_active": {
+		"speaker": "Tito",
+		"text": "*claque la langue, te jauge* Tu portes bien, sobrinho. Maintenant le morro a son propre rythme — mon contact gère, calçadão de Copa. Va le voir, il sait quoi te confier. Quand viendra la corrida finale du Carnaval, tu reviens me parler. D'ici là, pas de zèle, pas de bavures.",
+		"choices": ["Compris, Tito"],
+	},
 	"tito_trafico_corrida": {
 		"speaker": "Tito",
 		"text": "*se lève, pose les mains sur tes épaules, grave* Tu as fait tout le chemin, sobrinho. Le consortium est presque payé, la baie est à nous, le morro te respecte. *te regarde droit dans les yeux* Il reste la dernière corrida — celle du Carnaval. Tu la mènes, et le Morro n'a plus de roi : il t'a, toi. Ton oncle Zé a eu cette chance et il a fui. Pas toi. *te tend les clés* Vai, Patrão.",
