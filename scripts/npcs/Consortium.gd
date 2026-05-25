@@ -81,10 +81,13 @@ func _on_interacted(_by: Node) -> void:
 		knot = "consortium_barra_offer"
 		DialogueBridge.start_dialogue(data.id, knot)
 		return
-	# Offre aéroport : seulement après le premier contact avec le consortium,
-	# et tant que la dette n'est pas soldée (sinon on n'a plus rien à se dire).
+	# Offre aéroport : seulement après que l'acte 1 ait été fermé (nuit
+	# passée à la maison du tio Zé — flag `act1_closed`). Avant ça, le
+	# joueur n'a pas encore le souffle pour aller chercher un boss à Santos
+	# Dumont. Reste gated sur met_consortium + dette restante.
 	if QuestManager.is_available(QUEST_AIRPORT) \
 			and CampaignManager.has_flag("met_consortium") \
+			and CampaignManager.has_flag("act1_closed") \
 			and CampaignManager.debt_remaining() > 0:
 		knot = "consortium_airport_offer"
 		DialogueBridge.start_dialogue(data.id, knot)
