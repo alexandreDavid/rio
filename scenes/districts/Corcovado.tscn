@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/props/TaxiStand.tscn" id="1_taxi"]
 [ext_resource type="PackedScene" path="res://scenes/props/DeliveryPoint.tscn" id="2_drop"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" path="res://scenes/props/Viewpoint.tscn" id="4_view"]
 [ext_resource type="PackedScene" path="res://scenes/props/StreetVendor.tscn" id="5_vendor"]
 [ext_resource type="Script" path="res://scripts/world/AmbientDrifter.gd" id="6_drift"]
+[ext_resource type="PackedScene" path="res://scenes/props/ReactiveDialogueSpot.tscn" id="7_reactive"]
 
 [sub_resource type="RectangleShape2D" id="WallH"]
 size = Vector2(700, 16)
@@ -19,8 +20,6 @@ wrap_left = -400.0
 wrap_right = 400.0
 drift_speed = 4.0
 
-# Bruma de montagne — larges bandes blanches semi-transparentes qui dérivent
-# lentement vers l'ouest, donnant l'altitude au Mirante do Cristo.
 [node name="BrumaA" type="ColorRect" parent="." groups=["drift_west"]]
 offset_left = -300.0
 offset_top = -180.0
@@ -193,6 +192,26 @@ shape = SubResource("WallV")
 [node name="PlayerSpawn" type="Marker2D" parent="."]
 position = Vector2(-200, 100)
 
+[node name="PoliciaReperageSpot" parent="." instance=ExtResource("7_reactive")]
+position = Vector2(-200, 130)
+npc_id = "policia_reperage"
+prompt = "Repérer (longue-vue)"
+character_seed = 80106
+variants = [{
+"id": "b5_close",
+"objective_pending": ["policia_b5_reperage", "scout_corcovado"],
+"set_flag_after": "policia_b5_done",
+"actions": {"finish_quest": {"quest": "policia_b5_reperage", "objective": "scout_corcovado", "payout": 200}, "accept_quest": "policia_b6_tioze", "rep": {1: 3}},
+"speaker": "Narrateur",
+"text": "*Du pied du Cristo, Rio s'étale entière. À la jumelle tu suis le fil : les camions du consortium entrent dans un hangar de la Zona Portuária, déchargent de nuit, repartent vides. Tu notes les heures, les plaques, le toit percé. Ramos aura tout. D'ici, la ville a l'air si calme — comme si personne ne la saignait.* *La radio grésille dans le vent du sommet :* « Reçu, beau travail. Autre chose — un vieux concierge du Copacabana Palace demande à te voir. Il dit que c'est au sujet de ton oncle. Ramos s'en fout, mais… vas-y, écoute ce qu'il a à dire. »",
+"choices": ["Je redescends au Palace"]
+}, {
+"id": "default",
+"speaker": "Touriste",
+"text": "*bras écartés sous le Cristo pour la photo* Tira logo, tira! O sol tá perfeito! *sourit à l'objectif*",
+"choices": ["…"]
+}]
+
 [node name="TaxiStand" parent="." instance=ExtResource("1_taxi")]
 position = Vector2(-260, 130)
 
@@ -361,3 +380,28 @@ roam_zone = Rect2(-150, -50, 300, 100)
 speed = 30.0
 pause_random_jitter = 0.5
 look_at_player_distance = 50.0
+
+[node name="CorcovadoFotoSpot" parent="." instance=ExtResource("7_reactive")]
+position = Vector2(200, 130)
+npc_id = "corcovado_foto_assistente"
+prompt = "Prendre la photo (mirante)"
+character_seed = 80306
+variants = [{
+"id": "finish",
+"quest_active": "cristo_photo",
+"actions": {"finish_quest": {"quest": "cristo_photo", "objective": "shoot_cristo", "payout": 0}},
+"speaker": "Assistant (mirante)",
+"text": "*te tend un trépied, regarde le ciel* T'es le pigiste ? Pose ton sac, déclenche depuis ici — l'angle est parfait. *clic* Voilà. La carte SD est dans la fente. Ramène-la-lui.",
+"choices": ["Je redescends"]
+}, {
+"id": "after",
+"quest_completed": "cristo_photo",
+"speaker": "Assistant (mirante)",
+"text": "*scrute la baie* La photo est en couverture demain. Vu d'ici, le monde tient en une image.",
+"choices": ["À la prochaine"]
+}, {
+"id": "default",
+"speaker": "Assistant (mirante)",
+"text": "*essuie l'objectif d'un télescope* Le Cristo à 6h du matin, c'est autre chose. Reviens à l'aube.",
+"choices": ["J'y penserai"]
+}]

@@ -1576,18 +1576,9 @@ variants = [{
 "id": "b4_close",
 "objective_pending": ["policia_b4_descente", "bust_dealer"],
 "set_flag_after": "policia_b4_done",
-"actions": {"finish_quest": {"quest": "policia_b4_descente", "objective": "bust_dealer", "payout": 300}, "rep": {1: 4, 0: -4}},
+"actions": {"finish_quest": {"quest": "policia_b4_descente", "objective": "bust_dealer", "payout": 300}, "accept_quest": "policia_b5_reperage", "rep": {1: 4, 0: -4}},
 "speaker": "Le dealer",
-"text": "*adossé aux rochers d'Arpoador, il te voit, comprend trop tard* Eh, doucement, on peut s'arranger— *tu le plaques, il se débat, des touristes filment, ça crie. Tu serres trop fort. Quand la PM arrive, le môme saigne du nez et le quartier te regarde autrement.* *menotté, il crache* …Tu travailles pour qui, fils de pute ? Pour eux ?",
-"choices": ["Embarque-le"]
-}, {
-"id": "b5_offer",
-"flag": "policia_b4_done",
-"quest_not_active": "policia_b5_reperage",
-"quest_not_completed": "policia_b5_reperage",
-"actions": {"accept_quest": "policia_b5_reperage"},
-"speaker": "Contact (radio)",
-"text": "*la radio crache* Beau bordel, mais c'est fait. Ramos veut autre chose : monte au Corcovado, au mirante du Cristo. De là-haut on voit une remise du consortium. Tu repères, tu mémorises.",
+"text": "*adossé aux rochers d'Arpoador, il te voit, comprend trop tard* Eh, doucement, on peut s'arranger— *tu le plaques, il se débat, des touristes filment, ça crie. Tu serres trop fort. Quand la PM arrive, le môme saigne du nez et le quartier te regarde autrement.* *menotté, il crache* …Tu travailles pour qui, fils de pute ? Pour eux ? *La radio crache, ordre de Ramos :* « Beau bordel, mais c'est fait. Monte au Corcovado, au mirante du Cristo — d'en haut on voit une remise du consortium. Tu repères, tu mémorises. »",
 "choices": ["Je monte au Corcovado"]
 }, {
 "id": "default",
@@ -1605,18 +1596,9 @@ variants = [{
 "id": "c3_close",
 "objective_pending": ["consortium_c3_partenariat", "force_signature"],
 "set_flag_after": "consortium_c3_done",
-"actions": {"finish_quest": {"quest": "consortium_c3_partenariat", "objective": "force_signature", "payout": 400}, "rep": {4: 5, 0: -4}},
+"actions": {"finish_quest": {"quest": "consortium_c3_partenariat", "objective": "force_signature", "payout": 400}, "accept_quest": "consortium_c4_vip", "rep": {4: 5, 0: -4}},
 "speaker": "Le restaurateur",
-"text": "*derrière son comptoir d'Ipanema, bras croisés* J'ai dit non à Magalhães. Trois fois. *tu poses le contrat. Tu ne menaces pas. Tu listes : les fournisseurs qui se tariront, l'inspecteur qui passera, le bail qui ne se renouvellera pas. Tu souris. Le silence dure longtemps.* …*il prend le stylo, la main qui tremble de rage et de peur* Vous êtes pires qu'eux. Vous, vous faites signer.",
-"choices": ["Bienvenue dans la maison"]
-}, {
-"id": "c4_offer",
-"flag": "consortium_c3_done",
-"quest_not_active": "consortium_c4_vip",
-"quest_not_completed": "consortium_c4_vip",
-"actions": {"accept_quest": "consortium_c4_vip"},
-"speaker": "Le restaurateur",
-"text": "*range le contrat signé sans te regarder, voix éteinte* …Magalhães a laissé un mot pour vous. Un investisseur étranger arrive demain à Santos Dumont. Vous devez le réceptionner et le « promener ». La maison vend une image. Allez-y.",
+"text": "*derrière son comptoir d'Ipanema, bras croisés* J'ai dit non à Magalhães. Trois fois. *tu poses le contrat. Tu ne menaces pas. Tu listes : les fournisseurs qui se tariront, l'inspecteur qui passera, le bail qui ne se renouvellera pas. Tu souris. Le silence dure longtemps.* …*il prend le stylo, la main qui tremble de rage et de peur* Vous êtes pires qu'eux. Vous, vous faites signer. *range le contrat signé, voix éteinte* Magalhães a laissé un mot — un investisseur étranger arrive demain à Santos Dumont. Vous le réceptionnez, vous le promenez. La maison vend une image.",
 "choices": ["Direction l'aéroport"]
 }, {
 "id": "default",
@@ -1634,18 +1616,9 @@ variants = [{
 "id": "d4_close",
 "objective_pending": ["prefeito_d4_procession", "escort_procession"],
 "set_flag_after": "prefeito_d4_done",
-"actions": {"finish_quest": {"quest": "prefeito_d4_procession", "objective": "escort_procession", "payout": 300}, "rep": {0: 6, 4: -4}},
+"actions": {"finish_quest": {"quest": "prefeito_d4_procession", "objective": "escort_procession", "payout": 300}, "accept_quest": "prefeito_d5_rally", "rep": {0: 6, 4: -4}},
 "speaker": "Le porteur de bannière",
-"text": "*la procession avance le long d'Ipanema, cierges et chants — trois costauds « du Riserva Uno » barrent la rue. Tu te plantes devant, bras ouverts, entre eux et les fidèles. Tu ne frappes pas. Tu ne recules pas. Les gens filment. Les costauds calculent les caméras… et s'écartent.* *le vieux porteur te bénit du front* Tu as choisi un camp aujourd'hui, mon fils. Tout le monde l'a vu. Plus de retour en arrière.",
-"choices": ["La procession passe"]
-}, {
-"id": "d5_offer",
-"flag": "prefeito_d4_done",
-"quest_not_active": "prefeito_d5_rally",
-"quest_not_completed": "prefeito_d5_rally",
-"actions": {"accept_quest": "prefeito_d5_rally"},
-"speaker": "Le porteur de bannière",
-"text": "*essoufflé, radieux* Le Padre veut frapper fort : un grand meeting au Maracanã pour le candidat civique. Le bairro a confiance en toi — c'est toi qui dois chauffer la foule. Va.",
+"text": "*la procession avance le long d'Ipanema, cierges et chants — trois costauds « du Riserva Uno » barrent la rue. Tu te plantes devant, bras ouverts, entre eux et les fidèles. Tu ne frappes pas. Tu ne recules pas. Les gens filment. Les costauds calculent les caméras… et s'écartent.* *le vieux porteur te bénit du front, essoufflé, radieux* Tu as choisi un camp aujourd'hui, mon fils. Tout le monde l'a vu. Plus de retour en arrière. Le Padre veut frapper fort maintenant : un grand meeting au Maracanã pour le candidat civique. Le bairro a confiance en toi — c'est toi qui dois chauffer la foule.",
 "choices": ["Direction le Maracanã"]
 }, {
 "id": "default",

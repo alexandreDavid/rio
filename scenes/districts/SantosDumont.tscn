@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/props/TaxiStand.tscn" id="1_taxi"]
 [ext_resource type="PackedScene" path="res://scenes/npcs/DonSalvatore.tscn" id="2_salvatore"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" path="res://scenes/props/Viewpoint.tscn" id="4_view"]
 [ext_resource type="PackedScene" path="res://scenes/props/StreetVendor.tscn" id="5_vendor"]
 [ext_resource type="Script" path="res://scripts/world/AmbientDrifter.gd" id="6_drift"]
+[ext_resource type="PackedScene" path="res://scenes/props/ReactiveDialogueSpot.tscn" id="7_reactive"]
 
 [sub_resource type="RectangleShape2D" id="WallH"]
 size = Vector2(700, 16)
@@ -19,7 +20,6 @@ wrap_left = -400.0
 wrap_right = 400.0
 drift_speed = 24.0
 
-# Avions de ligne qui traversent le ciel (drift_east, plus rapide que le reste).
 [node name="PlaneFuselage" type="ColorRect" parent="." groups=["drift_east"]]
 offset_left = -350.0
 offset_top = -220.0
@@ -41,7 +41,6 @@ offset_right = -350.0
 offset_bottom = -214.0
 color = Color(0.92, 0.92, 0.92, 0.45)
 
-# Mouettes de port (drift_west, lentes)
 [node name="SDGullA" type="ColorRect" parent="." groups=["drift_west"]]
 offset_left = -200.0
 offset_top = -160.0
@@ -374,6 +373,26 @@ shape = SubResource("WallV")
 
 [node name="PlayerSpawn" type="Marker2D" parent="."]
 position = Vector2(-220, 140)
+
+[node name="ConsortiumAeroportoSpot" parent="." instance=ExtResource("7_reactive")]
+position = Vector2(-220, 170)
+npc_id = "consortium_aeroporto"
+prompt = "Le visiteur (arrivées)"
+character_seed = 80109
+variants = [{
+"id": "c4_close",
+"objective_pending": ["consortium_c4_vip", "drive_vip"],
+"set_flag_after": "consortium_c4_done",
+"actions": {"finish_quest": {"quest": "consortium_c4_vip", "objective": "drive_vip", "payout": 500}, "accept_quest": "consortium_c5_mac", "rep": {4: 5}},
+"speaker": "L'investisseur",
+"text": "*costume sur mesure, valise fine, accent indéterminé* Ah, le chauffeur de Sr. Magalhães. *monte sans te regarder* La plage, le Cristo, un déjeuner avec vue — montrez-moi le Rio qui rapporte, pas l'autre. *te glisse un pourboire qui vaut ton mois, puis avant de partir te tend une mallette* Un détail, pour Magalhães. Cet argent doit devenir… vertueux. Une donation culturelle au MAC, à Niterói — l'art lave tout. Vous comprenez ces choses, j'imagine.",
+"choices": ["Direction Niterói"]
+}, {
+"id": "default",
+"speaker": "Voyageur",
+"text": "*traîne une valise vers le hall* Voo atrasado de novo… *consulte son téléphone, soupire*",
+"choices": ["…"]
+}]
 
 [node name="TaxiStand" parent="." instance=ExtResource("1_taxi")]
 position = Vector2(-260, 160)

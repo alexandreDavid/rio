@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/props/TaxiStand.tscn" id="1_taxi"]
 [ext_resource type="PackedScene" path="res://scenes/props/StadiumStand.tscn" id="2_stand"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" path="res://scenes/props/Viewpoint.tscn" id="4_view"]
 [ext_resource type="PackedScene" path="res://scenes/props/StreetVendor.tscn" id="5_vendor"]
 [ext_resource type="Script" path="res://scripts/world/AmbientDrifter.gd" id="6_drift"]
+[ext_resource type="PackedScene" path="res://scenes/props/ReactiveDialogueSpot.tscn" id="7_reactive"]
 
 [sub_resource type="RectangleShape2D" id="WallH"]
 size = Vector2(700, 16)
@@ -21,9 +22,6 @@ drift_speed = 12.0
 bob_amp = 2.5
 bob_period = 1.8
 
-# Banderoles de supporters qui flottent au-dessus du stade — couleurs des
-# clubs cariocas (Flamengo rouge-noir, Fluminense vert-grenat, Vasco blanc-noir,
-# Botafogo noir-blanc). Drift_west + bob ample (le vent du stade).
 [node name="BanderoleFlamengo" type="ColorRect" parent="." groups=["drift_west", "drift_bob"]]
 offset_left = -300.0
 offset_top = -200.0
@@ -203,6 +201,46 @@ shape = SubResource("WallV")
 [node name="PlayerSpawn" type="Marker2D" parent="."]
 position = Vector2(-220, 100)
 
+[node name="PoliciaSegurancaSpot" parent="." instance=ExtResource("7_reactive")]
+position = Vector2(-220, 130)
+npc_id = "policia_seguranca"
+prompt = "« Sécuriser » la foule"
+character_seed = 80108
+variants = [{
+"id": "b8_close",
+"objective_pending": ["policia_b8_seguranca", "secure_crowd"],
+"set_flag_after": "policia_b8_done",
+"actions": {"finish_quest": {"quest": "policia_b8_seguranca", "objective": "secure_crowd", "payout": 1500}, "accept_quest": "policia_b9_madrugada", "pay_debt": 18000, "rep": {1: 6, 0: -6}},
+"speaker": "Narrateur",
+"text": "*Devant le Maracanã, un rassemblement pacifique — banderoles, chants, des familles. « Sécuriser », a dit Ramos. Tu donnes le signal ; les boucliers avancent, la foule reflue, quelqu'un tombe. En une heure il ne reste que des pancartes piétinées et le silence. Le consortium est content. La dette presque effacée. Tu ne te regardes pas dans les vitrines en repartant.* *Ta radio, voix de Ramos lui-même :* « T'as tout donné, sobrinho. Le mandat est signé. Cette nuit on monte sur le morro — l'Operação Madrugada. Retrouve-moi. »",
+"choices": ["Je rejoins Ramos"]
+}, {
+"id": "default",
+"speaker": "Torcedor",
+"text": "*maillot de la Seleção, agite un drapeau* Hoje tem jogo, irmão?! O Maraca vai tremer! *chante vers le stade*",
+"choices": ["…"]
+}]
+
+[node name="PrefeitoMaracanaSpot" parent="." instance=ExtResource("7_reactive")]
+position = Vector2(-180, 130)
+npc_id = "prefeito_maracana"
+prompt = "Le meeting"
+character_seed = 70405
+variants = [{
+"id": "d5_close",
+"objective_pending": ["prefeito_d5_rally", "lead_rally"],
+"set_flag_after": "prefeito_d5_done",
+"actions": {"finish_quest": {"quest": "prefeito_d5_rally", "objective": "lead_rally", "payout": 350}, "accept_quest": "prefeito_d6_mac", "rep": {0: 7}},
+"speaker": "Le candidat civique",
+"text": "*estrade devant le Maracanã, des milliers de personnes — tu prends le micro avant lui, tu parles du bairro, de l'orfanato, des gosses de l'Aterro. Pas de promesses creuses : des noms, des visages, le tien.* *la foule scande ton prénom ; le candidat, sidéré, te laisse finir.* …Ils ne sont pas venus pour moi. Ils sont venus pour toi. *encore essoufflé par l'ovation* Dernière vitrine avant le scrutin : une inauguration au MAC de Niterói. Culture, presse, respectabilité — l'image qui rassure les indécis. Traverse la baie, le Padre a tout arrangé.",
+"choices": ["Direction Niterói"]
+}, {
+"id": "default",
+"speaker": "Torcedor",
+"text": "*tambour au cou, peinturluré aux couleurs du Brésil* É hoje, irmão! Vai Brasil! *frappe son tambour vers le stade*",
+"choices": ["…"]
+}]
+
 [node name="TaxiStand" parent="." instance=ExtResource("1_taxi")]
 position = Vector2(-260, 130)
 
@@ -335,3 +373,43 @@ pause_at_waypoints = 0.3
 roam_zone = Rect2(-150, -50, 300, 100)
 pause_random_jitter = 0.5
 look_at_player_distance = 50.0
+
+[node name="MaracanaTorcedorSpot" parent="." instance=ExtResource("7_reactive")]
+position = Vector2(200, 130)
+npc_id = "maracana_torcedor"
+prompt = "Parler au vieux supporter"
+character_seed = 80401
+variants = [{
+"id": "return",
+"objective_done": ["maracana_jersey", "find_jersey"],
+"objective_pending": ["maracana_jersey", "return_jersey"],
+"actions": {"finish_quest": {"quest": "maracana_jersey", "objective": "return_jersey", "payout": 0}, "rep": {4: 2}},
+"speaker": "Seu Wanderley (supporter)",
+"text": "*déplie le maillot, les mains qui tremblent, lit les signatures* Pelé, Tostão, Carlos Alberto... C'est lui. Vinte e cinco anos que je le cherche. *te serre fort, les yeux brouillés* Tu sais ce que tu viens de faire ? Ma vieille va pleurer ce soir. Merci, sobrinho.",
+"choices": ["De rien, Seu Wanderley"]
+}, {
+"id": "in_progress",
+"quest_active": "maracana_jersey",
+"speaker": "Seu Wanderley (supporter)",
+"text": "*scrute l'avenue* T'as parlé au gars d'Aterro ? Demande-lui le carton bleu — c'est dedans.",
+"choices": ["J'y vais"]
+}, {
+"id": "offer",
+"quest_not_active": "maracana_jersey",
+"quest_not_completed": "maracana_jersey",
+"actions": {"accept_quest": "maracana_jersey"},
+"speaker": "Seu Wanderley (supporter)",
+"text": "*chemise jaune et verte fanée, te tire la manche* Sobrinho, t'as une tête honnête. Y a un type à Aterro do Flamengo, près du basket, qui détient un maillot de la finale 71, signé Pelé. J'ai mis six mois à le trouver. Va le récupérer, ramène-le-moi — 1800 reais à ton retour. Ma vieille a 70 ans la semaine prochaine.",
+"choices": ["Je m'en occupe, Seu Wanderley"]
+}, {
+"id": "done",
+"quest_completed": "maracana_jersey",
+"speaker": "Seu Wanderley (supporter)",
+"text": "*sourit, montre le mur au-dessus de son fauteuil* Encadré. Elle l'a vu hier — elle a pleuré comme une gamine.",
+"choices": ["Boa, Seu Wanderley"]
+}, {
+"id": "default",
+"speaker": "Seu Wanderley (supporter)",
+"text": "*radio collée à l'oreille* Mengão joue à 17h. Tu vas regarder ?",
+"choices": ["Bonne soirée"]
+}]

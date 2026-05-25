@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3]
+[gd_scene load_steps=25 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/props/TaxiStand.tscn" id="1_taxi"]
 [ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="2_wander"]
@@ -15,6 +15,7 @@
 [ext_resource type="PackedScene" path="res://scenes/props/ExerciseStation.tscn" id="12_exercise"]
 [ext_resource type="PackedScene" path="res://scenes/props/DistrictEntrance.tscn" id="13_entrance"]
 [ext_resource type="Script" path="res://scripts/world/AmbientDrifter.gd" id="18_drift"]
+[ext_resource type="PackedScene" path="res://scenes/props/ReactiveDialogueSpot.tscn" id="19_reactive"]
 
 [sub_resource type="RectangleShape2D" id="WallH_N"]
 size = Vector2(3900, 12)
@@ -46,7 +47,6 @@ wrap_left = -1500.0
 wrap_right = 2300.0
 drift_speed = 7.0
 
-# Décor animé : 3 nuages + 3 mouettes drift_west + 1 bateau drift_east
 [node name="DriftCloudA" type="ColorRect" parent="." groups=["drift_west"]]
 offset_left = -1300.0
 offset_top = -2600.0
@@ -1912,8 +1912,48 @@ shape = SubResource("WallV_Morro")
 [node name="PlayerSpawn" type="Marker2D" parent="."]
 position = Vector2(0, 250)
 
+[node name="PoliciaEscorteSpot" parent="." instance=ExtResource("19_reactive")]
+position = Vector2(44, 250)
+npc_id = "policia_escorte"
+prompt = "La patrouille en planque"
+character_seed = 80114
+variants = [{
+"id": "b3_close",
+"objective_pending": ["policia_b3_escorte", "escort_patrol"],
+"set_flag_after": "policia_b3_done",
+"actions": {"finish_quest": {"quest": "policia_b3_escorte", "objective": "escort_patrol", "payout": 250}, "accept_quest": "policia_b4_descente", "rep": {1: 4}},
+"speaker": "Sergent PM",
+"text": "*deux flics dans une voiture banalisée sous le Bondinho* T'es le gars de Ramos ? Monte pas, reste devant, fais le guet. *radio grésille* …On est en place. Bien joué, gamin. Le Capitão va aimer. *te tend une adresse* Ordre de Ramos : un dealer opère à Arpoador, Zona Sul. Arrestation. Propre si possible. Si ça part en vrille, t'auras rien vu. Maintenant dégage avant qu'on te voie avec nous.",
+"choices": ["Direction Arpoador"]
+}, {
+"id": "default",
+"speaker": "Passant",
+"text": "*photographie le Pão de Açúcar depuis l'Urca* Que vista, hein ? *poursuit sa marche*",
+"choices": ["…"]
+}]
+
 [node name="PlayerSpawnAterro" type="Marker2D" parent="."]
 position = Vector2(-200, -1100)
+
+[node name="PrefeitoAterroSpot" parent="." instance=ExtResource("19_reactive")]
+position = Vector2(-200, -1070)
+npc_id = "prefeito_aterro"
+prompt = "Le tournoi de basket"
+character_seed = 70402
+variants = [{
+"id": "d2_close",
+"objective_pending": ["prefeito_d2_basquete", "run_tournament"],
+"set_flag_after": "prefeito_d2_done",
+"actions": {"finish_quest": {"quest": "prefeito_d2_basquete", "objective": "run_tournament", "payout": 200}, "accept_quest": "prefeito_d3_mediation", "rep": {0: 5}},
+"speaker": "L'éducateur",
+"text": "*siffle la fin d'un match sur le terrain de l'Aterro, gamins en sueur et rires* T'as monté ça en deux jours. Trente gosses qui auraient traîné dans la rue, là ils jouent. *te serre la main fort* Le Padre avait raison sur toi. La presse a même pris une photo — toi au centre, le bairro autour. *essuie son front* Mais le Padre a un cas plus dur : une famille du morro en conflit ouvert avec un homme de Tito. Ça peut dégénérer. Il veut une médiation, pas du sang. Ta parole pèse, maintenant.",
+"choices": ["Je remonte au morro"]
+}, {
+"id": "default",
+"speaker": "Joueur de basket",
+"text": "*dribble au bord du terrain de l'Aterro* Bora jogar, mano? A quadra tá livre. *enchaîne un panier*",
+"choices": ["…"]
+}]
 
 [node name="PlayerSpawnFromBondinho" type="Marker2D" parent="."]
 position = Vector2(880, 30)
@@ -2270,3 +2310,60 @@ speed = 32.0
 pause_at_waypoints = 0.4
 pause_random_jitter = 0.5
 look_at_player_distance = 50.0
+
+[node name="BondinhoOperadorSpot" parent="." instance=ExtResource("19_reactive")]
+position = Vector2(860, 60)
+npc_id = "bondinho_operador"
+prompt = "Parler à l'opérateur du bondinho"
+character_seed = 80301
+variants = [{
+"id": "offer",
+"quest_not_active": "feijoada_bondinho",
+"quest_not_completed": "feijoada_bondinho",
+"actions": {"accept_quest": "feijoada_bondinho"},
+"speaker": "Opérateur (bondinho)",
+"text": "*compte sa caisse, te jauge* Eh, sobrinho. J'ai trois paniers de feijoada à monter au mirante pour un dîner privé — le chef attend là-haut. Je peux pas quitter le guichet en pleine après-midi. Bondinho gratos pour toi, livraison au sommet, je te file 800 reais à ton retour.",
+"choices": ["Je m'en occupe"]
+}, {
+"id": "in_progress",
+"quest_active": "feijoada_bondinho",
+"speaker": "Opérateur (bondinho)",
+"text": "*hoche le menton* Le bondinho est là, monte, livre. Le chef t'attend à la plateforme.",
+"choices": ["J'y vais"]
+}, {
+"id": "done",
+"quest_completed": "feijoada_bondinho",
+"speaker": "Opérateur (bondinho)",
+"text": "*sourit large* Tu m'as sauvé la mise. Si y a d'autres courses, t'es mon homme.",
+"choices": ["À la prochaine"]
+}, {
+"id": "default",
+"speaker": "Opérateur (bondinho)",
+"text": "*ouvre la porte de la cabine* Bondinho 8 reais, freguês. Le coucher de soleil au pão vaut le détour.",
+"choices": ["Plus tard"]
+}]
+
+[node name="AterroVendorSpot" parent="." instance=ExtResource("19_reactive")]
+position = Vector2(-280, -1080)
+npc_id = "aterro_vendedor"
+prompt = "Parler au revendeur"
+character_seed = 80402
+variants = [{
+"id": "finish",
+"objective_pending": ["maracana_jersey", "find_jersey"],
+"actions": {"finish_quest": {"quest": "maracana_jersey", "objective": "find_jersey", "payout": 0}},
+"speaker": "Revendeur (Aterro)",
+"text": "*déballe un carton bleu, regarde autour avant de l'ouvrir* Le maillot 71 ? Six mois que je le tiens, le vieux Wanderley peut pas se déplacer. Le voilà — Pelé, Tostão, Carlos Alberto, tout est dedans. Ramène-lui-le, gamin, et dis-lui que c'est le dernier service.",
+"choices": ["Compris"]
+}, {
+"id": "after",
+"quest_completed": "maracana_jersey",
+"speaker": "Revendeur (Aterro)",
+"text": "*range des cartons* Wanderley t'a payé ? Bom. Reviens si tu cherches du vintage carioca — j'en ai d'autres.",
+"choices": ["À l'occasion"]
+}, {
+"id": "default",
+"speaker": "Revendeur (Aterro)",
+"text": "*compte des billets pliés en quatre* Cartons à vendre, freguês : disques, maillots, vieilles photos. Tu cherches quelque chose ?",
+"choices": ["Pas aujourd'hui"]
+}]

@@ -1,10 +1,11 @@
-[gd_scene load_steps=18 format=3]
+[gd_scene load_steps=19 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/props/TaxiStand.tscn" id="1_taxi"]
 [ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="2_wander"]
 [ext_resource type="PackedScene" path="res://scenes/props/Viewpoint.tscn" id="3_view"]
 [ext_resource type="PackedScene" path="res://scenes/props/DistrictExit.tscn" id="5_exit"]
 [ext_resource type="PackedScene" path="res://scenes/npcs/Magalhaes.tscn" id="6_magalhaes"]
+[ext_resource type="PackedScene" path="res://scenes/props/ReactiveDialogueSpot.tscn" id="13_reactive"]
 [ext_resource type="PackedScene" path="res://scenes/props/KiteStation.tscn" id="7_kite"]
 [ext_resource type="Script" path="res://scripts/districts/BarraDaTijucaDistrict.gd" id="8_script"]
 [ext_resource type="PackedScene" path="res://scenes/props/BuildingDoor.tscn" id="9_door"]
@@ -33,9 +34,6 @@ size = Vector2(120, 100)
 [node name="BarraDaTijucaDistrict" type="Node2D"]
 script = ExtResource("8_script")
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# MER (sud) y=200..400
-# ═══════════════════════════════════════════════════════════════════════════════
 
 [node name="Sea" type="ColorRect" parent="."]
 offset_left = -1000.0
@@ -79,9 +77,6 @@ offset_right = 820.0
 offset_bottom = 282.0
 color = Color(0.85, 0.92, 0.95, 0.55)
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# PLAGE (sable) y=130..200
-# ═══════════════════════════════════════════════════════════════════════════════
 
 [node name="Sand" type="ColorRect" parent="."]
 offset_left = -1000.0
@@ -125,9 +120,6 @@ offset_right = 222.0
 offset_bottom = 192.0
 color = Color(0.55, 0.42, 0.32, 1)
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# CALÇADÃO + BIKE LANE y=80..130
-# ═══════════════════════════════════════════════════════════════════════════════
 
 [node name="BikeLane" type="ColorRect" parent="."]
 offset_left = -1000.0
@@ -143,9 +135,6 @@ offset_right = 1000.0
 offset_bottom = 120.0
 color = Color(0.92, 0.92, 0.88, 1)
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# AVENUE LÚCIO COSTA — y=-30..80 (double voie + médiane palmiers)
-# ═══════════════════════════════════════════════════════════════════════════════
 
 [node name="AvLucioSouth" type="ColorRect" parent="."]
 offset_left = -1000.0
@@ -243,11 +232,7 @@ theme_override_colors/font_color = Color(0.98, 0.92, 0.65, 0.85)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
 theme_override_constants/outline_size = 3
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# IMMEUBLES HAUTS (towers) y=-200..-60
-# ═══════════════════════════════════════════════════════════════════════════════
 
-# Tower A (ouest)
 [node name="TowerA" type="ColorRect" parent="."]
 offset_left = -900.0
 offset_top = -200.0
@@ -290,7 +275,6 @@ offset_right = -800.0
 offset_bottom = -86.0
 color = Color(0.25, 0.32, 0.45, 0.85)
 
-# Tower B
 [node name="TowerB" type="ColorRect" parent="."]
 offset_left = -600.0
 offset_top = -220.0
@@ -333,7 +317,6 @@ offset_right = -500.0
 offset_bottom = -106.0
 color = Color(0.25, 0.32, 0.45, 0.85)
 
-# Tower D (est) — entre le condomínio et la sortie ZonaSul
 [node name="TowerD" type="ColorRect" parent="."]
 offset_left = 480.0
 offset_top = -200.0
@@ -404,10 +387,6 @@ offset_right = 820.0
 offset_bottom = -96.0
 color = Color(0.25, 0.32, 0.45, 0.85)
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# CONDOMÍNIO RISERVA UNO  x=-300..300, y=-220..-60
-# Compound clos avec portail au sud, pool, fontaine, manager au centre.
-# ═══════════════════════════════════════════════════════════════════════════════
 
 [node name="CondoGround" type="ColorRect" parent="."]
 offset_left = -300.0
@@ -465,7 +444,6 @@ offset_right = 300.0
 offset_bottom = -60.0
 color = Color(0.32, 0.32, 0.32, 1)
 
-# Portail (gap dans le mur sud, x=-50..50)
 [node name="CondoGateLPillar" type="ColorRect" parent="."]
 offset_left = -56.0
 offset_top = -78.0
@@ -506,7 +484,6 @@ theme_override_colors/font_color = Color(0.95, 0.78, 0.45, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
 theme_override_constants/outline_size = 2
 
-# Tours intérieures du condomínio (visibles depuis l'avenue)
 [node name="CondoTowerA" type="ColorRect" parent="."]
 offset_left = -240.0
 offset_top = -200.0
@@ -535,7 +512,6 @@ offset_right = 240.0
 offset_bottom = -200.0
 color = Color(0.72, 0.68, 0.62, 1)
 
-# Pool centrale
 [node name="CondoPool" type="ColorRect" parent="."]
 offset_left = -60.0
 offset_top = -180.0
@@ -550,7 +526,6 @@ offset_right = 0.0
 offset_bottom = -167.0
 color = Color(0.92, 0.95, 0.98, 0.65)
 
-# Sun loungers
 [node name="LoungerL" type="ColorRect" parent="."]
 offset_left = -120.0
 offset_top = -160.0
@@ -565,9 +540,6 @@ offset_right = 120.0
 offset_bottom = -148.0
 color = Color(0.95, 0.92, 0.85, 1)
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# MURS PERIMETER
-# ═══════════════════════════════════════════════════════════════════════════════
 
 [node name="Walls" type="Node2D" parent="."]
 
@@ -589,8 +561,6 @@ position = Vector2(-1000, -30)
 [node name="ShapeLeft" type="CollisionShape2D" parent="Walls/Left"]
 shape = SubResource("WallV")
 
-# Condomínio walls — empêchent de traverser hors du portail (z barrière sud
-# coupée en 2 pour le gap)
 [node name="CondoTopWall" type="StaticBody2D" parent="Walls"]
 position = Vector2(0, -220)
 
@@ -609,14 +579,12 @@ position = Vector2(300, -145)
 [node name="ShapeCondoRight" type="CollisionShape2D" parent="Walls/CondoRightWall"]
 shape = SubResource("CondoWallVShort")
 
-# Pool barrier (empêche le joueur de marcher dans l'eau)
 [node name="PoolBarrier" type="StaticBody2D" parent="Walls"]
 position = Vector2(0, -160)
 
 [node name="ShapePoolBarrier" type="CollisionShape2D" parent="Walls/PoolBarrier"]
 shape = SubResource("TowerBlock")
 
-# Blocks pour rendre les tours impassables (la rue passe juste devant)
 [node name="TowerABlock" type="StaticBody2D" parent="Walls"]
 position = Vector2(-840, -130)
 
@@ -641,12 +609,37 @@ position = Vector2(780, -120)
 [node name="ShapeTowerE" type="CollisionShape2D" parent="Walls/TowerEBlock"]
 shape = SubResource("TowerBlock")
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# SPAWN + EXIT (côté est, vers ZonaSul)
-# ═══════════════════════════════════════════════════════════════════════════════
 
 [node name="PlayerSpawn" type="Marker2D" parent="."]
 position = Vector2(900, 100)
+
+[node name="ConsortiumBarraSpot" parent="." instance=ExtResource("13_reactive")]
+position = Vector2(940, 130)
+npc_id = "consortium_barra"
+prompt = "Riserva Uno (gestion)"
+character_seed = 80115
+variants = [{
+"id": "c2_close",
+"objective_pending": ["consortium_c2_loyers", "collect_condos"],
+"set_flag_after": "consortium_c2_done",
+"actions": {"finish_quest": {"quest": "consortium_c2_loyers", "objective": "collect_condos", "payout": 300}, "accept_quest": "consortium_c3_partenariat", "pay_debt": 3000, "rep": {4: 4}},
+"speaker": "Le syndic",
+"text": "*classeur sous le bras, te fait le tour des tours du Riserva Uno* Appartement 1204, retard. 808, payé. 1601, conteste — note-le pour Magalhães, il « discutera ». *te tend la sacoche d'encaissements* La maison gère tout ici : les loyers, les retards, les opinions. *coche une nouvelle ligne sur son classeur* Et Magalhães a un cas à Ipanema — un restaurateur têtu qui refuse le « partenariat ». Tu insistes jusqu'à ce que sa main tienne le stylo. Zona Sul. Vas-y.",
+"choices": ["Direction Ipanema"]
+}, {
+"id": "c7_close",
+"objective_pending": ["consortium_c7_condos", "align_condos"],
+"set_flag_after": "consortium_c7_done",
+"actions": {"finish_quest": {"quest": "consortium_c7_condos", "objective": "align_condos", "payout": 1200}, "accept_quest": "consortium_c8_menace", "pay_debt": 14000, "rep": {4: 8, 0: -4}},
+"speaker": "Le syndic",
+"text": "*réunit les trois conseils syndicaux dans une salle vitrée — tu poses les contrats, tu souris, tu attends* Riserva Uno, Le Parc, Península. *les trois présidents signent l'un après l'autre, personne ne lit* …Trois fiefs, une maison. Magalhães va boire au champagne ce soir. *ferme son classeur d'un coup sec* Il reste une épine : le dernier commerce libre du calçadão de Copa. La maison le veut signé avant le Carnaval — sans esclandre, mais signé.",
+"choices": ["Retour à Copa"]
+}, {
+"id": "default",
+"speaker": "Résident de Barra",
+"text": "*arrose ses plantes sur un balcon du Riserva Uno* Tudo tranquilo por aqui, viu? *rentre, ferme la baie vitrée*",
+"choices": ["…"]
+}]
 
 [node name="ExitToZonaSul" parent="." instance=ExtResource("5_exit")]
 position = Vector2(975, -30)
@@ -667,9 +660,6 @@ flavor_speaker = "Sobrinho"
 flavor_text = "Dix-huit kilomètres de plage rectiligne, sans rocher, sans bout. Le vent vient d'Angra. Les surfeurs disent que l'eau est plus froide ici — courant ascendant. La Barra c'est l'Atlantique en mode plein, sans découpe."
 money_reward = 60
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# NPCs ambient
-# ═══════════════════════════════════════════════════════════════════════════════
 
 [node name="JoggerA" parent="." instance=ExtResource("2_wander")]
 position = Vector2(-500, 95)
@@ -703,7 +693,6 @@ stationary = true
 bob_strength = 0.4
 look_at_player_distance = 50.0
 
-# Garde du condomínio à l'entrée — bloque visuellement mais pas physiquement
 [node name="GuardConcierge" parent="." instance=ExtResource("2_wander")]
 position = Vector2(80, -80)
 color = Color(0.18, 0.32, 0.45, 1)
@@ -726,10 +715,6 @@ theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
 theme_override_constants/outline_size = 4
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# LAMPADAIRES Lúcio Costa — 6 le long de l'avenue
-# Poteaux toujours visibles, halos + ampoules taggés "nightlight"
-# ═══════════════════════════════════════════════════════════════════════════════
 
 [node name="LampLC1Pole" type="ColorRect" parent="."]
 offset_left = -802.0
@@ -857,9 +842,6 @@ offset_right = 754.0
 offset_bottom = -48.0
 color = Color(1.0, 0.95, 0.62, 1)
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# AMBIENT supplémentaire — joggers, cyclistes, surfeurs, valet
-# ═══════════════════════════════════════════════════════════════════════════════
 
 [node name="JoggerC" parent="." instance=ExtResource("2_wander")]
 position = Vector2(-150, 95)
@@ -920,9 +902,6 @@ speed = 22.0
 pause_at_waypoints = 1.2
 look_at_player_distance = 50.0
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# BRT TRANSOESTE — abribus + viewpoint informatif (à l'ouest, vers Recreio)
-# ═══════════════════════════════════════════════════════════════════════════════
 
 [node name="BRTShelter" type="ColorRect" parent="."]
 offset_left = -750.0
@@ -979,7 +958,6 @@ flavor_speaker = "Sobrinho"
 flavor_text = "BRT TransOeste, ligne Alvorada → Santa Cruz. *consulte les horaires* Un bus toutes les 4 minutes en heure de pointe. Cinquante-six kilomètres de couloir réservé. Avant ça, la même course en voiture prenait deux heures à travers la Barra. Maintenant : trente-cinq minutes. *un articulé de quinze mètres passe en rugissant* La ville change quand les transports changent."
 money_reward = 25
 
-# KiteStation sur la plage côté ouest (Barra c'est LA spot kite de Rio)
 [node name="KiteStation" parent="." instance=ExtResource("7_kite")]
 position = Vector2(-400, 175)
 
@@ -995,9 +973,6 @@ theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
 theme_override_constants/outline_size = 3
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# BARRA SHOPPING — façade nord avec porte d'entrée vers intérieur
-# ═══════════════════════════════════════════════════════════════════════════════
 
 [node name="ShoppingFacade" type="ColorRect" parent="."]
 offset_left = 200.0
@@ -1112,11 +1087,8 @@ position = Vector2(330, -210)
 prompt_text = "Entrer au Barra Shopping"
 
 [node name="BarraShoppingInterior" parent="." instance=ExtResource("10_shopping")]
-position = Vector2(2500, -1000)
+position = Vector2(2500, 5000)
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# LE PARC RESIDENCES — façade ouest (entre TowerA et TowerB) + porte
-# ═══════════════════════════════════════════════════════════════════════════════
 
 [node name="LeParcFacade" type="ColorRect" parent="."]
 offset_left = -770.0
@@ -1203,11 +1175,8 @@ position = Vector2(-690, -210)
 prompt_text = "Entrer au Le Parc"
 
 [node name="LeParcInterior" parent="." instance=ExtResource("11_leparc")]
-position = Vector2(2500, -2000)
+position = Vector2(2500, 6000)
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# PENÍNSULA PRIVÉ — façade dorée entre TowerD et TowerE (x=620..720)
-# ═══════════════════════════════════════════════════════════════════════════════
 
 [node name="PeninsulaFacade" type="ColorRect" parent="."]
 offset_left = 620.0
@@ -1300,4 +1269,44 @@ position = Vector2(670, -210)
 prompt_text = "Entrer au Península Privé"
 
 [node name="PeninsulaInterior" parent="." instance=ExtResource("12_peninsula")]
-position = Vector2(2500, -3000)
+position = Vector2(2500, 7000)
+
+[node name="BarraAdvogadaSpot" parent="." instance=ExtResource("13_reactive")]
+position = Vector2(-200, 130)
+npc_id = "barra_advogada"
+prompt = "Parler à l'avocate"
+character_seed = 80407
+variants = [{
+"id": "return",
+"objective_done": ["barra_brief", "deliver_brief"],
+"objective_pending": ["barra_brief", "confirm_back"],
+"actions": {"finish_quest": {"quest": "barra_brief", "objective": "confirm_back", "payout": 0}, "rep": {0: 2}},
+"speaker": "Avocate (Riserva Uno)",
+"text": "*range le dossier signé dans son coffre, te tend une enveloppe brune* Signé avant 18h. Tu m'as sauvé l'audience. *referme le coffre d'un geste sec* Si t'as encore besoin de cash et que tu sais te taire, repasse.",
+"choices": ["Obrigado, doutora"]
+}, {
+"id": "in_progress",
+"quest_active": "barra_brief",
+"speaker": "Avocate (Riserva Uno)",
+"text": "*regarde sa montre, tape du pied* Leblon, le bureau du quatrième étage. Le cadre s'appelle Bertoluci. Avant 18h.",
+"choices": ["Je file"]
+}, {
+"id": "offer",
+"quest_not_active": "barra_brief",
+"quest_not_completed": "barra_brief",
+"actions": {"accept_quest": "barra_brief"},
+"speaker": "Avocate (Riserva Uno)",
+"text": "*tailleur strict, dossier scellé sous le bras, te jauge en deux secondes* Coursiers en grève. J'ai un dossier à faire signer ce soir par un cadre exécutif à Leblon, quatrième étage. 2000 reais cash si c'est signé avant 18h et que tu reviens me confirmer. Tu prends ?",
+"choices": ["Marché conclu"]
+}, {
+"id": "done",
+"quest_completed": "barra_brief",
+"speaker": "Avocate (Riserva Uno)",
+"text": "*signe d'autres papiers* L'audience est passée, on a gagné. Bonne mémoire pour toi.",
+"choices": ["Bonne suite"]
+}, {
+"id": "default",
+"speaker": "Avocate (Riserva Uno)",
+"text": "*au téléphone, voix tranchante* …non, l'article 142 ne s'applique pas. Rappelez le juge. *te fait signe d'attendre dehors*",
+"choices": ["Je repasse"]
+}]

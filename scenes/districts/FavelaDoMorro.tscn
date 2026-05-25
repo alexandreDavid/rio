@@ -1510,28 +1510,18 @@ variants = Array[Dictionary]([{
 "payout": 200,
 "quest": "policia_b2_filature"
 },
+"accept_quest": "policia_b3_escorte",
 "rep": {
 1: 5,
 2: -4
 }
 },
-"choices": ["Rapporter à Ramos"],
+"choices": ["En route pour Botafogo"],
 "id": "b2_close",
 "objective_pending": ["policia_b2_filature", "map_network"],
 "set_flag_after": "policia_b2_done",
 "speaker": "Narrateur",
-"text": "*Depuis ce recoin, tu vois tout : le guetteur sur les marches, la planque derrière le bar, qui monte les sacs et à quelle heure. Tu notes chaque visage, chaque horaire. Des gens qui t'ont vu grandir. Tu plies le carnet. C'est fait — et ça ne se défait pas. Le morro ne le sait pas encore.*"
-}, {
-"actions": {
-"accept_quest": "policia_b3_escorte"
-},
-"choices": ["En route pour Botafogo"],
-"flag": "policia_b2_done",
-"id": "b3_offer",
-"quest_not_active": "policia_b3_escorte",
-"quest_not_completed": "policia_b3_escorte",
-"speaker": "Contact (radio)",
-"text": "*la radio grésille, voix de l'agent* Bien reçu, le carnet est en or. Ramos veut que tu conduises une patrouille en planque — Botafogo, sous le Bondinho. Discrète. File."
+"text": "*Depuis ce recoin, tu vois tout : le guetteur sur les marches, la planque derrière le bar, qui monte les sacs et à quelle heure. Tu notes chaque visage, chaque horaire. Des gens qui t'ont vu grandir. Tu plies le carnet. C'est fait — et ça ne se défait pas. Le morro ne le sait pas encore.* *La radio grésille, voix de l'agent :* « Bien reçu, le carnet est en or. Ramos veut que tu conduises une patrouille en planque — Botafogo, sous le Bondinho. Discrète. File. »"
 }, {
 "choices": ["M'éloigner"],
 "id": "default",
@@ -1551,28 +1541,18 @@ variants = Array[Dictionary]([{
 "payout": 250,
 "quest": "prefeito_d3_mediation"
 },
+"accept_quest": "prefeito_d4_procession",
 "rep": {
 0: 5,
 2: 1
 }
 },
-"choices": ["Que la paix tienne"],
+"choices": ["Je protégerai la procession"],
 "id": "d3_close",
 "objective_pending": ["prefeito_d3_mediation", "defuse_conflict"],
 "set_flag_after": "prefeito_d3_done",
 "speaker": "La mère de famille",
-"text": "*sur le pas de sa porte, un homme de Tito en face, la tension palpable — tu te places entre les deux, tu parles bas, longtemps. Pas de menace, pas de promesse : juste de quoi laisser chacun reculer sans perdre la face.* …*l'homme crache, tourne les talons. La mère expire enfin.* Tu as évité un mort ce soir, sobrinho. Le morro s'en souviendra."
-}, {
-"actions": {
-"accept_quest": "prefeito_d4_procession"
-},
-"choices": ["Je protégerai la procession"],
-"flag": "prefeito_d3_done",
-"id": "d4_offer",
-"quest_not_active": "prefeito_d4_procession",
-"quest_not_completed": "prefeito_d4_procession",
-"speaker": "La mère de famille",
-"text": "*te retient par la manche* Le Padre m'a dit de te prévenir : une procession descend en Zona Sul demain, et des hommes du consortium ont reçu un « contrat » pour la disperser. Si tu la protèges, tu choisis un camp aux yeux de tous. Mais il faut bien que quelqu'un les protège."
+"text": "*sur le pas de sa porte, un homme de Tito en face, la tension palpable — tu te places entre les deux, tu parles bas, longtemps. Pas de menace, pas de promesse : juste de quoi laisser chacun reculer sans perdre la face.* …*l'homme crache, tourne les talons. La mère expire enfin, te retient par la manche* Tu as évité un mort ce soir, sobrinho. Le morro s'en souviendra. Le Padre m'a dit de te prévenir : une procession descend en Zona Sul demain, et des hommes du consortium ont reçu un « contrat » pour la disperser. Si tu la protèges, tu choisis un camp aux yeux de tous. Mais il faut bien que quelqu'un les protège."
 }, {
 "choices": ["…"],
 "id": "default",

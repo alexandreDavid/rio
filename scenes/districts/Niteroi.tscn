@@ -590,18 +590,9 @@ variants = [{
 "id": "b7_close",
 "objective_pending": ["policia_b7_saisie", "seize_cargo"],
 "set_flag_after": "policia_b7_done",
-"actions": {"finish_quest": {"quest": "policia_b7_saisie", "objective": "seize_cargo", "payout": 600}, "pay_debt": 4000, "rep": {1: 5}},
+"actions": {"finish_quest": {"quest": "policia_b7_saisie", "objective": "seize_cargo", "payout": 600}, "accept_quest": "policia_b8_seguranca", "pay_debt": 4000, "rep": {1: 5}},
 "speaker": "Don Vincenzo",
-"text": "*encadré par ses hommes, le mandat de Ramos à la main que tu lui colles sous le nez* …Donc Ramos envoie un gamin du morro faire son sale boulot. *crache, fait signe à ses hommes de ne pas bouger* Prends ta cargaison, ragazzo. Mais retiens ça : aujourd'hui tu saisis pour Ramos, et Ramos travaille pour les mêmes que moi. Tu sers personne. *sourire froid* Va. On se reverra.",
-"choices": ["Cargaison saisie"]
-}, {
-"id": "b8_offer",
-"flag": "policia_b7_done",
-"quest_not_active": "policia_b8_seguranca",
-"quest_not_completed": "policia_b8_seguranca",
-"actions": {"accept_quest": "policia_b8_seguranca"},
-"speaker": "Contact (radio)",
-"text": "*radio* Saisie homologuée, le Capitão jubile. Dernier gros morceau : un rassemblement gêne au Maracanã. Ramos veut que tu « sécurises la foule ». Tu sais ce que ça veut dire. C'est ça qui éponge ta dette. Vai.",
+"text": "*encadré par ses hommes, le mandat de Ramos à la main que tu lui colles sous le nez* …Donc Ramos envoie un gamin du morro faire son sale boulot. *crache, fait signe à ses hommes de ne pas bouger* Prends ta cargaison, ragazzo. Mais retiens ça : aujourd'hui tu saisis pour Ramos, et Ramos travaille pour les mêmes que moi. Tu sers personne. *sourire froid, ta radio crache l'ordre suivant :* « Saisie homologuée. Dernier gros morceau : un rassemblement gêne au Maracanã. Ramos veut que tu sécurises la foule. C'est ça qui éponge ta dette. »",
 "choices": ["Direction le Maracanã"]
 }, {
 "id": "default",
@@ -619,18 +610,9 @@ variants = [{
 "id": "c5_close",
 "objective_pending": ["consortium_c5_mac", "launder_mac"],
 "set_flag_after": "consortium_c5_done",
-"actions": {"finish_quest": {"quest": "consortium_c5_mac", "objective": "launder_mac", "payout": 800}, "pay_debt": 5000, "rep": {4: 6}},
+"actions": {"finish_quest": {"quest": "consortium_c5_mac", "objective": "launder_mac", "payout": 800}, "accept_quest": "consortium_c6_tioze", "pay_debt": 5000, "rep": {4: 6}},
 "speaker": "L'attachée du MAC",
-"text": "*tailleur impeccable, sous la soucoupe de Niemeyer* Sr. Magalhães, quel mécène généreux. *prend la mallette, te tend un reçu de donation officiel encadré* Une plaque à votre nom près de l'entrée, si vous voulez. *sourire parfait* L'argent entre en chiffres sales et ressort en vertu gravée dans le bronze. C'est ça, la culture. Transmettez nos remerciements à la maison.",
-"choices": ["La maison vous remercie"]
-}, {
-"id": "c6_offer",
-"flag": "consortium_c5_done",
-"quest_not_active": "consortium_c6_tioze",
-"quest_not_completed": "consortium_c6_tioze",
-"actions": {"accept_quest": "consortium_c6_tioze"},
-"speaker": "L'attachée du MAC",
-"text": "*baisse la voix, te raccompagne* Un message — pas de la maison, celui-là. Un vieux concierge du Copacabana Palace a demandé après vous. Il a dit que c'était au sujet de votre oncle, et de ce que le Consórcio est vraiment. *hausse une épaule* Moi je transmets l'art, pas les conseils. À vous de voir.",
+"text": "*tailleur impeccable, sous la soucoupe de Niemeyer* Sr. Magalhães, quel mécène généreux. *prend la mallette, te tend un reçu de donation officiel encadré* Une plaque à votre nom près de l'entrée, si vous voulez. *sourire parfait* L'argent entre en chiffres sales et ressort en vertu gravée dans le bronze. *baisse la voix, te raccompagne* Un message — pas de la maison, celui-là. Un vieux concierge du Copacabana Palace a demandé après vous. Au sujet de votre oncle, et de ce que le Consórcio est vraiment. Moi je transmets l'art, pas les conseils.",
 "choices": ["Je rentre voir le concierge"]
 }, {
 "id": "default",
@@ -648,18 +630,9 @@ variants = [{
 "id": "d6_close",
 "objective_pending": ["prefeito_d6_mac", "inaugurate_expo"],
 "set_flag_after": "prefeito_d6_done",
-"actions": {"finish_quest": {"quest": "prefeito_d6_mac", "objective": "inaugurate_expo", "payout": 500}, "pay_debt": 4000, "rep": {0: 5}},
+"actions": {"finish_quest": {"quest": "prefeito_d6_mac", "objective": "inaugurate_expo", "payout": 500}, "accept_quest": "prefeito_d7_tioze", "pay_debt": 4000, "rep": {0: 5}},
 "speaker": "La conservatrice",
-"text": "*sous la soucoupe de Niemeyer, rubans, photographes* Vous coupez le ruban, vous dites deux phrases, vous souriez à la presse. *tu parles des enfants de l'orfanato plutôt que de toi ; les flashes crépitent.* Parfait. Demain les journaux titreront sur le candidat civique du bairro — et sur le jeune homme à ses côtés. La respectabilité, ça se met en scène. Vous apprenez vite.",
-"choices": ["Pour le bairro"]
-}, {
-"id": "d7_offer",
-"flag": "prefeito_d6_done",
-"quest_not_active": "prefeito_d7_tioze",
-"quest_not_completed": "prefeito_d7_tioze",
-"actions": {"accept_quest": "prefeito_d7_tioze"},
-"speaker": "La conservatrice",
-"text": "*baisse la voix en te raccompagnant* Un mot privé — pas de la campagne. Un vieux concierge du Copacabana Palace a demandé après vous. Il dit qu'il a quelque chose qui peut tout changer, au sujet de votre oncle et du consortium. Il n'a pas voulu m'en dire plus. Allez le voir.",
+"text": "*sous la soucoupe de Niemeyer, rubans, photographes* Vous coupez le ruban, vous dites deux phrases, vous souriez à la presse. *tu parles des enfants de l'orfanato plutôt que de toi ; les flashes crépitent.* Parfait. Demain les journaux titreront sur le candidat civique du bairro — et sur le jeune homme à ses côtés. *baisse la voix en te raccompagnant* Un mot privé — pas de la campagne. Un vieux concierge du Copacabana Palace a demandé après vous. Il dit qu'il a quelque chose qui peut tout changer, au sujet de votre oncle et du consortium. Il n'a pas voulu m'en dire plus.",
 "choices": ["Je rentre voir le concierge"]
 }, {
 "id": "default",

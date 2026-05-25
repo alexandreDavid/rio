@@ -430,18 +430,9 @@ variants = [{
 "id": "b1_close",
 "objective_pending": ["policia_b1_intel", "report_face"],
 "set_flag_after": "policia_b1_done",
-"actions": {"finish_quest": {"quest": "policia_b1_intel", "objective": "report_face", "payout": 120}, "rep": {1: 3}},
+"actions": {"finish_quest": {"quest": "policia_b1_intel", "objective": "report_face", "payout": 120}, "accept_quest": "policia_b2_filature", "rep": {1: 3}},
 "speaker": "Agent en civil",
-"text": "*lit un journal sans le lire, lunettes noires* Ramos t'envoie. *tourne une page* Le type au maillot rayé, près des cocos — c'est un guetteur du morro. T'as bien vu. *note un truc* Le Capitão aime les yeux comme les tiens. Reviens, j'aurai autre chose.",
-"choices": ["Compris"]
-}, {
-"id": "b2_offer",
-"flag": "policia_b1_done",
-"quest_not_active": "policia_b2_filature",
-"quest_not_completed": "policia_b2_filature",
-"actions": {"accept_quest": "policia_b2_filature"},
-"speaker": "Agent en civil",
-"text": "*plie son journal* Maintenant le vrai travail. Ramos veut le plan du réseau de Tito — qui livre, qui guette, où. Tu remontes au morro. Ton morro. *te regarde par-dessus ses lunettes* T'as plus de quartier, gamin. T'as un Capitão.",
+"text": "*lit un journal sans le lire, lunettes noires* Ramos t'envoie. *tourne une page* Le type au maillot rayé, près des cocos — c'est un guetteur du morro. T'as bien vu. *note un truc* Le Capitão aime les yeux comme les tiens. *plie son journal* Maintenant le vrai travail : Ramos veut le plan du réseau de Tito — qui livre, qui guette, où. Tu remontes au morro. Ton morro. *te regarde par-dessus ses lunettes* T'as plus de quartier, gamin. T'as un Capitão.",
 "choices": ["Je remonte au morro"]
 }, {
 "id": "default",
@@ -459,19 +450,10 @@ required_flag = "voie_policia"
 variants = [{
 "id": "b6_warn",
 "objective_pending": ["policia_b6_tioze", "hear_concierge"],
-"actions": {"finish_quest": {"quest": "policia_b6_tioze", "objective": "hear_concierge", "payout": 0}, "set_flag": "tio_ze_warned_policia"},
+"actions": {"finish_quest": {"quest": "policia_b6_tioze", "objective": "hear_concierge", "payout": 0}, "accept_quest": "policia_b7_saisie", "set_flag": "tio_ze_warned_policia"},
 "speaker": "Le concierge",
-"text": "*vieil homme en uniforme du Palace, balaie sans te regarder* Petit. Te retourne pas. *voix basse* Je connaissais ton oncle Zé. Mieux que personne. Tu nettoies le morro pour Ramos, hein ? *un temps* Et Ramos, il nettoie pour qui ? Le consortium. Les mêmes qui tiennent ta dette. Tu fais le ménage de qui, au juste, sobrinho ? *te glisse un regard* Pense-y, avant la Madrugada.",
-"choices": ["…Qui es-tu, le vieux ?"]
-}, {
-"id": "b7_offer",
-"quest_completed": "policia_b6_tioze",
-"quest_not_active": "policia_b7_saisie",
-"quest_not_completed": "policia_b7_saisie",
-"actions": {"accept_quest": "policia_b7_saisie"},
-"speaker": "Le concierge",
-"text": "*soupire, s'appuie sur son balai* Tu continues quand même. Alors prends au moins ça : Ramos a son mandat. Une cargaison de la Mafia da Baía passe à Niterói. Tu la saisis — au nom de la loi, ou de Ramos, c'est selon. Vai. Et pense à ce que j'ai dit.",
-"choices": ["J'y vais"]
+"text": "*vieil homme en uniforme du Palace, balaie sans te regarder* Petit. Te retourne pas. *voix basse* Je connaissais ton oncle Zé. Mieux que personne. Tu nettoies le morro pour Ramos, hein ? *un temps* Et Ramos, il nettoie pour qui ? Le consortium. Les mêmes qui tiennent ta dette. Tu fais le ménage de qui, au juste, sobrinho ? *te glisse un regard, soupire, s'appuie sur son balai* Tu continueras quand même. Alors prends au moins ça : Ramos a son mandat. Une cargaison de la Mafia da Baía passe à Niterói — tu la saisis, au nom de la loi ou de Ramos, c'est selon. Pense à ce que j'ai dit, avant la Madrugada.",
+"choices": ["…J'y vais"]
 }, {
 "id": "default",
 "speaker": "Le concierge",
@@ -488,35 +470,17 @@ variants = [{
 "id": "c1_close",
 "objective_pending": ["consortium_c1_recouvrement", "collect_calcadao"],
 "set_flag_after": "consortium_c1_done",
-"actions": {"finish_quest": {"quest": "consortium_c1_recouvrement", "objective": "collect_calcadao", "payout": 150}, "rep": {4: 3}},
+"actions": {"finish_quest": {"quest": "consortium_c1_recouvrement", "objective": "collect_calcadao", "payout": 150}, "accept_quest": "consortium_c2_loyers", "rep": {4: 3}},
 "speaker": "Le commerçant",
-"text": "*essuie son comptoir, blêmit en te voyant* Vous êtes de chez Magalhães… *sort une enveloppe d'un tiroir, les mains qui tremblent* Tenez. Tout est là, et un petit supplément pour le retard. Dites-leur que ça n'arrivera plus. *te tend un stylo* Et… je signe où, déjà ? *Pas un mot plus haut que l'autre. C'est ça, la maison.*",
-"choices": ["Vous avez bien fait"]
+"text": "*essuie son comptoir, blêmit en te voyant* Vous êtes de chez Magalhães… *sort une enveloppe d'un tiroir, les mains qui tremblent* Tenez. Tout est là, et un petit supplément pour le retard. Dites-leur que ça n'arrivera plus. *te tend un stylo* Et… je signe où, déjà ? *Pas un mot plus haut que l'autre. C'est ça, la maison. Plus loin, le recouvreur plie l'enveloppe dans sa veste :* « Propre. Maintenant tu montes en grade — la tournée des loyers à Barra, le Riserva Uno. Présente-toi à Sr. Magalhães là-bas. »",
+"choices": ["Direction Barra"]
 }, {
 "id": "c8_close",
 "objective_pending": ["consortium_c8_menace", "break_holdout"],
 "set_flag_after": "consortium_c8_done",
-"actions": {"finish_quest": {"quest": "consortium_c8_menace", "objective": "break_holdout", "payout": 1500}, "pay_debt": 18000, "rep": {4: 6, 0: -5}},
+"actions": {"finish_quest": {"quest": "consortium_c8_menace", "objective": "break_holdout", "payout": 1500}, "accept_quest": "consortium_c9_pacto", "pay_debt": 18000, "rep": {4: 6, 0: -5}},
 "speaker": "La dernière commerçante",
-"text": "*la seule du calçadão qui n'avait pas signé — vieille, droite derrière sa caisse* Mon père a tenu ce kiosque quarante ans sans rien devoir à personne. *te regarde longtemps, puis baisse les yeux, prend le stylo* …Mais j'ai des petits-enfants. *elle signe, sans te regarder. Tu n'as pas levé la voix une seule fois. C'est plus laid comme ça.*",
-"choices": ["La maison vous remercie"]
-}, {
-"id": "c2_offer",
-"flag": "consortium_c1_done",
-"quest_not_active": "consortium_c2_loyers",
-"quest_not_completed": "consortium_c2_loyers",
-"actions": {"accept_quest": "consortium_c2_loyers"},
-"speaker": "Le recouvreur",
-"text": "*plie l'enveloppe dans sa veste* Propre. Magalhães va t'aimer. Maintenant tu montes en grade : la tournée des loyers à Barra, le Riserva Uno. Tu encaisses, tu notes les retards. Présente-toi à Sr. Magalhães là-bas.",
-"choices": ["Direction Barra"]
-}, {
-"id": "c9_offer",
-"flag": "consortium_c8_done",
-"quest_not_active": "consortium_c9_pacto",
-"quest_not_completed": "consortium_c9_pacto",
-"actions": {"accept_quest": "consortium_c9_pacto"},
-"speaker": "Le recouvreur",
-"text": "*range tout, te regarde presque avec respect* Le calçadão est à la maison. Tu as fait le ménage sans salir tes manches — c'est rare. Magalhães t'attend au Riserva Uno, à Barra. Pour la dernière signature. La tienne.",
+"text": "*la seule du calçadão qui n'avait pas signé — vieille, droite derrière sa caisse* Mon père a tenu ce kiosque quarante ans sans rien devoir à personne. *te regarde longtemps, puis baisse les yeux, prend le stylo* …Mais j'ai des petits-enfants. *elle signe, sans te regarder. Tu n'as pas levé la voix une seule fois. C'est plus laid comme ça. Le recouvreur range tout, te regarde presque avec respect :* « Le calçadão est à la maison. Magalhães t'attend au Riserva Uno, à Barra — pour la dernière signature. La tienne. »",
 "choices": ["Je vais voir Magalhães"]
 }, {
 "id": "default",
@@ -534,19 +498,10 @@ required_flag = "voie_consortium"
 variants = [{
 "id": "c6_warn",
 "objective_pending": ["consortium_c6_tioze", "hear_concierge"],
-"actions": {"finish_quest": {"quest": "consortium_c6_tioze", "objective": "hear_concierge", "payout": 0}, "set_flag": "tio_ze_warned_consortium"},
+"actions": {"finish_quest": {"quest": "consortium_c6_tioze", "objective": "hear_concierge", "payout": 0}, "accept_quest": "consortium_c7_condos", "set_flag": "tio_ze_warned_consortium"},
 "speaker": "Le concierge",
-"text": "*vieil homme en uniforme du Palace, balaie sans te regarder* Petit. Te retourne pas. *voix basse* Je connaissais ton oncle Zé. Mieux que personne. Le Consórcio ne t'a jamais prêté un centime — il t'a passé une laisse, et il a appelé ça une dette. J'ai vu comment, jadis. *un temps* Magalhães ne casse pas les jambes. Il casse les gens, lentement, et leur fait signer le constat. Avant que tu signes le tien : pense à qui tu seras de l'autre côté du stylo.",
-"choices": ["…Qui es-tu, le vieux ?"]
-}, {
-"id": "c7_offer",
-"quest_completed": "consortium_c6_tioze",
-"quest_not_active": "consortium_c7_condos",
-"quest_not_completed": "consortium_c7_condos",
-"actions": {"accept_quest": "consortium_c7_condos"},
-"speaker": "Le concierge",
-"text": "*soupire, s'appuie sur son balai* Tu vas signer quand même. Alors prends ça : la maison veut les trois condomínios de Barra alignés d'un coup. C'est le gros morceau, celui qui efface presque ta dette. Vas-y. Et souviens-toi de ce que je t'ai dit, quand ce sera ton tour de tenir le stylo.",
-"choices": ["J'y vais"]
+"text": "*vieil homme en uniforme du Palace, balaie sans te regarder* Petit. Te retourne pas. *voix basse* Je connaissais ton oncle Zé. Mieux que personne. Le Consórcio ne t'a jamais prêté un centime — il t'a passé une laisse, et il a appelé ça une dette. J'ai vu comment, jadis. *un temps* Magalhães ne casse pas les jambes. Il casse les gens, lentement, et leur fait signer le constat. *soupire, s'appuie sur son balai* Tu vas signer quand même. Alors prends ça : la maison veut les trois condomínios de Barra alignés d'un coup — c'est le gros morceau, celui qui efface presque ta dette. Souviens-toi de ce que je t'ai dit, quand ce sera ton tour de tenir le stylo.",
+"choices": ["…J'y vais"]
 }, {
 "id": "default",
 "speaker": "Le concierge",
@@ -563,35 +518,17 @@ variants = [{
 "id": "d1_close",
 "objective_pending": ["prefeito_d1_peticao", "gather_signatures"],
 "set_flag_after": "prefeito_d1_done",
-"actions": {"finish_quest": {"quest": "prefeito_d1_peticao", "objective": "gather_signatures", "payout": 120}, "rep": {0: 4}},
+"actions": {"finish_quest": {"quest": "prefeito_d1_peticao", "objective": "gather_signatures", "payout": 120}, "accept_quest": "prefeito_d2_basquete", "rep": {0: 4}},
 "speaker": "Bénévole de l'orfanato",
-"text": "*une table pliante, une pétition, des gosses qui jouent autour* Trois commerçants manquaient — Carlos, la pharmacienne, le kiosque. *tu les as convaincus un par un, sans rien promettre que ta parole* Ils ont signé pour toi, pas pour la mairie. Le Padre va pleurer de joie. L'orfanato tiendra une saison de plus.",
-"choices": ["C'est un début"]
+"text": "*une table pliante, une pétition, des gosses qui jouent autour* Trois commerçants manquaient — Carlos, la pharmacienne, le kiosque. *tu les as convaincus un par un, sans rien promettre que ta parole* Ils ont signé pour toi, pas pour la mairie. Le Padre va pleurer de joie. *range la pétition précieusement* Le Padre a une autre idée : un tournoi de basket à l'Aterro do Flamengo, pour sortir les gamins de la rue. Du concret, et une belle image pour la campagne. Tu sais parler aux jeunes.",
+"choices": ["Direction l'Aterro"]
 }, {
 "id": "d8_close",
 "objective_pending": ["prefeito_d8_campagne", "flip_calcadao"],
 "set_flag_after": "prefeito_d8_done",
-"actions": {"finish_quest": {"quest": "prefeito_d8_campagne", "objective": "flip_calcadao", "payout": 1500}, "pay_debt": 18000, "rep": {0: 8, 4: -5}},
+"actions": {"finish_quest": {"quest": "prefeito_d8_campagne", "objective": "flip_calcadao", "payout": 1500}, "accept_quest": "prefeito_d9_eleicao", "pay_debt": 18000, "rep": {0: 8, 4: -5}},
 "speaker": "Le calçadão",
-"text": "*tu lis le dossier à voix haute, sur une caisse, devant la foule du calçadão. Au début ils rient. Puis ils écoutent. Les noms, les chiffres, le racket déguisé en dette. Quelqu'un crache vers le Riserva Uno. En une heure le quartier a basculé — pas par peur, par colère juste. Ta dette ? Personne ne te la réclamera plus en public. La vérité l'a effacée mieux qu'aucun paiement.*",
-"choices": ["Le bairro a entendu"]
-}, {
-"id": "d2_offer",
-"flag": "prefeito_d1_done",
-"quest_not_active": "prefeito_d2_basquete",
-"quest_not_completed": "prefeito_d2_basquete",
-"actions": {"accept_quest": "prefeito_d2_basquete"},
-"speaker": "Bénévole de l'orfanato",
-"text": "*range la pétition précieusement* Le Padre a une autre idée : un tournoi de basket à l'Aterro do Flamengo, pour sortir les gamins de la rue. Du concret, et une belle image pour la campagne. Tu sais parler aux jeunes — vas-y.",
-"choices": ["Direction l'Aterro"]
-}, {
-"id": "d9_offer",
-"flag": "prefeito_d8_done",
-"quest_not_active": "prefeito_d9_eleicao",
-"quest_not_completed": "prefeito_d9_eleicao",
-"actions": {"accept_quest": "prefeito_d9_eleicao"},
-"speaker": "Bénévole de l'orfanato",
-"text": "*les yeux brillants* C'est le moment, l'élection est ce soir. Tout le bairro est derrière toi. Va retrouver le Padre — c'est lui qui ouvrira le scrutin. Et après… on ne dira plus « le neveu de Zé ». On dira « Coronel ».",
+"text": "*tu lis le dossier à voix haute, sur une caisse, devant la foule du calçadão. Au début ils rient. Puis ils écoutent. Les noms, les chiffres, le racket déguisé en dette. Quelqu'un crache vers le Riserva Uno. En une heure le quartier a basculé — pas par peur, par colère juste. Ta dette ? Personne ne te la réclamera plus en public. La vérité l'a effacée mieux qu'aucun paiement.* *Une bénévole arrive en courant, les yeux brillants :* « C'est le moment — l'élection est ce soir. Va retrouver le Padre, c'est lui qui ouvrira le scrutin. Après ça, on ne dira plus le neveu de Zé. On dira Coronel. »",
 "choices": ["Je vais voir le Padre"]
 }, {
 "id": "default",
@@ -609,18 +546,9 @@ required_flag = "voie_prefeito"
 variants = [{
 "id": "d7_warn",
 "objective_pending": ["prefeito_d7_tioze", "receive_dossier"],
-"actions": {"finish_quest": {"quest": "prefeito_d7_tioze", "objective": "receive_dossier", "payout": 0}, "set_flag": "tio_ze_warned_prefeito"},
+"actions": {"finish_quest": {"quest": "prefeito_d7_tioze", "objective": "receive_dossier", "payout": 0}, "accept_quest": "prefeito_d8_campagne", "set_flag": "tio_ze_warned_prefeito"},
 "speaker": "Le concierge",
-"text": "*vieil homme en uniforme du Palace, il s'arrête de balayer, te regarde vraiment cette fois* Petit. Tu es le seul à n'avoir pris ni flingue, ni plaque, ni stylo de la maison. *sort une enveloppe épaisse de sous sa veste, te la met dans les mains* Je connaissais ton oncle Zé. Mieux que personne. Voilà ce que j'ai vu, jadis, et que j'ai gardé : tout sur Magalhães et le consortium. Des noms, des comptes, des dates. *te serre le poignet* Sers-t'en bien. Pas pour régner. Pour qu'on n'ait plus jamais à fuir.",
-"choices": ["…Qui es-tu, le vieux ?"]
-}, {
-"id": "d8_offer",
-"quest_completed": "prefeito_d7_tioze",
-"quest_not_active": "prefeito_d8_campagne",
-"quest_not_completed": "prefeito_d8_campagne",
-"actions": {"accept_quest": "prefeito_d8_campagne"},
-"speaker": "Le concierge",
-"text": "*reprend son balai, la voix plus ferme* Maintenant retourne sur le calçadão et lis-leur ça. Tout. À voix haute. Ils ont peur du consortium parce qu'ils croient être seuls. Montre-leur qu'ils ne le sont pas. C'est comme ça qu'on efface une dette : pas en payant, en disant la vérité.",
+"text": "*vieil homme en uniforme du Palace, il s'arrête de balayer, te regarde vraiment cette fois* Petit. Tu es le seul à n'avoir pris ni flingue, ni plaque, ni stylo de la maison. *sort une enveloppe épaisse de sous sa veste, te la met dans les mains* Je connaissais ton oncle Zé. Mieux que personne. Voilà ce que j'ai vu, jadis, et que j'ai gardé : tout sur Magalhães et le consortium. Des noms, des comptes, des dates. *te serre le poignet, la voix plus ferme* Maintenant retourne sur le calçadão et lis-leur ça. Tout. À voix haute. Ils ont peur du consortium parce qu'ils croient être seuls. Montre-leur qu'ils ne le sont pas. C'est comme ça qu'on efface une dette : pas en payant, en disant la vérité.",
 "choices": ["J'y vais"]
 }, {
 "id": "default",
