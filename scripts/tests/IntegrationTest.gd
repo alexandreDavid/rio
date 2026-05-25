@@ -77,12 +77,10 @@ const QUEST_RESOURCES: Array[String] = [
 	"res://resources/quests/ronaldo_maracana_torcida.tres",
 	"res://resources/quests/consortium_airport_pickup.tres",
 	"res://resources/quests/ronaldo_aterro_basket.tres",
-	"res://resources/quests/pedro_cagarras_sup.tres",
 	"res://resources/quests/lucas_arpoador_surf.tres",
 	"res://resources/quests/camila_ipanema_volley.tres",
 	"res://resources/quests/diego_botafogo_capoeira.tres",
 	"res://resources/quests/sofia_bondinho_tour.tres",
-	"res://resources/quests/mateus_cagarras_pesca.tres",
 	"res://resources/quests/act4_carnaval_desfile.tres",
 	"res://resources/quests/beto_lost.tres",
 	"res://resources/quests/feijoada_bondinho.tres",
@@ -90,7 +88,6 @@ const QUEST_RESOURCES: Array[String] = [
 	"res://resources/quests/cristo_photo.tres",
 	"res://resources/quests/niteroi_envelope.tres",
 	"res://resources/quests/maracana_jersey.tres",
-	"res://resources/quests/cagarras_chain.tres",
 	"res://resources/quests/sambo_plumes.tres",
 	"res://resources/quests/barra_brief.tres",
 	"res://resources/quests/zona_sul_envelope.tres",
@@ -829,7 +826,6 @@ const _DISTRICT_SCENE_PATHS: Dictionary = {
 	"maracana":          "res://scenes/districts/Maracana.tscn",
 	"santos_dumont":     "res://scenes/districts/SantosDumont.tscn",
 	"pao_acucar":        "res://scenes/districts/PaoAcucar.tscn",
-	"cagarras":          "res://scenes/districts/Cagarras.tscn",
 	"sambodromo":        "res://scenes/districts/Sambodromo.tscn",
 	"barra_tijuca":      "res://scenes/districts/BarraDaTijuca.tscn",
 	"niteroi":           "res://scenes/districts/Niteroi.tscn",
@@ -1011,12 +1007,10 @@ const SCRIPT_COMPLETED_OBJECTIVES: Dictionary = {
 	"ronaldo_dj_paoacucar": ["play_set"],
 	"ronaldo_maracana_torcida": ["lead_torcida"],
 	"ronaldo_aterro_basket": ["win_basket_session"],
-	"pedro_cagarras_sup": ["round_islands"],
 	"lucas_arpoador_surf": ["win_surf_session"],
 	"camila_ipanema_volley": ["win_volley_match"],
 	"diego_botafogo_capoeira": ["tip_diego"],
 	"sofia_bondinho_tour": ["guide_to_summit"],
-	"mateus_cagarras_pesca": ["haul_catch"],
 	"bruno_pesca_baia": ["haul_baia"],
 	# Viewpoint dans le district Corcovado.
 	"padre_corcovado_relic": ["bless_at_corcovado"],
@@ -1074,7 +1068,6 @@ const SCRIPT_COMPLETED_OBJECTIVES: Dictionary = {
 	"cristo_photo": ["shoot_cristo"],
 	"niteroi_envelope": ["deliver_envelope"],
 	"maracana_jersey": ["find_jersey", "return_jersey"],
-	"cagarras_chain": ["recover_chain", "return_chain"],
 	"sambo_plumes": ["fetch_plumes", "deliver_plumes"],
 	"barra_brief": ["deliver_brief", "confirm_back"],
 	# Side quest Barra Riserva Uno — Magalhães script + Nilton dialog actions.
@@ -1403,9 +1396,11 @@ const _NITEROI: String = "res://scenes/districts/Niteroi.tscn"
 const _MARACANA: String = "res://scenes/districts/Maracana.tscn"
 const _BARRA: String = "res://scenes/districts/BarraDaTijuca.tscn"
 const _SANTOS: String = "res://scenes/districts/SantosDumont.tscn"
-const _CAGARRAS: String = "res://scenes/districts/Cagarras.tscn"
 
 func _test_voie_trafico_end_to_end() -> void:
+	# Trafico A6 (réception cargo) est désormais sur l'îlot offshore de Zona Sul
+	# — ZonaSul contient à la fois TraficoZonaSulSpot (A4) ET TraficoCagarrasSpot
+	# (A6) qui s'enchaînent dans la même instance de scène.
 	await _run_voie_e2e({
 		"name": "Tráfico", "pact_npc": "tito", "pact_knot": "tito_pacto_trafico_offer",
 		"voie_flag": "voie_trafico", "q1": "trafico_a1_livraison", "q9": "trafico_a9_corrida",
@@ -1414,7 +1409,7 @@ func _test_voie_trafico_end_to_end() -> void:
 		"stations": [
 			[_COPA, "TraficoContactSpot"], [_COPA, "TraficoTioZeSpot"],
 			[_ZONASUL, "TraficoZonaSulSpot"], [_FAVELA, "TraficoIntimSpot"],
-			[_CAGARRAS, "TraficoCagarrasSpot"], [_NITEROI, "TraficoNiteroiSpot"],
+			[_ZONASUL, "TraficoCagarrasSpot"], [_NITEROI, "TraficoNiteroiSpot"],
 		],
 	})
 

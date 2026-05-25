@@ -24,10 +24,45 @@ const AUTOLOADS: Array[String] = [
 ]
 
 const QUEST_RESOURCES: Array[String] = [
+	"res://resources/quests/prologue_pedrinho.tres",
+	"res://resources/quests/trafico_a1_livraison.tres",
+	"res://resources/quests/trafico_a2_pickup.tres",
+	"res://resources/quests/trafico_a3_chauffeur.tres",
+	"res://resources/quests/trafico_a4_ipanema.tres",
+	"res://resources/quests/trafico_a5_intim.tres",
+	"res://resources/quests/trafico_a6_cagarras.tres",
+	"res://resources/quests/trafico_a7_tioze.tres",
+	"res://resources/quests/trafico_a8_baia.tres",
+	"res://resources/quests/trafico_a9_corrida.tres",
+	"res://resources/quests/policia_b1_intel.tres",
+	"res://resources/quests/policia_b2_filature.tres",
+	"res://resources/quests/policia_b3_escorte.tres",
+	"res://resources/quests/policia_b4_descente.tres",
+	"res://resources/quests/policia_b5_reperage.tres",
+	"res://resources/quests/policia_b6_tioze.tres",
+	"res://resources/quests/policia_b7_saisie.tres",
+	"res://resources/quests/policia_b8_seguranca.tres",
+	"res://resources/quests/policia_b9_madrugada.tres",
+	"res://resources/quests/consortium_c1_recouvrement.tres",
+	"res://resources/quests/consortium_c2_loyers.tres",
+	"res://resources/quests/consortium_c3_partenariat.tres",
+	"res://resources/quests/consortium_c4_vip.tres",
+	"res://resources/quests/consortium_c5_mac.tres",
+	"res://resources/quests/consortium_c6_tioze.tres",
+	"res://resources/quests/consortium_c7_condos.tres",
+	"res://resources/quests/consortium_c8_menace.tres",
+	"res://resources/quests/consortium_c9_pacto.tres",
+	"res://resources/quests/prefeito_d1_peticao.tres",
+	"res://resources/quests/prefeito_d2_basquete.tres",
+	"res://resources/quests/prefeito_d3_mediation.tres",
+	"res://resources/quests/prefeito_d4_procession.tres",
+	"res://resources/quests/prefeito_d5_rally.tres",
+	"res://resources/quests/prefeito_d6_mac.tres",
+	"res://resources/quests/prefeito_d7_tioze.tres",
+	"res://resources/quests/prefeito_d8_campagne.tres",
+	"res://resources/quests/prefeito_d9_eleicao.tres",
 	"res://resources/quests/act1_heritage.tres",
-	"res://resources/quests/act1_meet_ramos.tres",
-	"res://resources/quests/act1_meet_tito.tres",
-	"res://resources/quests/milho_01.tres",
+	"res://resources/quests/quest_milho_01.tres",
 	"res://resources/quests/deliver_package_01.tres",
 	"res://resources/quests/find_bracelet_01.tres",
 	"res://resources/quests/ze_invitation.tres",
@@ -41,24 +76,11 @@ const QUEST_RESOURCES: Array[String] = [
 	"res://resources/quests/escort_contessa.tres",
 	"res://resources/quests/lost_dog.tres",
 	"res://resources/quests/bar_waiter.tres",
-	"res://resources/quests/act2_intro.tres",
-	"res://resources/quests/act2_miguel_favela.tres",
-	"res://resources/quests/act2_ramos_operacao.tres",
-	"res://resources/quests/act2_padre_orfanato.tres",
 	"res://resources/quests/act2_pecheur_secret.tres",
 	"res://resources/quests/act2_contessa_gala.tres",
 	"res://resources/quests/padaria_delivery.tres",
 	"res://resources/quests/valet_palace.tres",
 	"res://resources/quests/padaria_baking.tres",
-	"res://resources/quests/act3_policia_intel.tres",
-	"res://resources/quests/act3_trafico_pickup.tres",
-	"res://resources/quests/act3_prefeito_endorsements.tres",
-	"res://resources/quests/act3_policia_madrugada.tres",
-	"res://resources/quests/act3_trafico_corrida.tres",
-	"res://resources/quests/act3_prefeito_eleicao.tres",
-	"res://resources/quests/act4_prefeito_audiencia.tres",
-	"res://resources/quests/act4_policia_purga.tres",
-	"res://resources/quests/act4_trafico_tributo.tres",
 	"res://resources/quests/padre_corcovado_relic.tres",
 	"res://resources/quests/ronaldo_dj_paoacucar.tres",
 	"res://resources/quests/carlos_lagoa_volta.tres",
@@ -67,14 +89,19 @@ const QUEST_RESOURCES: Array[String] = [
 	"res://resources/quests/ronaldo_maracana_torcida.tres",
 	"res://resources/quests/consortium_airport_pickup.tres",
 	"res://resources/quests/ronaldo_aterro_basket.tres",
-	"res://resources/quests/pedro_cagarras_sup.tres",
 	"res://resources/quests/lucas_arpoador_surf.tres",
 	"res://resources/quests/camila_ipanema_volley.tres",
 	"res://resources/quests/diego_botafogo_capoeira.tres",
 	"res://resources/quests/sofia_bondinho_tour.tres",
-	"res://resources/quests/mateus_cagarras_pesca.tres",
 	"res://resources/quests/act4_carnaval_desfile.tres",
 	"res://resources/quests/beto_lost.tres",
+	"res://resources/quests/feijoada_bondinho.tres",
+	"res://resources/quests/ipanema_yoga.tres",
+	"res://resources/quests/cristo_photo.tres",
+	"res://resources/quests/niteroi_envelope.tres",
+	"res://resources/quests/maracana_jersey.tres",
+	"res://resources/quests/sambo_plumes.tres",
+	"res://resources/quests/barra_brief.tres",
 	"res://resources/quests/zona_sul_envelope.tres",
 	"res://resources/quests/consortium_barra_security.tres",
 	"res://resources/quests/consortium_le_parc.tres",
@@ -90,9 +117,7 @@ const QUEST_RESOURCES: Array[String] = [
 
 # Quêtes auto-acceptées dès qu'elles deviennent disponibles (passage d'acte).
 # Pivot narratif → on veut qu'elles apparaissent dans le journal sans dialogue préalable.
-const AUTO_ACCEPT_ON_AVAILABLE: Array[String] = [
-	"act2_intro",
-]
+const AUTO_ACCEPT_ON_AVAILABLE: Array[String] = []
 
 const NG_PLUS_META_PATH: String = "user://ng_plus.json"
 
@@ -206,11 +231,11 @@ func _on_district_changed(district_id: String) -> void:
 			and CampaignManager.has_flag("should_visit_home") \
 			and not CampaignManager.has_flag("home_visit_done"):
 		CampaignManager.set_flag("home_visit_done")
-	# Pickup Tráfico acte 3 : entrer à Botafogo coche pickup_botafogo.
-	if district_id == "botafogo_flamengo" and QuestManager.is_active("act3_trafico_pickup"):
-		var pobjs: Dictionary = QuestManager.get_objectives_state("act3_trafico_pickup")
-		if not pobjs.get("pickup_botafogo", false):
-			QuestManager.complete_objective("act3_trafico_pickup", "pickup_botafogo")
+	# Voie Tráfico A3 : arriver à Botafogo livre le coffre (chauffeur).
+	if district_id == "botafogo_flamengo" and QuestManager.is_active("trafico_a3_chauffeur"):
+		var a3objs: Dictionary = QuestManager.get_objectives_state("trafico_a3_chauffeur")
+		if not a3objs.get("drive_botafogo", false):
+			QuestManager.complete_objective("trafico_a3_chauffeur", "drive_botafogo")
 	if not QuestManager.is_active("tourist_vip_tour"):
 		return
 	if not TOUR_OBJECTIVES.has(district_id):
@@ -254,13 +279,18 @@ func _load_ng_plus_meta() -> void:
 		CampaignManager.set_flag("is_ng_plus")
 
 func _play_intro_cutscene() -> void:
-	# Le joueur démarre dans la maison du tio Zé, mais Seu João n'y est pas
-	# (cf. ouverture narrative). La cinématique d'introduction se déclenche
-	# désormais quand le joueur sort de la maison la 1re fois — voir
-	# IntroBumpTrigger / IntroSeuJoaoBump. Plus de cinématique automatique au
-	# démarrage : on laisse juste passer 2 frames pour que tout soit prêt.
+	# Ouverture narrative jouée PAR-DESSUS le décor (HouseInterior en fond) :
+	# enchaîne 4 répliques du « Narrateur » via CutsceneRunner — gèle le joueur
+	# le temps qu'il lise, puis libère. Le bump Seu João reste séparé : il se
+	# déclenche à la 1re sortie de la maison (cf. IntroSeuJoaoBump).
 	await get_tree().process_frame
 	await get_tree().process_frame
+	if CampaignManager.has_flag("narrative_intro_seen"):
+		return
+	await CutsceneRunner.play(func() -> void:
+		await CutsceneRunner.say("narrateur", "game_intro_open")
+	)
+	CampaignManager.set_flag("narrative_intro_seen")
 
 func _attempt_load() -> void:
 	if not SaveSystem.load_game():
@@ -282,19 +312,24 @@ func _attempt_load() -> void:
 func _recover_stuck_endgame() -> void:
 	if CampaignManager.chosen_endgame != CampaignManager.Endgame.NONE:
 		return
-	if QuestManager.is_completed("act3_prefeito_eleicao"):
-		print("[MainBoot] recovery : act3_prefeito_eleicao complétée sans endgame → seal PREFEITO")
+	if QuestManager.is_completed("prefeito_d9_eleicao"):
+		print("[MainBoot] recovery : prefeito_d9_eleicao complétée sans endgame → seal PREFEITO")
 		CampaignManager.complete_endgame(CampaignManager.Endgame.PREFEITO)
 		SaveSystem.save_game()
 		return
-	if QuestManager.is_completed("act3_trafico_corrida"):
-		print("[MainBoot] recovery : act3_trafico_corrida complétée sans endgame → seal TRAFICO")
+	if QuestManager.is_completed("trafico_a9_corrida"):
+		print("[MainBoot] recovery : trafico_a9_corrida complétée sans endgame → seal TRAFICO")
 		CampaignManager.complete_endgame(CampaignManager.Endgame.TRAFICO)
 		SaveSystem.save_game()
 		return
-	if QuestManager.is_completed("act3_policia_madrugada"):
-		print("[MainBoot] recovery : act3_policia_madrugada complétée sans endgame → seal POLICIA")
+	if QuestManager.is_completed("policia_b9_madrugada"):
+		print("[MainBoot] recovery : policia_b9_madrugada complétée sans endgame → seal POLICIA")
 		CampaignManager.complete_endgame(CampaignManager.Endgame.POLICIA)
+		SaveSystem.save_game()
+		return
+	if QuestManager.is_completed("consortium_c9_pacto"):
+		print("[MainBoot] recovery : consortium_c9_pacto complétée sans endgame → seal CONSORTIUM")
+		CampaignManager.complete_endgame(CampaignManager.Endgame.CONSORTIUM)
 		SaveSystem.save_game()
 		return
 

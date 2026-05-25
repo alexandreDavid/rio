@@ -63,9 +63,9 @@ const JOURNAL_ENTRIES: Dictionary = {
 	"tito_act2_loyalty_done":       {"category": "trafico", "title": "Tito te confie la corrida"},
 	"tito_act2_loyalty_declined":   {"category": "trafico", "title": "Tito te tourne le dos"},
 	"consortium_act3_intro":        {"category": "act2", "title": "Dom Nilton ouvre les trois portes"},
-	"spot_vizinha_default":         {"category": "sides", "title": "La voisine cherche son fils"},
-	"spot_vizinha_found":           {"category": "sides", "title": "Beto rendu à sa mère"},
-	"spot_beto_lost":               {"category": "sides", "title": "Beto perdu sur le calçadão"},
+	"spot_vizinho_jorge_offer":     {"category": "sides", "title": "Seu Jorge cherche son petit-fils"},
+	"spot_vizinho_jorge_return":    {"category": "sides", "title": "Beto renvoyé chez Seu Jorge"},
+	"spot_beto_lost":               {"category": "sides", "title": "Beto fourgue sur le calçadão"},
 	# --- META : runs cumulées ---
 	"seu_joao_ng_plus_intro":       {"category": "act1", "title": "Le déjà-vu de tio Zé"},
 	"spot_vovo_ng_plus_dejavu":     {"category": "carnaval", "title": "Vovó se souvient des autres règnes"},
@@ -86,8 +86,6 @@ const JOURNAL_ENTRIES: Dictionary = {
 	"ronaldo_dj_offer":         {"category": "districts", "title": "DJ au Pão de Açúcar"},
 	"ronaldo_torcida_offer":    {"category": "districts", "title": "Mener la torcida au Maracanã"},
 	"ronaldo_basket_offer":     {"category": "districts", "title": "Basquete na Aterro do Flamengo"},
-	"pecheur_cagarras_offer":   {"category": "districts", "title": "La botija des Cagarras"},
-	"pecheur_cagarras_done":    {"category": "districts", "title": "La mer t'aime bien"},
 	"carlos_lagoa_offer":       {"category": "districts", "title": "Volta da Lagoa avec Carlos"},
 	"padre_corcovado_offer":    {"category": "districts", "title": "La relique du Corcovado"},
 	# --- CONQUISTAS — paragraphes rétrospectifs, marqués au déblocage ---

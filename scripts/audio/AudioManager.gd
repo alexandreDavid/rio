@@ -22,7 +22,6 @@ const DISTRICT_MUSIC: Dictionary = {
 	"maracana":           "res://assets/audio/music/torcida.ogg",
 	"santos_dumont":      "res://assets/audio/music/airport.ogg",
 	"aterro_flamengo":    "res://assets/audio/music/aterro.ogg",
-	"cagarras":           "res://assets/audio/music/sea.ogg",
 	"sambodromo":         "res://assets/audio/music/carnaval.ogg",
 	"favela_morro":       "res://assets/audio/music/favela.ogg",       # forró doux + radio lointaine
 	"zona_sul":           "res://assets/audio/music/ipanema.ogg",      # bossa lounge
@@ -38,7 +37,6 @@ const AMBIENT_FALLBACK_PATH: String = "res://assets/audio/sfx/waves.ogg"
 const DISTRICT_AMBIENT: Dictionary = {
 	"copacabana":         "res://assets/audio/sfx/waves.ogg",
 	"zona_sul":           "res://assets/audio/sfx/waves.ogg",
-	"cagarras":           "res://assets/audio/sfx/waves.ogg",
 	"aterro_flamengo":    "res://assets/audio/sfx/ambient_park.ogg",
 	"botafogo_flamengo":  "res://assets/audio/sfx/ambient_city.ogg",
 	"favela_morro":       "res://assets/audio/sfx/ambient_favela.ogg",

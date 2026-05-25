@@ -13,7 +13,6 @@
 [ext_resource type="PackedScene" path="res://scenes/districts/Maracana.tscn" id="49_maracana"]
 [ext_resource type="PackedScene" path="res://scenes/districts/PaoAcucar.tscn" id="50_paoacucar"]
 [ext_resource type="PackedScene" path="res://scenes/districts/SantosDumont.tscn" id="51_santos"]
-[ext_resource type="PackedScene" path="res://scenes/districts/Cagarras.tscn" id="52_cagarras"]
 [ext_resource type="PackedScene" path="res://scenes/districts/Sambodromo.tscn" id="53_sambodromo"]
 [ext_resource type="PackedScene" path="res://scenes/vehicles/Bike.tscn" id="54_bike"]
 [ext_resource type="PackedScene" path="res://scenes/vehicles/Car.tscn" id="55_car"]
@@ -728,9 +727,6 @@ position = Vector2(-7500, -2900)
 
 [node name="SantosDumontDistrict" parent="." instance=ExtResource("51_santos")]
 position = Vector2(-8500, -2900)
-
-[node name="CagarrasDistrict" parent="." instance=ExtResource("52_cagarras")]
-position = Vector2(-9500, -2900)
 
 [node name="SambodromoDistrict" parent="." instance=ExtResource("53_sambodromo")]
 position = Vector2(-10500, -2900)

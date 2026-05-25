@@ -398,69 +398,157 @@ func _on_quest_change_check_main(quest_id: String) -> void:
 # `hide_signals` = MAIN à pré-marquer comme déjà signalées pour empêcher les
 # toasts "✦" génériques d'écraser le message clair de jalon.
 const MAIN_NEXT_HINT: Dictionary = {
+	"prologue_pedrinho": {
+		"text": "✓ Pedrinho est rentré — Le morro est libre. Va voir Seu João pour ta dette",
+		"hide_signals": ["act1_heritage"],
+	},
+	"trafico_a1_livraison": {
+		"text": "✓ Paquet livré — Reparle au contact du calçadão (Copacabana)",
+		"hide_signals": ["trafico_a2_pickup"],
+	},
+	"trafico_a2_pickup": {
+		"text": "✓ Sacoche récupérée — Le contact a un coffre à conduire",
+		"hide_signals": ["trafico_a3_chauffeur"],
+	},
+	"trafico_a3_chauffeur": {
+		"text": "✓ Coffre livré à Botafogo — Le morro parle de toi. Retourne voir le contact (Copa)",
+		"hide_signals": ["trafico_a4_ipanema"],
+	},
+	"trafico_a4_ipanema": {
+		"text": "✓ Deal conclu à Ipanema — Un voisin t'a vu. Remonte au morro le faire taire",
+		"hide_signals": ["trafico_a5_intim"],
+	},
+	"trafico_a5_intim": {
+		"text": "✓ Le voisin s'est tu — Prends le SUP à Ipanema, l'îlot t'attend au large",
+		"hide_signals": ["trafico_a6_cagarras"],
+	},
+	"trafico_a6_cagarras": {
+		"text": "✓ Chargement réceptionné — Un vieux du Palace veut te voir (Copa)",
+		"hide_signals": ["trafico_a7_tioze"],
+	},
+	"trafico_a7_tioze": {
+		"text": "✓ Tu as entendu le concierge — La grosse livraison t'attend (Niterói)",
+		"hide_signals": ["trafico_a8_baia"],
+	},
+	"trafico_a8_baia": {
+		"text": "✓ Baie traversée, dette presque soldée — Tito t'attend au morro pour la corrida",
+		"hide_signals": ["trafico_a9_corrida"],
+	},
+	"trafico_a9_corrida": {
+		"text": "✓ Última corrida menée — Le Morro est à toi. Tu es le Patrão.",
+		"hide_signals": [],
+	},
+	"policia_b1_intel": {
+		"text": "✓ Visage rapporté — Reparle à l'agent en civil (calçadão, Copa)",
+		"hide_signals": ["policia_b2_filature"],
+	},
+	"policia_b2_filature": {
+		"text": "✓ Réseau cartographié — Conduis la patrouille à Botafogo",
+		"hide_signals": ["policia_b3_escorte"],
+	},
+	"policia_b3_escorte": {
+		"text": "✓ Patrouille en place — Descente sur le dealer à Arpoador (Zona Sul)",
+		"hide_signals": ["policia_b4_descente"],
+	},
+	"policia_b4_descente": {
+		"text": "✓ Dealer coffré — Monte au Corcovado pour le repérage",
+		"hide_signals": ["policia_b5_reperage"],
+	},
+	"policia_b5_reperage": {
+		"text": "✓ Remise repérée — Un vieux du Palace veut te voir (Copa)",
+		"hide_signals": ["policia_b6_tioze"],
+	},
+	"policia_b6_tioze": {
+		"text": "✓ Tu as entendu le concierge — Saisie à Niterói",
+		"hide_signals": ["policia_b7_saisie"],
+	},
+	"policia_b7_saisie": {
+		"text": "✓ Cargaison saisie — « Sécurise » la foule au Maracanã",
+		"hide_signals": ["policia_b8_seguranca"],
+	},
+	"policia_b8_seguranca": {
+		"text": "✓ Foule matée, dette presque soldée — Retrouve Ramos pour la Madrugada",
+		"hide_signals": ["policia_b9_madrugada"],
+	},
+	"policia_b9_madrugada": {
+		"text": "✓ Operação Madrugada — Tu es Chefe de Polícia honoraire.",
+		"hide_signals": [],
+	},
+	"consortium_c1_recouvrement": {
+		"text": "✓ Recouvrement effectué — Va voir Magalhães à Barra (tournée des loyers)",
+		"hide_signals": ["consortium_c2_loyers"],
+	},
+	"consortium_c2_loyers": {
+		"text": "✓ Loyers encaissés — Le syndic a un « partenariat » à Ipanema (Zona Sul)",
+		"hide_signals": ["consortium_c3_partenariat"],
+	},
+	"consortium_c3_partenariat": {
+		"text": "✓ Partenariat signé — Un VIP arrive à Santos Dumont",
+		"hide_signals": ["consortium_c4_vip"],
+	},
+	"consortium_c4_vip": {
+		"text": "✓ VIP reçu — Donation à blanchir au MAC (Niterói)",
+		"hide_signals": ["consortium_c5_mac"],
+	},
+	"consortium_c5_mac": {
+		"text": "✓ Donation blanchie — Un vieux du Palace veut te voir (Copa)",
+		"hide_signals": ["consortium_c6_tioze"],
+	},
+	"consortium_c6_tioze": {
+		"text": "✓ Tu as entendu le concierge — Aligne les trois condomínios (Barra)",
+		"hide_signals": ["consortium_c7_condos"],
+	},
+	"consortium_c7_condos": {
+		"text": "✓ Trois condos alignés, dette presque soldée — Le dernier libre du calçadão (Copa)",
+		"hide_signals": ["consortium_c8_menace"],
+	},
+	"consortium_c8_menace": {
+		"text": "✓ Le dernier a signé — Magalhães t'attend au Riserva Uno pour le Pacto",
+		"hide_signals": ["consortium_c9_pacto"],
+	},
+	"consortium_c9_pacto": {
+		"text": "✓ Pacto da Barra signé — Tu es la maison. Sócio do Consórcio.",
+		"hide_signals": [],
+	},
+	"prefeito_d1_peticao": {
+		"text": "✓ Pétition signée — Organise le tournoi de basket à l'Aterro",
+		"hide_signals": ["prefeito_d2_basquete"],
+	},
+	"prefeito_d2_basquete": {
+		"text": "✓ Tournoi réussi — Médiation à régler dans la favela",
+		"hide_signals": ["prefeito_d3_mediation"],
+	},
+	"prefeito_d3_mediation": {
+		"text": "✓ Conflit désamorcé — Protège la procession en Zona Sul",
+		"hide_signals": ["prefeito_d4_procession"],
+	},
+	"prefeito_d4_procession": {
+		"text": "✓ Procession protégée — Mène le meeting au Maracanã",
+		"hide_signals": ["prefeito_d5_rally"],
+	},
+	"prefeito_d5_rally": {
+		"text": "✓ Meeting enflammé — Inauguration au MAC de Niterói",
+		"hide_signals": ["prefeito_d6_mac"],
+	},
+	"prefeito_d6_mac": {
+		"text": "✓ Expo inaugurée — Un vieux du Palace veut te remettre quelque chose (Copa)",
+		"hide_signals": ["prefeito_d7_tioze"],
+	},
+	"prefeito_d7_tioze": {
+		"text": "✓ Dossier en main — Retourne le calçadão avec la preuve (Copa)",
+		"hide_signals": ["prefeito_d8_campagne"],
+	},
+	"prefeito_d8_campagne": {
+		"text": "✓ Le calçadão a basculé, dette effacée par la vérité — Le Padre t'attend pour l'élection",
+		"hide_signals": ["prefeito_d9_eleicao"],
+	},
+	"prefeito_d9_eleicao": {
+		"text": "✓ Élection gagnée — Tu es le Coronel do Bairro.",
+		"hide_signals": [],
+	},
 	"act1_heritage": {
-		"text": "✓ Acompte payé — Rencontre Ramos (Bar do Policial) et Tito (Morro)",
-		"hide_signals": ["act1_meet_ramos", "act1_meet_tito"],
-	},
-	"act1_meet_ramos": {
-		"text": "✓ Ramos satisfait — Continue : Tito au cœur du Morro",
+		"text": "✓ Acompte payé — Choisis ton camp : Tito (Morro), Ramos (Bar do Policial), Magalhães (Barra) ou le Padre (chapelle)",
 		"hide_signals": [],
-	},
-	"act1_meet_tito": {
-		"text": "✓ Tito honoré — Continue : Capitão Ramos (Bar do Policial)",
-		"hide_signals": [],
-	},
-	"act2_intro": {
-		"text": "✓ Tio Zé démasqué — Va voir Ramos pour l'Operação Carnaval",
-		"hide_signals": ["act2_ramos_operacao"],
-	},
-	"act2_ramos_operacao": {
-		"text": "✓ Operação tranchée — Va voir le Padre à la chapelle",
-		"hide_signals": ["act2_padre_orfanato"],
-	},
-	"act2_padre_orfanato": {
-		"text": "✓ Orfanato sauvé — Monte au Morro voir Miguel",
-		"hide_signals": ["act2_miguel_favela"],
-	},
-	"act2_miguel_favela": {
-		"text": "✓ Convoi livré — Retourne au Copacabana Palace pour le pivot d'acte 3",
-		"hide_signals": [],
-	},
-	"act3_policia_intel": {
-		"text": "✓ Dossier monté — Retourne voir Ramos pour l'Operação Madrugada",
-		"hide_signals": ["act3_policia_madrugada"],
-	},
-	"act3_trafico_pickup": {
-		"text": "✓ Sac livré — Retourne voir Miguel pour la corrida",
-		"hide_signals": ["act3_trafico_corrida"],
-	},
-	"act3_prefeito_endorsements": {
-		"text": "✓ Coalition scellée — Retourne au Padre pour l'élection",
-		"hide_signals": ["act3_prefeito_eleicao"],
-	},
-	"act3_policia_madrugada": {
-		"text": "✓ Madrugada bouclée — La voie Polícia s'ouvre. Acte 4 : Purga",
-		"hide_signals": ["act4_policia_purga"],
-	},
-	"act3_trafico_corrida": {
-		"text": "✓ Corrida menée — La voie Tráfico s'ouvre. Acte 4 : Coleta do Patrão",
-		"hide_signals": ["act4_trafico_tributo"],
-	},
-	"act3_prefeito_eleicao": {
-		"text": "✓ Élection gagnée — La voie Prefeito s'ouvre. Acte 4 : Audiências",
-		"hide_signals": ["act4_prefeito_audiencia"],
-	},
-	"act4_policia_purga": {
-		"text": "✓ Purga consommée — Sambódromo : mène le Carnaval",
-		"hide_signals": ["act4_carnaval_desfile"],
-	},
-	"act4_trafico_tributo": {
-		"text": "✓ Tribut perçu — Sambódromo : mène le Carnaval",
-		"hide_signals": ["act4_carnaval_desfile"],
-	},
-	"act4_prefeito_audiencia": {
-		"text": "✓ Audiences données — Sambódromo : mène le Carnaval",
-		"hide_signals": ["act4_carnaval_desfile"],
 	},
 	"consortium_peninsula": {
 		"text": "✦ Chaîne consortium scellée — Magalhães te rappelle au Riserva Uno (Barra)",

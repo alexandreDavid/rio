@@ -49,11 +49,6 @@ const DISTRICTS: Dictionary = {
 		"node_name": "BotafogoFlamengoDistrict",
 		"spawn_marker": "PlayerSpawnAterro",
 	},
-	"cagarras": {
-		"label": "Posto 6 — Ilhas Cagarras (SUP)",
-		"fare": 10,
-		"node_name": "CagarrasDistrict",
-	},
 	"sambodromo": {
 		"label": "Sambódromo — desfile do Carnaval",
 		"fare": 22,
@@ -84,6 +79,16 @@ const DISTRICTS: Dictionary = {
 		"fare": 22,  # traversée de la baie
 		"node_name": "NiteroiDistrict",
 	},
+	"forte": {
+		"label": "Forte de Copacabana — vue mer + musée",
+		"fare": 8,
+		"node_name": "ForteDeCopacabanaDistrict",
+	},
+	"marina_gloria": {
+		"label": "Marina da Glória — yachts + SUP navigable",
+		"fare": 12,
+		"node_name": "MarinaDaGloriaDistrict",
+	},
 }
 
 # Position d'arrivée custom quand on entre via une sortie piétonne (pas via le
@@ -101,19 +106,19 @@ const WALK_ENTRIES: Dictionary = {
 	},
 	"zona_sul": {
 		"copacabana": Vector2(800, 130),                # arrivée depuis l'est (Copa) — ouest de ExitToCopa (905)
-		"botafogo_flamengo": Vector2(850, -1020),       # depuis Botafogo — sud de ExitToBotafogo (-1080)
-		"barra_tijuca": Vector2(-870, 100),             # depuis Barra — est de ExitToBarra (-920)
+		"botafogo_flamengo": Vector2(850, -960),        # depuis Botafogo — sud de ExitToBotafogo (top y=-1032), 72 px clear
+		"barra_tijuca": Vector2(-820, 100),             # depuis Barra — est de ExitToBarra (right edge x=-888), 68 px clear
 	},
 	"botafogo_flamengo": {
 		"copacabana": Vector2(0, 250),                  # sortie nord du Túnel Novo — nord de ExitToCopa (365)
 		"pao_acucar": Vector2(880, 30),                 # retour du bondinho au sud-est, près de la borne
-		"zona_sul": Vector2(700, 310),                  # depuis Lagoa/Ipanema — nord de ExitToZonaSul (360)
+		"zona_sul": Vector2(700, 250),                  # depuis Lagoa/Ipanema — nord de ExitToZonaSul (top y=312), 62 px clear
 	},
 	"favela_morro": {
 		"copacabana": Vector2(0, 150),    # arrivée depuis le bas — nord de ExitToCopa (250) à 70 px
 	},
 	"barra_tijuca": {
-		"zona_sul": Vector2(920, 100),                  # depuis Leblon — ouest de ExitToZonaSul (975)
+		"zona_sul": Vector2(870, 100),                  # depuis Leblon — ouest de ExitToZonaSul (left edge x=927), 57 px clear
 	},
 }
 
@@ -173,6 +178,9 @@ func travel_to(district_id: String) -> bool:
 	var target: Vector2 = _resolve_spawn(district_id)
 	if GameManager.player:
 		GameManager.player.global_position = target
+	_pending_target_district = district_id
+	_reposition_vehicles_near_player()
+	_pending_target_district = ""
 	_current = district_id
 	district_changed.emit(district_id)
 	return true
@@ -199,9 +207,42 @@ func walk_to(district_id: String, vehicle: Node = null) -> bool:
 		# Annule l'inertie pour éviter de défoncer un mur à l'arrivée.
 		if vehicle is CharacterBody2D:
 			(vehicle as CharacterBody2D).velocity = Vector2.ZERO
+	_pending_target_district = district_id
+	_reposition_vehicles_near_player(vehicle)
+	_pending_target_district = ""
 	_current = district_id
 	district_changed.emit(district_id)
 	return true
+
+# Réinitialise les Rideables au point de parking du district courant à chaque
+# arrivée (taxi ou piéton). Le véhicule monté par le joueur est skipé (il est
+# déjà sous lui via walk_to). Anchor = spawn par défaut du district (le « taxi
+# stand » conceptuel), pas la position du joueur — comme ça les véhicules
+# attendent à un endroit prévisible, pas n'importe où le joueur a marché.
+# `mounted` (optionnel) = le véhicule déjà déplacé par walk_to.
+func _reposition_vehicles_near_player(mounted: Node = null) -> void:
+	var anchor: Vector2 = _resolve_spawn(_pending_district_for_reset())
+	# Offsets fixes par type de véhicule autour du parking.
+	var offsets: Dictionary = {"bike": Vector2(-50, 30), "car": Vector2(50, 30), "sup": Vector2(-60, 50)}
+	for v in get_tree().get_nodes_in_group("vehicle"):
+		if v == mounted:
+			continue
+		if not (v is Node2D):
+			continue
+		if v is Rideable and (v as Rideable).is_ridden():
+			continue  # déjà collé au joueur
+		var vid: String = String((v as Rideable).vehicle_id) if v is Rideable else ""
+		(v as Node2D).global_position = anchor + offsets.get(vid, Vector2(0, 40))
+		if v is CharacterBody2D:
+			(v as CharacterBody2D).velocity = Vector2.ZERO
+
+# Helper interne : pendant travel_to/walk_to, on appelle le repositionnement
+# AVANT d'avoir maj `_current`. On a stocké la cible dans _pending_target — sinon
+# fallback sur la position courante du joueur pour rester safe.
+var _pending_target_district: String = ""
+
+func _pending_district_for_reset() -> String:
+	return _pending_target_district if _pending_target_district != "" else _current
 
 func _walk_target(district_id: String, from_id: String) -> Vector2:
 	# 1. Entrée custom (selon district d'origine)

@@ -40,7 +40,6 @@ func _launch() -> void:
 		_active_match.match_ended.connect(_on_match_ended)
 
 const FISHING_QUEST_HOOKS: Dictionary = {
-	"mateus_cagarras_pesca": "haul_catch",
 	"bruno_pesca_baia": "haul_baia",
 }
 

@@ -1223,25 +1223,6 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 		"text": "*tire un dernier filet* La mer parle moins fort cette nuit. Obrigado, sobrinho.",
 		"choices": ["Bonne pêche"],
 	},
-	# --- Side quest : tour des Cagarras en stand-up paddle ---
-	"pecheur_cagarras_offer": {
-		"speaker": "Seu Pedro",
-		"text": "*pointe l'horizon* Tu vois les quatre rochers là-bas ? Cagarras. J'ai aperçu une botija coloniale coincée entre deux rochers de l'îlot du milieu. La marée est calme aujourd'hui. Loue un SUP au Posto 6, contourne les quatre îlots, ramène un croquis. Je te file 250 reais et la moitié de ce que vaut la jarre si tu la rapportes un jour.",
-		"choices": ["J'y vais", "Pas le moment"],
-		"on_choose": {
-			"0": {"accept_quest": "pedro_cagarras_sup"},
-		},
-	},
-	"pecheur_cagarras_remind": {
-		"speaker": "Seu Pedro",
-		"text": "Le taxi de l'Av. Atlântica te dépose au Posto 6. La borne SUP est juste sur le sable. Quatre îlots, dans l'ordre. Et fais gaffe au courant — il pousse vers l'ouest.",
-		"choices": ["Já vou"],
-	},
-	"pecheur_cagarras_done": {
-		"speaker": "Seu Pedro",
-		"text": "*déplie le croquis et siffle* Bom mapa, sobrinho. La prochaine fois je viens avec toi et on remonte la jarre. La mer t'aime bien.",
-		"choices": ["Valeu, Seu Pedro"],
-	},
 	# --- Acte 4 : défilé du Carnaval (couronnement public) ---
 	"seu_joao_carnaval_offer": {
 		"speaker": "Seu João",
@@ -1840,33 +1821,6 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 		"speaker": "Sofia",
 		"text": "*te tend l'enveloppe avec les 180 reais, courbette légère* Domo arigato, sobrinho-san. Le pão de açúcar au coucher du soleil, c'est encore plus beau qu'à Hokusai. Si vous passez par Kyoto, demandez après moi à l'académie d'architecture.",
 		"choices": ["Boa viagem, Sofia"],
-	},
-	# --- Mateus — concours de pêche aux Cagarras ---
-	"mateus_intro": {
-		"speaker": "Mateus",
-		"text": "*répare son filet, sans lever la tête* Sobrinho. Pêcheur des Cagarras depuis vingt ans, j'ai vu le banc de pirajuba changer de cap trois fois. Tu pêches ?",
-		"choices": ["Un peu"],
-		"on_choose": {
-			"0": {"next": "mateus_offer"},
-		},
-	},
-	"mateus_offer": {
-		"speaker": "Mateus",
-		"text": "*finit un nœud* Petit concours informel. Tu prends mon canot, tu vas au FishingSpot près de l'îlot du milieu. Si tu ramènes une prise, 220 reais et le respect des bateaux. Si tu rentres bredouille, t'es bredouille — c'est tout. Marché ?",
-		"choices": ["J'y vais (PÊCHE AUX CAGARRAS)", "Plus tard"],
-		"on_choose": {
-			"0": {"accept_quest": "mateus_cagarras_pesca"},
-		},
-	},
-	"mateus_remind": {
-		"speaker": "Mateus",
-		"text": "*pointe la mer du menton* L'îlot du milieu. Le banc bouge avec les courants — vise la zone d'écume, pas l'eau plate.",
-		"choices": ["J'y vais"],
-	},
-	"mateus_done": {
-		"speaker": "Mateus",
-		"text": "*hoche la tête, presque souriant* Beau coup. T'as l'œil pour le banc. La mer respecte les patients, sobrinho. Reviens quand tu veux mouiller un fil.",
-		"choices": ["Valeu, Mateus"],
 	},
 	# Restaurante — Cantinho Carioca
 	"chef_intro": {

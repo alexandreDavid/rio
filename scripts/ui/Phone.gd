@@ -32,15 +32,16 @@ const REP_AXIS_COLORS: Dictionary = {
 @onready var noticias_screen: Control = $Frame/Screens/Noticias
 @onready var noticias_box: VBoxContainer = $Frame/Screens/Noticias/Scroll/Box
 @onready var ajustes_screen: Control = $Frame/Screens/Ajustes
-@onready var slider_music: HSlider = $Frame/Screens/Ajustes/Box/MusicRow/MusicSlider
-@onready var slider_sfx: HSlider = $Frame/Screens/Ajustes/Box/SfxRow/SfxSlider
-@onready var slider_ambient: HSlider = $Frame/Screens/Ajustes/Box/AmbientRow/AmbientSlider
-@onready var replay_tutorial_btn: Button = $Frame/Screens/Ajustes/Box/ReplayTutorial
-@onready var show_credits_btn: Button = $Frame/Screens/Ajustes/Box/ShowCredits
-@onready var quit_game_btn: Button = $Frame/Screens/Ajustes/Box/QuitGame
-@onready var slot_btn_1: Button = $Frame/Screens/Ajustes/Box/SlotRow/Slot1
-@onready var slot_btn_2: Button = $Frame/Screens/Ajustes/Box/SlotRow/Slot2
-@onready var slot_btn_3: Button = $Frame/Screens/Ajustes/Box/SlotRow/Slot3
+@onready var slider_music: HSlider = $Frame/Screens/Ajustes/Scroll/Box/MusicRow/MusicSlider
+@onready var slider_sfx: HSlider = $Frame/Screens/Ajustes/Scroll/Box/SfxRow/SfxSlider
+@onready var slider_ambient: HSlider = $Frame/Screens/Ajustes/Scroll/Box/AmbientRow/AmbientSlider
+@onready var appearance_btn: Button = $Frame/Screens/Ajustes/Scroll/Box/AppearanceEditor
+@onready var replay_tutorial_btn: Button = $Frame/Screens/Ajustes/Scroll/Box/ReplayTutorial
+@onready var show_credits_btn: Button = $Frame/Screens/Ajustes/Scroll/Box/ShowCredits
+@onready var quit_game_btn: Button = $Frame/Screens/Ajustes/Scroll/Box/QuitGame
+@onready var slot_btn_1: Button = $Frame/Screens/Ajustes/Scroll/Box/SlotRow/Slot1
+@onready var slot_btn_2: Button = $Frame/Screens/Ajustes/Scroll/Box/SlotRow/Slot2
+@onready var slot_btn_3: Button = $Frame/Screens/Ajustes/Scroll/Box/SlotRow/Slot3
 @onready var conquistas_screen: Control = $Frame/Screens/Conquistas
 @onready var conquistas_box: VBoxContainer = $Frame/Screens/Conquistas/Scroll/Box
 @onready var conquistas_counter: Label = $Frame/Screens/Conquistas/Counter
@@ -62,25 +63,17 @@ const REP_AXIS_COLORS: Dictionary = {
 @onready var viewer_name: Label = $Frame/PhotoViewer/ViewerName
 @onready var viewer_close: Button = $Frame/PhotoViewer/ViewerClose
 
-# App home screen buttons — Pages multi (page 1 essentielles, page 2 extras)
-@onready var page_1: GridContainer = $Frame/Screens/Home/Pages/Page1
-@onready var page_2: GridContainer = $Frame/Screens/Home/Pages/Page2
-@onready var arrow_left: Button = $Frame/Screens/Home/PageNav/ArrowLeft
-@onready var arrow_right: Button = $Frame/Screens/Home/PageNav/ArrowRight
-@onready var dot_1: Label = $Frame/Screens/Home/PageNav/Dot1
-@onready var dot_2: Label = $Frame/Screens/Home/PageNav/Dot2
-@onready var app_taxi: Button = $Frame/Screens/Home/Pages/Page1/Taxi
-@onready var app_stats: Button = $Frame/Screens/Home/Pages/Page1/Stats
+# App home screen buttons — grille unique scrollable verticalement.
+@onready var app_taxi: Button = $Frame/Screens/Home/AppsScroll/Apps/Taxi
+@onready var app_stats: Button = $Frame/Screens/Home/AppsScroll/Apps/Stats
 @onready var app_journal: Button = null  # fusionné dans Crônica
-@onready var app_cronica: Button = $Frame/Screens/Home/Pages/Page1/Cronica
-@onready var app_ajustes: Button = $Frame/Screens/Home/Pages/Page1/Ajustes
-@onready var app_missions: Button = $Frame/Screens/Home/Pages/Page2/Missions
-@onready var app_photos: Button = $Frame/Screens/Home/Pages/Page2/Photos
-@onready var app_noticias: Button = $Frame/Screens/Home/Pages/Page2/Noticias
-@onready var app_conquistas: Button = $Frame/Screens/Home/Pages/Page2/Conquistas
-@onready var app_mapa: Button = $Frame/Screens/Home/Pages/Page2/Mapa
-
-var _current_page: int = 1
+@onready var app_cronica: Button = $Frame/Screens/Home/AppsScroll/Apps/Cronica
+@onready var app_ajustes: Button = $Frame/Screens/Home/AppsScroll/Apps/Ajustes
+@onready var app_missions: Button = $Frame/Screens/Home/AppsScroll/Apps/Missions
+@onready var app_photos: Button = $Frame/Screens/Home/AppsScroll/Apps/Photos
+@onready var app_noticias: Button = $Frame/Screens/Home/AppsScroll/Apps/Noticias
+@onready var app_conquistas: Button = $Frame/Screens/Home/AppsScroll/Apps/Conquistas
+@onready var app_mapa: Button = $Frame/Screens/Home/AppsScroll/Apps/Mapa
 
 const PHOTOS_DIR: String = "user://photos"
 
@@ -111,13 +104,6 @@ func _ready() -> void:
 		app_conquistas.pressed.connect(func(): _show_screen("conquistas"))
 	if app_mapa:
 		app_mapa.pressed.connect(func(): _show_screen("mapa"))
-	if arrow_left:
-		arrow_left.pressed.connect(func(): _switch_page(_current_page - 1))
-	if arrow_right:
-		arrow_right.pressed.connect(func(): _switch_page(_current_page + 1))
-	if home_screen:
-		home_screen.gui_input.connect(_on_home_swipe)
-	_switch_page(1)
 	_setup_app_badges()
 	# Sliders volumes — émettent au glisser, persistés par Settings.
 	if slider_music:
@@ -126,6 +112,8 @@ func _ready() -> void:
 		slider_sfx.value_changed.connect(func(v): Settings.set_sfx(v))
 	if slider_ambient:
 		slider_ambient.value_changed.connect(func(v): Settings.set_ambient(v))
+	if appearance_btn:
+		appearance_btn.pressed.connect(_open_appearance)
 	if replay_tutorial_btn:
 		replay_tutorial_btn.pressed.connect(_replay_tutorial)
 	if show_credits_btn:
@@ -194,46 +182,6 @@ func close() -> void:
 # ------------------------------------------------------------------
 # Pagination home (2 pages × 4-5 apps)
 # ------------------------------------------------------------------
-
-const PAGE_COUNT: int = 2
-const SWIPE_THRESHOLD: float = 50.0
-
-var _swipe_start_x: float = -1.0
-
-func _switch_page(target: int) -> void:
-	target = clampi(target, 1, PAGE_COUNT)
-	_current_page = target
-	if page_1:
-		page_1.visible = target == 1
-	if page_2:
-		page_2.visible = target == 2
-	if dot_1:
-		dot_1.text = "●" if target == 1 else "○"
-		dot_1.add_theme_color_override("font_color",
-				Color(0.95, 0.92, 0.85) if target == 1 else Color(0.6, 0.6, 0.65))
-	if dot_2:
-		dot_2.text = "●" if target == 2 else "○"
-		dot_2.add_theme_color_override("font_color",
-				Color(0.95, 0.92, 0.85) if target == 2 else Color(0.6, 0.6, 0.65))
-	if arrow_left:
-		arrow_left.disabled = target <= 1
-		arrow_left.modulate.a = 1.0 if target > 1 else 0.35
-	if arrow_right:
-		arrow_right.disabled = target >= PAGE_COUNT
-		arrow_right.modulate.a = 1.0 if target < PAGE_COUNT else 0.35
-
-func _on_home_swipe(event: InputEvent) -> void:
-	# Détection swipe horizontal sur la zone Home — mobile (ScreenDrag) ou
-	# desktop (mouse drag).
-	if event is InputEventScreenTouch or event is InputEventMouseButton:
-		var pressed: bool = event.pressed if "pressed" in event else false
-		if pressed:
-			_swipe_start_x = event.position.x
-		elif _swipe_start_x >= 0.0:
-			var dx: float = event.position.x - _swipe_start_x
-			if abs(dx) > SWIPE_THRESHOLD:
-				_switch_page(_current_page + (-1 if dx > 0 else 1))
-			_swipe_start_x = -1.0
 
 func _setup_app_badges() -> void:
 	# Crée un Label rouge attaché en haut-droite de chaque app sujette à
@@ -935,7 +883,7 @@ const MAPA_REGIONS: Array = [
 	{"label": "🌄 Norte", "ids": ["sambodromo", "maracana", "corcovado"]},
 	{"label": "🌅 Leste (baía + bondinho)", "ids": ["niteroi", "pao_acucar", "santos_dumont", "aterro_flamengo", "botafogo_flamengo"]},
 	{"label": "🏙 Centro", "ids": ["favela_morro", "copacabana"]},
-	{"label": "🏖 Sul + Oeste", "ids": ["zona_sul", "cagarras", "barra_tijuca"]},
+	{"label": "🏖 Sul + Oeste", "ids": ["zona_sul", "barra_tijuca"]},
 ]
 
 func _refresh_mapa() -> void:
@@ -1119,6 +1067,12 @@ func _show_credits() -> void:
 	if c and c.has_method("open"):
 		close()
 		c.open()
+
+func _open_appearance() -> void:
+	var cc: Node = get_tree().current_scene.get_node_or_null("CharacterCreator")
+	if cc and cc.has_method("open"):
+		close()
+		cc.open()
 
 func _quit_game() -> void:
 	# Auto-save de courtoisie avant de quitter.

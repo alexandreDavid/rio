@@ -32,11 +32,14 @@ func _ready() -> void:
 		SaveSystem.save_loaded.connect(_on_save_loaded)
 	if camera:
 		camera.make_current()
+	apply_appearance()
 	print("[Player] spawned at ", global_position, " — camera current=", camera != null)
 
 func _on_save_loaded() -> void:
 	# Si aucun dialogue/cutscene n'est actif au reload, on force l'éveil pour
 	# parer aux saves faites pendant un freeze.
+	# L'apparence restaurée par la save doit re-render le sprite.
+	apply_appearance()
 	if not DialogueBridge.is_active() and not CutsceneRunner.is_running():
 		print("[Player] save_loaded → ensure unfrozen")
 		set_physics_process(true)
@@ -73,7 +76,7 @@ func _physics_process(delta: float) -> void:
 func _current_surface() -> String:
 	var d: String = DistrictManager.current()
 	match d:
-		"copacabana", "zona_sul", "cagarras":
+		"copacabana", "zona_sul":
 			return "sand"
 		"corcovado", "aterro_flamengo":
 			return "grass"
@@ -87,7 +90,10 @@ func set_mounted(vehicle: Node) -> void:
 	# Désactive la collision avec le monde tant qu'on est sur un véhicule
 	# (le véhicule porte la collision pour les deux).
 	collision_layer = 0 if vehicle else 1
-	collision_mask = 0 if vehicle else 1
+	# Couche 1 = murs/bâtiments ; couche 3 (bit 4) = surfaces d'eau navigables
+	# au SUP uniquement. À pied, on bloque sur les deux. Sur véhicule, plus
+	# rien (le véhicule porte sa propre collision).
+	collision_mask = 0 if vehicle else (1 | 4)
 	# Ignore les interactions tant qu'on conduit (sauf le E du Rideable).
 	set_process_unhandled_input(vehicle == null)
 	if vehicle:
@@ -99,112 +105,67 @@ func _unhandled_input(event: InputEvent) -> void:
 		if _current_interactable:
 			_current_interactable.interact(self)
 
-const ANIM_ROW: Dictionary = {
-	"down": 0,
-	"up": 1,
-	"left": 2,
-	"right": 3,
-}
-const WALK_CYCLE: Array = [0, 1, 2, 3]
+# Rendu via CharacterSpriteFactory : feuille 3×3 (lignes DOWN/UP/RIGHT, LEFT
+# en miroir ; colonnes idle/stepL/stepR), cellule 16×24. Personnalisable via
+# l'éditeur de perso (GameManager.player_appearance).
+# Synchronisé avec la factory : si la résolution de cellule change, le joueur
+# suit automatiquement (pas de double source de vérité).
+const FACTORY_CELL_W: int = CharacterSpriteFactory.CELL_W
+const FACTORY_CELL_H: int = CharacterSpriteFactory.CELL_H
+const FACTORY_ROW_DOWN: int = 0
+const FACTORY_ROW_UP: int = 1
+const FACTORY_ROW_RIGHT: int = 2
+# Cycle de marche 4 phases mappé sur les 3 colonnes (idle, stepL, idle, stepR).
+const FACTORY_WALK_CYCLE: Array[int] = [0, 1, 0, 2]
 const ANIM_FPS: float = 8.0
 const TARGET_DISPLAY_SIZE: float = 48.0
 
 var _anim_accum: float = 0.0
-var _content_rect: Rect2 = Rect2()
-var _cell_w: float = 0.0
-var _cell_h: float = 0.0
-var _frame_center_x: Array = []
-var _char_height: float = 200.0  # hauteur réelle du perso (pas du cell) pour scale
-var _frames_scanned: bool = false
 
-func _scan_content_bounds() -> void:
-	if sprite == null or sprite.texture == null:
+# (Re)construit la feuille du joueur depuis l'apparence courante et l'applique
+# au Sprite2D. Appelé à _ready, après un load (save_loaded), et live par
+# l'éditeur de perso (via GameManager.set_player_appearance).
+func apply_appearance() -> void:
+	if sprite == null:
 		return
-	var image: Image = sprite.texture.get_image()
-	if image == null:
-		return
-	var img_w: int = image.get_width()
-	var img_h: int = image.get_height()
-	# Boîte globale
-	var g_min_x: int = img_w
-	var g_min_y: int = img_h
-	var g_max_x: int = 0
-	var g_max_y: int = 0
-	for y in img_h:
-		for x in img_w:
-			if image.get_pixel(x, y).a > 0.05:
-				if x < g_min_x: g_min_x = x
-				if y < g_min_y: g_min_y = y
-				if x > g_max_x: g_max_x = x
-				if y > g_max_y: g_max_y = y
-	if g_max_x < g_min_x or g_max_y < g_min_y:
-		return
-	_content_rect = Rect2(g_min_x, g_min_y, g_max_x - g_min_x + 1, g_max_y - g_min_y + 1)
-	_cell_w = _content_rect.size.x / 4.0
-	_cell_h = _content_rect.size.y / 4.0
-
-	# Scan per-frame : centre X + hauteur réelle du perso
-	_frame_center_x.clear()
-	var max_char_height: int = 0
-	for row in 4:
-		for col in 4:
-			var cell_x: int = int(_content_rect.position.x + col * _cell_w)
-			var cell_y: int = int(_content_rect.position.y + row * _cell_h)
-			var cell_w_i: int = int(_cell_w)
-			var cell_h_i: int = int(_cell_h)
-			var min_x: int = cell_x + cell_w_i
-			var max_x: int = cell_x
-			var min_y: int = cell_y + cell_h_i
-			var max_y: int = cell_y
-			for y in range(cell_y, cell_y + cell_h_i):
-				for x in range(cell_x, cell_x + cell_w_i):
-					if image.get_pixel(x, y).a > 0.05:
-						if x < min_x: min_x = x
-						if x > max_x: max_x = x
-						if y < min_y: min_y = y
-						if y > max_y: max_y = y
-			var char_cx: float
-			if max_x >= min_x:
-				char_cx = (min_x + max_x) / 2.0
-			else:
-				char_cx = cell_x + _cell_w / 2.0
-			_frame_center_x.append(char_cx)
-			if max_y >= min_y:
-				var h: int = max_y - min_y + 1
-				if h > max_char_height:
-					max_char_height = h
-	if max_char_height > 0:
-		_char_height = float(max_char_height)
-	_frames_scanned = true
-	print("[Player] content=%s cells=%sx%s char_height=%s" % [_content_rect, _cell_w, _cell_h, _char_height])
+	var config: Dictionary = CharacterSpriteFactory.config_from_indices(GameManager.effective_appearance())
+	sprite.texture = CharacterSpriteFactory.build_sheet(config)
+	sprite.region_enabled = true
+	sprite.region_rect = Rect2(0, 0, FACTORY_CELL_W, FACTORY_CELL_H)
+	sprite.hframes = 1
+	sprite.vframes = 1
+	# LINEAR : la feuille haute résolution est réduite en douceur → rendu
+	# illustré/lissé (proche du sprite peint d'origine), pas pixelisé.
+	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	# Cellule réduite à TARGET_DISPLAY_SIZE px de haut à l'écran.
+	var sf: float = TARGET_DISPLAY_SIZE / float(FACTORY_CELL_H)
+	sprite.scale = Vector2(sf, sf)
+	_update_visual(0.0)
 
 func _update_visual(delta: float) -> void:
 	if sprite == null or sprite.texture == null:
 		return
-	if not _frames_scanned:
-		_scan_content_bounds()
-		if not _frames_scanned:
-			return
-		# Scale basé sur la hauteur RÉELLE du perso (pas le cell), pour coller à la taille des NPCs
-		var target_scale: float = TARGET_DISPLAY_SIZE / _char_height
-		sprite.scale = Vector2(target_scale, target_scale)
 	var dir_name: String = _direction_name()
 	var moving: bool = velocity.length() > 10.0
 	if moving:
 		_anim_accum += delta * ANIM_FPS
 	else:
 		_anim_accum = 0.0
-	var cycle_pos: int = int(_anim_accum) % WALK_CYCLE.size()
-	var frame_idx: int = WALK_CYCLE[cycle_pos]
-	var row: int = ANIM_ROW.get(dir_name, 0)
-	# Utilise le centre X réel du perso dans cette frame (compense le stride AI)
-	var frame_i: int = row * 4 + frame_idx
-	var char_cx: float = _frame_center_x[frame_i] if frame_i < _frame_center_x.size() else _content_rect.position.x + frame_idx * _cell_w + _cell_w / 2.0
+	var col: int = 0
+	if moving:
+		col = FACTORY_WALK_CYCLE[int(_anim_accum) % FACTORY_WALK_CYCLE.size()]
+	var row: int = FACTORY_ROW_DOWN
+	match dir_name:
+		"up":    row = FACTORY_ROW_UP
+		"down":  row = FACTORY_ROW_DOWN
+		"right": row = FACTORY_ROW_RIGHT
+		"left":  row = FACTORY_ROW_RIGHT  # miroir horizontal
+	sprite.flip_h = (dir_name == "left")
 	sprite.region_rect = Rect2(
-		char_cx - _cell_w / 2.0,
-		_content_rect.position.y + row * _cell_h,
-		_cell_w,
-		_cell_h
+		col * FACTORY_CELL_W,
+		row * FACTORY_CELL_H,
+		FACTORY_CELL_W,
+		FACTORY_CELL_H
 	)
 
 func _direction_name() -> String:

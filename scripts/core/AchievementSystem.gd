@@ -42,9 +42,7 @@ var _districts_visited: Dictionary = {}
 const BEACH_QUESTS: Array[String] = [
 	"camila_ipanema_volley",
 	"lucas_arpoador_surf",
-	"pedro_cagarras_sup",
 	"ronaldo_aterro_basket",
-	"mateus_cagarras_pesca",
 	"diego_botafogo_capoeira",
 	"sofia_bondinho_tour",
 ]
