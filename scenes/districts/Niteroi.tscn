@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3]
+[gd_scene load_steps=18 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/props/TaxiStand.tscn" id="1_taxi"]
 [ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="2_wander"]
@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" path="res://scenes/npcs/DonVincenzo.tscn" id="10_vincenzo"]
 [ext_resource type="PackedScene" path="res://scenes/npcs/OlgaMendez.tscn" id="11_olga"]
 [ext_resource type="PackedScene" path="res://scenes/npcs/RobertoMaia.tscn" id="12_roberto"]
+[ext_resource type="PackedScene" path="res://scenes/props/ReactiveDialogueSpot.tscn" id="16_reactive"]
 [ext_resource type="PackedScene" path="res://scenes/props/BuildingDoor.tscn" id="13_door"]
 [ext_resource type="PackedScene" path="res://scenes/interiors/MACInterior.tscn" id="14_mac_int"]
 [ext_resource type="Script" path="res://scripts/districts/NiteroiDistrict.gd" id="15_district"]
@@ -27,7 +28,6 @@ wrap_left = -820.0
 wrap_right = 820.0
 drift_speed = 8.0
 
-# Sky et baie de Guanabara vue depuis Niteroi
 [node name="Sky" type="ColorRect" parent="."]
 offset_left = -800.0
 offset_top = -300.0
@@ -42,8 +42,6 @@ offset_right = 800.0
 offset_bottom = -180.0
 color = Color(0.78, 0.82, 0.78, 1)
 
-# Decor anime (drift) place tot dans la tree pour rester derriere les
-# elements de premier plan.
 
 [node name="CloudA" type="ColorRect" parent="." groups=["drift_west"]]
 offset_left = -640.0
@@ -143,7 +141,6 @@ offset_right = 620.0
 offset_bottom = -107.0
 color = Color(0.85, 0.92, 0.95, 0.45)
 
-# Silhouettes lointaines de Rio de l'autre côté de la baie
 [node name="RioCorcovado" type="ColorRect" parent="."]
 offset_left = -600.0
 offset_top = -240.0
@@ -193,7 +190,6 @@ offset_right = 800.0
 offset_bottom = -180.0
 color = Color(0.42, 0.42, 0.50, 0.7)
 
-# Baie de Guanabara
 [node name="Bay" type="ColorRect" parent="."]
 offset_left = -800.0
 offset_top = -180.0
@@ -236,7 +232,6 @@ offset_right = -10.0
 offset_bottom = -120.0
 color = Color(0.92, 0.92, 0.85, 0.9)
 
-# Promenade Caminho Niemeyer (bord de baie)
 [node name="Promenade" type="ColorRect" parent="."]
 offset_left = -800.0
 offset_top = -40.0
@@ -251,7 +246,6 @@ offset_right = 800.0
 offset_bottom = -6.0
 color = Color(0.65, 0.62, 0.55, 0.7)
 
-# MAC Niemeyer (la soucoupe au-dessus de la promenade)
 [node name="MACPedestal" type="ColorRect" parent="."]
 offset_left = -20.0
 offset_top = -52.0
@@ -313,7 +307,6 @@ theme_override_colors/font_color = Color(0.32, 0.32, 0.35, 1)
 theme_override_colors/font_outline_color = Color(0.95, 0.95, 0.92, 0.8)
 theme_override_constants/outline_size = 2
 
-# Ferry dock à droite (sud-est)
 [node name="DockPlanks" type="ColorRect" parent="."]
 offset_left = 300.0
 offset_top = -52.0
@@ -389,7 +382,6 @@ theme_override_colors/font_color = Color(0.32, 0.32, 0.35, 1)
 theme_override_colors/font_outline_color = Color(0.95, 0.95, 0.92, 0.7)
 theme_override_constants/outline_size = 2
 
-# Square / plaza au sud — palmiers, bancs
 [node name="PlazaTile" type="ColorRect" parent="."]
 offset_left = -800.0
 offset_top = 30.0
@@ -481,7 +473,6 @@ offset_right = 310.0
 offset_bottom = 112.0
 color = Color(0.55, 0.42, 0.32, 1)
 
-# Café au bord de la plaza
 [node name="CafeWall" type="ColorRect" parent="."]
 offset_left = -780.0
 offset_top = 60.0
@@ -513,7 +504,6 @@ horizontal_alignment = 1
 theme_override_font_sizes/font_size = 10
 theme_override_colors/font_color = Color(0.42, 0.22, 0.18, 1)
 
-# Lampadaire central + halo nightlight
 [node name="LampPole" type="ColorRect" parent="."]
 offset_left = 2.0
 offset_top = 60.0
@@ -535,9 +525,7 @@ offset_right = 8.0
 offset_bottom = 64.0
 color = Color(1.0, 0.95, 0.62, 1)
 
-# [DRIFT MOVED — placés en début de scène, après le ciel]
 
-# Walls
 [node name="Walls" type="Node2D" parent="."]
 
 [node name="Top" type="StaticBody2D" parent="Walls"]
@@ -573,6 +561,113 @@ shape = SubResource("WallH")
 [node name="PlayerSpawn" type="Marker2D" parent="."]
 position = Vector2(400, 100)
 
+[node name="TraficoNiteroiSpot" parent="." instance=ExtResource("16_reactive")]
+position = Vector2(400, 130)
+npc_id = "trafico_niteroi"
+prompt = "Le relais (Mafia da Baía)"
+character_seed = 80116
+variants = [{
+"id": "a8_close",
+"objective_pending": ["trafico_a8_baia", "cross_baia"],
+"set_flag_after": "trafico_a8_done",
+"actions": {"finish_quest": {"quest": "trafico_a8_baia", "objective": "cross_baia", "payout": 1500}, "accept_quest": "trafico_a9_corrida", "pay_debt": 18000, "rep": {2: 8, 0: -4}},
+"speaker": "Don Vincenzo",
+"text": "*costume sombre, accent italo-carioca, t'inspecte des pieds à la tête* Donc c'est toi, le nouveau du morro de Tito. *fait signe ; ses hommes déchargent la cargaison de la barque, vite, sans un mot* Bella mercadoria. Dis à Tito que la baie est ouverte tant qu'il tient sa parole. *te tend une mallette épaisse* Presque toute ta dette d'un coup, ragazzo. *allume un cigare* Il reste une chose : Tito monte la dernière corrida du Carnaval — celle qui scelle un règne. Il t'attend, en personne, au morro. Si tu la mènes, le Morro est à toi.",
+"choices": ["Je retourne au morro"]
+}, {
+"id": "default",
+"speaker": "Passant de Niterói",
+"text": "*regarde Rio de l'autre côté de la baie* Daqui a vista é melhor, sabia? On voit tout le Pão de Açúcar. *poursuit son chemin*",
+"choices": ["…"]
+}]
+
+[node name="PoliciaSaisieSpot" parent="." instance=ExtResource("16_reactive")]
+position = Vector2(440, 100)
+npc_id = "policia_saisie"
+prompt = "La saisie (cargaison)"
+character_seed = 80117
+variants = [{
+"id": "b7_close",
+"objective_pending": ["policia_b7_saisie", "seize_cargo"],
+"set_flag_after": "policia_b7_done",
+"actions": {"finish_quest": {"quest": "policia_b7_saisie", "objective": "seize_cargo", "payout": 600}, "pay_debt": 4000, "rep": {1: 5}},
+"speaker": "Don Vincenzo",
+"text": "*encadré par ses hommes, le mandat de Ramos à la main que tu lui colles sous le nez* …Donc Ramos envoie un gamin du morro faire son sale boulot. *crache, fait signe à ses hommes de ne pas bouger* Prends ta cargaison, ragazzo. Mais retiens ça : aujourd'hui tu saisis pour Ramos, et Ramos travaille pour les mêmes que moi. Tu sers personne. *sourire froid* Va. On se reverra.",
+"choices": ["Cargaison saisie"]
+}, {
+"id": "b8_offer",
+"flag": "policia_b7_done",
+"quest_not_active": "policia_b8_seguranca",
+"quest_not_completed": "policia_b8_seguranca",
+"actions": {"accept_quest": "policia_b8_seguranca"},
+"speaker": "Contact (radio)",
+"text": "*radio* Saisie homologuée, le Capitão jubile. Dernier gros morceau : un rassemblement gêne au Maracanã. Ramos veut que tu « sécurises la foule ». Tu sais ce que ça veut dire. C'est ça qui éponge ta dette. Vai.",
+"choices": ["Direction le Maracanã"]
+}, {
+"id": "default",
+"speaker": "Passant de Niterói",
+"text": "*regarde Rio par-dessus la baie* A barca demora hoje, viu? *hausse les épaules*",
+"choices": ["…"]
+}]
+
+[node name="ConsortiumNiteroiSpot" parent="." instance=ExtResource("16_reactive")]
+position = Vector2(360, 130)
+npc_id = "consortium_niteroi"
+prompt = "Le MAC (donation)"
+character_seed = 80118
+variants = [{
+"id": "c5_close",
+"objective_pending": ["consortium_c5_mac", "launder_mac"],
+"set_flag_after": "consortium_c5_done",
+"actions": {"finish_quest": {"quest": "consortium_c5_mac", "objective": "launder_mac", "payout": 800}, "pay_debt": 5000, "rep": {4: 6}},
+"speaker": "L'attachée du MAC",
+"text": "*tailleur impeccable, sous la soucoupe de Niemeyer* Sr. Magalhães, quel mécène généreux. *prend la mallette, te tend un reçu de donation officiel encadré* Une plaque à votre nom près de l'entrée, si vous voulez. *sourire parfait* L'argent entre en chiffres sales et ressort en vertu gravée dans le bronze. C'est ça, la culture. Transmettez nos remerciements à la maison.",
+"choices": ["La maison vous remercie"]
+}, {
+"id": "c6_offer",
+"flag": "consortium_c5_done",
+"quest_not_active": "consortium_c6_tioze",
+"quest_not_completed": "consortium_c6_tioze",
+"actions": {"accept_quest": "consortium_c6_tioze"},
+"speaker": "L'attachée du MAC",
+"text": "*baisse la voix, te raccompagne* Un message — pas de la maison, celui-là. Un vieux concierge du Copacabana Palace a demandé après vous. Il a dit que c'était au sujet de votre oncle, et de ce que le Consórcio est vraiment. *hausse une épaule* Moi je transmets l'art, pas les conseils. À vous de voir.",
+"choices": ["Je rentre voir le concierge"]
+}, {
+"id": "default",
+"speaker": "Visiteur du MAC",
+"text": "*photographie la soucoupe de Niemeyer* Que arquitetura, hein? Parece um disco voador. *recule pour le cadrage*",
+"choices": ["…"]
+}]
+
+[node name="PrefeitoNiteroiSpot" parent="." instance=ExtResource("16_reactive")]
+position = Vector2(480, 130)
+npc_id = "prefeito_niteroi"
+prompt = "L'inauguration (MAC)"
+character_seed = 70406
+variants = [{
+"id": "d6_close",
+"objective_pending": ["prefeito_d6_mac", "inaugurate_expo"],
+"set_flag_after": "prefeito_d6_done",
+"actions": {"finish_quest": {"quest": "prefeito_d6_mac", "objective": "inaugurate_expo", "payout": 500}, "pay_debt": 4000, "rep": {0: 5}},
+"speaker": "La conservatrice",
+"text": "*sous la soucoupe de Niemeyer, rubans, photographes* Vous coupez le ruban, vous dites deux phrases, vous souriez à la presse. *tu parles des enfants de l'orfanato plutôt que de toi ; les flashes crépitent.* Parfait. Demain les journaux titreront sur le candidat civique du bairro — et sur le jeune homme à ses côtés. La respectabilité, ça se met en scène. Vous apprenez vite.",
+"choices": ["Pour le bairro"]
+}, {
+"id": "d7_offer",
+"flag": "prefeito_d6_done",
+"quest_not_active": "prefeito_d7_tioze",
+"quest_not_completed": "prefeito_d7_tioze",
+"actions": {"accept_quest": "prefeito_d7_tioze"},
+"speaker": "La conservatrice",
+"text": "*baisse la voix en te raccompagnant* Un mot privé — pas de la campagne. Un vieux concierge du Copacabana Palace a demandé après vous. Il dit qu'il a quelque chose qui peut tout changer, au sujet de votre oncle et du consortium. Il n'a pas voulu m'en dire plus. Allez le voir.",
+"choices": ["Je rentre voir le concierge"]
+}, {
+"id": "default",
+"speaker": "Visiteur du MAC",
+"text": "*contemple la baie depuis le MAC* A vista daqui é de tirar o fôlego, né? *reprend ses photos*",
+"choices": ["…"]
+}]
+
 [node name="TaxiStand" parent="." instance=ExtResource("1_taxi")]
 position = Vector2(-650, 165)
 
@@ -592,7 +687,6 @@ flavor_speaker = "Sobrinho"
 flavor_text = "La baie de Guanabara. Quatre cents kilomètres carrés d'eau salée prise entre Rio et Niterói. Les ferries traversent toutes les vingt minutes. *le vent vient du sud-est, frais* Quand tu vis à Rio, tu oublies que la ville est entourée d'eau. Ici tu t'en souviens."
 money_reward = 50
 
-# Porte d'entrée du MAC (vers l'intérieur de la galerie)
 [node name="DoorMAC" parent="." instance=ExtResource("13_door")]
 position = Vector2(0, -25)
 prompt_text = "Entrer dans le MAC"
@@ -609,35 +703,27 @@ theme_override_colors/font_color = Color(0.98, 0.95, 0.85, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
 theme_override_constants/outline_size = 2
 
-# Intérieur du MAC (instance déportée, Helena est dedans, accessible via DoorMAC)
 [node name="MACInterior" parent="." instance=ExtResource("14_mac_int")]
-position = Vector2(2000, 0)
+position = Vector2(2000, 5000)
 
-# NPC Bruno — vieux capitaine ferry sur le dock (donneur SIDE bruno_carga)
 [node name="Bruno" parent="." instance=ExtResource("6_bruno")]
 position = Vector2(330, -35)
 
-# NPC Yara — étudiante en arts plastiques près du MAC (lore, pas de quête)
 [node name="Yara" parent="." instance=ExtResource("7_yara")]
 position = Vector2(-90, 85)
 
-# Spot de pêche au bout du ponton (SIDE bruno_pesca_baia)
 [node name="FishingSpot" parent="." instance=ExtResource("8_fish")]
 position = Vector2(470, -40)
 
-# Don Vincenzo — parrain au Café da Praça (chaîne SIDE Mafia da Baía)
 [node name="DonVincenzo" parent="." instance=ExtResource("10_vincenzo")]
 position = Vector2(-720, 110)
 
-# Olga Mendez — main droite, à deux tables du Don
 [node name="OlgaMendez" parent="." instance=ExtResource("11_olga")]
 position = Vector2(-660, 145)
 
-# Roberto Maia — journaliste, sur un banc de la plaza
 [node name="RobertoMaia" parent="." instance=ExtResource("12_roberto")]
 position = Vector2(-320, 90)
 
-# Quelques visiteurs ambient
 [node name="VisitorA" parent="." instance=ExtResource("2_wander")]
 position = Vector2(-200, 90)
 color = Color(0.85, 0.78, 0.55, 1)
@@ -667,3 +753,85 @@ theme_override_font_sizes/font_size = 16
 theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
 theme_override_constants/outline_size = 4
+
+[node name="NiteroiPortoSpot" parent="." instance=ExtResource("16_reactive")]
+position = Vector2(-200, 100)
+npc_id = "niteroi_porto_contato"
+prompt = "Parler à l'homme du quai"
+character_seed = 80307
+variants = [{
+"id": "offer",
+"quest_not_active": "niteroi_envelope",
+"quest_not_completed": "niteroi_envelope",
+"actions": {"accept_quest": "niteroi_envelope"},
+"speaker": "Homme du port",
+"text": "*costume kaki, mains nettoyées au calc., te jauge* Sobrinho. Une enveloppe scellée à remettre devant le MAC à un type — cravate bleue, mallette. 1100 reais, pas de questions. Tu es chaud ?",
+"choices": ["Je le fais"]
+}, {
+"id": "in_progress",
+"quest_active": "niteroi_envelope",
+"speaker": "Homme du port",
+"text": "*tape sa cigarette sur le quai* Le contact est devant le MAC, freguês. Cravate bleue, mallette.",
+"choices": ["J'y vais"]
+}, {
+"id": "done",
+"quest_completed": "niteroi_envelope",
+"speaker": "Homme du port",
+"text": "*recompte un rouleau de billets* L'enveloppe est passée. Ta réputation circule, sobrinho — bien ou mal, à toi de voir.",
+"choices": ["À la prochaine"]
+}, {
+"id": "default",
+"speaker": "Homme du port",
+"text": "*scrute la baie* Les barcas partent toutes les heures. Niterói te fait peur, freguês ?",
+"choices": ["Plus tard"]
+}]
+
+[node name="NiteroiMACContactSpot" parent="." instance=ExtResource("16_reactive")]
+position = Vector2(700, 100)
+npc_id = "niteroi_mac_contato"
+prompt = "Parler au contact (cravate bleue)"
+character_seed = 80308
+variants = [{
+"id": "finish",
+"quest_active": "niteroi_envelope",
+"actions": {"finish_quest": {"quest": "niteroi_envelope", "objective": "deliver_envelope", "payout": 0}},
+"speaker": "Contact (cravate bleue)",
+"text": "*mallette posée à ses pieds, regarde sa montre* Tu as quelque chose pour moi ? *prend l'enveloppe, la glisse dans la mallette, hoche la tête* Discret. C'est apprécié.",
+"choices": ["De rien"]
+}, {
+"id": "after",
+"quest_completed": "niteroi_envelope",
+"speaker": "Contact (cravate bleue)",
+"text": "*lit un journal devant le MAC* Tu repasses ? Le Niemeyer est fermé pour rénovation cette semaine.",
+"choices": ["Bonne lecture"]
+}, {
+"id": "default",
+"speaker": "Contact (cravate bleue)",
+"text": "*regarde sa montre, soupire* J'attends quelqu'un. Pas toi.",
+"choices": ["Désolé"]
+}]
+
+[node name="NiteroiPlumeFournisseurSpot" parent="." instance=ExtResource("16_reactive")]
+position = Vector2(-500, 100)
+npc_id = "niteroi_plumes_fornecedor"
+prompt = "Parler à Tomé (fournisseur)"
+character_seed = 80406
+variants = [{
+"id": "finish",
+"objective_pending": ["sambo_plumes", "fetch_plumes"],
+"actions": {"finish_quest": {"quest": "sambo_plumes", "objective": "fetch_plumes", "payout": 0}},
+"speaker": "Tomé (fournisseur)",
+"text": "*sort une caisse en bois plus haute que toi, regarde son ardoise* La caisse de Lurdes — vert, jaune, bleu, et la queue de paon. Désolé pour l'erreur de livraison, j'ai pris la barca de Niterói au lieu de Sapucaí. Embarque, freguês, et dis-lui que la prochaine est offerte.",
+"choices": ["Je transmets"]
+}, {
+"id": "after",
+"quest_completed": "sambo_plumes",
+"speaker": "Tomé (fournisseur)",
+"text": "*emballe d'autres plumes pour d'autres écoles* Lurdes a son défilé ?",
+"choices": ["Elle est aux anges"]
+}, {
+"id": "default",
+"speaker": "Tomé (fournisseur)",
+"text": "*plumes vert-jaune-bleu partout dans la boutique* Le carnaval me nourrit toute l'année. Tu veux un échantillon ?",
+"choices": ["Plus tard"]
+}]

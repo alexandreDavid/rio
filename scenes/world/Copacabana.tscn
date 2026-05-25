@@ -1,4 +1,4 @@
-[gd_scene load_steps=58 format=3]
+[gd_scene load_steps=67 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/npcs/DonaIrene.tscn" id="37_irene"]
 [ext_resource type="PackedScene" path="res://scenes/npcs/BarPatrao.tscn" id="38_patrao"]
@@ -39,6 +39,8 @@
 [ext_resource type="PackedScene" path="res://scenes/districts/BarraDaTijuca.tscn" id="64_barra"]
 [ext_resource type="PackedScene" path="res://scenes/districts/Niteroi.tscn" id="65_niteroi"]
 [ext_resource type="PackedScene" path="res://scenes/npcs/MadameDubois.tscn" id="66_dubois"]
+[ext_resource type="PackedScene" path="res://scenes/districts/ForteDeCopacabana.tscn" id="67_forte"]
+[ext_resource type="PackedScene" path="res://scenes/districts/MarinaDaGloria.tscn" id="68_marina"]
 [ext_resource type="PackedScene" path="res://scenes/npcs/SeuJoao.tscn" id="2_seu_joao"]
 [ext_resource type="PackedScene" path="res://scenes/props/CornCart.tscn" id="3_cart"]
 [ext_resource type="PackedScene" path="res://scenes/npcs/Customer.tscn" id="4_customer"]
@@ -78,7 +80,6 @@ wrap_left = -200.0
 wrap_right = 2600.0
 drift_speed = 10.0
 
-# Décor animé : mouettes plage, voilier au large, paraplane haut
 [node name="CopaGullA" type="ColorRect" parent="." groups=["drift_west"]]
 offset_left = 300.0
 offset_top = 200.0
@@ -326,28 +327,306 @@ position = Vector2(700, -2000)
 position = Vector2(7200, -3000)
 
 [node name="BetoSpot" parent="." instance=ExtResource("62_reactive")]
-position = Vector2(1920, 110)
+position = Vector2(1040, 178)
 npc_id = "beto"
 prompt = "Parler au gamin"
+character_seed = 70499
 variants = [{
 "id": "found_followup",
 "flag": "beto_found",
 "speaker": "Beto",
-"text": "*lève les yeux du sable où il dessine, te sourit largement* Je rentre ce soir, sobrinho ! J'ai promis ! Et après le dîner, vovó va me tricoter un poulpe, elle a dit !",
-"choices": ["Boa, Beto"]
+"text": "*range sa valise de lunettes en te voyant, lève les mains* C'est bon, c'est bon, je remonte voir le vieux ! *sourire en coin* Mais avoue qu'elles sont stylées, mes Ray-Ban. Quinze reais, prix sobrinho.",
+"choices": ["Remonte, Beto. Tout de suite."]
 }, {
 "id": "lost",
-"flag": "vizinha_quest_taken",
+"flag": "beto_quest_taken",
 "set_flag_after": "beto_found",
 "actions": {"finish_quest": {"quest": "beto_lost", "objective": "find_beto", "payout": 0}},
 "speaker": "Beto",
-"text": "*petit, neuf ans, t-shirt jaune, sandales bleues — il joue dans le sable, seul* Eu... j'sais plus comment on rentre. *renifle, ne pleure pas pour ne pas avouer qu'il a peur* Le monsieur du coco, il m'a dit d'attendre maman, mais maman elle vient pas. *te regarde* T'es du morro ? Tu connais la voisine d'en bas, celle qui chante ?",
-"choices": ["Cours rentrer chez ta mère, Beto"]
+"text": "*quinze ans, casquette à l'envers, une valise de lunettes de contrefaçon ouverte sur une serviette* Tu veux des lunettes, chef ? Vraies fausses Ray-Ban, dix reais— *te reconnaît, baisse d'un ton* Ah merde. C'est vô Jorge qui t'envoie. *referme la valise à contrecœur* Il capte rien, le vieux. Je gagne plus ici en un jour qu'à trier son poisson en un mois.",
+"choices": ["Tu remontes. Maintenant."]
 }, {
 "id": "default",
 "speaker": "Beto",
-"text": "*joue dans le sable, fait un château bancal* Olá ! Tu sais faire les châteaux qui tiennent jusqu'à la marée ?",
-"choices": ["Bonne chance, Beto"]
+"text": "*hèle les touristes, valise de lunettes au bras* Óculos, óculos! Lunettes, sunglasses, dez reais, freguês !",
+"choices": ["Plus tard, gamin"]
+}]
+
+[node name="TraficoContactSpot" parent="." instance=ExtResource("62_reactive")]
+position = Vector2(640, 232)
+npc_id = "trafico_contact"
+prompt = "Le contact du calçadão"
+character_seed = 80101
+variants = [{
+"id": "a1_drop",
+"objective_pending": ["trafico_a1_livraison", "drop_calcadao"],
+"set_flag_after": "trafico_a1_done",
+"actions": {"finish_quest": {"quest": "trafico_a1_livraison", "objective": "drop_calcadao", "payout": 120}, "accept_quest": "trafico_a2_pickup", "rep": {2: 2}},
+"speaker": "Contact",
+"text": "*assis sur un banc face à la mer, ne te regarde pas* Le paquet de Tito. *tend la main, le fait disparaître sous une serviette* T'as les mains qui tremblent pas, gamin. *glisse des billets* Bien. Miguel veut te tester maintenant — une sacoche t'attend au Copacabana Palace, le groom la garde. Tu la prends, tu la ramènes ici. Tu poses pas de questions sur ce qu'y a dedans.",
+"choices": ["J'y vais"]
+}, {
+"id": "a2_close",
+"objective_pending": ["trafico_a2_pickup", "pickup_palace"],
+"set_flag_after": "trafico_a2_done",
+"actions": {"finish_quest": {"quest": "trafico_a2_pickup", "objective": "pickup_palace", "payout": 180}, "accept_quest": "trafico_a3_chauffeur", "rep": {2: 3}},
+"speaker": "Contact",
+"text": "*récupère la sacoche du Palace, la soupèse, hoche la tête* Miguel avait raison sur toi. *sourire en coin, te file une clé* Maintenant le vrai boulot. Le coffre est chargé près d'ici — tu le conduis à Botafogo, sous le Bondinho. Pas de détour, pas de PM dans le rétro. Quelqu'un t'attend là-bas.",
+"choices": ["En route"]
+}, {
+"id": "a3_remind",
+"quest_active": "trafico_a3_chauffeur",
+"speaker": "Contact",
+"text": "*agacé* Qu'est-ce tu fous encore sur le calçadão ? Botafogo. Le coffre se livre pas tout seul.",
+"choices": ["J'y vais"]
+}, {
+"id": "a4_offer",
+"quest_completed": "trafico_a3_chauffeur",
+"quest_not_active": "trafico_a4_ipanema",
+"quest_not_completed": "trafico_a4_ipanema",
+"actions": {"accept_quest": "trafico_a4_ipanema"},
+"speaker": "Contact",
+"text": "*te tend un sac de sport* Bien joué pour Botafogo. Maintenant tu montes en gamme. Ipanema — y'a un gringo qui paie cash, posto 9. Tu lui refourgues ça, tu prends l'argent, tu disparais. S'il fait l'idiot, tu pars sans discuter.",
+"choices": ["Direction Ipanema"]
+}, {
+"id": "done",
+"quest_completed": "trafico_a3_chauffeur",
+"speaker": "Contact",
+"text": "*te salue d'un menton* Le morro parle de toi maintenant. Tito aussi. Continue comme ça et t'auras plus jamais à vendre de milho.",
+"choices": ["À bientôt"]
+}, {
+"id": "default",
+"speaker": "Contact",
+"text": "*regarde la mer, ne te calcule pas* Circule, gamin. J'attends quelqu'un.",
+"choices": ["…"]
+}]
+
+[node name="TraficoTioZeSpot" parent="." instance=ExtResource("62_reactive")]
+position = Vector2(1700, 132)
+npc_id = "trafico_tioze"
+prompt = "Le vieux concierge"
+character_seed = 909099
+required_flag = "voie_trafico"
+variants = [{
+"id": "a7_warn",
+"objective_pending": ["trafico_a7_tioze", "heed_warning"],
+"actions": {"finish_quest": {"quest": "trafico_a7_tioze", "objective": "heed_warning", "payout": 0}, "accept_quest": "trafico_a8_baia", "set_flag": "tio_ze_warned_trafico"},
+"speaker": "Le concierge",
+"text": "*un vieil homme en uniforme du Palace, il balaie sans te regarder, voix basse* Petit. Te retourne pas. *continue de balayer* Je connaissais ton oncle Zé. Mieux que personne. Il a porté pour Tito, lui aussi. Le morro lui a tout pris, et quand il a voulu partir, Tito l'a brûlé — comme il te brûlera. *te glisse un regard* Tu peux encore choisir de pas finir comme lui. *soupire* Mais tu y retourneras quand même. Alors écoute au moins ça — le gros coup passe par la baie, Niterói, la Mafia da Baía en relais. Réfléchis-y avant la corrida.",
+"choices": ["…J'y vais"]
+}, {
+"id": "default",
+"speaker": "Le concierge",
+"text": "*balaie le perron du Palace, t'ignore poliment* Bienvenue au Copacabana Palace. *à voix basse, sans lever les yeux* …Toi, je te connais de quelque part.",
+"choices": ["…"]
+}]
+
+[node name="PoliciaContactSpot" parent="." instance=ExtResource("62_reactive")]
+position = Vector2(520, 232)
+npc_id = "policia_contact"
+prompt = "L'agent en civil"
+character_seed = 80102
+variants = [{
+"id": "b1_close",
+"objective_pending": ["policia_b1_intel", "report_face"],
+"set_flag_after": "policia_b1_done",
+"actions": {"finish_quest": {"quest": "policia_b1_intel", "objective": "report_face", "payout": 120}, "rep": {1: 3}},
+"speaker": "Agent en civil",
+"text": "*lit un journal sans le lire, lunettes noires* Ramos t'envoie. *tourne une page* Le type au maillot rayé, près des cocos — c'est un guetteur du morro. T'as bien vu. *note un truc* Le Capitão aime les yeux comme les tiens. Reviens, j'aurai autre chose.",
+"choices": ["Compris"]
+}, {
+"id": "b2_offer",
+"flag": "policia_b1_done",
+"quest_not_active": "policia_b2_filature",
+"quest_not_completed": "policia_b2_filature",
+"actions": {"accept_quest": "policia_b2_filature"},
+"speaker": "Agent en civil",
+"text": "*plie son journal* Maintenant le vrai travail. Ramos veut le plan du réseau de Tito — qui livre, qui guette, où. Tu remontes au morro. Ton morro. *te regarde par-dessus ses lunettes* T'as plus de quartier, gamin. T'as un Capitão.",
+"choices": ["Je remonte au morro"]
+}, {
+"id": "default",
+"speaker": "Agent en civil",
+"text": "*regarde la mer derrière ses lunettes noires* Circulez. Y'a rien à voir.",
+"choices": ["…"]
+}]
+
+[node name="PoliciaTioZeSpot" parent="." instance=ExtResource("62_reactive")]
+position = Vector2(1762, 132)
+npc_id = "policia_tioze"
+prompt = "Le vieux concierge"
+character_seed = 909099
+required_flag = "voie_policia"
+variants = [{
+"id": "b6_warn",
+"objective_pending": ["policia_b6_tioze", "hear_concierge"],
+"actions": {"finish_quest": {"quest": "policia_b6_tioze", "objective": "hear_concierge", "payout": 0}, "set_flag": "tio_ze_warned_policia"},
+"speaker": "Le concierge",
+"text": "*vieil homme en uniforme du Palace, balaie sans te regarder* Petit. Te retourne pas. *voix basse* Je connaissais ton oncle Zé. Mieux que personne. Tu nettoies le morro pour Ramos, hein ? *un temps* Et Ramos, il nettoie pour qui ? Le consortium. Les mêmes qui tiennent ta dette. Tu fais le ménage de qui, au juste, sobrinho ? *te glisse un regard* Pense-y, avant la Madrugada.",
+"choices": ["…Qui es-tu, le vieux ?"]
+}, {
+"id": "b7_offer",
+"quest_completed": "policia_b6_tioze",
+"quest_not_active": "policia_b7_saisie",
+"quest_not_completed": "policia_b7_saisie",
+"actions": {"accept_quest": "policia_b7_saisie"},
+"speaker": "Le concierge",
+"text": "*soupire, s'appuie sur son balai* Tu continues quand même. Alors prends au moins ça : Ramos a son mandat. Une cargaison de la Mafia da Baía passe à Niterói. Tu la saisis — au nom de la loi, ou de Ramos, c'est selon. Vai. Et pense à ce que j'ai dit.",
+"choices": ["J'y vais"]
+}, {
+"id": "default",
+"speaker": "Le concierge",
+"text": "*balaie le perron du Palace* Bienvenue au Copacabana Palace. *sans lever les yeux* …Toi, je te connais de quelque part.",
+"choices": ["…"]
+}]
+
+[node name="ConsortiumContactSpot" parent="." instance=ExtResource("62_reactive")]
+position = Vector2(760, 232)
+npc_id = "consortium_contact"
+prompt = "Le recouvreur de la maison"
+character_seed = 80103
+variants = [{
+"id": "c1_close",
+"objective_pending": ["consortium_c1_recouvrement", "collect_calcadao"],
+"set_flag_after": "consortium_c1_done",
+"actions": {"finish_quest": {"quest": "consortium_c1_recouvrement", "objective": "collect_calcadao", "payout": 150}, "rep": {4: 3}},
+"speaker": "Le commerçant",
+"text": "*essuie son comptoir, blêmit en te voyant* Vous êtes de chez Magalhães… *sort une enveloppe d'un tiroir, les mains qui tremblent* Tenez. Tout est là, et un petit supplément pour le retard. Dites-leur que ça n'arrivera plus. *te tend un stylo* Et… je signe où, déjà ? *Pas un mot plus haut que l'autre. C'est ça, la maison.*",
+"choices": ["Vous avez bien fait"]
+}, {
+"id": "c8_close",
+"objective_pending": ["consortium_c8_menace", "break_holdout"],
+"set_flag_after": "consortium_c8_done",
+"actions": {"finish_quest": {"quest": "consortium_c8_menace", "objective": "break_holdout", "payout": 1500}, "pay_debt": 18000, "rep": {4: 6, 0: -5}},
+"speaker": "La dernière commerçante",
+"text": "*la seule du calçadão qui n'avait pas signé — vieille, droite derrière sa caisse* Mon père a tenu ce kiosque quarante ans sans rien devoir à personne. *te regarde longtemps, puis baisse les yeux, prend le stylo* …Mais j'ai des petits-enfants. *elle signe, sans te regarder. Tu n'as pas levé la voix une seule fois. C'est plus laid comme ça.*",
+"choices": ["La maison vous remercie"]
+}, {
+"id": "c2_offer",
+"flag": "consortium_c1_done",
+"quest_not_active": "consortium_c2_loyers",
+"quest_not_completed": "consortium_c2_loyers",
+"actions": {"accept_quest": "consortium_c2_loyers"},
+"speaker": "Le recouvreur",
+"text": "*plie l'enveloppe dans sa veste* Propre. Magalhães va t'aimer. Maintenant tu montes en grade : la tournée des loyers à Barra, le Riserva Uno. Tu encaisses, tu notes les retards. Présente-toi à Sr. Magalhães là-bas.",
+"choices": ["Direction Barra"]
+}, {
+"id": "c9_offer",
+"flag": "consortium_c8_done",
+"quest_not_active": "consortium_c9_pacto",
+"quest_not_completed": "consortium_c9_pacto",
+"actions": {"accept_quest": "consortium_c9_pacto"},
+"speaker": "Le recouvreur",
+"text": "*range tout, te regarde presque avec respect* Le calçadão est à la maison. Tu as fait le ménage sans salir tes manches — c'est rare. Magalhães t'attend au Riserva Uno, à Barra. Pour la dernière signature. La tienne.",
+"choices": ["Je vais voir Magalhães"]
+}, {
+"id": "default",
+"speaker": "Le recouvreur",
+"text": "*compte des billets à l'ombre d'un parasol, sans te regarder* La maison n'a rien à te dire aujourd'hui. Circule.",
+"choices": ["…"]
+}]
+
+[node name="ConsortiumTioZeSpot" parent="." instance=ExtResource("62_reactive")]
+position = Vector2(1648, 132)
+npc_id = "consortium_tioze"
+prompt = "Le vieux concierge"
+character_seed = 909099
+required_flag = "voie_consortium"
+variants = [{
+"id": "c6_warn",
+"objective_pending": ["consortium_c6_tioze", "hear_concierge"],
+"actions": {"finish_quest": {"quest": "consortium_c6_tioze", "objective": "hear_concierge", "payout": 0}, "set_flag": "tio_ze_warned_consortium"},
+"speaker": "Le concierge",
+"text": "*vieil homme en uniforme du Palace, balaie sans te regarder* Petit. Te retourne pas. *voix basse* Je connaissais ton oncle Zé. Mieux que personne. Le Consórcio ne t'a jamais prêté un centime — il t'a passé une laisse, et il a appelé ça une dette. J'ai vu comment, jadis. *un temps* Magalhães ne casse pas les jambes. Il casse les gens, lentement, et leur fait signer le constat. Avant que tu signes le tien : pense à qui tu seras de l'autre côté du stylo.",
+"choices": ["…Qui es-tu, le vieux ?"]
+}, {
+"id": "c7_offer",
+"quest_completed": "consortium_c6_tioze",
+"quest_not_active": "consortium_c7_condos",
+"quest_not_completed": "consortium_c7_condos",
+"actions": {"accept_quest": "consortium_c7_condos"},
+"speaker": "Le concierge",
+"text": "*soupire, s'appuie sur son balai* Tu vas signer quand même. Alors prends ça : la maison veut les trois condomínios de Barra alignés d'un coup. C'est le gros morceau, celui qui efface presque ta dette. Vas-y. Et souviens-toi de ce que je t'ai dit, quand ce sera ton tour de tenir le stylo.",
+"choices": ["J'y vais"]
+}, {
+"id": "default",
+"speaker": "Le concierge",
+"text": "*balaie le perron du Palace* Bienvenue au Copacabana Palace. *sans lever les yeux* …Toi, je te connais de quelque part.",
+"choices": ["…"]
+}]
+
+[node name="PrefeitoContactSpot" parent="." instance=ExtResource("62_reactive")]
+position = Vector2(880, 232)
+npc_id = "prefeito_contact"
+prompt = "La table de la pétition"
+character_seed = 70401
+variants = [{
+"id": "d1_close",
+"objective_pending": ["prefeito_d1_peticao", "gather_signatures"],
+"set_flag_after": "prefeito_d1_done",
+"actions": {"finish_quest": {"quest": "prefeito_d1_peticao", "objective": "gather_signatures", "payout": 120}, "rep": {0: 4}},
+"speaker": "Bénévole de l'orfanato",
+"text": "*une table pliante, une pétition, des gosses qui jouent autour* Trois commerçants manquaient — Carlos, la pharmacienne, le kiosque. *tu les as convaincus un par un, sans rien promettre que ta parole* Ils ont signé pour toi, pas pour la mairie. Le Padre va pleurer de joie. L'orfanato tiendra une saison de plus.",
+"choices": ["C'est un début"]
+}, {
+"id": "d8_close",
+"objective_pending": ["prefeito_d8_campagne", "flip_calcadao"],
+"set_flag_after": "prefeito_d8_done",
+"actions": {"finish_quest": {"quest": "prefeito_d8_campagne", "objective": "flip_calcadao", "payout": 1500}, "pay_debt": 18000, "rep": {0: 8, 4: -5}},
+"speaker": "Le calçadão",
+"text": "*tu lis le dossier à voix haute, sur une caisse, devant la foule du calçadão. Au début ils rient. Puis ils écoutent. Les noms, les chiffres, le racket déguisé en dette. Quelqu'un crache vers le Riserva Uno. En une heure le quartier a basculé — pas par peur, par colère juste. Ta dette ? Personne ne te la réclamera plus en public. La vérité l'a effacée mieux qu'aucun paiement.*",
+"choices": ["Le bairro a entendu"]
+}, {
+"id": "d2_offer",
+"flag": "prefeito_d1_done",
+"quest_not_active": "prefeito_d2_basquete",
+"quest_not_completed": "prefeito_d2_basquete",
+"actions": {"accept_quest": "prefeito_d2_basquete"},
+"speaker": "Bénévole de l'orfanato",
+"text": "*range la pétition précieusement* Le Padre a une autre idée : un tournoi de basket à l'Aterro do Flamengo, pour sortir les gamins de la rue. Du concret, et une belle image pour la campagne. Tu sais parler aux jeunes — vas-y.",
+"choices": ["Direction l'Aterro"]
+}, {
+"id": "d9_offer",
+"flag": "prefeito_d8_done",
+"quest_not_active": "prefeito_d9_eleicao",
+"quest_not_completed": "prefeito_d9_eleicao",
+"actions": {"accept_quest": "prefeito_d9_eleicao"},
+"speaker": "Bénévole de l'orfanato",
+"text": "*les yeux brillants* C'est le moment, l'élection est ce soir. Tout le bairro est derrière toi. Va retrouver le Padre — c'est lui qui ouvrira le scrutin. Et après… on ne dira plus « le neveu de Zé ». On dira « Coronel ».",
+"choices": ["Je vais voir le Padre"]
+}, {
+"id": "default",
+"speaker": "Bénévole de l'orfanato",
+"text": "*fait signer une pétition aux passants, sourit aux enfants* Pour l'orfanato Nossa Senhora, une signature ? *te reconnaît* …Ah, c'est toi. Merci pour tout.",
+"choices": ["…"]
+}]
+
+[node name="PrefeitoTioZeSpot" parent="." instance=ExtResource("62_reactive")]
+position = Vector2(1586, 132)
+npc_id = "prefeito_tioze"
+prompt = "Le vieux concierge"
+character_seed = 909099
+required_flag = "voie_prefeito"
+variants = [{
+"id": "d7_warn",
+"objective_pending": ["prefeito_d7_tioze", "receive_dossier"],
+"actions": {"finish_quest": {"quest": "prefeito_d7_tioze", "objective": "receive_dossier", "payout": 0}, "set_flag": "tio_ze_warned_prefeito"},
+"speaker": "Le concierge",
+"text": "*vieil homme en uniforme du Palace, il s'arrête de balayer, te regarde vraiment cette fois* Petit. Tu es le seul à n'avoir pris ni flingue, ni plaque, ni stylo de la maison. *sort une enveloppe épaisse de sous sa veste, te la met dans les mains* Je connaissais ton oncle Zé. Mieux que personne. Voilà ce que j'ai vu, jadis, et que j'ai gardé : tout sur Magalhães et le consortium. Des noms, des comptes, des dates. *te serre le poignet* Sers-t'en bien. Pas pour régner. Pour qu'on n'ait plus jamais à fuir.",
+"choices": ["…Qui es-tu, le vieux ?"]
+}, {
+"id": "d8_offer",
+"quest_completed": "prefeito_d7_tioze",
+"quest_not_active": "prefeito_d8_campagne",
+"quest_not_completed": "prefeito_d8_campagne",
+"actions": {"accept_quest": "prefeito_d8_campagne"},
+"speaker": "Le concierge",
+"text": "*reprend son balai, la voix plus ferme* Maintenant retourne sur le calçadão et lis-leur ça. Tout. À voix haute. Ils ont peur du consortium parce qu'ils croient être seuls. Montre-leur qu'ils ne le sont pas. C'est comme ça qu'on efface une dette : pas en payant, en disant la vérité.",
+"choices": ["J'y vais"]
+}, {
+"id": "default",
+"speaker": "Le concierge",
+"text": "*balaie le perron du Palace* Bienvenue au Copacabana Palace. *sans lever les yeux* …Toi, je te connais de quelque part.",
+"choices": ["…"]
 }]
 
 [node name="LurdesShadow" type="ColorRect" parent="."]
@@ -382,6 +661,7 @@ color = Color(0.92, 0.92, 0.85, 1)
 position = Vector2(460, 215)
 npc_id = "coco_regular"
 prompt = "Parler à Dona Lurdes"
+character_seed = 80104
 variants = [{
 "id": "after_envelope",
 "quest_completed": "zona_sul_envelope",
@@ -440,6 +720,7 @@ color = Color(0.42, 0.12, 0.12, 1)
 position = Vector2(1735, 105)
 npc_id = "palace_bellboy"
 prompt = "Parler à Renato"
+character_seed = 80105
 variants = [{
 "id": "after_envelope",
 "quest_completed": "zona_sul_envelope",
@@ -604,10 +885,21 @@ position = Vector2(-16500, -2900)
 [node name="NiteroiDistrict" parent="." instance=ExtResource("65_niteroi")]
 position = Vector2(-18500, -2900)
 
+[node name="ForteDeCopacabanaDistrict" parent="." instance=ExtResource("67_forte")]
+position = Vector2(-21000, -2900)
+
+[node name="MarinaDaGloriaDistrict" parent="." instance=ExtResource("68_marina")]
+position = Vector2(-24000, -2900)
+
 [node name="ExitToFavela" parent="." instance=ExtResource("58_exit")]
 position = Vector2(200, -210)
 target_district = "favela_morro"
 label_text = "↑ MORRO / FAVELA"
+
+[node name="ExitToForte" parent="." instance=ExtResource("58_exit")]
+position = Vector2(200, 175)
+target_district = "forte"
+label_text = "→ FORTE DE COPACABANA"
 
 [node name="Otavio" parent="." instance=ExtResource("41_otavio")]
 position = Vector2(1840, 36)
@@ -637,3 +929,35 @@ theme_override_font_sizes/font_size = 11
 
 [node name="Player" parent="." instance=ExtResource("1_player")]
 position = Vector2(7200, -2925)
+
+[node name="CalcadaoFotografoSpot" parent="." instance=ExtResource("62_reactive")]
+position = Vector2(1300, 115)
+npc_id = "calcadao_fotografo"
+prompt = "Parler au photographe"
+character_seed = 80305
+variants = [{
+"id": "offer",
+"quest_not_active": "cristo_photo",
+"quest_not_completed": "cristo_photo",
+"actions": {"accept_quest": "cristo_photo"},
+"speaker": "Photographe (calçadão)",
+"text": "*appareil photo en bandoulière, café froid, cernes profonds* Sobrinho. J'ai un éditorial à boucler ce midi : Cristo au mirante, vue large, pas mes 30 derniers Cristo bookés. Je suis crevé. Monte au Corcovado, déclenche depuis le point sud, ramène la carte SD. 1000 reais cash.",
+"choices": ["Je monte"]
+}, {
+"id": "in_progress",
+"quest_active": "cristo_photo",
+"speaker": "Photographe (calçadão)",
+"text": "*serre son café* Le mirante, freguês. Avant midi, sinon le mag part sans moi.",
+"choices": ["J'y vais"]
+}, {
+"id": "done",
+"quest_completed": "cristo_photo",
+"speaker": "Photographe (calçadão)",
+"text": "*regarde la carte SD sur le viseur, hoche la tête* Cadrage propre, lumière bénie. Tu pourrais en faire un métier.",
+"choices": ["Obrigado"]
+}, {
+"id": "default",
+"speaker": "Photographe (calçadão)",
+"text": "*ajuste son objectif* À Copa, la lumière de 16h vaut son pesant d'or. *clic clac*",
+"choices": ["Bonne lumière"]
+}]

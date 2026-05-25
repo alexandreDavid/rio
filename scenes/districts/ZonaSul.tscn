@@ -1,4 +1,4 @@
-[gd_scene load_steps=43 format=3]
+[gd_scene load_steps=37 format=3]
 
 [ext_resource type="Script" path="res://scripts/districts/ZonaSulDistrict.gd" id="0_script"]
 [ext_resource type="PackedScene" path="res://scenes/props/TaxiStand.tscn" id="1_taxi"]
@@ -15,6 +15,7 @@
 [ext_resource type="PackedScene" path="res://scenes/interiors/OfficeIpanema.tscn" id="12_office"]
 [ext_resource type="PackedScene" path="res://scenes/interiors/ArpoadorBar.tscn" id="13_bar"]
 [ext_resource type="PackedScene" path="res://scenes/props/DialogueSpot.tscn" id="14_dialogspot"]
+[ext_resource type="PackedScene" path="res://scenes/props/ReactiveDialogueSpot.tscn" id="17_reactive"]
 [ext_resource type="PackedScene" path="res://scenes/props/BettingKiosk.tscn" id="15_betkiosk"]
 [ext_resource type="PackedScene" path="res://scenes/props/BikeRental.tscn" id="16_bikerental"]
 
@@ -26,6 +27,9 @@ size = Vector2(16, 480)
 
 [sub_resource type="RectangleShape2D" id="ExitWideShape"]
 size = Vector2(64, 400)
+
+[sub_resource type="RectangleShape2D" id="ExitCagarrasShape"]
+size = Vector2(400, 64)
 
 [sub_resource type="RectangleShape2D" id="BldA_Shape"]
 size = Vector2(120, 70)
@@ -78,7 +82,6 @@ wrap_left = -950.0
 wrap_right = 920.0
 drift_speed = 9.0
 
-# Décor animé plage : mouettes, cerf-volant, voilier sur la mer (sud)
 [node name="ZS_GullA" type="ColorRect" parent="." groups=["drift_west"]]
 offset_left = -700.0
 offset_top = 70.0
@@ -1542,7 +1545,114 @@ position = Vector2(640, -9)
 shape = SubResource("BldG_Shape")
 
 [node name="PlayerSpawn" type="Marker2D" parent="."]
-position = Vector2(800, 130)
+position = Vector2(800, 90)
+
+[node name="TraficoZonaSulSpot" parent="." instance=ExtResource("17_reactive")]
+position = Vector2(800, 162)
+npc_id = "trafico_zonasul"
+prompt = "Le gringo (posto 9)"
+character_seed = 80111
+variants = [{
+"id": "a4_close",
+"objective_pending": ["trafico_a4_ipanema", "deal_ipanema"],
+"set_flag_after": "trafico_a4_done",
+"actions": {"finish_quest": {"quest": "trafico_a4_ipanema", "objective": "deal_ipanema", "payout": 350}, "accept_quest": "trafico_a5_intim", "rep": {2: 4, 0: -3}},
+"speaker": "Gringo",
+"text": "*lunettes de soleil, serviette de luxe, nerveux* You have it? *prend le sac, te file une liasse — puis se fige, deux types le regardent depuis le kiosque* …Who are those guys? *il panique, renverse sa bière, des gens crient* Merda. *tu ramasses l'argent et tu t'éclipses — quelqu'un t'a vu, c'est sûr. Ton téléphone vibre, la voix du contact :* « Un voisin du morro raconte déjà au bar. Remonte. Maintenant. »",
+"choices": ["Je remonte au morro"]
+}, {
+"id": "default",
+"speaker": "Touriste",
+"text": "*photographie le coucher de soleil sur Ipanema* Que lugar lindo, né? *ne te calcule pas*",
+"choices": ["…"]
+}]
+
+[node name="PoliciaDescenteSpot" parent="." instance=ExtResource("17_reactive")]
+position = Vector2(844, 130)
+npc_id = "policia_descente"
+prompt = "Le dealer d'Arpoador"
+character_seed = 80112
+variants = [{
+"id": "b4_close",
+"objective_pending": ["policia_b4_descente", "bust_dealer"],
+"set_flag_after": "policia_b4_done",
+"actions": {"finish_quest": {"quest": "policia_b4_descente", "objective": "bust_dealer", "payout": 300}, "rep": {1: 4, 0: -4}},
+"speaker": "Le dealer",
+"text": "*adossé aux rochers d'Arpoador, il te voit, comprend trop tard* Eh, doucement, on peut s'arranger— *tu le plaques, il se débat, des touristes filment, ça crie. Tu serres trop fort. Quand la PM arrive, le môme saigne du nez et le quartier te regarde autrement.* *menotté, il crache* …Tu travailles pour qui, fils de pute ? Pour eux ?",
+"choices": ["Embarque-le"]
+}, {
+"id": "b5_offer",
+"flag": "policia_b4_done",
+"quest_not_active": "policia_b5_reperage",
+"quest_not_completed": "policia_b5_reperage",
+"actions": {"accept_quest": "policia_b5_reperage"},
+"speaker": "Contact (radio)",
+"text": "*la radio crache* Beau bordel, mais c'est fait. Ramos veut autre chose : monte au Corcovado, au mirante du Cristo. De là-haut on voit une remise du consortium. Tu repères, tu mémorises.",
+"choices": ["Je monte au Corcovado"]
+}, {
+"id": "default",
+"speaker": "Surfeur",
+"text": "*cire sa planche face à la vague d'Arpoador* O mar tá bom hoje, hein? *retourne à l'eau*",
+"choices": ["…"]
+}]
+
+[node name="ConsortiumZonaSulSpot" parent="." instance=ExtResource("17_reactive")]
+position = Vector2(760, 130)
+npc_id = "consortium_zonasul"
+prompt = "Le restaurateur (Ipanema)"
+character_seed = 80113
+variants = [{
+"id": "c3_close",
+"objective_pending": ["consortium_c3_partenariat", "force_signature"],
+"set_flag_after": "consortium_c3_done",
+"actions": {"finish_quest": {"quest": "consortium_c3_partenariat", "objective": "force_signature", "payout": 400}, "rep": {4: 5, 0: -4}},
+"speaker": "Le restaurateur",
+"text": "*derrière son comptoir d'Ipanema, bras croisés* J'ai dit non à Magalhães. Trois fois. *tu poses le contrat. Tu ne menaces pas. Tu listes : les fournisseurs qui se tariront, l'inspecteur qui passera, le bail qui ne se renouvellera pas. Tu souris. Le silence dure longtemps.* …*il prend le stylo, la main qui tremble de rage et de peur* Vous êtes pires qu'eux. Vous, vous faites signer.",
+"choices": ["Bienvenue dans la maison"]
+}, {
+"id": "c4_offer",
+"flag": "consortium_c3_done",
+"quest_not_active": "consortium_c4_vip",
+"quest_not_completed": "consortium_c4_vip",
+"actions": {"accept_quest": "consortium_c4_vip"},
+"speaker": "Le restaurateur",
+"text": "*range le contrat signé sans te regarder, voix éteinte* …Magalhães a laissé un mot pour vous. Un investisseur étranger arrive demain à Santos Dumont. Vous devez le réceptionner et le « promener ». La maison vend une image. Allez-y.",
+"choices": ["Direction l'aéroport"]
+}, {
+"id": "default",
+"speaker": "Touriste",
+"text": "*sirote une caipirinha face à la mer* Ipanema é o paraíso, né? *lève son verre vers le large*",
+"choices": ["…"]
+}]
+
+[node name="PrefeitoZonaSulSpot" parent="." instance=ExtResource("17_reactive")]
+position = Vector2(884, 130)
+npc_id = "prefeito_zonasul"
+prompt = "La procession"
+character_seed = 70404
+variants = [{
+"id": "d4_close",
+"objective_pending": ["prefeito_d4_procession", "escort_procession"],
+"set_flag_after": "prefeito_d4_done",
+"actions": {"finish_quest": {"quest": "prefeito_d4_procession", "objective": "escort_procession", "payout": 300}, "rep": {0: 6, 4: -4}},
+"speaker": "Le porteur de bannière",
+"text": "*la procession avance le long d'Ipanema, cierges et chants — trois costauds « du Riserva Uno » barrent la rue. Tu te plantes devant, bras ouverts, entre eux et les fidèles. Tu ne frappes pas. Tu ne recules pas. Les gens filment. Les costauds calculent les caméras… et s'écartent.* *le vieux porteur te bénit du front* Tu as choisi un camp aujourd'hui, mon fils. Tout le monde l'a vu. Plus de retour en arrière.",
+"choices": ["La procession passe"]
+}, {
+"id": "d5_offer",
+"flag": "prefeito_d4_done",
+"quest_not_active": "prefeito_d5_rally",
+"quest_not_completed": "prefeito_d5_rally",
+"actions": {"accept_quest": "prefeito_d5_rally"},
+"speaker": "Le porteur de bannière",
+"text": "*essoufflé, radieux* Le Padre veut frapper fort : un grand meeting au Maracanã pour le candidat civique. Le bairro a confiance en toi — c'est toi qui dois chauffer la foule. Va.",
+"choices": ["Direction le Maracanã"]
+}, {
+"id": "default",
+"speaker": "Surfeur",
+"text": "*regarde l'horizon, planche sous le bras* Vai encarar essa série, mano? Tá perfeita. *court vers l'eau*",
+"choices": ["…"]
+}]
 
 [node name="TaxiStand" parent="." instance=ExtResource("1_taxi")]
 position = Vector2(-700, 50)
@@ -1797,13 +1907,7 @@ position = Vector2(2700, -3000)
 position = Vector2(3400, -3000)
 
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# ZONE NORD : sud→nord depuis l'arrière des immeubles
-#   Av. Epitácio Pessoa  →  sidewalk/bike/jogging  →  Lagoa + Hipódromo
-#   → Jardim Botânico
-# ═══════════════════════════════════════════════════════════════════════════════
 
-# ─── Av. Epitácio Pessoa (juste au nord des immeubles) ───────────────────────
 [node name="EpitacioPessoaSidewalkS" type="ColorRect" parent="."]
 offset_left = -940.0
 offset_top = -75.0
@@ -1872,7 +1976,6 @@ theme_override_colors/font_color = Color(0.98, 0.92, 0.65, 0.85)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
 theme_override_constants/outline_size = 3
 
-# ─── Sidewalk + bike lane + jogging entre Epitácio et la Lagoa ───────────────
 [node name="LagoaSidewalkS" type="ColorRect" parent="."]
 offset_left = -940.0
 offset_top = -150.0
@@ -1922,7 +2025,6 @@ offset_right = 800.0
 offset_bottom = -159.0
 color = Color(0.95, 0.95, 0.92, 0.7)
 
-# La pista vermelha — la mythique piste de jogging rouge autour de la Lagoa
 [node name="LagoaJoggingTrack" type="ColorRect" parent="."]
 offset_left = -940.0
 offset_top = -195.0
@@ -1944,7 +2046,6 @@ offset_right = 900.0
 offset_bottom = -195.0
 color = Color(0.85, 0.75, 0.55, 1)
 
-# ─── HIPÓDROMO DA GÁVEA : x=-940..-500, y=-700..-200  (à l'ouest du lac) ─────
 [node name="HipoBaseGrass" type="ColorRect" parent="."]
 offset_left = -940.0
 offset_top = -700.0
@@ -2001,7 +2102,6 @@ offset_right = -600.0
 offset_bottom = -638.0
 color = Color(0.55, 0.35, 0.22, 1)
 
-# Tribune (grandstand) au sud de la piste
 [node name="HipoGrandstandShadow" type="ColorRect" parent="."]
 offset_left = -805.0
 offset_top = -230.0
@@ -2044,7 +2144,6 @@ offset_right = -565.0
 offset_bottom = -265.0
 color = Color(0.62, 0.55, 0.48, 0.8)
 
-# Kiosque APOSTAS
 [node name="HipoKiosk" type="ColorRect" parent="."]
 offset_left = -720.0
 offset_top = -260.0
@@ -2090,7 +2189,6 @@ theme_override_colors/font_color = Color(0.98, 0.95, 0.85, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
 theme_override_constants/outline_size = 3
 
-# ─── LAGOA RODRIGO DE FREITAS : x=-500..600, y=-700..-200  (central lake) ────
 [node name="LagoaWater" type="ColorRect" parent="."]
 offset_left = -500.0
 offset_top = -700.0
@@ -2180,7 +2278,6 @@ theme_override_colors/font_color = Color(0.98, 0.95, 0.85, 0.85)
 theme_override_colors/font_outline_color = Color(0.12, 0.22, 0.28, 0.85)
 theme_override_constants/outline_size = 3
 
-# Quai paddleboat sur la rive sud
 [node name="LagoaDock" type="ColorRect" parent="."]
 offset_left = -60.0
 offset_top = -220.0
@@ -2202,7 +2299,6 @@ offset_right = 60.0
 offset_bottom = -206.0
 color = Color(0.42, 0.32, 0.25, 0.9)
 
-# ─── Terre est de la Lagoa (entre lake east shore et right wall) ─────────────
 [node name="LagoaEastGrass" type="ColorRect" parent="."]
 offset_left = 600.0
 offset_top = -700.0
@@ -2231,7 +2327,6 @@ offset_right = 750.0
 offset_bottom = -330.0
 color = Color(0.32, 0.55, 0.32, 1)
 
-# ─── JARDIM BOTÂNICO : x=-300..900, y=-1100..-700  (au nord du lac) ──────────
 [node name="JardimGrass" type="ColorRect" parent="."]
 offset_left = -300.0
 offset_top = -1100.0
@@ -2267,7 +2362,6 @@ offset_right = 880.0
 offset_bottom = -740.0
 color = Color(0.35, 0.55, 0.30, 0.7)
 
-# Allée des palmiers impériaux (alignés sud→nord au centre)
 [node name="JardimAlley" type="ColorRect" parent="."]
 offset_left = 280.0
 offset_top = -1080.0
@@ -2289,7 +2383,6 @@ offset_right = 420.0
 offset_bottom = -710.0
 color = Color(0.55, 0.45, 0.32, 0.85)
 
-# Palmiers vue de dessus
 [node name="JardimPalm1Shade" type="ColorRect" parent="."]
 offset_left = 250.0
 offset_top = -1054.0
@@ -2416,7 +2509,6 @@ offset_right = 440.0
 offset_bottom = -878.0
 color = Color(0.42, 0.32, 0.22, 1)
 
-# Fontaine centrale
 [node name="JardimFountainOuter" type="ColorRect" parent="."]
 offset_left = 330.0
 offset_top = -830.0
@@ -2438,7 +2530,6 @@ offset_right = 353.0
 offset_bottom = -806.0
 color = Color(0.95, 0.95, 0.95, 0.85)
 
-# Portail Jardim sur la rive nord de la Lagoa (au sud du jardin)
 [node name="JardimGateLPillar" type="ColorRect" parent="."]
 offset_left = 280.0
 offset_top = -716.0
@@ -2472,7 +2563,6 @@ theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
 theme_override_constants/outline_size = 3
 
-# ─── NPCs interactables ──────────────────────────────────────────────────────
 [node name="BettingKiosk" parent="." instance=ExtResource("15_betkiosk")]
 position = Vector2(-690, -210)
 bet_amount = 20
@@ -2518,7 +2608,6 @@ prompt = "Parler au naturaliste"
 speaker = "Naturaliste"
 text = "*ajuste son chapeau de paille, ouvre un carnet d'observations* L'allée des palmiers impériaux, plantée par Dom João VI lui-même. Cent quarante d'entre eux. Tu peux toucher l'écorce — c'est permis."
 
-# Viewpoint Cristo reflection sur la Lagoa
 [node name="ViewpointLagoaCristo" parent="." instance=ExtResource("3_view")]
 position = Vector2(50, -250)
 viewpoint_id = "lagoa_cristo_reflection"
@@ -2527,7 +2616,6 @@ flavor_speaker = "Sobrinho"
 flavor_text = "La Lagoa Rodrigo de Freitas, eau douce enchâssée entre les collines. Par temps clair, le Corcovado se reflète parfait dans le lac — Cristo les bras ouverts, à l'endroit et à l'envers en même temps. Rio en double."
 money_reward = 70
 
-# Ambient wanderers sur la piste rouge et les sidewalks
 [node name="JoggerLagoaA" parent="." instance=ExtResource("2_wander")]
 position = Vector2(-400, -182)
 color = Color(0.4, 0.75, 0.55, 1)
@@ -2572,9 +2660,6 @@ pause_at_waypoints = 2.0
 pause_random_jitter = 1.0
 
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# LAMPADAIRES (poteau toujours visible, halo + bulb dans le groupe "nightlight")
-# ═══════════════════════════════════════════════════════════════════════════════
 
 [node name="LampVS1Pole" type="ColorRect" parent="."]
 offset_left = -702.0
@@ -2744,11 +2829,6 @@ offset_right = 554.0
 offset_bottom = -122.0
 color = Color(1.0, 0.95, 0.62, 1)
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# FORK NORD : Av. Epitácio Pessoa bifurque vers le nord-est → Botafogo
-# La route remonte le long de la rive est de la Lagoa, traverse l'est du
-# Jardim, et débouche sur Botafogo en haut. y=-130 (Epitácio) → y=-1080 (exit).
-# ═══════════════════════════════════════════════════════════════════════════════
 
 [node name="ForkRoadAsphalt" type="ColorRect" parent="."]
 offset_left = 820.0
@@ -2771,7 +2851,6 @@ offset_right = 882.0
 offset_bottom = -75.0
 color = Color(0.55, 0.52, 0.50, 0.85)
 
-# Marquages centraux jaunes en pointillé (8 segments)
 [node name="ForkLine1" type="ColorRect" parent="."]
 offset_left = 848.0
 offset_top = -200.0
@@ -2854,3 +2933,93 @@ label_text = "↑ BOTAFOGO"
 
 [node name="CollisionShape2D" parent="ExitToBotafogo" index="0"]
 shape = SubResource("ExitBotafogoShape")
+
+[node name="IpanemaYogiSpot" parent="." instance=ExtResource("17_reactive")]
+position = Vector2(650, 175)
+npc_id = "ipanema_yogi"
+prompt = "Parler à la prof de yoga"
+character_seed = 80303
+variants = [{
+"id": "offer",
+"quest_not_active": "ipanema_yoga",
+"quest_not_completed": "ipanema_yoga",
+"actions": {"accept_quest": "ipanema_yoga"},
+"speaker": "Marina (yogi)",
+"text": "*assise en lotus sur le sable, te sourit* Namaste, parceiro. J'ai laissé mon tapis brodé chez le restaurateur d'Ipanema hier soir — trop de caipirinhas. Récupère-le-moi, je remplace une copine au studio dans une heure. 600 reais à ton retour.",
+"choices": ["J'y vais"]
+}, {
+"id": "in_progress",
+"quest_active": "ipanema_yoga",
+"speaker": "Marina (yogi)",
+"text": "*ferme les yeux, respire lentement* Le tapis, le tapis. Souffle pour moi.",
+"choices": ["J'y retourne"]
+}, {
+"id": "done",
+"quest_completed": "ipanema_yoga",
+"speaker": "Marina (yogi)",
+"text": "*déroule son tapis, le caresse* Tu me sauves. Reviens au studio, je te garde une place.",
+"choices": ["Obrigado, Marina"]
+}, {
+"id": "default",
+"speaker": "Marina (yogi)",
+"text": "*étire un downward dog* Soleil sur le sable, mer derrière — pas besoin de plus.",
+"choices": ["Bonne séance"]
+}]
+
+[node name="IpanemaRestoYogaSpot" parent="." instance=ExtResource("17_reactive")]
+position = Vector2(-200, 100)
+npc_id = "ipanema_restaurateur_yoga"
+prompt = "Parler au restaurateur"
+character_seed = 80304
+variants = [{
+"id": "finish",
+"quest_active": "ipanema_yoga",
+"actions": {"finish_quest": {"quest": "ipanema_yoga", "objective": "fetch_mat", "payout": 0}},
+"speaker": "Restaurateur (Ipanema)",
+"text": "*lève les yeux du livre de comptes* Le tapis de Marina ? *le sort de l'arrière-salle* Pas la première fois qu'elle l'oublie. Tiens — et dis-lui de remplacer ses caipirinhas par de l'água de coco.",
+"choices": ["Je transmets"]
+}, {
+"id": "after",
+"quest_completed": "ipanema_yoga",
+"speaker": "Restaurateur (Ipanema)",
+"text": "*sourit* Marina a retrouvé son tapis ? Mes étoiles Michelin sont en sécurité.",
+"choices": ["À bientôt"]
+}, {
+"id": "default",
+"speaker": "Restaurateur (Ipanema)",
+"text": "*range des verres* Bem-vindo. La carte est sur le mur, l'addition au comptoir.",
+"choices": ["Plus tard"]
+}]
+
+[node name="LeblonExecutifSpot" parent="." instance=ExtResource("17_reactive")]
+position = Vector2(-400, 60)
+npc_id = "leblon_executivo"
+prompt = "Parler au cadre"
+character_seed = 80408
+variants = [{
+"id": "finish",
+"objective_pending": ["barra_brief", "deliver_brief"],
+"actions": {"finish_quest": {"quest": "barra_brief", "objective": "deliver_brief", "payout": 0}},
+"speaker": "Bertoluci (cadre)",
+"text": "*costume gris, ouvre le dossier, lit en diagonale, signe sans relever la tête* L'audience tient. *te rend le dossier scellé* Dis à l'avocate que j'ai signé à 17h47 — c'est dans les délais.",
+"choices": ["Je file"]
+}, {
+"id": "after",
+"quest_completed": "barra_brief",
+"speaker": "Bertoluci (cadre)",
+"text": "*range des classeurs* L'audience est passée. Maître Pereira sait y faire.",
+"choices": ["À l'occasion"]
+}, {
+"id": "default",
+"speaker": "Bertoluci (cadre)",
+"text": "*regarde par la fenêtre vers Leblon* Ipanema est bondé à cette heure. Tu venais signer quelque chose ?",
+"choices": ["Pas aujourd'hui"]
+}]
+
+[node name="ExitToCagarras" parent="." instance=ExtResource("5_exit")]
+position = Vector2(650, 180)
+target_district = "cagarras"
+label_text = "🛶 → ÎLES CAGARRAS (SUP)"
+
+[node name="CollisionShape2D" parent="ExitToCagarras" index="0"]
+shape = SubResource("ExitCagarrasShape")

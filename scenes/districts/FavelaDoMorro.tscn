@@ -1458,28 +1458,18 @@ variants = Array[Dictionary]([{
 "payout": 300,
 "quest": "trafico_a5_intim"
 },
+"accept_quest": "trafico_a6_cagarras",
 "rep": {
 0: -2,
 2: 5
 }
 },
-"choices": ["Que ça reste comme ça"],
+"choices": ["Aux Cagarras, alors"],
 "id": "a5_close",
 "objective_pending": ["trafico_a5_intim", "silence_voisin"],
 "set_flag_after": "trafico_a5_done",
 "speaker": "Le voisin",
-"text": "*il rit fort avec deux gars, une bière à la main — il te voit, le sourire tombe* Eh, eh, du calme, je disais rien de mal… *recule contre le mur* J'ai rien vu à Ipanema, t'entends ? Rien. *baisse les yeux, la voix éteinte* Personne saura. Je le jure sur ma mère. *les autres s'éclipsent ; le morro a compris le message — toi aussi.*"
-}, {
-"actions": {
-"accept_quest": "trafico_a6_cagarras"
-},
-"choices": ["Aux Cagarras, alors"],
-"flag": "trafico_a5_done",
-"id": "a6_offer",
-"quest_not_active": "trafico_a6_cagarras",
-"quest_not_completed": "trafico_a6_cagarras",
-"speaker": "Le voisin",
-"text": "*te parle bas, soumis maintenant, presque utile* Si tu veux te faire bien voir de Tito… j'ai entendu qu'un arrivage entre par la mer. Les Cagarras, au large du Posto 6. Faut quelqu'un de confiance pour réceptionner. Prends le bateau. Dis pas que ça vient de moi."
+"text": "*il rit fort avec deux gars, une bière à la main — il te voit, le sourire tombe* Eh, eh, du calme, je disais rien de mal… *recule contre le mur* J'ai rien vu à Ipanema, t'entends ? Rien. *baisse les yeux, voix éteinte* Personne saura. Je le jure sur ma mère. *te tend une info pour se racheter* Tito… il attend un arrivage par la mer. Cagarras, au large du Posto 6. Si tu veux te faire bien voir de lui, prends le bateau."
 }, {
 "choices": ["…"],
 "id": "default",

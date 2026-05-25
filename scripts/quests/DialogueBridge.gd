@@ -2451,7 +2451,10 @@ func _apply_placeholder_action(action: Dictionary) -> void:
 	if GameManager.player:
 		inv = GameManager.player.get_node_or_null("Inventory") as Inventory
 
-	if action.has("accept_quest"):
+	# Cas composé accept_quest + finish_quest : la quête à accepter dépend
+	# souvent de la quête à clôre (prereq), donc on délègue à la branche
+	# finish_quest qui ordonne complete → accept correctement (voies A/B/C/D).
+	if action.has("accept_quest") and not action.has("finish_quest"):
 		if not _try_accept(action.accept_quest):
 			_show_locked_message(action.accept_quest)
 			return
@@ -2512,6 +2515,11 @@ func _apply_placeholder_action(action: Dictionary) -> void:
 		# set_flag en bonus (utilisé pour les pivots narratifs post-quête).
 		if action.has("set_flag"):
 			set_flag(String(action.set_flag))
+		# accept_quest en bonus : chaîne close+next dans le même dialogue (évite
+		# au joueur de devoir réinteragir avec le même NPC pour la suite —
+		# motif des voies A/B/C/D, ex. trafico a1→a2 sur le même contact).
+		if action.has("accept_quest"):
+			_try_accept(action.accept_quest)
 		return
 	if action.has("pay_bribe"):
 		# Bribe pure (sans finish_quest) : ex. flic qui demande de l'argent.
