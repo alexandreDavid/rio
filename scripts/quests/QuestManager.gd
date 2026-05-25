@@ -93,7 +93,11 @@ func missing_prerequisites(quest_id: String) -> Array[String]:
 func is_available(quest_id: String) -> bool:
 	return get_state(quest_id) == State.AVAILABLE and meets_requirements(quest_id)
 
-func complete_objective(quest_id: String, objective_id: String) -> void:
+func complete_objective(quest_id: String, objective_id: String, auto_pay_reward: bool = true) -> void:
+	# `auto_pay_reward` = true par défaut : la complétion finale paie automatiquement
+	# le `money_reward` de la quête. Les appelants qui ont déjà versé le payout via
+	# leur propre canal (DialogueBridge avec `finish_quest.payout`) passent false
+	# pour éviter le double paiement.
 	if get_state(quest_id) != State.ACTIVE:
 		return
 	if not _objectives[quest_id].has(objective_id):
@@ -102,7 +106,7 @@ func complete_objective(quest_id: String, objective_id: String) -> void:
 	_objectives[quest_id][objective_id] = true
 	EventBus.quest_updated.emit(quest_id, objective_id)
 	if _all_mandatory_done(quest_id):
-		_complete(quest_id)
+		_complete(quest_id, auto_pay_reward)
 
 func fail(quest_id: String) -> void:
 	if get_state(quest_id) != State.ACTIVE:
@@ -119,10 +123,10 @@ func _all_mandatory_done(quest_id: String) -> bool:
 			return false
 	return true
 
-func _complete(quest_id: String) -> void:
+func _complete(quest_id: String, auto_pay_reward: bool = true) -> void:
 	_state[quest_id] = State.COMPLETED
 	var quest: Quest = _quests[quest_id]
-	if quest.money_reward != 0 and GameManager.player:
+	if auto_pay_reward and quest.money_reward != 0 and GameManager.player:
 		var inv: Node = GameManager.player.get_node_or_null("Inventory")
 		if inv:
 			inv.add_money(quest.money_reward)

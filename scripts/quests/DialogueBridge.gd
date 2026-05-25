@@ -2489,7 +2489,9 @@ func _apply_placeholder_action(action: Dictionary) -> void:
 			var info: Dictionary = action.finish_quest
 			if inv and info.get("payout", 0) > 0:
 				inv.add_money(info.payout)
-			QuestManager.complete_objective(info.quest, info.objective)
+			# Le dialogue a déjà versé `payout` → on demande à QuestManager de
+			# ne pas re-payer `money_reward` (évite le double paiement).
+			QuestManager.complete_objective(info.quest, info.objective, false)
 		if action.has("rep"):
 			for axis_key in action.rep:
 				ReputationSystem.modify(int(axis_key), action.rep[axis_key])
@@ -2505,7 +2507,9 @@ func _apply_placeholder_action(action: Dictionary) -> void:
 				return
 		if inv and info.get("payout", 0) > 0:
 			inv.add_money(info.payout)
-		QuestManager.complete_objective(info.quest, info.objective)
+		# Le dialogue a déjà versé `payout` → on demande à QuestManager de
+		# ne pas re-payer `money_reward` (évite le double paiement).
+		QuestManager.complete_objective(info.quest, info.objective, false)
 		if action.has("rep"):
 			for axis_key in action.rep:
 				ReputationSystem.modify(int(axis_key), action.rep[axis_key])
