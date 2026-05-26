@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_loot"]
+script = ExtResource("2_obj")
+id = "loot_palace_safe"
+description = "Forcer le coffre du Copacabana Palace (entrée concierge)"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "act4_palace_heist"
+display_name = "Le coffre du Palace"
+description = "Le Fixer a un plan : le coffre arrière du Copacabana Palace, accessible par l'entrée des concierges. Pas d'effraction visible, juste un homme qui sait. 10 000 reais clean — si on est discret."
+journal_text = "Forcer le coffre du Copacabana Palace"
+giver_npc_id = "fixer"
+ink_knot = "fixer_offer_palace_heist"
+objectives = Array[Resource]([SubResource("obj_loot")])
+money_reward = 10000
+reputation_rewards = {2: 5, 1: -3}
+required_reputation = {}
+required_act = 4
+quest_type = 1
+prerequisite_quest_ids = Array[String]([])

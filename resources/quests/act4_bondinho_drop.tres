@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_drop"]
+script = ExtResource("2_obj")
+id = "drop_cash_summit"
+description = "Poser la mallette de cash au sommet du Pão de Açúcar (Bondinho)"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "act4_bondinho_drop"
+display_name = "Au sommet du Bondinho"
+description = "Le Fixer monte une opération de blanchiment qui passe par le Bondinho : tu portes une mallette de cash sale jusqu'au sommet du Pão de Açúcar, un partenaire la récupère, l'argent ressort lavé. 15 000 reais à la clé. Discret par construction — personne ne fouille les touristes au sommet."
+journal_text = "Acheminer la mallette de cash au sommet du Pão de Açúcar"
+giver_npc_id = "fixer"
+ink_knot = "fixer_offer_bondinho_drop"
+objectives = Array[Resource]([SubResource("obj_drop")])
+money_reward = 15000
+reputation_rewards = {4: 4, 1: -3}
+required_reputation = {}
+required_act = 4
+quest_type = 1
+prerequisite_quest_ids = Array[String]([])

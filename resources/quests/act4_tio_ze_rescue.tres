@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_rescue"]
+script = ExtResource("2_obj")
+id = "free_tio_ze"
+description = "Libérer tio Zé de la planque de la Mafia da Baía (Niterói)"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "act4_tio_ze_rescue"
+display_name = "Tio Zé est vivant"
+description = "Le Fixer a une information qui retourne tout : tio Zé n'est pas mort. La Mafia da Baía le détient dans une planque de Niterói depuis des mois. Pas d'argent en jeu — juste la famille."
+journal_text = "Sauver tio Zé d'une planque à Niterói"
+giver_npc_id = "fixer"
+ink_knot = "fixer_offer_tio_ze_rescue"
+objectives = Array[Resource]([SubResource("obj_rescue")])
+money_reward = 0
+reputation_rewards = {3: 8, 2: 2}
+required_reputation = {}
+required_act = 4
+quest_type = 1
+prerequisite_quest_ids = Array[String]([])

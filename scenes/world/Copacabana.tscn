@@ -626,6 +626,98 @@ variants = [{
 "choices": ["…"]
 }]
 
+[node name="FixerSpot" parent="." instance=ExtResource("62_reactive")]
+position = Vector2(360, -100)
+npc_id = "fixer"
+prompt = "Le Fixer"
+character_seed = 90202
+variants = [{
+"id": "palace_done",
+"objective_pending": ["act4_palace_heist", "loot_palace_safe"],
+"actions": {"finish_quest": {"quest": "act4_palace_heist", "objective": "loot_palace_safe", "payout": 10000}, "pay_debt": 8000, "rep": {2: 5, 1: -3}, "set_flag": "palace_heist_done"},
+"speaker": "Le Fixer",
+"text": "*ouvre la mallette, compte les billets, sourit pour la première fois* Propre. Le concierge ne s'est aperçu de rien — il l'avouera quand on l'aura promu sous-directeur dans dix ans. *te tend ta part* Voilà 10k, garoto. Et la moitié pour ta dette, comme convenu.",
+"choices": ["Bon business"]
+}, {
+"id": "sambo_done",
+"objective_pending": ["act4_sambo_sabotage", "sabotage_rival_float"],
+"actions": {"finish_quest": {"quest": "act4_sambo_sabotage", "objective": "sabotage_rival_float", "payout": 12000}, "pay_debt": 10000, "rep": {2: 4, 0: -5, 3: -3}, "set_flag": "sambo_sabotage_done"},
+"speaker": "Le Fixer",
+"text": "*regarde une vidéo amateur sur son téléphone — un char qui s'effondre, des plumes partout, des passistas en pleurs* …Tu sais qu'il y avait des enfants dans ce char qui le construisaient depuis un an ? *te tend l'enveloppe quand même* 12k. Mon contact est content. Le bairro, moins. Compte là-dessus.",
+"choices": ["…J'encaisse"]
+}, {
+"id": "tio_ze_done",
+"objective_pending": ["act4_tio_ze_rescue", "free_tio_ze"],
+"actions": {"finish_quest": {"quest": "act4_tio_ze_rescue", "objective": "free_tio_ze", "payout": 0}, "rep": {3: 8, 2: 2}, "set_flag": "tio_ze_rescued"},
+"speaker": "Le Fixer",
+"text": "*pour la première fois, baisse sa capuche* Tu l'as ramené. *voix plus douce* Je connaissais Zé, jadis — on bossait pour Tito, du même côté. Quand il a voulu partir, ils l'ont pas tué : ils l'ont caché à Niterói comme une dette en suspens. *te serre la main, longuement* C'est pas mon métier de faire ça. C'est le tien.",
+"choices": ["Obrigado, Fixer"]
+}, {
+"id": "press_done",
+"objective_pending": ["act4_press_expose", "deliver_dossier"],
+"actions": {"finish_quest": {"quest": "act4_press_expose", "objective": "deliver_dossier", "payout": 8000}, "pay_debt": 6000, "rep": {0: 6, 4: -5}, "set_flag": "press_leaked"},
+"speaker": "Le Fixer",
+"text": "*lit la une du journal du matin, paie son café* « Consórcio sob suspeita — denúncias chocam o bairro. » *replie le journal, te tend l'enveloppe* 8k, et le bairro respire un peu mieux ce matin. Magalhães, lui, dort moins bien. Bom dia.",
+"choices": ["Bom dia"]
+}, {
+"id": "bondinho_done",
+"objective_pending": ["act4_bondinho_drop", "drop_cash_summit"],
+"actions": {"finish_quest": {"quest": "act4_bondinho_drop", "objective": "drop_cash_summit", "payout": 15000}, "pay_debt": 12000, "rep": {4: 4, 1: -3}, "set_flag": "bondinho_drop_done"},
+"speaker": "Le Fixer",
+"text": "*reçoit un texto, hoche la tête* Mallette livrée, partenaire content. *te tend ta part* 15k, plus propres que la mienne. Le sommet du Bondinho, c'est l'endroit le plus discret de Rio — les touristes filment la baie, pas les hommes.",
+"choices": ["Affaire faite"]
+}, {
+"id": "palace_offer",
+"act": 4,
+"quest_not_active": "act4_palace_heist",
+"quest_not_completed": "act4_palace_heist",
+"actions": {"accept_quest": "act4_palace_heist"},
+"speaker": "Le Fixer",
+"text": "*sort un plan plié* Le coffre arrière du Copacabana Palace. Le concierge de nuit me doit un service. Tu rentres par la porte des concierges (av. Atlântica face mer), tu prends ce qu'il y a, tu ressors. 10 000 reais nets, dont 8 pour ta dette si tu veux. Pas d'effraction visible.",
+"choices": ["J'y vais"]
+}, {
+"id": "sambo_offer",
+"act": 4,
+"quest_not_active": "act4_sambo_sabotage",
+"quest_not_completed": "act4_sambo_sabotage",
+"actions": {"accept_quest": "act4_sambo_sabotage"},
+"speaker": "Le Fixer",
+"text": "*pose une enveloppe sur la table* Une école de samba m'a payé pour saccager le char de leur rivale au Sambódromo. Pas de blessés — du carton, des roues, l'image. La presse filme tout, ça fera plus mal que mille reais d'amende. 12 000 reais pour toi.",
+"choices": ["Discutable, mais OK"]
+}, {
+"id": "tio_ze_offer",
+"act": 4,
+"quest_not_active": "act4_tio_ze_rescue",
+"quest_not_completed": "act4_tio_ze_rescue",
+"actions": {"accept_quest": "act4_tio_ze_rescue"},
+"speaker": "Le Fixer",
+"text": "*hésite, baisse la voix* Garoto, cette info-là je te la fais à l'œil. Ton oncle Zé n'est pas mort. La Mafia da Baía le détient dans une planque à Niterói depuis des mois — un débiteur qu'ils gardent en vie au cas où. Va le chercher. Pas d'argent en jeu. Juste la famille.",
+"choices": ["Je vais le sortir de là"]
+}, {
+"id": "press_offer",
+"act": 4,
+"quest_not_active": "act4_press_expose",
+"quest_not_completed": "act4_press_expose",
+"actions": {"accept_quest": "act4_press_expose"},
+"speaker": "Le Fixer",
+"text": "*pose un dossier épais sur la table* J'ai chopé ça via un ancien du Consórcio. Noms, comptes off-shore, signatures. Un journaliste anti-corruption attend juste l'enveloppe. 8 000 reais — et un sérieux coup de pied à Magalhães. Tu fais passer ?",
+"choices": ["Avec plaisir"]
+}, {
+"id": "bondinho_offer",
+"act": 4,
+"quest_not_active": "act4_bondinho_drop",
+"quest_not_completed": "act4_bondinho_drop",
+"actions": {"accept_quest": "act4_bondinho_drop"},
+"speaker": "Le Fixer",
+"text": "*te tend une mallette en aluminium* Une opération de blanchiment qui passe par le Bondinho. Tu montes au sommet du Pão de Açúcar avec ça, un partenaire récupère. L'argent ressort lavé, tu touches 15 000 reais. Sois touriste — chemise hawaïenne si tu veux.",
+"choices": ["Direction le sommet"]
+}, {
+"id": "default",
+"speaker": "Le Fixer",
+"text": "*lit son journal, ne lève pas les yeux* Tout est en cours, garoto. Reviens quand t'as bouclé.",
+"choices": ["…"]
+}]
+
 [node name="LurdesShadow" type="ColorRect" parent="."]
 offset_left = 454.0
 offset_top = 223.0
