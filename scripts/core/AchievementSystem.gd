@@ -14,7 +14,8 @@ const CATALOG: Array = [
 	{"id": "debt_cleared", "icon": "💰", "title": "Dívida saldada", "desc": "Solder la dette de 50 000 R$.", "reward": 1000},
 	{"id": "act_2", "icon": "🎬", "title": "Acte 2 — Os verdadeiros rostos", "desc": "Franchir le seuil de l'acte 2.", "reward": 300},
 	{"id": "act_3", "icon": "🎬", "title": "Acte 3 — A última volta", "desc": "Atteindre l'acte 3.", "reward": 500},
-	{"id": "act_4", "icon": "🎬", "title": "Acte 4 — O Reinado", "desc": "Régner sur le bairro.", "reward": 800},
+	{"id": "act_4", "icon": "🎬", "title": "Acte 4 — Os Grandes Lances", "desc": "Atteindre les gros coups (25 000 R$).", "reward": 600},
+	{"id": "act_5", "icon": "🎬", "title": "Acte 5 — O Reinado", "desc": "Régner sur le bairro.", "reward": 800},
 	{"id": "endgame_prefeito", "icon": "🏛", "title": "Coronel do Bairro", "desc": "Sceller la voie Prefeito.", "reward": 500},
 	{"id": "endgame_policia", "icon": "🚓", "title": "Chefe de Polícia", "desc": "Sceller la voie Polícia.", "reward": 500},
 	{"id": "endgame_trafico", "icon": "👑", "title": "Patrão do Morro", "desc": "Sceller la voie Tráfico.", "reward": 500},
@@ -145,6 +146,8 @@ func _evaluate_all() -> void:
 		_unlock("act_3")
 	if not is_unlocked("act_4") and CampaignManager.current_act >= 4:
 		_unlock("act_4")
+	if not is_unlocked("act_5") and CampaignManager.current_act >= 5:
+		_unlock("act_5")
 	if not is_unlocked("endgame_prefeito") and CampaignManager.chosen_endgame == CampaignManager.Endgame.PREFEITO:
 		_unlock("endgame_prefeito")
 	if not is_unlocked("endgame_policia") and CampaignManager.chosen_endgame == CampaignManager.Endgame.POLICIA:

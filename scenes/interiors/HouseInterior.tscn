@@ -270,7 +270,7 @@ prompt = "Parler à Mãe"
 character_seed = 70411
 variants = [{
 "id": "carnaval",
-"act": 4,
+"act": 5,
 "speaker": "Mãe",
 "text": "*essuie ses mains sur son tablier* Mon roi du Sambódromo. Tu rentres à quatre heures du matin maintenant — mais tu rentres entier. C'est tout ce que je demandais à ton oncle. Va, va. La moqueca chauffe.",
 "choices": ["Obrigado, mãe"]
@@ -331,7 +331,7 @@ prompt = "Parler à Vovó"
 character_seed = 70412
 variants = [{
 "id": "carnaval",
-"act": 4,
+"act": 5,
 "speaker": "Vovó",
 "text": "*lève les yeux de son tricot, sourit* Tu sens la sueur de Sambódromo et la samba qui colle. *recommence à tricoter* Ton oncle aurait dansé jusqu'au lever du soleil. Il danse encore, à sa façon. Va te laver, mon petit roi.",
 "choices": ["Sim, vovó"]

@@ -88,6 +88,7 @@ const QUEST_RESOURCES: Array[String] = [
 	"res://resources/quests/cristo_photo.tres",
 	"res://resources/quests/niteroi_envelope.tres",
 	"res://resources/quests/maracana_jersey.tres",
+	"res://resources/quests/assassinate_consortium.tres",
 	"res://resources/quests/sambo_plumes.tres",
 	"res://resources/quests/barra_brief.tres",
 	"res://resources/quests/zona_sul_envelope.tres",
@@ -1384,7 +1385,7 @@ func _run_voie_e2e(cfg: Dictionary) -> void:
 	DialogueBridge.choose(0)
 	_assert(CampaignManager.chosen_endgame == cfg.endgame,
 		"%s : couronnement → endgame scellé" % cfg.name)
-	_assert(CampaignManager.current_act == 4, "%s : acte 4 atteint (règne)" % cfg.name)
+	_assert(CampaignManager.current_act == 5, "%s : acte 5 atteint (règne)" % cfg.name)
 
 	# Finale : Carnaval → Épilogue (jeu terminable).
 	_assert(QuestManager.is_available("act4_carnaval_desfile"),

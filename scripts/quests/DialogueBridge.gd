@@ -177,7 +177,7 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 		"choices": ["Obrigado, tio"],
 	},
 	# --- Acte 3 : tio Zé recoupe l'intel pour Ramos ---
-	# --- Soirée 4 : la veille du Carnaval (acte 4) ---
+	# --- Soirée 4 : la veille du Carnaval (acte 5) ---
 	"seu_joao_evening_carnaval_eve": {
 		"speaker": "Seu João",
 		"text": "*ne lève pas les yeux du sol qu'il balaye* Demain c'est la Sapucaí, sobrinho. Trois cent mille personnes vont chanter le nom du Reinado. Si c'est toi… *long silence* …ta mère sera dans la foule, en première ligne. Vovó écoutera la radio en tricotant. Et moi je serai à la fenêtre. *fait une pause* Zé aussi sera là, quelque part. Tu le verras peut-être pas. Mais lui, il te verra.",
@@ -876,6 +876,35 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 	# Entre A1 livré et A9 (corrida), Tito ne donne plus de missions directes —
 	# c'est le contact du calçadão (puis la chaîne de spots) qui prend la main.
 	# Ce knot évite qu'il devienne muet et redirige le joueur vers son réseau.
+	# --- Acte 4 : option assassinat du consortium (Sicario) ---
+	# Voie courte et sanglante : un seul coup, le consortium tombe, la dette
+	# s'efface. Mais l'argent du sang ne se lave pas — la rep prend une raclée
+	# sur 3 axes (loi, business, communauté).
+	"sicario_offer": {
+		"speaker": "Sicario",
+		"text": "*encapuchonné dans l'ombre du calçadão, voix rauque* Tu portes une dette qui te tuera plus sûrement qu'une balle, garoto. *crache* Y'a une autre voie. Un seul coup. Dom Nilton ne déjeune pas demain, et la maison s'effondre — avec ta dette. 5 000 reais d'acompte, le reste est mon affaire. Tu signes en sang, ou tu continues à courir ?",
+		"choices": ["Je signe (5 000 R$)", "Pas mon style"],
+		"on_choose": {
+			"0": {"accept_quest": "assassinate_consortium", "pay_bribe": 5000, "rep": {2: 2}},
+			"1": {"set_flag": "sicario_refused"},
+		},
+	},
+	"sicario_remind": {
+		"speaker": "Sicario",
+		"text": "*sans lever les yeux* Av. Atlântica, midi. Dom Nilton sirote son café au quiosque. Approche-toi. Le reste se passe tout seul.",
+		"choices": ["J'y vais"],
+	},
+	# Knot de complétion : déclenché par un spot/event à la fin de l'exécution.
+	# Pay_debt avec un gros chiffre pour clôturer la dette restante (CampaignManager
+	# clamp à debt_remaining donc on peut passer DEBT_TOTAL sans risque).
+	"sicario_done": {
+		"speaker": "Sicario",
+		"text": "*compte les billets sans te regarder* C'est fait. Le consortium n'a plus de tête, le bairro n'a plus de dette. *te rend la moitié de tes 5000* Garde ça. T'en auras besoin pour disparaître quelque temps. Le Carnaval, ça oublie vite — mais la PM, jamais.",
+		"choices": ["…"],
+		"on_choose": {
+			"0": {"finish_quest": {"quest": "assassinate_consortium", "objective": "execute_hit", "payout": 0}, "pay_debt": 50000, "rep": {2: 8, 0: -10, 1: -10, 4: -20}, "set_flag": "consortium_assassinated"},
+		},
+	},
 	"tito_voie_active": {
 		"speaker": "Tito",
 		"text": "*claque la langue, te jauge* Tu portes bien, sobrinho. Maintenant le morro a son propre rythme — mon contact gère, calçadão de Copa. Va le voir, il sait quoi te confier. Quand viendra la corrida finale du Carnaval, tu reviens me parler. D'ici là, pas de zèle, pas de bavures.",
@@ -1263,7 +1292,7 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 		"text": "*tire un dernier filet* La mer parle moins fort cette nuit. Obrigado, sobrinho.",
 		"choices": ["Bonne pêche"],
 	},
-	# --- Acte 4 : défilé du Carnaval (couronnement public) ---
+	# --- Acte 5 : défilé du Carnaval (couronnement public) ---
 	"seu_joao_carnaval_offer": {
 		"speaker": "Seu João",
 		"text": "Sobrinho ! L'école de samba veut te mettre devant pour le défilé. Une vrai bagunça : tamborim, surdo, cuíca, agogô. Tu mènes le bloc, la foule te porte. C'est ton couronnement, comprends ? Va au Sambódromo, le taxi t'y dépose. Et tu rentres reinado pour de bom.",

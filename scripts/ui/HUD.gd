@@ -341,7 +341,8 @@ func _on_act_changed(new_act: int) -> void:
 	var titles: Dictionary = {
 		2: "Acte 2 — Os verdadeiros rostos",
 		3: "Acte 3 — A última volta",
-		4: "Acte 4 — O Reinado",
+		4: "Acte 4 — Os Grandes Lances",
+		5: "Acte 5 — O Reinado",
 	}
 	if titles.has(new_act):
 		_flash_toast(titles[new_act])
@@ -359,8 +360,8 @@ func _refresh_day() -> void:
 func _refresh_debt() -> void:
 	if debt_label == null:
 		return
-	# Acte 4 : la dette est derrière, le label affiche le titre de règne.
-	if CampaignManager.current_act >= 4 and CampaignManager.chosen_endgame != CampaignManager.Endgame.NONE:
+	# Acte 5 (Reinado) : la dette est derrière, le label affiche le titre de règne.
+	if CampaignManager.current_act >= 5 and CampaignManager.chosen_endgame != CampaignManager.Endgame.NONE:
 		debt_label.text = "Reinado : %s" % CampaignManager.reign_title()
 		debt_label.modulate = Color(1, 0.92, 0.55, 1)
 		return
@@ -393,7 +394,7 @@ func _welcome_back_after_load() -> void:
 	var debt: int = CampaignManager.debt_remaining()
 	var endgame: int = CampaignManager.chosen_endgame
 	var lines: Array[String] = ["Bem-vindo de volta · Jour %d · Acte %d" % [day, act]]
-	if act >= 4 and endgame != CampaignManager.Endgame.NONE:
+	if act >= 5 and endgame != CampaignManager.Endgame.NONE:
 		lines.append("Reinado : %s" % CampaignManager.reign_title())
 	elif debt > 0:
 		lines.append("Dette restante : R$ %d" % debt)

@@ -109,9 +109,9 @@ func _skip_to_act(target: int) -> void:
 	_toast_msg("Skip → Acte %d" % CampaignManager.current_act)
 
 func _skip_to_act4(endgame: int) -> void:
-	# Saute directement à l'acte 4 : complete_endgame purge la dette, pose
-	# l'endgame et bascule current_act. La refonte en voies (A/B/C/D) a remplacé
-	# l'ancien spine act3_* — pas de quêtes intermédiaires à compléter ici.
+	# Saute jusqu'à l'acte 5 (Reinado) via complete_endgame : purge la dette,
+	# pose l'endgame et bascule current_act = 5. Passe l'acte 4 (Os Grandes
+	# Lances) directement pour ne pas obliger le tester à jouer les A8/A9.
 	_skip_to_act(3)
 	CampaignManager.complete_endgame(endgame)
 	var labels: Dictionary = {
@@ -119,7 +119,7 @@ func _skip_to_act4(endgame: int) -> void:
 		CampaignManager.Endgame.TRAFICO: "Tráfico",
 		CampaignManager.Endgame.PREFEITO: "Prefeito",
 	}
-	_toast_msg("Skip → Acte 4 voie %s" % labels.get(endgame, "?"))
+	_toast_msg("Skip → Acte 5 voie %s" % labels.get(endgame, "?"))
 
 # --- Helpers ---
 

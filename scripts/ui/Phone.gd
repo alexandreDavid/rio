@@ -383,14 +383,14 @@ func _count_viewpoints() -> int:
 	return n
 
 # Vue « Estratégia » : combien de R$ + quels pivots manquent pour passer au
-# prochain acte. Acte 4 (règne) affiche le titre. Acte 3 sans voie choisie
+# prochain acte. Acte 5 (règne) affiche le titre. Acte 3 sans voie choisie
 # pointe vers les trois NPCs de finale.
 func _add_act_tracker() -> void:
 	var act: int = CampaignManager.current_act
 	var section: Label = Label.new()
 	section.add_theme_font_size_override("font_size", 13)
 	section.add_theme_color_override("font_color", Color(0.95, 0.85, 0.4))
-	if act >= 4:
+	if act >= 5:
 		section.text = "🏛 Reinado : %s" % CampaignManager.reign_title()
 		stats_box.add_child(section)
 		var hint: Label = Label.new()
@@ -811,8 +811,8 @@ func _build_news_items() -> Array:
 	var day: int = TimeOfDay.day_count
 	var endgame: int = CampaignManager.chosen_endgame
 
-	# Manchettes endgame (acte 4 — règne).
-	if act >= 4:
+	# Manchettes endgame (acte 5 — règne).
+	if act >= 5:
 		match endgame:
 			CampaignManager.Endgame.PREFEITO:
 				out.append({"text": "Subprefeitura civica anunciada — Coronel do Bairro recebe a faixa", "source": "O Globo Rio", "color": NEWS_COLOR_WIN})
@@ -865,8 +865,8 @@ func _build_news_items() -> Array:
 	if ReputationSystem.get_value(ReputationSystem.Axis.STREET) >= 50:
 		out.append({"text": "Lendas urbanas no Morro — sobrinho misterioso protege os pequenos", "source": "Extra", "color": NEWS_COLOR_SOCIETY})
 
-	# Carnaval — proche pendant acte 4.
-	if act >= 4:
+	# Carnaval — proche pendant acte 5 (reinado).
+	if act >= 5:
 		out.append({"text": "Sambódromo afinado — ensaios técnicos liberam ingressos do bloco", "source": "O Globo Rio", "color": NEWS_COLOR_AMBIENT})
 	else:
 		out.append({"text": "Carnaval 2026 — preparativos começam nos blocos do bairro", "source": "O Globo Rio", "color": NEWS_COLOR_AMBIENT})

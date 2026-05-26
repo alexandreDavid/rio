@@ -15,8 +15,11 @@ const ACT1_THRESHOLD: int = 500
 # Acte 2 = échantillon libre : chaque patron offre sa mission intro (A1/B1/C1/D1)
 # sans pacte. Le joueur cumule jusqu'à 5000 R$, puis l'acte 3 enclenche le vrai
 # choix de voie (mutuellement exclusive).
-# Acompte cumulé nécessaire à l'acte 3 (dernière ligne droite avant remboursement final).
 const ACT2_THRESHOLD: int = 5000
+# Acte 3 → 4 : la voie est scellée, le joueur enchaîne A1-A7 dans la chaîne.
+# À 25 000 R$ cumulés, l'acte 4 « Os Grandes Lances » s'ouvre : missions
+# majeures (A8 gros coup, assassinat du consortium, A9 couronnement).
+const ACT3_THRESHOLD: int = 25000
 
 var current_act: int = 1
 var debt_paid: int = 0
@@ -103,6 +106,10 @@ func can_advance_to_act(n: int) -> bool:
 		# Avancement libre au seuil dette : pas besoin d'avoir scellé une voie en
 		# acte 2 — c'est justement en acte 3 que le pacte se signe.
 		return current_act == 2 and debt_paid >= ACT2_THRESHOLD
+	if n == 4:
+		# Acte 3 → 4 : 25 000 R$ remboursés, on entre dans « Os Grandes Lances ».
+		# A8 gros coup, A9 couronnement, et l'option assassinat du consortium.
+		return current_act == 3 and debt_paid >= ACT3_THRESHOLD
 	return false
 
 func advance_act() -> bool:
@@ -125,8 +132,8 @@ func set_endgame(path: int) -> void:
 	chosen_endgame = path
 	EventBus.endgame_chosen.emit(path)
 
-# Acte 3 : la finale clôture la dette (l'argent vient de la voie choisie, pas du joueur),
-# scelle la voie ET ouvre l'acte 4 (Reinado). Émet endgame_chosen + act_changed(4).
+# Acte 4 → 5 : couronnement de la voie. Clôt la dette (l'argent vient de la voie),
+# scelle endgame_chosen ET ouvre l'acte 5 (Reinado/Carnaval). Émet act_changed(5).
 func complete_endgame(path: int) -> void:
 	chosen_endgame = path
 	var remaining: int = debt_remaining()
@@ -134,11 +141,11 @@ func complete_endgame(path: int) -> void:
 		debt_paid = DEBT_TOTAL
 		EventBus.debt_paid.emit(remaining, 0)
 	EventBus.endgame_chosen.emit(path)
-	if current_act < 4:
-		current_act = 4
-		EventBus.act_changed.emit(4)
+	if current_act < 5:
+		current_act = 5
+		EventBus.act_changed.emit(5)
 
-# Titre du joueur en acte 4 selon la voie.
+# Titre du joueur en acte 5 (Reinado) selon la voie.
 func reign_title() -> String:
 	match chosen_endgame:
 		Endgame.PREFEITO: return "Coronel do Bairro"

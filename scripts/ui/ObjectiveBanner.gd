@@ -166,9 +166,16 @@ func _compute_hint() -> String:
 	if act == 3 and CampaignManager.chosen_endgame == CampaignManager.Endgame.NONE:
 		if _no_voie_chosen():
 			return "🎯 Le vrai choix : va sceller un pacte (Tito / Ramos / Magalhães / Padre)"
+		if debt_paid < CampaignManager.ACT3_THRESHOLD:
+			var still3: int = CampaignManager.ACT3_THRESHOLD - debt_paid
+			return "🎯 Avance dans ta voie — %s R$ avant les Grands Lances (acte 4)" % still3
 
-	# --- Acte 4 : reinado ---
+	# --- Acte 4 : Os Grandes Lances (gros coups + option assassinat) ---
 	if act == 4:
+		return "🎯 Os Grandes Lances — gros coup, couronnement, ou assassinat du consortium"
+
+	# --- Acte 5 : reinado ---
+	if act == 5:
 		return "🎯 Mène ton règne — défilé du Carnaval au Sambódromo"
 
 	# Fallback : si aucun hint MAIN/acte ne s'applique, on surface le prochain

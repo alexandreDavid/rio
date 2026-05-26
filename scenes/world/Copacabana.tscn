@@ -596,6 +596,36 @@ variants = [{
 "choices": ["…"]
 }]
 
+[node name="SicarioSpot" parent="." instance=ExtResource("62_reactive")]
+position = Vector2(420, -100)
+npc_id = "sicario"
+prompt = "L'encapuchonné"
+character_seed = 90201
+variants = [{
+"id": "execute",
+"act": 4,
+"objective_pending": ["assassinate_consortium", "execute_hit"],
+"actions": {"finish_quest": {"quest": "assassinate_consortium", "objective": "execute_hit", "payout": 0}, "pay_debt": 50000, "rep": {2: 8, 0: -10, 1: -10, 4: -20}, "set_flag": "consortium_assassinated"},
+"speaker": "Sicario",
+"text": "*compte les billets sans te regarder* C'est fait. Le consortium n'a plus de tête, le bairro n'a plus de dette. *te rend la moitié de tes 5000* Garde ça. T'en auras besoin pour disparaître quelque temps. Le Carnaval, ça oublie vite — mais la PM, jamais.",
+"choices": ["…"]
+}, {
+"id": "offer",
+"act": 4,
+"quest_not_active": "assassinate_consortium",
+"quest_not_completed": "assassinate_consortium",
+"not_flag": "sicario_refused",
+"actions": {"accept_quest": "assassinate_consortium", "pay_bribe": 5000, "rep": {2: 2}},
+"speaker": "Sicario",
+"text": "*encapuchonné dans l'ombre, voix rauque* Tu portes une dette qui te tuera plus sûrement qu'une balle, garoto. *crache* Y'a une autre voie. Un seul coup. Dom Nilton ne déjeune pas demain, et la maison s'effondre — avec ta dette. 5 000 reais d'acompte, le reste est mon affaire.",
+"choices": ["Je signe (5 000 R$)"]
+}, {
+"id": "default",
+"speaker": "Sicario",
+"text": "*tire sur sa cigarette, regarde la mer* On se reverra peut-être, garoto. Pas aujourd'hui.",
+"choices": ["…"]
+}]
+
 [node name="LurdesShadow" type="ColorRect" parent="."]
 offset_left = 454.0
 offset_top = 223.0

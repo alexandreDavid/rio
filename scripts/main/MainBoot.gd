@@ -107,6 +107,7 @@ const QUEST_RESOURCES: Array[String] = [
 	"res://resources/quests/consortium_le_parc.tres",
 	"res://resources/quests/consortium_peninsula.tres",
 	"res://resources/quests/pacto_barra.tres",
+	"res://resources/quests/assassinate_consortium.tres",
 	"res://resources/quests/bruno_carga.tres",
 	"res://resources/quests/bruno_pesca_baia.tres",
 	"res://resources/quests/quiz_maracana.tres",

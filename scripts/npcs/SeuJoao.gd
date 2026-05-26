@@ -6,7 +6,6 @@ extends NPC
 # veille du Carnaval). Sur le calçadão / charrette, il garde son rôle d'origine.
 
 const QUEST_ID: String = "quest_milho_01"
-const QUEST_INTEL: String = "act3_policia_intel"
 const QUEST_CARNAVAL: String = "act4_carnaval_desfile"
 
 func _ready() -> void:
@@ -24,6 +23,9 @@ func _apply_visibility() -> void:
 	# complétée = le joueur a vu Seu João au moins une fois → visible.
 	var heritage_started: bool = QuestManager.is_active("act1_heritage") \
 			or QuestManager.is_completed("act1_heritage") \
+			or QuestManager.is_active("prologue_pedrinho") \
+			or QuestManager.is_completed("prologue_pedrinho") \
+			or CampaignManager.has_flag("prologue_started") \
 			or CampaignManager.has_flag("intro_bump_seen") \
 			or CampaignManager.has_flag("intro_seen") \
 			or CampaignManager.has_flag("act1_started")
@@ -42,9 +44,18 @@ func _on_interacted(_by: Node) -> void:
 # Décide du knot Ink à jouer selon les états campagne / quête / charrette.
 # L'ordre = priorité (le 1er match gagne).
 func _pick_knot() -> String:
+	# --- PROLOGUE : l'enfant disparu, avant toute la trame ---
+	# Tant qu'il n'est pas résolu, Seu João ne parle que de ça. La sortie
+	# de la favela est verrouillée en parallèle (DistrictExit).
+	if not QuestManager.is_completed("prologue_pedrinho"):
+		if QuestManager.is_active("prologue_pedrinho"):
+			return "seu_joao_prologue_remind"
+		# La quête est donnée par la mère dehors (cutscene MaeAborde), pas ici.
+		return "seu_joao_prologue_nudge"
+
 	var cart: CornCart = get_tree().get_first_node_in_group("corn_cart") as CornCart
 
-	# --- Acte 4 : on parle du Carnaval avant tout ---
+	# --- Acte 5 (Reinado) : on parle du Carnaval avant tout ---
 	if QuestManager.is_active(QUEST_CARNAVAL):
 		return "seu_joao_carnaval_remind"
 	if QuestManager.is_completed(QUEST_CARNAVAL):
@@ -52,8 +63,8 @@ func _pick_knot() -> String:
 	if QuestManager.is_available(QUEST_CARNAVAL):
 		return "seu_joao_carnaval_offer"
 
-	# --- Veille du Carnaval (acte 4 sans encore avoir lancé la quête défilé) ---
-	if CampaignManager.current_act == 4:
+	# --- Veille du Carnaval (acte 5 sans encore avoir lancé la quête défilé) ---
+	if CampaignManager.current_act == 5:
 		return "seu_joao_evening_carnaval_eve"
 
 	# Beats narratifs en attente, dans l'ordre chronologique : si le joueur
@@ -77,12 +88,6 @@ func _pick_knot() -> String:
 			and not CampaignManager.has_flag("seu_joao_path_chosen_seen"):
 		CampaignManager.set_flag("seu_joao_path_chosen_seen")
 		return "seu_joao_evening_path_chosen"
-
-	# --- Acte 3 : Ramos a demandé une intel — tio Zé recoupe ---
-	if QuestManager.is_active(QUEST_INTEL):
-		var iobjs: Dictionary = QuestManager.get_objectives_state(QUEST_INTEL)
-		if not iobjs.get("intel_seu_joao", false):
-			return "seu_joao_act3_intel"
 
 	# --- États historiques (charrette / quête milho) ---
 	if cart != null and cart.is_carrying():

@@ -42,7 +42,7 @@ func _on_interacted(_by: Node) -> void:
 
 	# Le commissaire (cousin de Mendonça, SIDE Península) a alerté Ramos sur le
 	# racket consortium — il refuse de s'engager tant que rien n'est scellé.
-	if CampaignManager.has_flag("commissaire_alerted") and CampaignManager.current_act < 4:
+	if CampaignManager.has_flag("commissaire_alerted") and CampaignManager.current_act < 5:
 		DialogueBridge.start_dialogue(data.id, "ramos_commissaire_alerted")
 		return
 
