@@ -595,42 +595,19 @@ variants = [{
 "choices": ["…"]
 }]
 
-[node name="SicarioSpot" parent="." instance=ExtResource("62_reactive")]
-position = Vector2(420, -100)
-npc_id = "sicario"
-prompt = "L'encapuchonné"
-character_seed = 90201
-variants = [{
-"id": "execute",
-"act": 4,
-"objective_pending": ["assassinate_consortium", "execute_hit"],
-"actions": {"finish_quest": {"quest": "assassinate_consortium", "objective": "execute_hit", "payout": 0}, "pay_debt": 50000, "rep": {2: 8, 0: -10, 1: -10, 4: -20}, "set_flag": "consortium_assassinated"},
-"speaker": "Sicario",
-"text": "*compte les billets sans te regarder* C'est fait. Le consortium n'a plus de tête, le bairro n'a plus de dette. *te rend la moitié de tes 5000* Garde ça. T'en auras besoin pour disparaître quelque temps. Le Carnaval, ça oublie vite — mais la PM, jamais.",
-"choices": ["…"]
-}, {
-"id": "offer",
-"act": 4,
-"quest_not_active": "assassinate_consortium",
-"quest_not_completed": "assassinate_consortium",
-"not_flag": "sicario_refused",
-"actions": {"accept_quest": "assassinate_consortium", "pay_bribe": 5000, "rep": {2: 2}},
-"speaker": "Sicario",
-"text": "*encapuchonné dans l'ombre, voix rauque* Tu portes une dette qui te tuera plus sûrement qu'une balle, garoto. *crache* Y'a une autre voie. Un seul coup. Dom Nilton ne déjeune pas demain, et la maison s'effondre — avec ta dette. 5 000 reais d'acompte, le reste est mon affaire.",
-"choices": ["Je signe (5 000 R$)"]
-}, {
-"id": "default",
-"speaker": "Sicario",
-"text": "*tire sur sa cigarette, regarde la mer* On se reverra peut-être, garoto. Pas aujourd'hui.",
-"choices": ["…"]
-}]
-
 [node name="FixerSpot" parent="." instance=ExtResource("62_reactive")]
 position = Vector2(360, -100)
 npc_id = "fixer"
 prompt = "Le Fixer"
 character_seed = 90202
 variants = [{
+"id": "assassinate_done",
+"objective_pending": ["assassinate_consortium", "execute_hit"],
+"actions": {"finish_quest": {"quest": "assassinate_consortium", "objective": "execute_hit", "payout": 0}, "pay_debt": 50000, "rep": {2: 8, 0: -10, 1: -10, 4: -20}, "set_flag": "consortium_assassinated"},
+"speaker": "Le Fixer",
+"text": "*pour la première fois, sourit froidement* C'est fait. Dom Nilton ne déjeune plus. Le consortium n'a plus de tête, le bairro n'a plus de dette. *te rend la moitié de tes 5000* Garde ça — t'en auras besoin pour disparaître quelque temps. Le Carnaval oublie vite, la PM jamais.",
+"choices": ["…"]
+}, {
 "id": "palace_done",
 "objective_pending": ["act4_palace_heist", "loot_palace_safe"],
 "actions": {"finish_quest": {"quest": "act4_palace_heist", "objective": "loot_palace_safe", "payout": 10000}, "pay_debt": 8000, "rep": {2: 5, 1: -3}, "set_flag": "palace_heist_done"},
@@ -665,6 +642,16 @@ variants = [{
 "speaker": "Le Fixer",
 "text": "*reçoit un texto, hoche la tête* Mallette livrée, partenaire content. *te tend ta part* 15k, plus propres que la mienne. Le sommet du Bondinho, c'est l'endroit le plus discret de Rio — les touristes filment la baie, pas les hommes.",
 "choices": ["Affaire faite"]
+}, {
+"id": "assassinate_offer",
+"act": 4,
+"quest_not_active": "assassinate_consortium",
+"quest_not_completed": "assassinate_consortium",
+"not_flag": "sicario_refused",
+"actions": {"accept_quest": "assassinate_consortium", "pay_bribe": 5000, "rep": {2: 2}},
+"speaker": "Le Fixer",
+"text": "*baisse la voix, voix rauque* Y'a une voie courte, garoto. Un seul coup. Dom Nilton ne déjeune pas demain, et la maison s'effondre — avec ta dette. 5 000 reais d'acompte, le reste est mon affaire. Tu signes en sang, ou tu continues à courir ?",
+"choices": ["Je signe (5 000 R$)"]
 }, {
 "id": "palace_offer",
 "act": 4,
