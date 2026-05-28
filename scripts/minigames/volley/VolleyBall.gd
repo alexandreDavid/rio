@@ -32,6 +32,8 @@ func unfreeze_ball() -> void:
 	freeze = false
 
 func apply_hit(direction: Vector2, power: float, team: int) -> void:
+	# Conservé pour rétrocompatibilité (anciens callers). Les blobs Player/AI
+	# en Blobby-style modifient directement `linear_velocity` sans passer ici.
 	linear_velocity = direction.normalized() * power
 	hit_by.emit(team)
 

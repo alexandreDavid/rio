@@ -33,37 +33,38 @@ func _ready() -> void:
 	_serve_button = get_node_or_null("UI/ServeButton") as Button
 	if _serve_button:
 		_serve_button.pressed.connect(_launch_serve)
-	var hit_btn: Button = get_node_or_null("UI/HitButton") as Button
-	if hit_btn:
-		hit_btn.pressed.connect(_on_hit_pressed)
+	var jump_btn: Button = get_node_or_null("UI/JumpButton") as Button
+	if jump_btn:
+		jump_btn.pressed.connect(_on_jump_pressed)
 	var quit_btn: CanvasLayer = get_node_or_null("MinigameQuitButton")
 	if quit_btn and quit_btn.has_signal("quit_pressed"):
 		quit_btn.quit_pressed.connect(_end_match)
 
-func _on_hit_pressed() -> void:
-	var player: VolleyPlayer = get_node_or_null("Player") as VolleyPlayer
-	if player:
-		player.try_hit()
-
-	# Groupe ground forcé (syntaxe tscn pas fiable)
+	# Initialisation du match (ground group + caméra + signal ball + score) —
+	# DOIT rester dans _ready : si on relogue ça dans _on_hit_pressed, chaque
+	# frappe re-initialise le match et déclenche un nouveau service (= reboot).
 	var ground: Node = get_node_or_null("Ground")
 	if ground and not ground.is_in_group("ground"):
 		ground.add_to_group("ground")
 	print("[VolleyMatch] ball=%s score_label=%s ground=%s" % [ball, score_label, ground])
-
 	var cam: Camera2D = get_node_or_null("Camera2D")
 	if cam:
 		cam.make_current()
-
 	if ball:
 		ball.touched_ground.connect(_on_ball_ground)
 		print("[VolleyMatch] ball.touched_ground connecté")
-
 	_update_score()
 	print("===== VOLLEY MATCH READY =====")
 	print("")
 	await get_tree().create_timer(0.8).timeout
 	_serve()
+
+func _on_jump_pressed() -> void:
+	# Bouton « Sauter » (Blobby-style) : le blob bondit, la balle rebondit
+	# d'elle-même quand elle touche l'Area2D BallSensor du blob.
+	var player: VolleyPlayer = get_node_or_null("Player") as VolleyPlayer
+	if player:
+		player.try_jump()
 
 func _unhandled_input(event: InputEvent) -> void:
 	if _ended:
