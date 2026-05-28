@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/props/TaxiStand.tscn" id="1_taxi"]
 [ext_resource type="PackedScene" path="res://scenes/props/SambaStage.tscn" id="2_stage"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" path="res://scenes/props/Viewpoint.tscn" id="4_view"]
 [ext_resource type="PackedScene" path="res://scenes/props/StreetVendor.tscn" id="5_vendor"]
 [ext_resource type="Script" path="res://scripts/world/AmbientDrifter.gd" id="6_drift"]
+[ext_resource type="PackedScene" path="res://scenes/props/ReactiveDialogueSpot.tscn" id="7_reactive"]
 
 [sub_resource type="RectangleShape2D" id="WallH"]
 size = Vector2(700, 16)
@@ -19,7 +20,6 @@ wrap_top = -280.0
 wrap_bottom = 320.0
 drift_speed_vertical = 32.0
 
-# Confettis qui tombent — drift_south, couleurs carnaval (jaune/vert/bleu/rose/orange/violet)
 [node name="ConfettiA" type="ColorRect" parent="." groups=["drift_south"]]
 offset_left = -310.0
 offset_top = -260.0
@@ -233,6 +233,32 @@ position = Vector2(-260, 130)
 [node name="SambaStage" parent="." instance=ExtResource("2_stage")]
 position = Vector2(140, 90)
 
+[node name="SamboSabotageSpot" parent="." instance=ExtResource("7_reactive")]
+position = Vector2(280, 90)
+npc_id = "rival_float"
+prompt = "Le char rival (backstage)"
+character_seed = 90204
+variants = [{
+"id": "do_sabotage",
+"objective_pending": ["act4_sambo_sabotage", "sabotage_rival_float"],
+"set_flag_after": "sambo_loc_done",
+"actions": {"rep": {0: -2}},
+"speaker": "Narrateur",
+"text": "*Backstage, à l'écart des projecteurs : le char favori repose sur ses cales. Pas de gardiens — confiance mal placée. Tu desserres une roue, déchires une plume géante, jettes un seau d'eau sur la fanfare en papier mâché. Le sabotage est crapuleux par construction. Tu pars en évitant les caméras.*",
+"choices": ["Direction le Fixer"]
+}, {
+"id": "already_done",
+"flag": "sambo_loc_done",
+"speaker": "Narrateur",
+"text": "*Le char est en réparation, les passistas en larmes. Personne ne te regarde — tu n'es plus utile ici.*",
+"choices": ["…"]
+}, {
+"id": "default",
+"speaker": "Passista",
+"text": "*ajuste son costume à plumes* Você é da imprensa? Não tira foto antes da hora, irmão.",
+"choices": ["…"]
+}]
+
 [node name="DancerCarroA" type="ColorRect" parent="."]
 offset_left = -180.0
 offset_top = -90.0
@@ -392,3 +418,43 @@ speed = 40.0
 pause_at_waypoints = 0.3
 pause_random_jitter = 0.5
 look_at_player_distance = 50.0
+
+[node name="SamboCostumeiraSpot" parent="." instance=ExtResource("7_reactive")]
+position = Vector2(-200, 100)
+npc_id = "sambo_costumeira"
+prompt = "Parler à la costumière en chef"
+character_seed = 80405
+variants = [{
+"id": "return",
+"objective_done": ["sambo_plumes", "fetch_plumes"],
+"objective_pending": ["sambo_plumes", "deliver_plumes"],
+"actions": {"finish_quest": {"quest": "sambo_plumes", "objective": "deliver_plumes", "payout": 0}, "rep": {4: 3}},
+"speaker": "Dona Lurdes (costumière)",
+"text": "*ouvre la caisse, plonge les mains dans les plumes — vert, jaune, bleu — et soupire de soulagement* Te abençoe, sobrinho. La parade tient debout. *te tend une enveloppe craquante* T'as sauvé un défilé, ça vaut plus que ce qu'il y a dedans.",
+"choices": ["Obrigado, dona"]
+}, {
+"id": "in_progress",
+"quest_active": "sambo_plumes",
+"speaker": "Dona Lurdes (costumière)",
+"text": "*regarde sa montre toutes les vingt secondes* Le fournisseur s'appelle Tomé, il est en face du MAC à Niterói. Dis-lui que c'est Lurdes qui t'envoie.",
+"choices": ["J'y vais"]
+}, {
+"id": "offer",
+"quest_not_active": "sambo_plumes",
+"quest_not_completed": "sambo_plumes",
+"actions": {"accept_quest": "sambo_plumes"},
+"speaker": "Dona Lurdes (costumière)",
+"text": "*aiguille à la bouche, tissu plumes sur les épaules* Sobrinho ! La caisse de plumes de notre école a été livrée par erreur chez mon fournisseur de Niterói. Le défilé est dans une semaine. *te tape l'épaule* Tu prends la barca, tu vas chez Tomé en face du MAC, tu ramènes la caisse. 1700 reais et un place au premier rang en répétition.",
+"choices": ["Je rapatrie les plumes"]
+}, {
+"id": "done",
+"quest_completed": "sambo_plumes",
+"speaker": "Dona Lurdes (costumière)",
+"text": "*coud une queue de paon sur un dos d'écrevisse géante* L'école est prête, sobrinho. Cette année on rentre dans l'histoire.",
+"choices": ["Bon défilé"]
+}, {
+"id": "default",
+"speaker": "Dona Lurdes (costumière)",
+"text": "*pique son aiguille dans son chignon* Le carnaval, c'est mille mains qui cousent pour une nuit. La mienne est la dernière.",
+"choices": ["…"]
+}]

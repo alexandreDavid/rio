@@ -609,6 +609,7 @@ variants = [{
 "choices": ["…"]
 }, {
 "id": "palace_done",
+"flag": "palace_heist_loc_done",
 "objective_pending": ["act4_palace_heist", "loot_palace_safe"],
 "actions": {"finish_quest": {"quest": "act4_palace_heist", "objective": "loot_palace_safe", "payout": 10000}, "pay_debt": 8000, "rep": {2: 5, 1: -3}, "set_flag": "palace_heist_done"},
 "speaker": "Le Fixer",
@@ -616,6 +617,7 @@ variants = [{
 "choices": ["Bon business"]
 }, {
 "id": "sambo_done",
+"flag": "sambo_loc_done",
 "objective_pending": ["act4_sambo_sabotage", "sabotage_rival_float"],
 "actions": {"finish_quest": {"quest": "act4_sambo_sabotage", "objective": "sabotage_rival_float", "payout": 12000}, "pay_debt": 10000, "rep": {2: 4, 0: -5, 3: -3}, "set_flag": "sambo_sabotage_done"},
 "speaker": "Le Fixer",
@@ -623,6 +625,7 @@ variants = [{
 "choices": ["…J'encaisse"]
 }, {
 "id": "tio_ze_done",
+"flag": "tio_ze_loc_freed",
 "objective_pending": ["act4_tio_ze_rescue", "free_tio_ze"],
 "actions": {"finish_quest": {"quest": "act4_tio_ze_rescue", "objective": "free_tio_ze", "payout": 0}, "rep": {3: 8, 2: 2}, "set_flag": "tio_ze_rescued"},
 "speaker": "Le Fixer",
@@ -630,6 +633,7 @@ variants = [{
 "choices": ["Obrigado, Fixer"]
 }, {
 "id": "press_done",
+"flag": "press_loc_done",
 "objective_pending": ["act4_press_expose", "deliver_dossier"],
 "actions": {"finish_quest": {"quest": "act4_press_expose", "objective": "deliver_dossier", "payout": 8000}, "pay_debt": 6000, "rep": {0: 6, 4: -5}, "set_flag": "press_leaked"},
 "speaker": "Le Fixer",
@@ -637,6 +641,7 @@ variants = [{
 "choices": ["Bom dia"]
 }, {
 "id": "bondinho_done",
+"flag": "bondinho_loc_done",
 "objective_pending": ["act4_bondinho_drop", "drop_cash_summit"],
 "actions": {"finish_quest": {"quest": "act4_bondinho_drop", "objective": "drop_cash_summit", "payout": 15000}, "pay_debt": 12000, "rep": {4: 4, 1: -3}, "set_flag": "bondinho_drop_done"},
 "speaker": "Le Fixer",
@@ -701,6 +706,32 @@ variants = [{
 "id": "default",
 "speaker": "Le Fixer",
 "text": "*lit son journal, ne lève pas les yeux* Tout est en cours, garoto. Reviens quand t'as bouclé.",
+"choices": ["…"]
+}]
+
+[node name="PalaceHeistSpot" parent="." instance=ExtResource("62_reactive")]
+position = Vector2(1700, -64)
+npc_id = "palace_concierge_night"
+prompt = "Porte des concierges"
+character_seed = 90203
+variants = [{
+"id": "do_heist",
+"objective_pending": ["act4_palace_heist", "loot_palace_safe"],
+"set_flag_after": "palace_heist_loc_done",
+"actions": {"rep": {2: 1}},
+"speaker": "Concierge de nuit",
+"text": "*ouvre la porte arrière sans un mot, te désigne du menton un coffre derrière le bureau* Quinze minutes. Pas un de plus. *tu prends la mallette, refermes le coffre, ressors sans courir. Le Fixer t'attend pour la part.*",
+"choices": ["Direction le Fixer"]
+}, {
+"id": "already_done",
+"flag": "palace_heist_loc_done",
+"speaker": "Concierge de nuit",
+"text": "*ne te calcule plus* Pas deux fois la même nuit, garoto. Va vivre ta vie.",
+"choices": ["…"]
+}, {
+"id": "default",
+"speaker": "Concierge de nuit",
+"text": "*range des serviettes, t'ignore* Service réservé aux résidents du Palace.",
 "choices": ["…"]
 }]
 

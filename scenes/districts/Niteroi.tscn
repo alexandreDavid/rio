@@ -561,6 +561,58 @@ shape = SubResource("WallH")
 [node name="PlayerSpawn" type="Marker2D" parent="."]
 position = Vector2(400, 100)
 
+[node name="TioZeRescueSpot" parent="." instance=ExtResource("16_reactive")]
+position = Vector2(180, 130)
+npc_id = "tio_ze_captif"
+prompt = "Planque Mafia da Baía"
+character_seed = 90205
+variants = [{
+"id": "do_rescue",
+"objective_pending": ["act4_tio_ze_rescue", "free_tio_ze"],
+"set_flag_after": "tio_ze_loc_freed",
+"actions": {"rep": {3: 4}},
+"speaker": "tio Zé",
+"text": "*la pièce sent le tabac froid, deux portes plus loin tu entends rire — les gardes ne s'attendent à rien. Sur un matelas crasseux, tio Zé. Plus maigre, mais c'est lui.* …Sobrinho ? *sa voix se brise* T'as mis trois ans à venir, garoto. *tu coupes la corde au couteau, il s'appuie sur toi. La sortie par la fenêtre du fond, sans bruit.*",
+"choices": ["On rentre, tio"]
+}, {
+"id": "already_done",
+"flag": "tio_ze_loc_freed",
+"speaker": "Narrateur",
+"text": "*La planque est vide. Le matelas crasseux a disparu — la Mafia a déjà fait le ménage.*",
+"choices": ["…"]
+}, {
+"id": "default",
+"speaker": "Garde",
+"text": "*ne lève pas les yeux de son téléphone* Service privé, irmão. Va voir ailleurs.",
+"choices": ["…"]
+}]
+
+[node name="PressExposeSpot" parent="." instance=ExtResource("16_reactive")]
+position = Vector2(560, 100)
+npc_id = "journaliste"
+prompt = "Le journaliste anti-corruption"
+character_seed = 90206
+variants = [{
+"id": "do_leak",
+"objective_pending": ["act4_press_expose", "deliver_dossier"],
+"set_flag_after": "press_loc_done",
+"actions": {"rep": {0: 2}},
+"speaker": "Journaliste",
+"text": "*lit le dossier en silence, l'index tremblant sur chaque ligne* Sainte… *referme la chemise, te regarde* Tu sais ce que ça représente, ce papier ? Une enquête de six ans pour moi. Sortie demain matin, première page. *te serre la main longuement* Tu rentres au bairro, et tu fais profil bas trois jours. Le bruit va monter vite.",
+"choices": ["Compris"]
+}, {
+"id": "already_done",
+"flag": "press_loc_done",
+"speaker": "Journaliste",
+"text": "*tape un nouvel article* L'enquête est partie en presse. Va te reposer.",
+"choices": ["…"]
+}, {
+"id": "default",
+"speaker": "Journaliste",
+"text": "*pianote sur son clavier* Pas dispo. Si t'as une fuite, file-la au Fixer, il sait me joindre.",
+"choices": ["…"]
+}]
+
 [node name="TraficoNiteroiSpot" parent="." instance=ExtResource("16_reactive")]
 position = Vector2(400, 130)
 npc_id = "trafico_niteroi"
