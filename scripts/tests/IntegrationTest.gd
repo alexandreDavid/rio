@@ -234,7 +234,7 @@ func _test_npc_data_resources_load() -> void:
 
 func _test_dialogue_graph() -> void:
 	_section("Graphe de dialogues placeholder")
-	var dialogues: Dictionary = DialogueBridge.PLACEHOLDER_DIALOGUES
+	var dialogues: Dictionary = DialogueBridge.all_dialogues()
 	var quest_ids: Array = QuestManager._quests.keys()
 	for knot in dialogues:
 		var dlg: Dictionary = dialogues[knot]
@@ -397,7 +397,7 @@ const KNOWN_VERBS: Array = [
 
 func _test_dialogue_choices_consistency() -> void:
 	_section("Cohérence choix ↔ actions du graphe dialogues")
-	var dialogues: Dictionary = DialogueBridge.PLACEHOLDER_DIALOGUES
+	var dialogues: Dictionary = DialogueBridge.all_dialogues()
 	for knot in dialogues:
 		var dlg: Dictionary = dialogues[knot]
 		var choices: Array = dlg.get("choices", [])
@@ -898,7 +898,7 @@ func _test_walk_entries_clear_of_exits() -> void:
 
 func _test_npc_dispatch_knots() -> void:
 	_section("NPC dispatchers — tous les knots référencés existent")
-	var dialogues: Dictionary = DialogueBridge.PLACEHOLDER_DIALOGUES
+	var dialogues: Dictionary = DialogueBridge.all_dialogues()
 	for npc_id in NPC_DISPATCH_KNOTS:
 		var knots: Array = NPC_DISPATCH_KNOTS[npc_id]
 		for knot in knots:
@@ -910,7 +910,7 @@ func _test_npc_dispatch_knots() -> void:
 # ramos_intro). On vérifie TOUS les NPCData, pas juste une liste manuelle.
 func _test_npc_base_knots_exist() -> void:
 	_section("NPC — knot de base (ink_knot) défini pour chaque NPCData")
-	var dialogues: Dictionary = DialogueBridge.PLACEHOLDER_DIALOGUES
+	var dialogues: Dictionary = DialogueBridge.all_dialogues()
 	var dir: DirAccess = DirAccess.open(NPC_DATA_DIR)
 	if dir == null:
 		_assert(false, "ouverture %s" % NPC_DATA_DIR)
@@ -940,7 +940,7 @@ const CUTSCENE_REQUIREMENTS: Array = [
 
 func _test_cutscene_dependencies() -> void:
 	_section("Dépendances des cinématiques (NPCs + knots)")
-	var dialogues: Dictionary = DialogueBridge.PLACEHOLDER_DIALOGUES
+	var dialogues: Dictionary = DialogueBridge.all_dialogues()
 	# Index NPCData par id pour vérifier la présence.
 	var npc_ids: Dictionary = {}
 	var dir: DirAccess = DirAccess.open(NPC_DATA_DIR)
@@ -1487,7 +1487,7 @@ func _test_voie_prefeito_end_to_end() -> void:
 
 func _test_quest_objectives_reachable() -> void:
 	_section("Chaque objectif est complétable (dialogue OU script connu)")
-	var dialogues: Dictionary = DialogueBridge.PLACEHOLDER_DIALOGUES
+	var dialogues: Dictionary = DialogueBridge.all_dialogues()
 	# Construis l'index { quest_id: [objective_ids] } depuis les finish_quest dans dialogues.
 	var dialogue_completions: Dictionary = {}
 	for knot in dialogues:
@@ -1580,7 +1580,7 @@ func _test_pmpatrol_act_dispatch() -> void:
 	_section("PMPatrol — knots récurrents par acte + scaling bribe")
 	# Vérifie que les knots existent et que les montants/structure correspondent
 	# au design (acte 1: 50, acte 2: 80, acte 3+: 150).
-	var dialogues: Dictionary = DialogueBridge.PLACEHOLDER_DIALOGUES
+	var dialogues: Dictionary = DialogueBridge.all_dialogues()
 	var expectations: Array = [
 		{"knot": "cop_shakedown_recurring", "amount": 50},
 		{"knot": "cop_shakedown_recurring_act2", "amount": 80},

@@ -876,28 +876,14 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 	# Entre A1 livré et A9 (corrida), Tito ne donne plus de missions directes —
 	# c'est le contact du calçadão (puis la chaîne de spots) qui prend la main.
 	# Ce knot évite qu'il devienne muet et redirige le joueur vers son réseau.
-	# --- Acte 4 : option assassinat (offre + complétion gérées par FixerSpot) ---
-	# Knot stub pour le journal narratif (le quest .tres ink_knot pointe ici).
-	# Le vrai dialogue d'offre se fait via la variante `assassinate_offer` du
-	# FixerSpot (npc_id = fixer) qui pose les actions accept_quest + pay_bribe.
-	"fixer_offer_assassinate": {
-		"speaker": "Le Fixer",
-		"text": "*baisse la voix, voix rauque* Y'a une voie courte, garoto. Un seul coup. Dom Nilton ne déjeune pas demain, et la maison s'effondre — avec ta dette. 5 000 reais d'acompte, le reste est mon affaire.",
-		"choices": ["…"],
-	},
+	# (Knots acte 4 + couronnements voies déplacés vers scripts/dialogues/
+	# Act4Dialogues.gd — fusionnés via register_runtime_dialogue dans _ready.)
 	"tito_voie_active": {
 		"speaker": "Tito",
 		"text": "*claque la langue, te jauge* Tu portes bien, sobrinho. Maintenant le morro a son propre rythme — mon contact gère, calçadão de Copa. Va le voir, il sait quoi te confier. Quand viendra la corrida finale du Carnaval, tu reviens me parler. D'ici là, pas de zèle, pas de bavures.",
 		"choices": ["Compris, Tito"],
 	},
-	"tito_trafico_corrida": {
-		"speaker": "Tito",
-		"text": "*se lève, pose les mains sur tes épaules, grave* Tu as fait tout le chemin, sobrinho. Le consortium est presque payé, la baie est à nous, le morro te respecte. *te regarde droit dans les yeux* Il reste la dernière corrida — celle du Carnaval. Tu la mènes, et le Morro n'a plus de roi : il t'a, toi. Ton oncle Zé a eu cette chance et il a fui. Pas toi. *te tend les clés* Vai, Patrão.",
-		"choices": ["Je mène la corrida"],
-		"on_choose": {
-			"0": {"set_endgame": "TRAFICO", "finish_quest": {"quest": "trafico_a9_corrida", "objective": "execute_run", "payout": 5000}, "rep": {2: 10}},
-		},
-	},
+	# (tito_trafico_corrida → Act4Dialogues.gd)
 	# --- VOIE POLÍCIA : intro acte 2 ---
 	"ramos_intro_b1_offer": {
 		"speaker": "Capitão Ramos",
@@ -922,14 +908,7 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 		"text": "*tapote la table* Le visage, sobrinho. Calçadão de Copa, mon contact en civil traîne près des cocos. Tu repères, tu rapportes. La loi attend.",
 		"choices": ["J'y vais, Capitão"],
 	},
-	"ramos_policia_madrugada": {
-		"speaker": "Capitão Ramos",
-		"text": "*boucle son ceinturon, te regarde dans le blanc des yeux* Cette nuit, sobrinho. Le mandat est signé. La PM monte sur le morro à la madrugada et on coupe la tête du réseau. Si tu es là-haut avec moi, le bairro saura à qui il doit sa paix : à toi. Chefe de Polícia honoraire. Ton oncle Zé aurait jamais eu ce cran. *te tend un gilet* On y va.",
-		"choices": ["On lance l'Operação Madrugada"],
-		"on_choose": {
-			"0": {"set_endgame": "POLICIA", "finish_quest": {"quest": "policia_b9_madrugada", "objective": "complete_madrugada", "payout": 5000}, "rep": {1: 10}},
-		},
-	},
+	# (ramos_policia_madrugada → Act4Dialogues.gd)
 	# --- VOIE CONSORTIUM : intro acte 2 ---
 	"magalhaes_intro_c1_offer": {
 		"speaker": "Sr. Magalhães",
@@ -954,22 +933,7 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 		"text": "*sans lever les yeux de ses dossiers* Le recouvrement, mon cher. Calçadão de Copa — un commerçant a pris du retard. Un mot, un sourire, une signature. La maison déteste attendre.",
 		"choices": ["Je m'en occupe"],
 	},
-	"magalhaes_consortium_pacto": {
-		"speaker": "Sr. Magalhães",
-		"text": "*pose un dossier relié devant toi, dévisse son stylo en or* Tout est là. Trois condomínios alignés, le calçadão sous contrat, la baie blanchie. Le Pacto da Barra : rente mensuelle officielle, endossement politique en réserve, et ta dette… effacée d'un trait. *te tend le stylo* Ton oncle Zé a refusé ce stylo, jadis. Il a préféré fuir et balayer un hall. Toi, tu es plus malin. Signe, et tu es la maison.",
-		"choices": ["Je signe le Pacto da Barra"],
-		"on_choose": {
-			"0": {"set_endgame": "CONSORTIUM", "finish_quest": {"quest": "consortium_c9_pacto", "objective": "seal_pacto", "payout": 5000}, "rep": {4: 10}},
-		},
-	},
-	# Knot uniquement déclenché par Act3FinaleCutscenes (clôture voie Consortium) —
-	# pas routé via Magalhaes._pick_knot(). Ne pas s'attendre à le voir en dialogue
-	# d'approche standard.
-	"magalhaes_consortium_done": {
-		"speaker": "Sr. Magalhães",
-		"text": "*range le dossier signé dans un coffre, te serre la main longuement* Bienvenue dans la maison, sócio. La casa sempre ganha — et désormais, tu es la casa.",
-		"choices": ["…"],
-	},
+	# (magalhaes_consortium_pacto + magalhaes_consortium_done → Act4Dialogues.gd)
 	# --- VOIE PREFEITO : intro acte 2 ---
 	"padre_intro_d1_offer": {
 		"speaker": "Padre Anselmo",
@@ -994,14 +958,7 @@ const PLACEHOLDER_DIALOGUES: Dictionary = {
 		"text": "*joint les mains* La pétition, mon enfant. Trois commerçants du calçadão hésitent encore. Une signature, c'est un toit pour vingt orphelins. Va leur parler — ils t'écouteront, toi.",
 		"choices": ["J'y retourne, mon Père"],
 	},
-	"padre_prefeito_eleicao": {
-		"speaker": "Padre Anselmo",
-		"text": "*pose la main sur ton épaule, ému, devant la foule du bairro* Le scrutin est ce soir, mon enfant. Le calçadão, le morro, l'orfanato — tous derrière toi. Pas par peur : par confiance. Si tu l'emportes, tu seras le Coronel do Bairro, et la dette de ton oncle s'effacera au grand jour, par la vérité. Va. Le peuple t'attend aux urnes.",
-		"choices": ["On gagne cette élection"],
-		"on_choose": {
-			"0": {"set_endgame": "PREFEITO", "finish_quest": {"quest": "prefeito_d9_eleicao", "objective": "win_election", "payout": 5000}, "rep": {0: 10}},
-		},
-	},
+	# (padre_prefeito_eleicao → Act4Dialogues.gd)
 	# Knot de base (NPCData.ink_knot) — fallback défensif si le dispatch tombe à
 	# travers (jamais en pratique : SeuJoao._pick_knot couvre tous les états).
 	# L'ancienne version proposait la quête milho, désormais auto-pilotée par
@@ -2370,6 +2327,15 @@ func register_runtime_dialogue(knot_id: String, data: Dictionary) -> void:
 func _has_placeholder(knot_id: String) -> bool:
 	return PLACEHOLDER_DIALOGUES.has(knot_id) or _runtime_dialogues.has(knot_id)
 
+# Vue agrégée de tous les knots disponibles (PLACEHOLDER_DIALOGUES const +
+# registres runtime alimentés par les spots et les splits par acte). Utilisé
+# par les tests d'intégration qui doivent voir l'intégralité du graphe.
+func all_dialogues() -> Dictionary:
+	var merged: Dictionary = PLACEHOLDER_DIALOGUES.duplicate()
+	for k in _runtime_dialogues:
+		merged[k] = _runtime_dialogues[k]
+	return merged
+
 func _get_placeholder(knot_id: String) -> Dictionary:
 	if _runtime_dialogues.has(knot_id):
 		return _runtime_dialogues[knot_id]
@@ -2383,6 +2349,16 @@ func _ready() -> void:
 	_loader.choices_produced.connect(_on_ink_choices)
 	_loader.story_ended.connect(_on_ink_ended)
 	_loader.ready_to_play.connect(_on_ink_ready)
+	# Merge des knots externes (split par acte/voie pour alléger ce fichier).
+	# Du point de vue de start_dialogue/choose, indistinguable d'un knot
+	# PLACEHOLDER_DIALOGUES — _has_placeholder check les deux.
+	_merge_external_dialogues()
+
+const _ACT4_DIALOGUES: Script = preload("res://scripts/dialogues/Act4Dialogues.gd")
+
+func _merge_external_dialogues() -> void:
+	for knot_id in _ACT4_DIALOGUES.KNOTS:
+		register_runtime_dialogue(knot_id, _ACT4_DIALOGUES.KNOTS[knot_id])
 
 func start_dialogue(npc_id: String, ink_knot: String) -> void:
 	if _active_npc_id != "":
