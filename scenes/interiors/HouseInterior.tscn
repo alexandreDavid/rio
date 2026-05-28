@@ -230,21 +230,6 @@ script = ExtResource("6_night")
 [node name="Shape" type="CollisionShape2D" parent="NightTrigger"]
 shape = SubResource("NightTriggerShape")
 
-[node name="GrandmaInRocker" parent="." instance=ExtResource("2_wander")]
-position = Vector2(-130, -30)
-color = Color(0.62, 0.55, 0.5, 1)
-size = Vector2(10, 17)
-stationary = true
-bob_strength = 1.0
-look_at_player_distance = 40.0
-
-[node name="HousewifeCooking" parent="." instance=ExtResource("2_wander")]
-position = Vector2(120, -50)
-color = Color(0.85, 0.4, 0.55, 1)
-size = Vector2(10, 17)
-stationary = true
-look_at_player_distance = 40.0
-
 [node name="ChildPlayingTV" parent="." instance=ExtResource("2_wander")]
 position = Vector2(-30, 50)
 color = Color(0.4, 0.85, 0.55, 1)
