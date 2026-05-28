@@ -1,0 +1,349 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/props/TaxiStand.tscn" id="1_taxi"]
+[ext_resource type="PackedScene" path="res://scenes/props/DistrictExit.tscn" id="2_exit"]
+[ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="3_wander"]
+[ext_resource type="Script" path="res://scripts/world/AmbientDrifter.gd" id="4_drift"]
+[ext_resource type="PackedScene" path="res://scenes/props/ReactiveDialogueSpot.tscn" id="6_reactive"]
+
+[sub_resource type="RectangleShape2D" id="WallH"]
+size = Vector2(900, 12)
+
+[sub_resource type="RectangleShape2D" id="WallV"]
+size = Vector2(12, 320)
+
+[sub_resource type="RectangleShape2D" id="WaterShape"]
+size = Vector2(880, 220)
+
+[sub_resource type="RectangleShape2D" id="ExitShape"]
+size = Vector2(500, 64)
+
+[node name="MarinaDaGloriaDistrict" type="Node2D"]
+script = ExtResource("4_drift")
+wrap_left = -460.0
+wrap_right = 460.0
+drift_speed = 8.0
+
+[node name="Sky" type="ColorRect" parent="."]
+offset_left = -460.0
+offset_top = -260.0
+offset_right = 460.0
+offset_bottom = -180.0
+color = Color(0.55, 0.72, 0.88, 1)
+
+[node name="CityLineDistant" type="ColorRect" parent="."]
+offset_left = -460.0
+offset_top = -210.0
+offset_right = 460.0
+offset_bottom = -180.0
+color = Color(0.32, 0.42, 0.5, 0.85)
+
+[node name="CityWindow1" type="ColorRect" parent="."]
+offset_left = -380.0
+offset_top = -202.0
+offset_right = -376.0
+offset_bottom = -198.0
+color = Color(0.95, 0.92, 0.7, 0.85)
+
+[node name="CityWindow2" type="ColorRect" parent="."]
+offset_left = -240.0
+offset_top = -200.0
+offset_right = -236.0
+offset_bottom = -196.0
+color = Color(0.95, 0.92, 0.7, 0.85)
+
+[node name="CityWindow3" type="ColorRect" parent="."]
+offset_left = 80.0
+offset_top = -205.0
+offset_right = 84.0
+offset_bottom = -201.0
+color = Color(0.95, 0.92, 0.7, 0.85)
+
+[node name="CloudA" type="ColorRect" parent="." groups=["drift_west"]]
+offset_left = -300.0
+offset_top = -245.0
+offset_right = -220.0
+offset_bottom = -235.0
+color = Color(0.95, 0.95, 0.92, 0.7)
+
+[node name="CloudB" type="ColorRect" parent="." groups=["drift_west"]]
+offset_left = 60.0
+offset_top = -250.0
+offset_right = 150.0
+offset_bottom = -240.0
+color = Color(0.92, 0.92, 0.88, 0.65)
+
+[node name="GullA" type="ColorRect" parent="." groups=["drift_west"]]
+offset_left = -180.0
+offset_top = -170.0
+offset_right = -172.0
+offset_bottom = -167.0
+color = Color(0.98, 0.98, 0.95, 1)
+
+[node name="GullB" type="ColorRect" parent="." groups=["drift_west"]]
+offset_left = 240.0
+offset_top = -160.0
+offset_right = 248.0
+offset_bottom = -157.0
+color = Color(0.98, 0.98, 0.95, 1)
+
+[node name="Bay" type="ColorRect" parent="."]
+offset_left = -460.0
+offset_top = -180.0
+offset_right = 460.0
+offset_bottom = 40.0
+color = Color(0.22, 0.42, 0.58, 1)
+
+[node name="BayHighlight" type="ColorRect" parent="."]
+offset_left = -460.0
+offset_top = -180.0
+offset_right = 460.0
+offset_bottom = -174.0
+color = Color(0.78, 0.88, 0.92, 0.55)
+
+[node name="WaveA" type="ColorRect" parent="."]
+offset_left = -360.0
+offset_top = -130.0
+offset_right = -240.0
+offset_bottom = -128.0
+color = Color(0.85, 0.92, 0.95, 0.55)
+
+[node name="WaveB" type="ColorRect" parent="."]
+offset_left = -40.0
+offset_top = -90.0
+offset_right = 100.0
+offset_bottom = -88.0
+color = Color(0.85, 0.92, 0.95, 0.55)
+
+[node name="WaveC" type="ColorRect" parent="."]
+offset_left = 220.0
+offset_top = -50.0
+offset_right = 360.0
+offset_bottom = -48.0
+color = Color(0.85, 0.92, 0.95, 0.55)
+
+[node name="YachtAHull" type="ColorRect" parent="." groups=["drift_bob"]]
+offset_left = -280.0
+offset_top = -80.0
+offset_right = -210.0
+offset_bottom = -68.0
+color = Color(0.95, 0.95, 0.92, 1)
+
+[node name="YachtAMast" type="ColorRect" parent="." groups=["drift_bob"]]
+offset_left = -247.0
+offset_top = -130.0
+offset_right = -243.0
+offset_bottom = -80.0
+color = Color(0.55, 0.42, 0.32, 1)
+
+[node name="YachtASail" type="ColorRect" parent="." groups=["drift_bob"]]
+offset_left = -243.0
+offset_top = -128.0
+offset_right = -218.0
+offset_bottom = -90.0
+color = Color(0.92, 0.92, 0.88, 0.95)
+
+[node name="YachtBHull" type="ColorRect" parent="." groups=["drift_bob"]]
+offset_left = -50.0
+offset_top = -70.0
+offset_right = 30.0
+offset_bottom = -58.0
+color = Color(0.85, 0.32, 0.32, 1)
+
+[node name="YachtBCabin" type="ColorRect" parent="." groups=["drift_bob"]]
+offset_left = -30.0
+offset_top = -82.0
+offset_right = 10.0
+offset_bottom = -70.0
+color = Color(0.95, 0.95, 0.92, 1)
+
+[node name="YachtCHull" type="ColorRect" parent="." groups=["drift_bob"]]
+offset_left = 200.0
+offset_top = -60.0
+offset_right = 290.0
+offset_bottom = -48.0
+color = Color(0.32, 0.42, 0.62, 1)
+
+[node name="YachtCMast" type="ColorRect" parent="." groups=["drift_bob"]]
+offset_left = 243.0
+offset_top = -110.0
+offset_right = 247.0
+offset_bottom = -60.0
+color = Color(0.55, 0.42, 0.32, 1)
+
+[node name="YachtCSail" type="ColorRect" parent="." groups=["drift_bob"]]
+offset_left = 247.0
+offset_top = -108.0
+offset_right = 280.0
+offset_bottom = -70.0
+color = Color(0.95, 0.95, 0.92, 0.92)
+
+[node name="PontonCentre" type="ColorRect" parent="."]
+offset_left = -10.0
+offset_top = 0.0
+offset_right = 10.0
+offset_bottom = -120.0
+color = Color(0.55, 0.42, 0.32, 1)
+
+[node name="PontonCentreStripe" type="ColorRect" parent="."]
+offset_left = -10.0
+offset_top = -60.0
+offset_right = 10.0
+offset_bottom = -58.0
+color = Color(0.42, 0.32, 0.24, 1)
+
+[node name="PontonLeft" type="ColorRect" parent="."]
+offset_left = -250.0
+offset_top = 0.0
+offset_right = -230.0
+offset_bottom = -90.0
+color = Color(0.55, 0.42, 0.32, 1)
+
+[node name="PontonRight" type="ColorRect" parent="."]
+offset_left = 230.0
+offset_top = 0.0
+offset_right = 250.0
+offset_bottom = -75.0
+color = Color(0.55, 0.42, 0.32, 1)
+
+[node name="Promenade" type="ColorRect" parent="."]
+offset_left = -460.0
+offset_top = 40.0
+offset_right = 460.0
+offset_bottom = 200.0
+color = Color(0.85, 0.85, 0.82, 1)
+
+[node name="PromenadeStripe" type="ColorRect" parent="."]
+offset_left = -460.0
+offset_top = 100.0
+offset_right = 460.0
+offset_bottom = 102.0
+color = Color(0.62, 0.62, 0.58, 1)
+
+[node name="LampPole" type="ColorRect" parent="."]
+offset_left = -100.0
+offset_top = 60.0
+offset_right = -96.0
+offset_bottom = 110.0
+color = Color(0.42, 0.4, 0.38, 1)
+
+[node name="LampBulb" type="ColorRect" parent="."]
+offset_left = -110.0
+offset_top = 50.0
+offset_right = -86.0
+offset_bottom = 60.0
+color = Color(0.95, 0.92, 0.7, 0.85)
+
+[node name="LampPole2" type="ColorRect" parent="."]
+offset_left = 200.0
+offset_top = 60.0
+offset_right = 204.0
+offset_bottom = 110.0
+color = Color(0.42, 0.4, 0.38, 1)
+
+[node name="LampBulb2" type="ColorRect" parent="."]
+offset_left = 190.0
+offset_top = 50.0
+offset_right = 214.0
+offset_bottom = 60.0
+color = Color(0.95, 0.92, 0.7, 0.85)
+
+[node name="MarinaSign" type="Label" parent="."]
+offset_left = -180.0
+offset_top = 130.0
+offset_right = 180.0
+offset_bottom = 154.0
+text = "MARINA DA GLÓRIA"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.18, 0.42, 0.55, 1)
+theme_override_colors/font_outline_color = Color(0.95, 0.95, 0.92, 0.9)
+theme_override_constants/outline_size = 3
+
+[node name="SupHint" type="Label" parent="."]
+offset_left = -180.0
+offset_top = 156.0
+offset_right = 180.0
+offset_bottom = 172.0
+text = "🛶 Prends le SUP — pars naviguer dans la baie"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.32, 0.32, 0.4, 1)
+theme_override_colors/font_outline_color = Color(0.95, 0.95, 0.92, 0.85)
+theme_override_constants/outline_size = 3
+
+[node name="Walls" type="Node2D" parent="."]
+
+[node name="Top" type="StaticBody2D" parent="Walls"]
+position = Vector2(0, -180)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Top"]
+shape = SubResource("WallH")
+
+[node name="Bottom" type="StaticBody2D" parent="Walls"]
+position = Vector2(0, 220)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Bottom"]
+shape = SubResource("WallH")
+
+[node name="Left" type="StaticBody2D" parent="Walls"]
+position = Vector2(-466, 20)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Left"]
+shape = SubResource("WallV")
+
+[node name="Right" type="StaticBody2D" parent="Walls"]
+position = Vector2(466, 20)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Right"]
+shape = SubResource("WallV")
+
+[node name="Water" type="StaticBody2D" parent="."]
+position = Vector2(0, -70)
+collision_layer = 4
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Water"]
+shape = SubResource("WaterShape")
+
+[node name="PlayerSpawn" type="Marker2D" parent="."]
+position = Vector2(-180, 130)
+
+[node name="ExitToCopa" parent="." instance=ExtResource("2_exit")]
+position = Vector2(0, 200)
+target_district = "copacabana"
+label_text = "↓ COPACABANA"
+
+[node name="CollisionShape2D" parent="ExitToCopa" index="0"]
+shape = SubResource("ExitShape")
+
+[node name="TaxiStand" parent="." instance=ExtResource("1_taxi")]
+position = Vector2(-380, 130)
+
+[node name="DockMasterSpot" parent="." instance=ExtResource("6_reactive")]
+position = Vector2(200, 130)
+npc_id = "marina_dockmaster"
+prompt = "Parler au capitaine de port"
+character_seed = 80501
+variants = [{
+"id": "default",
+"speaker": "Capitaine de port",
+"text": "*tape sa pipe, vue sur la baie* La Marina ferme jamais. Le SUP est à toi tant que tu le ramènes avant le coucher du soleil — ou que tu le ramènes pas, mais alors faut payer. Vou Niemeyer en arrière-plan, Pão de Açúcar derrière toi, tu te crois où, en vacances ? *sourit* C'est exactement ça.",
+"choices": ["Obrigado, capitão"]
+}]
+
+[node name="Visitor1" parent="." instance=ExtResource("3_wander")]
+position = Vector2(-80, 130)
+color = Color(0.85, 0.55, 0.45, 1)
+size = Vector2(10, 17)
+roam_zone = Rect2(-80, -30, 160, 60)
+speed = 14.0
+pause_at_waypoints = 1.6
+
+[node name="Visitor2" parent="." instance=ExtResource("3_wander")]
+position = Vector2(120, 140)
+color = Color(0.55, 0.62, 0.85, 1)
+size = Vector2(10, 17)
+roam_zone = Rect2(-60, -30, 120, 50)
+speed = 12.0
+pause_at_waypoints = 2.0

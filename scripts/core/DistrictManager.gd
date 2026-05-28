@@ -214,27 +214,21 @@ func walk_to(district_id: String, vehicle: Node = null) -> bool:
 	district_changed.emit(district_id)
 	return true
 
-# Réinitialise les Rideables au point de parking du district courant à chaque
-# arrivée (taxi ou piéton). Le véhicule monté par le joueur est skipé (il est
-# déjà sous lui via walk_to). Anchor = spawn par défaut du district (le « taxi
-# stand » conceptuel), pas la position du joueur — comme ça les véhicules
-# attendent à un endroit prévisible, pas n'importe où le joueur a marché.
-# `mounted` (optionnel) = le véhicule déjà déplacé par walk_to.
+# Renvoie chaque Rideable non monté à sa position d'origine (home_position
+# cachée dans Rideable._ready). Idée : un seul véhicule de chaque type, qui
+# vit dans son district natif. Si le joueur s'en éloigne sans le conduire,
+# il rentre à la maison plutôt que de le suivre.
+# `mounted` (optionnel) = le véhicule déjà déplacé par walk_to (skipé ici).
 func _reposition_vehicles_near_player(mounted: Node = null) -> void:
-	var anchor: Vector2 = _resolve_spawn(_pending_district_for_reset())
-	# Offsets fixes par type de véhicule autour du parking.
-	var offsets: Dictionary = {"bike": Vector2(-50, 30), "car": Vector2(50, 30), "sup": Vector2(-60, 50)}
 	for v in get_tree().get_nodes_in_group("vehicle"):
 		if v == mounted:
 			continue
-		if not (v is Node2D):
+		if not (v is Rideable):
 			continue
-		if v is Rideable and (v as Rideable).is_ridden():
-			continue  # déjà collé au joueur
-		var vid: String = String((v as Rideable).vehicle_id) if v is Rideable else ""
-		(v as Node2D).global_position = anchor + offsets.get(vid, Vector2(0, 40))
-		if v is CharacterBody2D:
-			(v as CharacterBody2D).velocity = Vector2.ZERO
+		var r: Rideable = v as Rideable
+		if r.is_ridden():
+			continue  # le véhicule monté reste avec le joueur
+		r.return_home()
 
 # Helper interne : pendant travel_to/walk_to, on appelle le repositionnement
 # AVANT d'avoir maj `_current`. On a stocké la cible dans _pending_target — sinon

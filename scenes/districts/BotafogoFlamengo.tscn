@@ -5,8 +5,6 @@
 [ext_resource type="PackedScene" path="res://scenes/props/Viewpoint.tscn" id="3_view"]
 [ext_resource type="PackedScene" path="res://scenes/props/StreetVendor.tscn" id="4_vendor"]
 [ext_resource type="PackedScene" path="res://scenes/props/DistrictExit.tscn" id="5_exit"]
-[ext_resource type="PackedScene" path="res://scenes/vehicles/Bike.tscn" id="6_bike"]
-[ext_resource type="PackedScene" path="res://scenes/vehicles/Car.tscn" id="7_car"]
 [ext_resource type="PackedScene" path="res://scenes/props/BasketCourt.tscn" id="9_court"]
 [ext_resource type="PackedScene" path="res://scenes/props/BondinhoLauncher.tscn" id="10_bondinho"]
 [ext_resource type="PackedScene" path="res://scenes/npcs/Diego.tscn" id="14_diego"]
@@ -2173,38 +2171,6 @@ speed = 16.0
 pause_at_waypoints = 2.0
 pause_random_jitter = 0.8
 look_at_player_distance = 50.0
-
-[node name="Bike" parent="." instance=ExtResource("6_bike")]
-position = Vector2(-500, -45)
-
-[node name="BikeLabel" type="Label" parent="."]
-offset_left = -540.0
-offset_top = -78.0
-offset_right = -460.0
-offset_bottom = -60.0
-text = "🚲 Vélo"
-horizontal_alignment = 1
-theme_override_font_sizes/font_size = 12
-theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
-theme_override_constants/outline_size = 4
-z_index = 1
-
-[node name="Car" parent="." instance=ExtResource("7_car")]
-position = Vector2(-200, -45)
-
-[node name="CarLabel" type="Label" parent="."]
-offset_left = -240.0
-offset_top = -78.0
-offset_right = -160.0
-offset_bottom = -60.0
-text = "🚗 Voiture"
-horizontal_alignment = 1
-theme_override_font_sizes/font_size = 12
-theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
-theme_override_constants/outline_size = 4
-z_index = 1
 
 [node name="BasketCourt" parent="." instance=ExtResource("9_court")]
 position = Vector2(-700, -380)

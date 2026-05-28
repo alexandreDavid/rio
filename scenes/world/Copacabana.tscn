@@ -16,7 +16,6 @@
 [ext_resource type="PackedScene" path="res://scenes/districts/Sambodromo.tscn" id="53_sambodromo"]
 [ext_resource type="PackedScene" path="res://scenes/vehicles/Bike.tscn" id="54_bike"]
 [ext_resource type="PackedScene" path="res://scenes/vehicles/Car.tscn" id="55_car"]
-[ext_resource type="PackedScene" path="res://scenes/vehicles/Sup.tscn" id="56_sup"]
 [ext_resource type="PackedScene" path="res://scenes/districts/ZonaSul.tscn" id="57_zonasul"]
 [ext_resource type="PackedScene" path="res://scenes/props/DistrictExit.tscn" id="58_exit"]
 [ext_resource type="PackedScene" path="res://scenes/districts/BotafogoFlamengo.tscn" id="59_botafogo"]
@@ -918,22 +917,6 @@ offset_top = 4.0
 offset_right = 1860.0
 offset_bottom = 22.0
 text = "🚗 Voiture"
-horizontal_alignment = 1
-theme_override_font_sizes/font_size = 12
-theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
-theme_override_constants/outline_size = 4
-z_index = 1
-
-[node name="Sup" parent="." instance=ExtResource("56_sup")]
-position = Vector2(1100, 380)
-
-[node name="SupLabel" type="Label" parent="."]
-offset_left = 1060.0
-offset_top = 350.0
-offset_right = 1140.0
-offset_bottom = 368.0
-text = "🏄 SUP"
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 12
 theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)

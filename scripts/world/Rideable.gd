@@ -26,12 +26,33 @@ var _ridden_by: Node = null
 # Frame d'application du mount, pour empêcher le même press E de redéclencher
 # un dismount immédiat (l'event passe par le Player puis arrive ici).
 var _mount_frame: int = -1
+# Position d'origine du véhicule (au démarrage de la partie) — il retourne à
+# cette position quand le joueur change de district sans le conduire.
+var _home_position: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
 	if interactable:
 		interactable.prompt = prompt_mount
 		interactable.interacted.connect(_on_interact)
 	set_physics_process(false)
+	# Le DistrictManager renvoie chaque Rideable non monté à son point d'origine
+	# à chaque district_changed (anti-doublons, anti-vagabondage). Sans ce
+	# groupe, les véhicules ne sont jamais notifiés.
+	add_to_group("vehicle")
+	# Cache la position de départ (en world coords) au prochain process_frame —
+	# le Node2D peut ne pas encore avoir hérité de l'offset du parent ici.
+	call_deferred("_cache_home_position")
+
+func _cache_home_position() -> void:
+	_home_position = global_position
+
+# Téléporte le véhicule à sa position d'origine. Appelé par DistrictManager
+# quand le joueur change de district sans monter le véhicule.
+func return_home() -> void:
+	if _ridden_by != null:
+		return  # ne déloge pas un véhicule monté
+	global_position = _home_position
+	velocity = Vector2.ZERO
 
 func is_ridden() -> bool:
 	return _ridden_by != null

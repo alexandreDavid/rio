@@ -674,10 +674,11 @@ func _test_interiors_no_overlap() -> void:
 	await get_tree().process_frame
 
 # Garde-fou véhicules : après un changement de district (taxi ou piéton),
-# les Rideables doivent être téléportés près du joueur — sans ça, la voiture
-# garée à Copa reste à Copa quand le joueur taxi à Botafogo (cas réel signalé).
+# Politique véhicules : un seul de chaque type dans tout le jeu, chacun avec
+# une `home_position` (pos d'instanciation). Au changement de district, tout
+# véhicule non monté retourne à sa home_position — ne suit PAS le joueur.
 func _test_vehicles_follow_player_on_district_change() -> void:
-	_section("Véhicules — suivent le joueur lors d'un changement de district")
+	_section("Véhicules — retour à la home_position au changement de district")
 	var packed: PackedScene = load("res://scenes/world/Copacabana.tscn") as PackedScene
 	if packed == null:
 		_assert(false, "Copacabana.tscn charge")
@@ -686,35 +687,47 @@ func _test_vehicles_follow_player_on_district_change() -> void:
 	add_child(root)
 	await get_tree().process_frame
 	await get_tree().process_frame
-	# Au démarrage le joueur est à Copa ; on attrape sa pos initiale et celle
-	# d'un véhicule pour les comparer après changement.
 	var player: Node = GameManager.player
 	_assert(player != null, "GameManager.player présent")
 	if player == null:
 		root.queue_free(); return
-	# Sanity : il existe au moins un Rideable enregistré dans le groupe "vehicle".
 	var vehicles: Array = get_tree().get_nodes_in_group("vehicle")
 	_assert(vehicles.size() >= 1, "Au moins un Rideable (groupe 'vehicle')")
-	# On simule un changement de district : déplace le joueur loin (ex. Niterói
-	# world ≈ (-18500, -2900)) puis émet district_changed via travel_to. travel_to
-	# paie la course → on donne du cash et on bypass via _resolve_spawn direct.
+	# Pas plus d'1 véhicule par type (Bike / Car / Sup).
+	var counts: Dictionary = {}
+	for v in vehicles:
+		if v is Rideable:
+			var vid: String = String((v as Rideable).vehicle_id)
+			counts[vid] = int(counts.get(vid, 0)) + 1
+	for vid in counts:
+		_assert(int(counts[vid]) == 1,
+			"un seul véhicule '%s' dans le monde entier (compté %d)" % [vid, counts[vid]])
+	# Cache les home_positions avant de bouger.
+	var homes: Dictionary = {}
+	for v in vehicles:
+		if v is Rideable and not (v as Rideable).is_ridden():
+			homes[v] = (v as Node2D).global_position
+	# Bouge le joueur loin et déplace les véhicules ailleurs manuellement, puis
+	# travel_to → les véhicules doivent retomber sur leur home_position.
+	for v in vehicles:
+		if v is Node2D and v is Rideable and not (v as Rideable).is_ridden():
+			(v as Node2D).global_position = Vector2(99999, 99999)  # ailleurs
 	var fare: int = DistrictManager.get_fare("niteroi")
 	var inv: Node = (player as Node).get_node_or_null("Inventory")
 	if inv:
 		inv.call("add_money", fare + 100)
 	DistrictManager.travel_to("niteroi")
-	# Laisse les transforms se propager.
 	await get_tree().process_frame
-	# Vérifie que chaque véhicule non monté est près du joueur.
-	for v in get_tree().get_nodes_in_group("vehicle"):
-		if not (v is Node2D):
+	for v in vehicles:
+		if not (v is Rideable):
 			continue
-		if v is Rideable and (v as Rideable).is_ridden():
+		if (v as Rideable).is_ridden():
 			continue
-		var d: float = (v as Node2D).global_position.distance_to((player as Node2D).global_position)
-		_assert(d < 300.0,
-			"véhicule '%s' à %.0f px du joueur après travel_to (suit le déplacement)"
-				% [v.name, d])
+		if not homes.has(v):
+			continue
+		var d: float = (v as Node2D).global_position.distance_to(homes[v])
+		_assert(d < 5.0,
+			"véhicule '%s' revenu à sa home_position (delta %.0f px)" % [v.name, d])
 	root.queue_free()
 	await get_tree().process_frame
 
