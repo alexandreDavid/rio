@@ -206,13 +206,15 @@ func _unlock(id: String) -> void:
 		return
 	_unlocked[id] = true
 	var data: Dictionary = _find_in_catalog(id)
+	# Émis AVANT add_money pour que HUD puisse tagger le prochain flash money
+	# avec le titre de l'achievement (sinon le joueur voit +R$ X sans source).
+	achievement_unlocked.emit(id, data)
 	# Bonus R$ : crédite directement le joueur si reward > 0.
 	var reward: int = int(data.get("reward", 0))
 	if reward > 0 and GameManager.player:
 		var inv: Inventory = GameManager.player.get_node_or_null("Inventory") as Inventory
 		if inv:
 			inv.add_money(reward)
-	achievement_unlocked.emit(id, data)
 	# Inscrit l'entrée rétrospective correspondante dans la Crônica si elle
 	# existe (knot "conquista_<id>" cf. NarrativeJournal.JOURNAL_ENTRIES).
 	NarrativeJournal.mark_read("conquista_%s" % id)

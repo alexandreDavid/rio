@@ -16,6 +16,10 @@ var _phone_badge: Label = null
 # calculer le delta. L'init évite un faux flash au chargement de partie.
 var _last_money_shown: int = 0
 var _money_init_done: bool = false
+# Quand un achievement débloque un reward, on tag le prochain flash avec son
+# titre pour qu'il soit clair d'où vient le +R$ X (sinon le joueur croit
+# gagner de l'argent du ciel après avoir payé un bribe ou autre).
+var _next_money_source: String = ""
 @onready var journal_button: Button = $JournalButton
 @onready var save_button: Button = $SaveButton
 @onready var photo_button: Button = $PhotoButton
@@ -228,8 +232,16 @@ func _on_money_changed(amount: int) -> void:
 func _flash_money_delta(delta: int) -> void:
 	if money_label == null:
 		return
+	# Si un achievement vient de débloquer un reward, on tague le flash avec
+	# son titre pour que le joueur voie la source. Sinon flash générique.
+	var text: String = "+R$ %d" % delta
+	var dur: float = 1.1
+	if _next_money_source != "":
+		text = "%s  +R$ %d" % [_next_money_source, delta]
+		_next_money_source = ""
+		dur = 2.4
 	var lbl: Label = Label.new()
-	lbl.text = "+R$ %d" % delta
+	lbl.text = text
 	lbl.add_theme_color_override("font_color", Color(0.55, 0.95, 0.55, 1))
 	lbl.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.85))
 	lbl.add_theme_constant_override("outline_size", 3)
@@ -239,8 +251,8 @@ func _flash_money_delta(delta: int) -> void:
 	money_label.add_child(lbl)
 	var tween: Tween = create_tween()
 	tween.set_parallel(true)
-	tween.tween_property(lbl, "position:y", 44.0, 1.1)
-	tween.tween_property(lbl, "modulate:a", 0.0, 1.1)
+	tween.tween_property(lbl, "position:y", 44.0, dur)
+	tween.tween_property(lbl, "modulate:a", 0.0, dur)
 	tween.chain().tween_callback(lbl.queue_free)
 
 func _on_interaction_available(node: Node) -> void:
@@ -617,7 +629,10 @@ func _on_achievement_unlocked(_id: String, data: Dictionary) -> void:
 	var text: String = "%s %s" % [icon, title]
 	if reward > 0:
 		text += "  +R$ %d" % reward
-	_flash_toast(text, Color(0.95, 0.85, 0.4, 1), 3.0)
+		# Le prochain money_changed sera tagué avec ce titre (achievement émet
+		# son signal AVANT add_money, donc on capture la source ici).
+		_next_money_source = "%s %s" % [icon, title]
+	_flash_toast(text, Color(0.95, 0.85, 0.4, 1), 3.5)
 	_refresh_phone_badge()
 
 func _on_dynamic_mission_completed(category: int, money: int, rep: int) -> void:
