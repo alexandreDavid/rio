@@ -1,4 +1,4 @@
-[gd_scene load_steps=67 format=3]
+[gd_scene load_steps=68 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/npcs/DonaIrene.tscn" id="37_irene"]
 [ext_resource type="PackedScene" path="res://scenes/npcs/BarPatrao.tscn" id="38_patrao"]
@@ -39,6 +39,7 @@
 [ext_resource type="PackedScene" path="res://scenes/npcs/MadameDubois.tscn" id="66_dubois"]
 [ext_resource type="PackedScene" path="res://scenes/districts/ForteDeCopacabana.tscn" id="67_forte"]
 [ext_resource type="PackedScene" path="res://scenes/districts/MarinaDaGloria.tscn" id="68_marina"]
+[ext_resource type="PackedScene" path="res://scenes/props/PalaceSacoche.tscn" id="69_sacoche"]
 [ext_resource type="PackedScene" path="res://scenes/npcs/SeuJoao.tscn" id="2_seu_joao"]
 [ext_resource type="PackedScene" path="res://scenes/props/CornCart.tscn" id="3_cart"]
 [ext_resource type="PackedScene" path="res://scenes/npcs/Customer.tscn" id="4_customer"]
@@ -374,13 +375,21 @@ variants = [{
 "text": "*assis sur un banc face à la mer, ne te regarde pas* Le paquet de Tito. *tend la main, le fait disparaître sous une serviette* T'as les mains qui tremblent pas, gamin. *glisse des billets* Bien. Reviens si tu décides de signer avec Tito — pour l'instant tu as juste rendu un service, gamin.",
 "choices": ["À bientôt"]
 }, {
-"id": "a2_close",
-"objective_pending": ["trafico_a2_pickup", "pickup_palace"],
+"id": "a3_offer_post_palace",
+"quest_completed": "trafico_a2_pickup",
+"quest_not_active": "trafico_a3_chauffeur",
+"quest_not_completed": "trafico_a3_chauffeur",
 "set_flag_after": "trafico_a2_done",
-"actions": {"finish_quest": {"quest": "trafico_a2_pickup", "objective": "pickup_palace", "payout": 180}, "accept_quest": "trafico_a3_chauffeur", "rep": {2: 3}},
+"actions": {"accept_quest": "trafico_a3_chauffeur", "rep": {2: 3}},
 "speaker": "Contact",
 "text": "*récupère la sacoche du Palace, la soupèse, hoche la tête* Miguel avait raison sur toi. *sourire en coin, te file une clé* Maintenant le vrai boulot. Le coffre est chargé près d'ici — tu le conduis à Botafogo, sous le Bondinho. Pas de détour, pas de PM dans le rétro. Quelqu'un t'attend là-bas.",
 "choices": ["En route"]
+}, {
+"id": "a2_close",
+"objective_pending": ["trafico_a2_pickup", "pickup_palace"],
+"speaker": "Contact",
+"text": "*ne te regarde pas, soupire* La sacoche, sobrinho. Va la chercher au Palace, le groom l'a posée à l'entrée av. Atlântica. Tu reviens avec.",
+"choices": ["J'y vais"]
 }, {
 "id": "a3_remind",
 "quest_active": "trafico_a3_chauffeur",
@@ -708,6 +717,9 @@ variants = [{
 "text": "*lit son journal, ne lève pas les yeux* Tout est en cours, garoto. Reviens quand t'as bouclé.",
 "choices": ["…"]
 }]
+
+[node name="PalaceSacoche" parent="." instance=ExtResource("69_sacoche")]
+position = Vector2(1700, 36)
 
 [node name="PalaceHeistSpot" parent="." instance=ExtResource("62_reactive")]
 position = Vector2(1700, -64)

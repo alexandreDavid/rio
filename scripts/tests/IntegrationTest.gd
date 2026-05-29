@@ -1432,14 +1432,19 @@ const _BARRA: String = "res://scenes/districts/BarraDaTijuca.tscn"
 const _SANTOS: String = "res://scenes/districts/SantosDumont.tscn"
 
 func _test_voie_trafico_end_to_end() -> void:
-	# Trafico A6 (réception cargo) est désormais sur l'îlot offshore de Zona Sul
-	# — ZonaSul contient à la fois TraficoZonaSulSpot (A4) ET TraficoCagarrasSpot
-	# (A6) qui s'enchaînent dans la même instance de scène.
+	# Trafico A2 (pickup_palace) est désormais bouclée par un Pickable au Palace
+	# (PalaceSacoche, scenes/props/) — pas via le contact spot. Le test la coche
+	# manuellement (arrival hook) en l'absence du Pickable physique.
+	# A6 (réception cargo) est sur l'îlot offshore de Zona Sul — même instance.
+	# A3 (drive_botafogo) est cochée par MainBoot._on_district_changed.
 	await _run_voie_e2e({
 		"name": "Tráfico", "pact_npc": "tito", "pact_knot": "tito_pacto_trafico_offer",
 		"voie_flag": "voie_trafico", "q1": "trafico_a1_livraison", "q9": "trafico_a9_corrida",
 		"crown_knot": "tito_trafico_corrida", "endgame": CampaignManager.Endgame.TRAFICO,
-		"arrival": [["trafico_a3_chauffeur", "drive_botafogo"]],
+		"arrival": [
+			["trafico_a2_pickup", "pickup_palace"],
+			["trafico_a3_chauffeur", "drive_botafogo"],
+		],
 		"stations": [
 			[_COPA, "TraficoContactSpot"], [_COPA, "TraficoTioZeSpot"],
 			[_ZONASUL, "TraficoZonaSulSpot"], [_FAVELA, "TraficoIntimSpot"],
