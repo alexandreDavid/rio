@@ -2,17 +2,19 @@ class_name DynamicMissionMarker
 extends Node2D
 
 # Marqueur visible dans le monde pour une mission éphémère acceptée.
-# Quand le joueur entre dans la zone, on notifie DynamicMissionManager.
+# Le joueur doit explicitement INTERAGIR sur la zone (bouton E / tap) pour
+# valider l'étape — évite le « money for nothing » d'un trigger automatique
+# au passage.
 
 @export var category: int = 0  # DynamicMissionManager.Category
 
-@onready var trigger: Area2D = $Trigger
+@onready var interactable: Interactable = $Interactable
 @onready var pulse_rect: ColorRect = $Pulse
 @onready var core_rect: ColorRect = $Core
 
 func _ready() -> void:
-	if trigger:
-		trigger.body_entered.connect(_on_body_entered)
+	if interactable:
+		interactable.interacted.connect(_on_interacted)
 
 func apply_color(c: Color) -> void:
 	if core_rect:
@@ -27,15 +29,6 @@ func _process(delta: float) -> void:
 		var s: float = 1.0 + 0.25 * sin(t * 4.0)
 		pulse_rect.scale = Vector2(s, s)
 
-func _on_body_entered(body: Node) -> void:
-	if not _is_player(body):
-		return
+func _on_interacted(_by: Node) -> void:
 	DynamicMissionManager.mark_progress(category)
 	# Le manager s'occupe du queue_free via _despawn / re-_spawn.
-
-func _is_player(body: Node) -> bool:
-	if body == null:
-		return false
-	if body.is_in_group("player"):
-		return true
-	return body is PlayerController

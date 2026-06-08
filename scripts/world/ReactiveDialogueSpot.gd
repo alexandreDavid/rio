@@ -20,6 +20,19 @@ extends Node2D
 # Variantes de dialogue. Format ci-dessus. Doit contenir au moins une entrée.
 @export var variants: Array[Dictionary] = []
 
+# Apparence visible — même style que les NPCs (CharacterSpriteFactory, filtre
+# LINEAR). Un spot logique sans personne reste invisible (laisser à 0 / vide).
+#  - character_appearance : indices CharacterSpriteFactory (contrôle précis)
+#  - character_seed       : sinon, config aléatoire stable (≠ 0)
+@export var character_appearance: Dictionary = {}
+@export var character_seed: int = 0
+
+# Gating de présence : si défini, le spot (sprite + interaction) n'apparaît que
+# lorsque ce flag CampaignManager est posé. Sert à ne pas afficher les 4 « tio
+# Zé concierge » de chaque voie en même temps devant le Palace — seul celui de
+# la voie choisie se montre.
+@export var required_flag: String = ""
+
 @onready var interactable: Interactable = $Interactable
 
 func _ready() -> void:
@@ -27,6 +40,59 @@ func _ready() -> void:
 		return
 	interactable.prompt = prompt
 	interactable.interacted.connect(_on_interacted)
+	_refresh_gate()
+
+# Active/masque le spot selon required_flag. Tant qu'il est masqué on poll
+# (léger : ≤ qq spots, seulement avant que la voie soit choisie).
+func _refresh_gate() -> void:
+	var active: bool = required_flag == "" or CampaignManager.has_flag(required_flag)
+	visible = active
+	if interactable:
+		interactable.enabled = active
+	if active:
+		_spawn_character_sprite()
+	set_process(required_flag != "" and not active)
+
+func _process(_delta: float) -> void:
+	if CampaignManager.has_flag(required_flag):
+		_refresh_gate()
+
+# Affiche un personnage rendu par CharacterSpriteFactory (cellule DOWN/idle),
+# au même gabarit et filtrage que les NPCs scriptés — pour ne plus avoir de
+# spots invisibles ni de bouts de ColorRect hors style.
+func _spawn_character_sprite() -> void:
+	if get_node_or_null("CharSprite") != null:
+		return
+	var config: Dictionary = {}
+	if not character_appearance.is_empty():
+		config = CharacterSpriteFactory.config_from_indices(character_appearance)
+	elif character_seed != 0:
+		config = CharacterSpriteFactory.random_config(character_seed)
+	else:
+		return  # spot purement logique : pas de visuel
+	var cw: int = CharacterSpriteFactory.CELL_W
+	var ch: int = CharacterSpriteFactory.CELL_H
+	# Ombre ovale au sol (ancre le perso), sous le sprite.
+	var shadow: ColorRect = ColorRect.new()
+	shadow.name = "CharShadow"
+	shadow.offset_left = -13.0
+	shadow.offset_top = 4.0
+	shadow.offset_right = 13.0
+	shadow.offset_bottom = 10.0
+	shadow.color = Color(0.0, 0.0, 0.0, 0.28)
+	shadow.z_index = -1
+	add_child(shadow)
+	var spr: Sprite2D = Sprite2D.new()
+	spr.name = "CharSprite"
+	spr.texture = CharacterSpriteFactory.build_sheet(config)
+	spr.region_enabled = true
+	spr.region_rect = Rect2(0, 0, cw, ch)
+	spr.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	var s: float = 48.0 / float(ch)
+	spr.scale = Vector2(s, s)
+	# Pieds ~ à l'origine du spot (le sprite est centré sur la cellule).
+	spr.position = Vector2(0, -24.0)
+	add_child(spr)
 
 func _on_interacted(_by: Node) -> void:
 	var variant: Dictionary = _pick_variant()

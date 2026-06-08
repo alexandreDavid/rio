@@ -141,6 +141,7 @@ func _ready() -> void:
 	_test_reactive_spots_default_variant()
 	_test_runtime_spot_action_applies()
 	_test_quest_objectives_reachable()
+	_test_navigation_director_targets()
 	await _test_mobile_controls_invariants()
 	_test_act1_to_act2_transition()
 	await _test_act2_directed_flow()
@@ -193,7 +194,7 @@ func _test_autoloads_present() -> void:
 	_section("Autoloads")
 	for n in ["EventBus", "GameManager", "ReputationSystem", "TimeOfDay",
 			"QuestManager", "DialogueBridge", "SaveSystem", "CampaignManager",
-			"NPCScheduler"]:
+			"NPCScheduler", "NavigationDirector"]:
 		_assert(get_node_or_null("/root/" + n) != null, "autoload %s" % n)
 
 func _test_quest_resources_load() -> void:
@@ -213,6 +214,42 @@ func _test_quest_resources_load() -> void:
 		_assert(q.ink_knot != "", "%s a un ink_knot" % path)
 		# Register in QuestManager for subsequent tests
 		QuestManager.register_quest(q)
+
+func _test_navigation_director_targets() -> void:
+	_section("NavigationDirector — cibles de guidage")
+	var nd: Node = get_node_or_null("/root/NavigationDirector")
+	_assert(nd != null, "autoload NavigationDirector présent")
+	if nd == null:
+		return
+	var step: Dictionary = nd.STEP
+	var valid_anchors: Array = ["", "calcadao", "atlantica", "palace", "consortium", "taxi", "cart"]
+	# 1. Intégrité de chaque entrée du registre de destinations.
+	for key in step:
+		var e: Dictionary = step[key]
+		_assert(String(e.get("text", "")) != "", "STEP %s a un texte" % key)
+		var d: String = e.get("dist", "")
+		_assert(d == "" or DistrictManager.DISTRICTS.has(d), "STEP %s district valide (%s)" % [key, d])
+		var a: String = e.get("anchor", "")
+		_assert(a in valid_anchors or a.begins_with("npc:"), "STEP %s anchor valide (%s)" % [key, a])
+	# 2. Chaque étape des quêtes MAIN de voie (A/B/C/D) a une cible résoluble.
+	var voie_prefixes: Array = ["trafico_a", "policia_b", "consortium_c", "prefeito_d"]
+	for path in QUEST_RESOURCES:
+		var res: Resource = load(path)
+		if not (res is Quest):
+			continue
+		var q: Quest = res as Quest
+		if q.quest_type != Quest.QuestType.MAIN:
+			continue
+		var is_voie: bool = false
+		for p in voie_prefixes:
+			if q.id.begins_with(p):
+				is_voie = true
+				break
+		if not is_voie:
+			continue
+		for obj in q.objectives:
+			var key2: String = "%s/%s" % [q.id, obj.id]
+			_assert(step.has(key2), "cible de guidage pour étape MAIN %s" % key2)
 
 func _test_npc_data_resources_load() -> void:
 	_section("Chargement des NPCs")
@@ -1253,8 +1290,13 @@ func _test_act1_to_act2_transition() -> void:
 	QuestManager.complete_objective("act1_heritage", "first_payment")
 	_assert(QuestManager.is_completed("act1_heritage"),
 		"act1_heritage complétée après acompte (3 objectifs OK)")
+	# Nouveau design : le seul acompte ne bascule PLUS en acte 2 — il faut le
+	# retour à la maison + la nuit chez tio Zé (flag act1_closed).
+	_assert(CampaignManager.current_act == 1,
+		"acte 1 maintenu après le seul acompte (retour maison requis)")
+	CampaignManager.set_flag("act1_closed")
 	_assert(CampaignManager.current_act == 2,
-		"acte 2 enclenché automatiquement (current_act == 2)")
+		"acte 2 enclenché après le retour maison (act1_closed)")
 	_reset_campaign_state()
 
 # Acte 2 dirigé : la nuit doit passer dans la maison (HouseNightTrigger →
@@ -1267,7 +1309,8 @@ func _test_act2_directed_flow() -> void:
 	_complete_quest_all_objectives("prologue_pedrinho")
 	_complete_quest_all_objectives("act1_heritage")
 	CampaignManager.pay_debt(CampaignManager.ACT1_THRESHOLD)
-	_assert(CampaignManager.current_act == 2, "acte 2 atteint")
+	_assert(CampaignManager.current_act == 1,
+		"acte 1 maintenu tant que la nuit (retour maison) n'est pas passée")
 	_assert(not CampaignManager.has_flag("act1_closed"),
 		"act1_closed pas encore posé tant que la nuit n'est pas passée")
 
@@ -1284,6 +1327,8 @@ func _test_act2_directed_flow() -> void:
 	DialogueBridge.choose(0)  # set_flag act1_closed
 	_assert(CampaignManager.has_flag("act1_closed"),
 		"act1_closed posé après la cinématique de nuit (set_flag chain)")
+	_assert(CampaignManager.current_act == 2,
+		"acte 2 atteint après le retour maison + nuit (act1_closed)")
 
 	# Une fois act1_closed posé, le pacte Tito est jouable.
 	DialogueBridge.start_dialogue("tito", "tito_pacto_trafico_offer")
@@ -1362,6 +1407,10 @@ func _run_voie_e2e(cfg: Dictionary) -> void:
 	_complete_quest_all_objectives("act1_heritage")
 	_assert(QuestManager.is_completed("prologue_pedrinho"), "%s : prologue résolu" % cfg.name)
 	_assert(QuestManager.is_completed("act1_heritage"), "%s : 1er acompte payé" % cfg.name)
+	# La chaîne d'une voie (q2 → q9) se joue en ACTE 3 : en acte 2 seules les
+	# 1res missions (a1/b1/c1/d1) sont accessibles. On place donc l'acte 3 avant
+	# de sceller le pacte et de dérouler la chaîne.
+	CampaignManager.current_act = 3
 
 	# Pacte avec le patron (knot PLACEHOLDER, comme au doigt dans le dialogue).
 	DialogueBridge.start_dialogue(cfg.pact_npc, cfg.pact_knot)

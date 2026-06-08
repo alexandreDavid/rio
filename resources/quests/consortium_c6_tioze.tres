@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_hear_concierge"]
+script = ExtResource("2_obj")
+id = "hear_concierge"
+description = "Écouter le concierge du Copacabana Palace"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "consortium_c6_tioze"
+display_name = "Ce que le vieux a vu"
+description = "Un vieux concierge du Palace dit qu'il a vu, jadis, ce qu'est vraiment le Consórcio. Il veut te le dire. Avant que tu signes."
+journal_text = "Aller au Copacabana Palace et écouter le concierge."
+giver_npc_id = "consortium_niteroi"
+ink_knot = "spot_consortium_niteroi_c6_offer"
+objectives = Array[Resource]([SubResource("obj_hear_concierge")])
+money_reward = 0
+reputation_rewards = {}
+required_reputation = {}
+required_act = 0
+quest_type = 1
+prerequisite_quest_ids = Array[String](["consortium_c5_mac"])

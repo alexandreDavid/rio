@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_fetch"]
+script = ExtResource("2_obj")
+id = "fetch_mat"
+description = "Récupérer le tapis chez le restaurateur d'Ipanema"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "ipanema_yoga"
+display_name = "Tapis perdu à Ipanema"
+description = "Une prof de yoga du Posto 9 a oublié son tapis brodé chez le restaurateur d'Ipanema hier soir. Récupère-le avant son prochain cours."
+journal_text = "Aller chez le restaurateur d'Ipanema (Zona Sul) pour récupérer le tapis."
+giver_npc_id = "ipanema_yogi"
+ink_knot = "spot_ipanema_yogi_offer"
+objectives = Array[Resource]([SubResource("obj_fetch")])
+money_reward = 600
+reputation_rewards = {3: 2, 4: 1}
+required_reputation = {}
+required_act = 0

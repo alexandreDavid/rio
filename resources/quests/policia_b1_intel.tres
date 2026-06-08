@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_report_face"]
+script = ExtResource("2_obj")
+id = "report_face"
+description = "Rapporter un visage utile à Ramos (Bar do Policial)"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "policia_b1_intel"
+display_name = "Un visage pour le Capitão"
+description = "Ramos te prend sous son aile. Repère quelqu'un d'utile sur le calçadão et rapporte-lui le visage. C'est ton entrée dans le camp bleu."
+journal_text = "Identifier un visage et le rapporter au contact de Ramos (Copacabana)."
+giver_npc_id = "ramos"
+ink_knot = "ramos_pacto_policia_offer"
+objectives = Array[Resource]([SubResource("obj_report_face")])
+money_reward = 250
+reputation_rewards = {}
+required_reputation = {}
+required_act = 0
+quest_type = 1
+prerequisite_quest_ids = Array[String]([])

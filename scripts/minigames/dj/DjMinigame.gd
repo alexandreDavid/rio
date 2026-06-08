@@ -43,6 +43,15 @@ var _score: int = 0
 var _perfects: int = 0
 var _goods: int = 0
 var _misses: int = 0
+# Combo : ce qui distingue le DJ du Carnaval. Le set électronique récompense le
+# FLOW — une série de hits sans rater fait monter un multiplicateur ; une note
+# manquée le casse. (Le Carnaval, lui, teste la mémoire d'un pattern fixe.)
+var _combo: int = 0
+var _max_combo: int = 0
+
+# x1 (0-4) · x1.5 (5-9) · x2 (10-14) · x2.5 (15-19) · x3 (20+).
+func _combo_mult() -> float:
+	return 1.0 + min(_combo / 5, 4) * 0.5
 var _notes: Array = []          # éléments {node, lane, target_time, hit}
 var _pattern: Array = []        # [target_time, lane] à venir
 var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
@@ -55,6 +64,9 @@ var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
 
 var _lane_buttons: Array[Button] = []
 
+# Lanes électroniques (≠ instruments samba du Carnaval) — affichées sur les boutons.
+const LANE_LABELS: Array = ["Kick", "Snare", "Hat", "Synth"]
+
 func _ready() -> void:
 	EventBus.minigame_started.emit("dj_paoacucar")
 	var cam: Camera2D = get_node_or_null("Camera2D")
@@ -65,6 +77,7 @@ func _ready() -> void:
 		var btn: Button = get_node_or_null("UI/Lane%dButton" % i) as Button
 		_lane_buttons.append(btn)
 		if btn:
+			btn.text = LANE_LABELS[i]
 			btn.pivot_offset = btn.size * 0.5
 			var lane_idx: int = i
 			btn.pressed.connect(func(): hit_lane(lane_idx))
@@ -123,10 +136,11 @@ func _process(delta: float) -> void:
 			continue
 		var time_until: float = n.target_time - elapsed
 		node.position.y = TARGET_LINE_Y - time_until * FALL_SPEED - NOTE_H * 0.5
-		# Auto-miss si dépassée la cible + marge.
+		# Auto-miss si dépassée la cible + marge → casse le combo.
 		if elapsed - n.target_time > MISS_GRACE:
 			n.hit = true
 			_misses += 1
+			_combo = 0
 			node.modulate = Color(0.55, 0.25, 0.25, 0.5)
 			_set_status("MISS")
 	_update_labels()
@@ -165,17 +179,20 @@ func _hit_lane(lane: int) -> void:
 		return
 	var n = _notes[best_idx]
 	if best_dist <= PERFECT_WINDOW:
-		_score += POINTS_PERFECT
+		_combo += 1
+		_score += int(round(POINTS_PERFECT * _combo_mult()))
 		_perfects += 1
 		n.node.modulate = Color(0.4, 1.0, 0.4, 1)
-		_set_status("PERFECT")
+		_set_status("PERFECT x%d" % _combo)
 	elif best_dist <= GOOD_WINDOW:
-		_score += POINTS_GOOD
+		_combo += 1
+		_score += int(round(POINTS_GOOD * _combo_mult()))
 		_goods += 1
 		n.node.modulate = Color(0.95, 0.85, 0.4, 1)
-		_set_status("GOOD")
+		_set_status("GOOD x%d" % _combo)
 	else:
 		return
+	_max_combo = max(_max_combo, _combo)
 	n.hit = true
 	# Petit "punch" visuel.
 	var t: Tween = create_tween()
@@ -202,7 +219,10 @@ func _update_labels() -> void:
 	if score_label:
 		score_label.text = "Score : %d" % _score
 	if combo_label:
-		combo_label.text = "✓ %d  ★ %d  ✗ %d" % [_goods, _perfects, _misses]
+		if _combo >= 2:
+			combo_label.text = "COMBO x%d  (x%.1f)" % [_combo, _combo_mult()]
+		else:
+			combo_label.text = "✓ %d  ★ %d  ✗ %d" % [_goods, _perfects, _misses]
 
 func _end_game() -> void:
 	if _ended:
@@ -210,7 +230,7 @@ func _end_game() -> void:
 	_ended = true
 	var tips: int = int(round(_score / TIP_DIVISOR))
 	if status_label:
-		status_label.text = "Fim do set ! %d perfects · %d goods · R$ %d en tips" % [_perfects, _goods, tips]
+		status_label.text = "Fim do set ! combo max x%d · %d perfects · R$ %d en tips" % [_max_combo, _perfects, tips]
 	await get_tree().create_timer(2.5).timeout
 	EventBus.minigame_ended.emit("dj_paoacucar", {"score": _score, "tips": tips, "qualifies": tips > 0})
 	match_ended.emit(tips > 0, tips)

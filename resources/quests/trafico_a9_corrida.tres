@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_execute_run"]
+script = ExtResource("2_obj")
+id = "execute_run"
+description = "Mener la dernière corrida pour Tito"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "trafico_a9_corrida"
+display_name = "Última corrida"
+description = "La dernière. Tito te confie la corrida du Carnaval. Si tu la mènes, le Morro est à toi — tu deviens le Patrão."
+journal_text = "Retourner au morro voir Tito pour mener la dernière corrida."
+giver_npc_id = "trafico_niteroi"
+ink_knot = "spot_trafico_niteroi_a9_offer"
+objectives = Array[Resource]([SubResource("obj_execute_run")])
+money_reward = 0
+reputation_rewards = {}
+required_reputation = {}
+required_act = 0
+quest_type = 1
+prerequisite_quest_ids = Array[String](["trafico_a8_baia"])

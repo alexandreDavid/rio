@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_deal_ipanema"]
+script = ExtResource("2_obj")
+id = "deal_ipanema"
+description = "Refourguer la marchandise à Ipanema (Zona Sul)"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "trafico_a4_ipanema"
+display_name = "Gringo à Ipanema"
+description = "Le contact t'envoie écouler la marchandise à Ipanema. Un touriste paie cash. Si ça tourne mal, tu pars vite et tu ne regardes pas derrière."
+journal_text = "Rejoindre la Zona Sul (Ipanema) et conclure le deal."
+giver_npc_id = "trafico_contact"
+ink_knot = "spot_trafico_contact_a4_offer"
+objectives = Array[Resource]([SubResource("obj_deal_ipanema")])
+money_reward = 700
+reputation_rewards = {}
+required_reputation = {}
+required_act = 0
+quest_type = 1
+prerequisite_quest_ids = Array[String](["trafico_a3_chauffeur"])

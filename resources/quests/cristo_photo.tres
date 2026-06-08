@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_shoot"]
+script = ExtResource("2_obj")
+id = "shoot_cristo"
+description = "Prendre la photo du Cristo Redentor depuis le mirante du Corcovado"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "cristo_photo"
+display_name = "Cristo en couverture"
+description = "Un photographe pigiste du calçadão couvre l'éditorial du mois pour un mag étranger : Cristo Redentor au lever du soleil. Il dort encore. Tu montes au mirante à sa place, tu shootes, tu rapportes."
+journal_text = "Monter au Corcovado, déclencher la photo au mirante, redescendre."
+giver_npc_id = "calcadao_fotografo"
+ink_knot = "spot_calcadao_fotografo_offer"
+objectives = Array[Resource]([SubResource("obj_shoot")])
+money_reward = 1000
+reputation_rewards = {3: 3, 4: 2}
+required_reputation = {}
+required_act = 0

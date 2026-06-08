@@ -1,13 +1,13 @@
 # Rio — Copacabana (Godot 4.6)
 
-Vertical slice d'un jeu 2D top-down situé sur la plage de Copacabana à Rio. Quête principale autour du milho (maïs grillé), mini-jeu de beach-volley, système de réputation multi-axes, dialogues via Ink.
+Vertical slice d'un jeu 2D top-down situé sur la plage de Copacabana à Rio. Quête principale autour du milho (maïs grillé), mini-jeux (volley, padaria, valet, surf…), système de réputation multi-axes, dialogues à choix structurés.
 
 Langue de travail : **français** (code, commentaires, dialogues, UI).
 
 ## Stack
 - Godot **4.6** Forward+ (`project.godot` line `config/features`)
 - Scripts GDScript statiquement typés — préférer `Node2D` explicite aux `Variant` non typés
-- Dialogues : Ink (dossier `ink/`), chargés par `scripts/quests/InkStoryLoader.gd`
+- Dialogues : knots structurés (dicts `const KNOTS`) dans `scripts/dialogues/Act1..4Dialogues.gd` + `SideQuestDialogues.gd`, fusionnés au runtime par `DialogueBridge._merge_external_dialogues()`. `DialogueBridge` expose un contrat de signaux (`line_shown` / `choices_presented` / `dialogue_finished`) indépendant du moteur : `InkStoryLoader.gd` reste branché comme backend interchangeable, mais **le plugin inkgd n'est pas installé** et `ink/milho.ink` est un vestige non chargé — tout le contenu réel vit dans les dicts ci-dessus
 
 ## Autoloads (singletons)
 Ordre important dans `project.godot` — ne pas changer sans raison :
@@ -92,24 +92,28 @@ La cible primaire est iOS (`build_ios.sh`, `export_ios/`). Toute UI doit fonctio
 
 ## Gating narratif MAIN/SIDE
 La trame est gated, les activités libres ne le sont pas. Sur `Quest.gd` :
-- `quest_type` : `Quest.QuestType.MAIN` (trame, 17 quêtes) ou `SIDE` (défaut, 29 quêtes)
+- `quest_type` : `Quest.QuestType.MAIN` (trame, ~45 quêtes) ou `SIDE` (défaut, ~50 quêtes) — ~95 `.tres` au total dans `resources/quests/`
 - `prerequisite_quest_ids: Array[String]` : à compléter avant que `is_available()` passe true
 - `required_act` : acte minimum (0 = dispo dès le début)
 
-Avancement d'acte = seuil de dette **+** pivots complétés (`CampaignManager.ACT_PIVOT_QUESTS`) :
-- Acte 1 → 2 : `act1_heritage` + `act1_meet_ramos` + `act1_meet_tito` + 500 R$
-- Acte 2 → 3 : **chaîne linéaire** `act2_intro` (auto-cutscene) → `act2_ramos_operacao` → `act2_padre_orfanato` → `act2_miguel_favela` + 25 000 R$
-- Acte 3 → 4 : via `complete_endgame()` à la fin d'une des 3 voies (Polícia/Tráfico/Prefeito, mutuellement exclusives — chaque voie est linéaire en interne : intel→madrugada / pickup→corrida / endorsements→eleicao)
+Avancement d'acte = seuils de dette payée (`CampaignManager`, constantes `ACTn_THRESHOLD`) **+** quelques conditions narratives. Les seuils sont des jalons de RYTHME : la quête de fin de voie (`complete_endgame`) solde de toute façon le reliquat de la dette totale (`DEBT_TOTAL = 50 000`).
+- **Acte 1 → 2** : `act1_heritage` complété + flag `act1_closed` (retour à la maison + nuit chez tio Zé, posé par `Act1NightCutscene`) + **500 R$** payés (`ACT1_THRESHOLD`). `ACT_PIVOT_QUESTS = {2: ["act1_heritage"]}` — les anciens pivots `act1_meet_*` / `act2_*` n'existent plus.
+- **Acte 2 → 3** : **échantillon libre** — chaque patron offre sa mission intro sans sceller de voie ; passage débloqué au seul seuil **2 000 R$** (`ACT2_THRESHOLD`). Le vrai choix de voie se fait en acte 3.
+- **Acte 3 → 4** : la voie est scellée (pacte → flag `voie_*`), le joueur enchaîne la chaîne A1–A7 ; passage passif à **6 000 R$** (`ACT3_THRESHOLD`).
+- **Acte 4 → 5** : `complete_endgame(path)` au couronnement (A9/B9/C9/D9) — solde la dette, scelle l'endgame et ouvre l'acte 5 (Reinado/Carnaval).
+
+**4 voies mutuellement exclusives** (`enum Endgame`, `VOIE_FLAGS`) : Tráfico (Tito), Polícia (Ramos), Consórcio (Magalhães), Prefeito (Padre). Chaque voie est linéaire en interne.
 
 À chaque MAIN complétée, `HUD.MAIN_NEXT_HINT[quest_id]` fournit le toast jalon ("✓ X — Va voir Y au [lieu]"). À étendre dans ce dictionnaire à chaque ajout de MAIN.
 
 Si un knot tente `accept_quest` sur une quête bloquée, `DialogueBridge._show_locked_message` affiche "Pas encore le bon moment — d'abord : <prereqs>". Le `QuestLog` sépare HISTÓRIA (✦ doré) et ATIVIDADES (• bleu).
 
 ## Workflows fréquents
-- **Ajouter un NPC** : copier `scenes/npcs/NPC.tscn` → adapter script + dialogue Ink → instancier dans `Copacabana.tscn` avec `position`
-- **Ajouter une quête** : créer un `.tres` dans `resources/quests/` → référencer l'ID Ink → enregistrer dans `MainBoot.QUEST_RESOURCES` ; tagger `quest_type = 1` si MAIN et lister `prerequisite_quest_ids` ; vérifier avec `tools/check_quest_gating.gd`
+- **Ajouter un NPC** : copier `scenes/npcs/NPC.tscn` → adapter script + ajouter les knots dans le bon `scripts/dialogues/*Dialogues.gd` → instancier dans `Copacabana.tscn` avec `position`
+- **Ajouter une quête** : créer un `.tres` dans `resources/quests/` → ajouter les knots d'offre/rappel/fin dans `scripts/dialogues/*Dialogues.gd` (l'`ink_knot` de la quête y pointe) → enregistrer dans `MainBoot.QUEST_RESOURCES` ; tagger `quest_type = 1` si MAIN et lister `prerequisite_quest_ids` ; vérifier avec `tools/check_quest_gating.gd`
+- **Ajouter un knot de dialogue** : éditer le fichier d'acte/domaine concerné (`Act1..4Dialogues.gd` / `SideQuestDialogues.gd`) — `const KNOTS` ; key = `ink_knot`, value = `{speaker, text, choices, on_choose?}`. La résolution runtime est par clé globale, le fichier choisi n'a pas d'incidence fonctionnelle (juste l'organisation)
 - **Ajouter une tuile / régler le tileset** : utiliser l'agent `tileset-atlas` (cf `.claude/agents/`)
-- **Tester** : `./run_tests.sh` (1633 assertions, headless via `IntegrationTest.tscn`) ou ouvrir Godot
+- **Tester** : `./run_tests.sh` (~3100 assertions, headless via `IntegrationTest.tscn` + `PlaythroughDriver.tscn`) ou ouvrir Godot
 - **Skip d'acte (debug build)** : `Ctrl+F1..F4` (`scripts/debug/DebugConsole.gd`) → reset / skip vers acte 2/3/4 avec pivots auto-complétés ; `Ctrl+Shift+F4` voie Tráfico, `Ctrl+Alt+F4` voie Prefeito
 
 ## Export

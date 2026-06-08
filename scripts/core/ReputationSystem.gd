@@ -5,8 +5,14 @@ extends Node
 
 enum Axis { CIVIC, POLICE, STREET, TOURIST, CHARISMA }
 
+# Libellés FR affichables (UI, messages de lock). Index = valeur d'Axis.
+const AXIS_LABELS: Array[String] = ["Civisme", "Police", "Rua", "Tourisme", "Charisme"]
+
 const MIN_VALUE: int = -100
 const MAX_VALUE: int = 100
+
+func axis_label(axis: int) -> String:
+	return AXIS_LABELS[axis] if axis >= 0 and axis < AXIS_LABELS.size() else "?"
 
 var _values: Array[int] = []
 # Compteur par source pour limiter les gains répétitifs (ex. gym → max 3 points de charisma).

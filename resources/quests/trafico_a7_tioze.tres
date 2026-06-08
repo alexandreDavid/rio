@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_heed_warning"]
+script = ExtResource("2_obj")
+id = "heed_warning"
+description = "Écouter le concierge du Copacabana Palace"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "trafico_a7_tioze"
+display_name = "L'avertissement du Palace"
+description = "Le contact dit qu'un vieux concierge du Copacabana Palace insiste pour te parler. Il a quelque chose à te dire sur Tito. Et sur ton oncle."
+journal_text = "Aller au Copacabana Palace et écouter le concierge."
+giver_npc_id = "trafico_cagarras"
+ink_knot = "spot_trafico_cagarras_a7_offer"
+objectives = Array[Resource]([SubResource("obj_heed_warning")])
+money_reward = 0
+reputation_rewards = {}
+required_reputation = {}
+required_act = 0
+quest_type = 1
+prerequisite_quest_ids = Array[String](["trafico_a6_cagarras"])

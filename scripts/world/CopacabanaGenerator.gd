@@ -1255,6 +1255,10 @@ func _spawn_forte() -> void:
 	flag_y.color = Color(0.95, 0.85, 0.18, 1)
 	container.add_child(flag_y)
 	_spawn_sign(container, Vector2(-200, 174), "FORTE DE COPACABANA", Color(0.55, 0.4, 0.32, 1), 8)
+	# Passerelle d'accès au Forte : 3 entrées clusterisées au bord ouest de la
+	# zone jouable (x ≥ map_start_x=160). Café Colombo + Confeitaria 18 +
+	# Le Forte est désormais un district à part (ForteDeCopacabana) — l'entrée
+	# se fait via DistrictExit "ExitToForte" déclaré dans Copa.tscn à (200,175).
 
 # Leme — extrémité est. Petit prolongement de la plage avec un rocher
 # (Pedra do Leme) et une végétation montagneuse en arrière-plan, marquant la

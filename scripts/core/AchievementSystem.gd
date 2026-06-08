@@ -14,7 +14,7 @@ const CATALOG: Array = [
 	{"id": "debt_cleared", "icon": "💰", "title": "Dívida saldada", "desc": "Solder la dette de 50 000 R$.", "reward": 1000},
 	{"id": "act_2", "icon": "🎬", "title": "Acte 2 — Os verdadeiros rostos", "desc": "Franchir le seuil de l'acte 2.", "reward": 300},
 	{"id": "act_3", "icon": "🎬", "title": "Acte 3 — A última volta", "desc": "Atteindre l'acte 3.", "reward": 500},
-	{"id": "act_4", "icon": "🎬", "title": "Acte 4 — Os Grandes Lances", "desc": "Atteindre les gros coups (25 000 R$).", "reward": 600},
+	{"id": "act_4", "icon": "🎬", "title": "Acte 4 — Os Grandes Lances", "desc": "Atteindre les gros coups de l'acte 4.", "reward": 600},
 	{"id": "act_5", "icon": "🎬", "title": "Acte 5 — O Reinado", "desc": "Régner sur le bairro.", "reward": 800},
 	{"id": "endgame_prefeito", "icon": "🏛", "title": "Coronel do Bairro", "desc": "Sceller la voie Prefeito.", "reward": 500},
 	{"id": "endgame_policia", "icon": "🚓", "title": "Chefe de Polícia", "desc": "Sceller la voie Polícia.", "reward": 500},
@@ -205,16 +205,14 @@ func _unlock(id: String) -> void:
 	if _unlocked.get(id, false):
 		return
 	_unlocked[id] = true
-	var data: Dictionary = _find_in_catalog(id)
-	# Émis AVANT add_money pour que HUD puisse tagger le prochain flash money
-	# avec le titre de l'achievement (sinon le joueur voit +R$ X sans source).
+	# Les conquistas sont une RECONNAISSANCE, plus une source de cash : verser des
+	# R$ à des jalons (1er acompte, passage d'acte…) faisait « gagner de l'argent
+	# sans rien faire » et, pire, remboursait le paiement au consortium (« payer
+	# ne déduit rien »). On neutralise le bonus à la source et on retire la mention
+	# +R$ du toast pour rester cohérent.
+	var data: Dictionary = _find_in_catalog(id).duplicate(true)
+	data["reward"] = 0
 	achievement_unlocked.emit(id, data)
-	# Bonus R$ : crédite directement le joueur si reward > 0.
-	var reward: int = int(data.get("reward", 0))
-	if reward > 0 and GameManager.player:
-		var inv: Inventory = GameManager.player.get_node_or_null("Inventory") as Inventory
-		if inv:
-			inv.add_money(reward)
 	# Inscrit l'entrée rétrospective correspondante dans la Crônica si elle
 	# existe (knot "conquista_<id>" cf. NarrativeJournal.JOURNAL_ENTRIES).
 	NarrativeJournal.mark_read("conquista_%s" % id)

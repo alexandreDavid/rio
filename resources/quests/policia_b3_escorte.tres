@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_escort_patrol"]
+script = ExtResource("2_obj")
+id = "escort_patrol"
+description = "Conduire la patrouille PM en planque à Botafogo"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "policia_b3_escorte"
+display_name = "Patrouille sous le Bondinho"
+description = "Ramos te confie une patrouille. Tu la conduis discrètement en planque sous le Bondinho de Botafogo."
+journal_text = "Rejoindre Botafogo avec la patrouille PM."
+giver_npc_id = "policia_filature"
+ink_knot = "spot_policia_filature_b3_offer"
+objectives = Array[Resource]([SubResource("obj_escort_patrol")])
+money_reward = 500
+reputation_rewards = {}
+required_reputation = {}
+required_act = 0
+quest_type = 1
+prerequisite_quest_ids = Array[String](["policia_b2_filature"])

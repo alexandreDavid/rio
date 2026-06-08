@@ -8,18 +8,20 @@ extends Node
 # (NONE=0, PREFEITO=1, POLICIA=2, TRAFICO=3, CONSORTIUM=4) pour les saves.
 enum Endgame { NONE, PREFEITO, POLICIA, TRAFICO, CONSORTIUM }
 
-# Somme totale due à la fin de l'acte 1 pour le consortium.
+# Somme totale due au consortium. La quête de fin (A9/B9/C9/D9) solde
+# automatiquement le reliquat — les seuils ci-dessous sont des jalons de RYTHME,
+# pas une obligation de gagner 50 000 R$ à la sueur du milho.
 const DEBT_TOTAL: int = 50000
 # Acompte à verser pour déclencher le passage à l'acte 2 (facilement atteignable).
 const ACT1_THRESHOLD: int = 500
 # Acte 2 = échantillon libre : chaque patron offre sa mission intro (A1/B1/C1/D1)
-# sans pacte. Le joueur cumule jusqu'à 5000 R$, puis l'acte 3 enclenche le vrai
-# choix de voie (mutuellement exclusive).
-const ACT2_THRESHOLD: int = 5000
-# Acte 3 → 4 : la voie est scellée, le joueur enchaîne A1-A7 dans la chaîne.
-# À 25 000 R$ cumulés, l'acte 4 « Os Grandes Lances » s'ouvre : missions
-# majeures (A8 gros coup, assassinat du consortium, A9 couronnement).
-const ACT3_THRESHOLD: int = 25000
+# sans pacte. Seuil calé sur le revenu des 4 missions intro (~1 050 R$) + un peu
+# de milho/side → l'acte 3 (vrai choix de voie) s'ouvre sans grind.
+const ACT2_THRESHOLD: int = 2000
+# Acte 3 → 4 : la voie est scellée, le joueur enchaîne A1-A7. Seuil calé pour
+# être franchi en complétant la chaîne (les missions paient désormais le gros du
+# revenu), laissant A8 (gros coup) / A9 (couronnement) pour l'acte 4.
+const ACT3_THRESHOLD: int = 6000
 
 var current_act: int = 1
 var debt_paid: int = 0
@@ -42,11 +44,13 @@ var completed_paths: Array = []
 # atteint en acte ≥ 2, on pose un flag exploité par les ReactiveDialogueSpot
 # de la maison (mãe et vovó). Évalués en cascade : un saut large peut poser
 # plusieurs flags en une seule transaction.
+# Paliers calés sur la fenêtre de l'acte 2 (acompte 500 → seuil acte 3 à 2000)
+# pour que les beats famille se jouent bien PENDANT l'acte 2.
 const ACT2_MILESTONES: Array = [
-	{"threshold": 5000,  "flag": "mae_letter_triggered"},
-	{"threshold": 10000, "flag": "mae_consortium_revisit_triggered"},
-	{"threshold": 15000, "flag": "mae_sick_triggered"},
-	{"threshold": 20000, "flag": "tio_ze_letter_triggered"},
+	{"threshold": 600,  "flag": "mae_letter_triggered"},
+	{"threshold": 1000, "flag": "mae_consortium_revisit_triggered"},
+	{"threshold": 1400, "flag": "mae_sick_triggered"},
+	{"threshold": 1800, "flag": "tio_ze_letter_triggered"},
 ]
 
 func _ready() -> void:
@@ -85,12 +89,10 @@ func pay_debt(amount: int) -> int:
 
 # Quêtes principales qui doivent être complétées pour franchir un acte (en plus du seuil de dette).
 # Le gating narratif force le joueur à suivre la trame, pas seulement à farmer.
-# Acte 2 est linéaire : intro (cutscene) → ramos → padre → miguel. Le pivot vers
-# l'acte 3 attend la fin de la chaîne complète (act2_miguel_favela).
 # Pivots requis pour avancer (en plus du seuil de dette). Post-refonte : les
 # quêtes legacy act1_meet_*, act2_intro, act2_ramos/padre/miguel_* n'existent
-# plus. Le passage à l'acte 3 est désormais gated par le choix d'un patron
-# (cf. VOIE_FLAGS dans can_advance_to_act).
+# plus. Acte 2 = échantillon libre ; le passage à l'acte 3 est gated par le
+# choix d'un patron (cf. VOIE_FLAGS dans can_advance_to_act).
 const ACT_PIVOT_QUESTS: Dictionary = {
 	2: ["act1_heritage"],
 }
@@ -100,6 +102,11 @@ const VOIE_FLAGS: Array[String] = ["voie_trafico", "voie_policia", "voie_consort
 func can_advance_to_act(n: int) -> bool:
 	if n == 2:
 		if not QuestManager.is_completed("act1_heritage"):
+			return false
+		# L'acte 2 ne s'ouvre qu'APRÈS le retour à la maison + la nuit chez tio Zé
+		# (flag act1_closed), en plus de l'acompte payé. Le simple paiement ne
+		# suffit plus : il faut rentrer parler à tio Zé.
+		if not has_flag("act1_closed"):
 			return false
 		return current_act == 1 and debt_paid >= ACT1_THRESHOLD
 	if n == 3:
@@ -111,6 +118,15 @@ func can_advance_to_act(n: int) -> bool:
 		# A8 gros coup, A9 couronnement, et l'option assassinat du consortium.
 		return current_act == 3 and debt_paid >= ACT3_THRESHOLD
 	return false
+
+# Seuil de dette payée (cumulée) à atteindre pour franchir l'acte courant.
+# 0 = acte 4+ : plus de seuil, la voie se solde au couronnement (complete_endgame).
+func next_act_threshold() -> int:
+	match current_act:
+		1: return ACT1_THRESHOLD
+		2: return ACT2_THRESHOLD
+		3: return ACT3_THRESHOLD
+		_: return 0
 
 func advance_act() -> bool:
 	var next_act: int = current_act + 1
@@ -168,7 +184,9 @@ func set_flag(key: String, value: Variant = true) -> void:
 	flags[key] = value
 	# Le pacte d'une voie (voie_* flag) déclenche le passage à l'acte 3 si la
 	# dette est franchie. Sans ça, le joueur reste figé à l'acte 2 après le pact.
-	if value and VOIE_FLAGS.has(key):
+	# act1_closed (retour maison + nuit chez tio Zé) déclenche le passage à
+	# l'acte 2 — c'est ce retour, pas le paiement seul, qui ferme l'acte 1.
+	if value and (VOIE_FLAGS.has(key) or key == "act1_closed"):
 		_check_act_advance()
 
 func has_flag(key: String) -> bool:

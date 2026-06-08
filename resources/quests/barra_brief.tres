@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_deliver"]
+script = ExtResource("2_obj")
+id = "deliver_brief"
+description = "Remettre le dossier au cadre exécutif de Leblon (Zona Sul)"
+optional = false
+
+[sub_resource type="Resource" id="obj_confirm"]
+script = ExtResource("2_obj")
+id = "confirm_back"
+description = "Confirmer la livraison à l'avocate de Barra"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "barra_brief"
+display_name = "Dossier urgent"
+description = "Une avocate du Riserva Uno (Barra) a un dossier scellé à faire signer ce soir par un cadre exécutif à Leblon. Coursiers en grève. 2000 reais cash si tu le fais avant 18h, retour confirmé chez elle."
+journal_text = "Livrer le dossier au cadre de Leblon, retour confirmer chez l'avocate (Barra)."
+giver_npc_id = "barra_advogada"
+ink_knot = "spot_barra_advogada_offer"
+objectives = Array[Resource]([SubResource("obj_deliver"), SubResource("obj_confirm")])
+money_reward = 2000
+reputation_rewards = {0: 3, 4: 3}
+required_reputation = {}
+required_act = 0

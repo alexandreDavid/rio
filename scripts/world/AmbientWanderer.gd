@@ -24,12 +24,13 @@ const DECORATIVE_STYLE: bool = true
 # Pour les remettre, basculer à true.
 const RENDER_DEFAULT: bool = true
 
-# Mode de rendu :
-#   PIXEL_ART : sprite procédural pixel-art 16×24 généré au runtime, 3×3
-#                   sheet (3 directions × 3 frames), tinté par color/skin/hair.
-#                   Style chunky pixels.
-#   COLORRECT     : composition ColorRect historique (head/body/arms/legs).
+# Mode de rendu (quand RENDER_PIXEL_ART) : TOUS les wanderers (stationnaires
+# comme mobiles) sont rendus par CharacterSpriteFactory — exactement le même
+# style que les NPCs scriptés et les ReactiveDialogueSpot (sheet directions ×
+# frames, filtre LINEAR, seed stable par nom+position). Plus de figurants
+# « hors style ». Si RENDER_PIXEL_ART est false : composition ColorRect.
 const RENDER_PIXEL_ART: bool = true
+
 
 @export var color: Color = Color(0.85, 0.55, 0.4, 1)
 @export var skin_color: Color = Color(0.92, 0.78, 0.62, 1)
@@ -152,9 +153,9 @@ func _ready() -> void:
 	if DECORATIVE_STYLE:
 		look_at_player_distance = 0.0
 		bob_strength = min(bob_strength, 0.3)
-	# Choix du moteur de rendu :
-	#  - PIXEL_ART : sprite procédural 16×24, masque la composition ColorRect
-	#  - sinon : composition ColorRect historique
+	# Rendu unifié : TOUS les wanderers (stationnaires comme mobiles) passent
+	# par CharacterSpriteFactory — même style que les NPCs scriptés et les
+	# ReactiveDialogueSpot (plus de figurants « hors style »).
 	if RENDER_PIXEL_ART:
 		_setup_pixel_sprite()
 	else:
@@ -181,106 +182,19 @@ func _ready() -> void:
 # besoin d'attendre que Godot génère le .uid de classe).
 const _CharacterSpriteFactoryRef = preload("res://scripts/world/CharacterSpriteFactory.gd")
 
-# Une feuille 3×3 cellules (16×24 px chacune) générée à _ready à partir des
-# couleurs (color, skin_color, hair_color) du wanderer. Pas d'asset binaire :
-# le sprite vit uniquement en mémoire. Cache statique pour éviter de
-# régénérer 109 fois la même image.
-
-const PX_CELL_W: int = 16
-const PX_CELL_H: int = 24
+# Le sprite procédural vient entièrement de CharacterSpriteFactory (feuille
+# 3×3, cf. _setup_pixel_sprite). On ne garde ici que les constantes de layout,
+# SYNCHRONISÉES sur la factory pour la découpe des régions (pas de double
+# source de vérité sur la taille de cellule).
+const PX_CELL_W: int = CharacterSpriteFactory.CELL_W
+const PX_CELL_H: int = CharacterSpriteFactory.CELL_H
 const PX_DIR_DOWN: int = 0
 const PX_DIR_UP: int = 1
 const PX_DIR_RIGHT: int = 2
 
-# Cache : clé = "<color>|<skin>|<hair>|<hat>|<hat_color>", valeur = ImageTexture.
-static var _sprite_cache: Dictionary = {}
-
 # Sprite2D dynamique créé à _ready quand RENDER_PIXEL_ART est actif.
 var _pixel_sprite: Sprite2D = null
 var _walk_frame_idx: int = 0  # 0=idle, 1=stepL, 2=stepR
-
-func _build_sprite_sheet() -> ImageTexture:
-	var key: String = "%s|%s|%s|%s|%s" % [color, skin_color, hair_color, hat, hat_color]
-	if _sprite_cache.has(key):
-		return _sprite_cache[key]
-	var sheet_w: int = PX_CELL_W * 3
-	var sheet_h: int = PX_CELL_H * 3
-	var img: Image = Image.create(sheet_w, sheet_h, false, Image.FORMAT_RGBA8)
-	img.fill(Color(0, 0, 0, 0))
-	for dir in 3:
-		for frame in 3:
-			_draw_sprite_cell(img, frame * PX_CELL_W, dir * PX_CELL_H, dir, frame)
-	var tex: ImageTexture = ImageTexture.create_from_image(img)
-	_sprite_cache[key] = tex
-	return tex
-
-# Dessine une cellule de 16×24 px à l'offset (ox, oy) pour la direction `dir`
-# (0=DOWN, 1=UP, 2=RIGHT) et le frame `frame` (0=idle, 1=stepL, 2=stepR).
-func _draw_sprite_cell(img: Image, ox: int, oy: int, dir: int, frame: int) -> void:
-	var skin: Color = skin_color
-	var hair: Color = hair_color
-	var shirt: Color = color
-	var pants: Color = color.darkened(0.35)
-	var outline: Color = Color(0.05, 0.05, 0.08, 1.0)
-	var face_visible: bool = (dir != PX_DIR_UP)
-
-	# Hair top (rows 0-3) — dôme arrondi.
-	_px_fill_rect(img, ox + 4, oy + 0, 8, 1, hair)
-	_px_fill_rect(img, ox + 3, oy + 1, 10, 1, hair)
-	_px_fill_rect(img, ox + 2, oy + 2, 12, 2, hair)
-	# Tête / visage (rows 4-9). Dos = tout cheveux ; face/profil = peau.
-	var head_main: Color = skin if face_visible else hair
-	_px_fill_rect(img, ox + 2, oy + 4, 12, 6, head_main)
-	# Bordure cheveux qui descend sur les côtés (frange).
-	if face_visible:
-		_px_fill_rect(img, ox + 2, oy + 4, 1, 2, hair)
-		_px_fill_rect(img, ox + 13, oy + 4, 1, 2, hair)
-		_px_fill_rect(img, ox + 2, oy + 4, 12, 1, hair)
-	# Yeux (DOWN ou RIGHT — UP n'a pas de visage).
-	if dir == PX_DIR_DOWN:
-		img.set_pixel(ox + 5, oy + 7, outline)
-		img.set_pixel(ox + 10, oy + 7, outline)
-	elif dir == PX_DIR_RIGHT:
-		img.set_pixel(ox + 10, oy + 7, outline)
-	# Cou (row 9 étroit).
-	if face_visible:
-		_px_fill_rect(img, ox + 6, oy + 9, 4, 1, skin)
-
-	# Corps (rows 10-17).
-	_px_fill_rect(img, ox + 3, oy + 10, 10, 8, shirt)
-	# Bras pendants (sur les côtés du corps, légèrement plus sombres).
-	var arm: Color = shirt.darkened(0.15)
-	_px_fill_rect(img, ox + 1, oy + 10, 2, 5, arm)
-	_px_fill_rect(img, ox + 13, oy + 10, 2, 5, arm)
-	# Mains (skin tone à l'extrémité des bras).
-	_px_fill_rect(img, ox + 1, oy + 14, 2, 1, skin)
-	_px_fill_rect(img, ox + 13, oy + 14, 2, 1, skin)
-
-	# Jambes (rows 18-23) avec décalage selon le frame de marche.
-	var l_off: int = 0
-	var r_off: int = 0
-	if frame == 1:
-		l_off = -1   # jambe gauche en avant
-		r_off = 0
-	elif frame == 2:
-		l_off = 0
-		r_off = -1   # jambe droite en avant
-	_px_fill_rect(img, ox + 4, oy + 18 + l_off, 3, 6 - l_off, pants)
-	_px_fill_rect(img, ox + 9, oy + 18 + r_off, 3, 6 - r_off, pants)
-
-	# Chapeau optionnel (recouvre le sommet de la tête).
-	if hat:
-		_px_fill_rect(img, ox + 1, oy + 0, 14, 1, hat_color)
-		_px_fill_rect(img, ox + 2, oy + 1, 12, 2, hat_color)
-
-	# Contour bas du sprite (ombre fine).
-	_px_fill_rect(img, ox + 4, oy + 23, 8, 1, outline)
-
-func _px_fill_rect(img: Image, x: int, y: int, w: int, h: int, c: Color) -> void:
-	for yy in range(y, y + h):
-		for xx in range(x, x + w):
-			if xx >= 0 and xx < img.get_width() and yy >= 0 and yy < img.get_height():
-				img.set_pixel(xx, yy, c)
 
 # Programme le prochain demi-tour aléatoire pour un NPC stationnaire.
 func _schedule_next_idle_turn() -> void:
@@ -379,8 +293,11 @@ func _setup_pixel_sprite() -> void:
 	_pixel_sprite.texture = _CharacterSpriteFactoryRef.build_sheet(config)
 	_pixel_sprite.region_enabled = true
 	_pixel_sprite.region_rect = Rect2(0, 0, PX_CELL_W, PX_CELL_H)
-	# Scale pour atteindre une hauteur ~ size.y (utilise la même target que
-	# le rendu ColorRect pour cohérence). 16x24 → 2× = 32x48 par défaut.
+	# LINEAR : feuille haute résolution réduite en douceur (rendu lissé,
+	# cohérent avec le joueur et les NPCs).
+	_pixel_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	# Scale pour atteindre une hauteur ~ size.y (même target que le rendu
+	# ColorRect). Indépendant de la résolution de cellule.
 	var target_h: float = max(size.y, 18.0)
 	var scale_factor: float = target_h / PX_CELL_H * 2.0
 	_pixel_sprite.scale = Vector2(scale_factor, scale_factor)
@@ -595,7 +512,7 @@ func _decorative_process() -> void:
 			# 60% de chance de changer de direction, sinon on reprogramme.
 			if _rng.randf() < 0.6:
 				# Pioche une direction différente de la courante (sinon le
-				# joueur ne voit rien).
+				# joueur ne voit aucun changement).
 				var new_dir: int = _facing_4
 				while new_dir == _facing_4:
 					new_dir = _rng.randi() % 4

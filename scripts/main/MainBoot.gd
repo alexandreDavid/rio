@@ -151,10 +151,9 @@ func _ready() -> void:
 func _on_act_changed(new_act: int) -> void:
 	_check_auto_accept()
 	if new_act == 2:
-		# Au passage d'acte 2 : on demande au joueur de revenir à la favela
-		# voir tio Zé / sa mère / vovó. La cinématique reveal du Concierge se
-		# déclenche en parallèle pour le moment fort sur le calçadão.
-		CampaignManager.set_flag("should_visit_home")
+		# Le retour à la maison (voir tio Zé / la famille) a désormais lieu en
+		# acte 1, AVANT la bascule — c'est lui qui ferme l'acte 1. À l'entrée
+		# d'acte 2, on ne joue plus que la révélation du Concierge.
 		Act2RevealCutscene.run()
 	elif new_act == 3:
 		# Pivot acte 3 : Dom Nilton vient officialiser le choix de voie. Si le

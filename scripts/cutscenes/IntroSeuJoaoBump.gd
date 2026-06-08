@@ -52,8 +52,18 @@ static func run(door: Node2D = null) -> void:
 		var bump_target: Vector2 = player.global_position + BUMP_OFFSET_FROM_PLAYER
 		await CutsceneRunner.walk_node_to(sj, bump_target, ENTRY_WALK_SPEED)
 		CutsceneRunner.face_npc("seu_joao", CutsceneRunner.DIR_UP)
-		await _bump_shake(player)
+		# Le joueur peut avoir été libéré (changement de scène pendant la
+		# cutscene async) : le contrôle de type du paramètre typé échouerait
+		# avant même le garde interne.
+		if is_instance_valid(player):
+			await _bump_shake(player)
 		await CutsceneRunner.wait(TENSION_PAUSE)
+		# Si la scène a été détruite pendant les awaits (transition, ou teardown
+		# des tests), sj est libéré : on NE doit PAS ouvrir de dialogue, sinon
+		# il reste actif sans personne pour le fermer et bloque tout dialogue
+		# ultérieur (start_dialogue ignoré : « déjà actif »).
+		if not is_instance_valid(sj):
+			return
 		# Dialogue d'héritage (chaîne accept_quest act1_heritage + flag act1_started).
 		if CampaignManager.ng_plus_count > 0:
 			await CutsceneRunner.say("seu_joao", "seu_joao_ng_plus_intro")
@@ -66,6 +76,10 @@ static func run(door: Node2D = null) -> void:
 		SaveSystem.save_game()
 		await CutsceneRunner.wait(POST_DIALOG_PAUSE)
 		await CutsceneRunner.say("seu_joao", "seu_joao_intro_tutorial")
+		# sj peut avoir été libéré pendant les say() (changement de scène, ou
+		# teardown des tests entre deux playthroughs) — même garde que pour player.
+		if not is_instance_valid(sj):
+			return
 		# Walk Seu João vers sa place habituelle (table) — visible et naturel,
 		# pas un téléport sec.
 		await CutsceneRunner.walk_node_to(sj, HOUSE_REST_POS, RETURN_WALK_SPEED)

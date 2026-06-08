@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_inaugurate_expo"]
+script = ExtResource("2_obj")
+id = "inaugurate_expo"
+description = "Inaugurer l'expo au MAC de Niterói (vitrine politique)"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "prefeito_d6_mac"
+display_name = "Vitrine au MAC"
+description = "Une inauguration au MAC Niemeyer : culture, presse, et ton visage à côté du candidat. La politique est aussi une image qu'on accroche au mur."
+journal_text = "Traverser à Niterói et inaugurer l'expo au MAC."
+giver_npc_id = "prefeito_maracana"
+ink_knot = "spot_prefeito_maracana_d6_offer"
+objectives = Array[Resource]([SubResource("obj_inaugurate_expo")])
+money_reward = 1000
+reputation_rewards = {}
+required_reputation = {}
+required_act = 0
+quest_type = 1
+prerequisite_quest_ids = Array[String](["prefeito_d5_rally"])

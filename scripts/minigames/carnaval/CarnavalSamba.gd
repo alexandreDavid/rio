@@ -88,6 +88,8 @@ func _ready() -> void:
 		var btn: Button = get_node_or_null("UI/Lane%dButton" % i) as Button
 		_lane_buttons.append(btn)
 		if btn:
+			# Affiche l'instrument de la lane (mobile : sinon le joueur devine).
+			btn.text = LANE_LABELS[i]
 			btn.pivot_offset = btn.size * 0.5
 			var lane_idx: int = i
 			btn.pressed.connect(func(): hit_lane(lane_idx))

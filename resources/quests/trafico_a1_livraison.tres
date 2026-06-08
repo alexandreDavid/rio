@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_drop_calcadao"]
+script = ExtResource("2_obj")
+id = "drop_calcadao"
+description = "Déposer le paquet de Tito au contact du calçadão (Copacabana)"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "trafico_a1_livraison"
+display_name = "La première course"
+description = "Tito te confie un paquet. Tu le descends au calçadão, tu le donnes à son contact, tu ne l'ouvres pas. C'est ton entrée dans le morro."
+journal_text = "Porter le paquet de Tito jusqu'au contact sur le calçadão de Copacabana."
+giver_npc_id = "tito"
+ink_knot = "tito_pacto_trafico_offer"
+objectives = Array[Resource]([SubResource("obj_drop_calcadao")])
+money_reward = 250
+reputation_rewards = {}
+required_reputation = {}
+required_act = 0
+quest_type = 1
+prerequisite_quest_ids = Array[String]([])

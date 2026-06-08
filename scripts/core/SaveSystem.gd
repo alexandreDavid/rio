@@ -10,8 +10,14 @@ signal save_loaded()
 
 const LEGACY_SAVE_PATH: String = "user://savegame.json"
 const SAVE_PATH_PATTERN: String = "user://savegame_slot%d.json"
-# Bump à chaque refonte de l'état qui invalide les saves antérieures.
+# Bump à chaque changement de structure de l'état sauvegardé.
 const SAVE_VERSION: int = 2
+# Plus ancienne version encore récupérable. En-dessous, la refonte est trop
+# cassante pour migrer sans risque → la save est écartée (nouvelle partie).
+# Relever ce seuil seulement quand un bump abandonne vraiment le support d'une
+# ancienne structure ; sinon ajouter une étape dans _MIGRATIONS et laisser le
+# seuil tranquille pour préserver les sauvegardes des joueurs.
+const OLDEST_MIGRATABLE_VERSION: int = 2
 
 func current_save_path() -> String:
 	return SAVE_PATH_PATTERN % Settings.current_slot
@@ -102,9 +108,12 @@ func load_game() -> bool:
 	var data: Dictionary = json.data
 	var save_ver: int = int(data.get("version", 0))
 	if save_ver != SAVE_VERSION:
-		push_warning("SaveSystem: version incompatible (save=%d, attendue=%d) — save ignorée" % [save_ver, SAVE_VERSION])
-		discard_save()
-		return false
+		data = _migrate_save(data, save_ver)
+		if data.is_empty():
+			push_warning("SaveSystem: version %d non migrable (attendue %d) — save écartée" % [save_ver, SAVE_VERSION])
+			discard_save()
+			return false
+		print("SaveSystem: save v%d migrée → v%d" % [save_ver, SAVE_VERSION])
 	_loading = true
 	ReputationSystem.deserialize(data.get("reputation", {}))
 	QuestManager.deserialize(data.get("quests", {}))
@@ -121,6 +130,30 @@ func load_game() -> bool:
 	_loading = false
 	save_loaded.emit()
 	return true
+
+# Étapes de migration incrémentales : clé = version source, valeur = Callable
+# qui prend le dict de save et renvoie le dict migré vers source+1. À CHAQUE
+# bump de SAVE_VERSION, ajouter ici l'étape correspondante au lieu de jeter la
+# save. La plupart des bumps n'ajoutent que des champs : comme tous les
+# deserialize() utilisent .get(clé, défaut), une étape sans transformation
+# (`func(d): return d`) suffit alors à conserver la progression.
+const _MIGRATIONS: Dictionary = {}
+
+# Migre `data` de `from_ver` jusqu'à SAVE_VERSION en appliquant les étapes une à
+# une. Renvoie {} si la migration est impossible (save d'une version future, ou
+# antérieure à OLDEST_MIGRATABLE_VERSION, ou étape manquante).
+func _migrate_save(data: Dictionary, from_ver: int) -> Dictionary:
+	if from_ver > SAVE_VERSION or from_ver < OLDEST_MIGRATABLE_VERSION:
+		return {}
+	var migrated: Dictionary = data
+	var ver: int = from_ver
+	while ver < SAVE_VERSION:
+		if not _MIGRATIONS.has(ver):
+			return {}
+		migrated = _MIGRATIONS[ver].call(migrated)
+		migrated["version"] = ver + 1
+		ver += 1
+	return migrated
 
 # Rejoue les signaux clés pour que les listeners (HUD, scheduler NPCs, etc.) re-render
 # leur état depuis les valeurs chargées. Sinon ils restent sur les valeurs initiales.
@@ -145,6 +178,9 @@ func discard_save() -> void:
 	if FileAccess.file_exists(path):
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
 	_save_pending = false
+	# Nouvelle partie : repart sur l'apparence par défaut (l'autoload survivait
+	# au changement de scène et aurait gardé l'avatar de la partie précédente).
+	GameManager.player_appearance = {}
 
 func discard_save_at(slot: int) -> void:
 	var path: String = slot_save_path(slot)
@@ -191,9 +227,17 @@ func _serialize_player() -> Dictionary:
 	return {
 		"position": [p.global_position.x, p.global_position.y],
 		"inventory": inv.serialize() if inv and inv.has_method("serialize") else {},
+		"appearance": GameManager.player_appearance.duplicate(true),
 	}
 
 func _deserialize_player(data: Dictionary) -> void:
+	# Apparence : restaurée même si le node Player n'est pas (encore) prêt —
+	# GameManager garde l'état, le Player la relit via _on_save_loaded.
+	var appr: Dictionary = data.get("appearance", {})
+	if appr.is_empty():
+		GameManager.player_appearance = {}
+	else:
+		GameManager.player_appearance = CharacterSpriteFactory.sanitize_indices(appr)
 	var p: Node = GameManager.player
 	if p == null or not (p is Node2D) or data.is_empty():
 		return

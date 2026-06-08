@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_break_holdout"]
+script = ExtResource("2_obj")
+id = "break_holdout"
+description = "Faire plier le dernier commerce libre du calçadão (Copa)"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "consortium_c8_menace"
+display_name = "Le dernier libre"
+description = "Un seul commerce du calçadão refuse encore la maison. Magalhães veut qu'il signe avant le Carnaval. Sans esclandre. Mais qu'il signe."
+journal_text = "Retourner au calçadão de Copacabana et faire plier le dernier récalcitrant."
+giver_npc_id = "consortium_barra"
+ink_knot = "spot_consortium_barra_c8_offer"
+objectives = Array[Resource]([SubResource("obj_break_holdout")])
+money_reward = 3000
+reputation_rewards = {}
+required_reputation = {}
+required_act = 0
+quest_type = 1
+prerequisite_quest_ids = Array[String](["consortium_c7_condos"])

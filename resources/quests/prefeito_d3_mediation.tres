@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_defuse_conflict"]
+script = ExtResource("2_obj")
+id = "defuse_conflict"
+description = "Désamorcer le conflit entre une famille et un homme de Tito (favela)"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "prefeito_d3_mediation"
+display_name = "Paz no morro"
+description = "Une famille du morro est en conflit avec un homme de Tito. Le Padre veut une médiation, pas une guerre. Ta parole vaut quelque chose, maintenant."
+journal_text = "Remonter à la favela et désamorcer le conflit."
+giver_npc_id = "prefeito_aterro"
+ink_knot = "spot_prefeito_aterro_d3_offer"
+objectives = Array[Resource]([SubResource("obj_defuse_conflict")])
+money_reward = 500
+reputation_rewards = {}
+required_reputation = {}
+required_act = 0
+quest_type = 1
+prerequisite_quest_ids = Array[String](["prefeito_d2_basquete"])

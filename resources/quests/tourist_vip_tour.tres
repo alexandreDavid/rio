@@ -32,5 +32,5 @@ ink_knot = "tourist_vip_tour_offer"
 objectives = Array[Resource]([SubResource("obj_corcovado"), SubResource("obj_paoacucar"), SubResource("obj_lagoa")])
 money_reward = 600
 reputation_rewards = {3: 8, 4: 3}
-required_reputation = {}
+required_reputation = {3: 12}
 required_act = 0

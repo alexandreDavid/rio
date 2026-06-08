@@ -20,6 +20,10 @@ const REIGN_INTROS: Dictionary = {
 		"title": "Patrão do Morro",
 		"body": "La corrida traverse Niterói sans une éraflure. Au lever du soleil, le Morro a un nouveau Patrão — toi. Miguel s'efface, Tito passe le mot.\n\nMais Patrão se respecte : les commerçants paient leur tribut, le Carnaval ouvre un marché parallèle, et un cartel de São Paulo regarde la ligne. Va voir Miguel — il y a des comptes à ouvrir.",
 	},
+	CampaignManager.Endgame.CONSORTIUM: {
+		"title": "Sócio do Consórcio",
+		"body": "Le Pacto da Barra est signé devant notaire, rente mensuelle et endossement politique en réserve. Magalhães te sert un whisky hors d'âge : tu n'es plus un débiteur, tu es la maison.\n\nMais un sócio rend des comptes : les condomínios attendent leur gestion, le Carnaval blanchit plus que jamais, et le commissaire flaire la rente. Retourne voir Magalhães — la maison a déjà du travail pour toi.",
+	},
 }
 
 func _ready() -> void:

@@ -33,4 +33,17 @@ echo "Godot: $GODOT_BIN"
 echo "Lancement des tests d'intégration…"
 echo ""
 
-"$GODOT_BIN" --headless --path . scenes/tests/IntegrationTest.tscn
+# Suite d'intégration (assertions abstraites) + pilotes « réels » qui chargent la
+# vraie scène Main et simulent les interactions joueur (flux acte 1→3, paiement,
+# patrons, et contrat complet par voie). Chaque scène quitte avec un code != 0 en
+# cas d'échec ; on agrège.
+rc=0
+for scene in \
+	"scenes/tests/IntegrationTest.tscn" \
+	"scenes/tests/PlaythroughDriver.tscn" \
+	"scenes/tests/VoieDriver.tscn"; do
+	echo ""
+	echo "=== $scene ==="
+	"$GODOT_BIN" --headless --path . "$scene" || rc=1
+done
+exit $rc

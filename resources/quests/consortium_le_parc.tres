@@ -27,5 +27,5 @@ objectives = Array[Resource]([SubResource("obj_intimidate_carrasco"), SubResourc
 money_reward = 1000
 reputation_rewards = {1: 4, 0: -3}
 required_reputation = {}
-required_act = 1
+required_act = 3
 prerequisite_quest_ids = Array[String](["consortium_barra_security"])

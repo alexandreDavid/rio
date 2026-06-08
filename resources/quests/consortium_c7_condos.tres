@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_align_condos"]
+script = ExtResource("2_obj")
+id = "align_condos"
+description = "Aligner les trois condomínios sous la maison (Barra)"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "consortium_c7_condos"
+display_name = "Aligner les trois"
+description = "Le gros morceau. Trois condomínios à faire rentrer dans le rang d'un coup. Ça éponge presque toute ta dette — et ça scelle ton nom dans les registres de la maison."
+journal_text = "Retourner à Barra et aligner les trois condomínios."
+giver_npc_id = "consortium_tioze"
+ink_knot = "spot_consortium_tioze_c7_offer"
+objectives = Array[Resource]([SubResource("obj_align_condos")])
+money_reward = 2400
+reputation_rewards = {}
+required_reputation = {}
+required_act = 0
+quest_type = 1
+prerequisite_quest_ids = Array[String](["consortium_c6_tioze"])

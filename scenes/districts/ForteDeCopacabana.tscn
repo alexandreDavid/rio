@@ -1,0 +1,291 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/props/TaxiStand.tscn" id="1_taxi"]
+[ext_resource type="PackedScene" path="res://scenes/props/DistrictExit.tscn" id="2_exit"]
+[ext_resource type="PackedScene" path="res://scenes/props/BuildingDoor.tscn" id="3_door"]
+[ext_resource type="PackedScene" path="res://scenes/interiors/ForteColomboInterior.tscn" id="4_colombo"]
+[ext_resource type="PackedScene" path="res://scenes/interiors/ForteConfeitariaInterior.tscn" id="5_confeitaria"]
+[ext_resource type="PackedScene" path="res://scenes/interiors/ForteMuseuInterior.tscn" id="6_museu"]
+[ext_resource type="Script" path="res://scripts/districts/ForteDeCopacabanaDistrict.gd" id="7_script"]
+
+[sub_resource type="RectangleShape2D" id="WallH"]
+size = Vector2(540, 12)
+
+[sub_resource type="RectangleShape2D" id="WallV"]
+size = Vector2(12, 420)
+
+[sub_resource type="RectangleShape2D" id="ExitShape"]
+size = Vector2(360, 64)
+
+[node name="ForteDeCopacabanaDistrict" type="Node2D"]
+script = ExtResource("7_script")
+
+[node name="Sky" type="ColorRect" parent="."]
+offset_left = -300.0
+offset_top = -260.0
+offset_right = 300.0
+offset_bottom = -160.0
+color = Color(0.55, 0.72, 0.85, 1)
+
+[node name="Sea" type="ColorRect" parent="."]
+offset_left = -300.0
+offset_top = -160.0
+offset_right = 300.0
+offset_bottom = -130.0
+color = Color(0.32, 0.55, 0.72, 1)
+
+[node name="SeaWaveA" type="ColorRect" parent="."]
+offset_left = -240.0
+offset_top = -150.0
+offset_right = -160.0
+offset_bottom = -148.0
+color = Color(0.85, 0.92, 0.95, 0.55)
+
+[node name="SeaWaveB" type="ColorRect" parent="."]
+offset_left = 60.0
+offset_top = -140.0
+offset_right = 160.0
+offset_bottom = -138.0
+color = Color(0.85, 0.92, 0.95, 0.45)
+
+[node name="PaoAcucarSilhouette" type="ColorRect" parent="."]
+offset_left = -260.0
+offset_top = -210.0
+offset_right = -200.0
+offset_bottom = -160.0
+color = Color(0.28, 0.32, 0.42, 0.85)
+
+[node name="MorroSilhouette" type="ColorRect" parent="."]
+offset_left = 180.0
+offset_top = -200.0
+offset_right = 260.0
+offset_bottom = -160.0
+color = Color(0.32, 0.42, 0.38, 0.8)
+
+[node name="FortressWall" type="ColorRect" parent="."]
+offset_left = -240.0
+offset_top = -130.0
+offset_right = 240.0
+offset_bottom = -90.0
+color = Color(0.92, 0.88, 0.78, 1)
+
+[node name="FortressCrenel1" type="ColorRect" parent="."]
+offset_left = -220.0
+offset_top = -140.0
+offset_right = -200.0
+offset_bottom = -130.0
+color = Color(0.92, 0.88, 0.78, 1)
+
+[node name="FortressCrenel2" type="ColorRect" parent="."]
+offset_left = -160.0
+offset_top = -140.0
+offset_right = -140.0
+offset_bottom = -130.0
+color = Color(0.92, 0.88, 0.78, 1)
+
+[node name="FortressCrenel3" type="ColorRect" parent="."]
+offset_left = -100.0
+offset_top = -140.0
+offset_right = -80.0
+offset_bottom = -130.0
+color = Color(0.92, 0.88, 0.78, 1)
+
+[node name="FortressCrenel4" type="ColorRect" parent="."]
+offset_left = -40.0
+offset_top = -140.0
+offset_right = -20.0
+offset_bottom = -130.0
+color = Color(0.92, 0.88, 0.78, 1)
+
+[node name="FortressCrenel5" type="ColorRect" parent="."]
+offset_left = 20.0
+offset_top = -140.0
+offset_right = 40.0
+offset_bottom = -130.0
+color = Color(0.92, 0.88, 0.78, 1)
+
+[node name="FortressCrenel6" type="ColorRect" parent="."]
+offset_left = 80.0
+offset_top = -140.0
+offset_right = 100.0
+offset_bottom = -130.0
+color = Color(0.92, 0.88, 0.78, 1)
+
+[node name="FortressCrenel7" type="ColorRect" parent="."]
+offset_left = 140.0
+offset_top = -140.0
+offset_right = 160.0
+offset_bottom = -130.0
+color = Color(0.92, 0.88, 0.78, 1)
+
+[node name="FortressCrenel8" type="ColorRect" parent="."]
+offset_left = 200.0
+offset_top = -140.0
+offset_right = 220.0
+offset_bottom = -130.0
+color = Color(0.92, 0.88, 0.78, 1)
+
+[node name="CannonL" type="ColorRect" parent="."]
+offset_left = -190.0
+offset_top = -118.0
+offset_right = -160.0
+offset_bottom = -110.0
+color = Color(0.18, 0.18, 0.22, 1)
+
+[node name="CannonR" type="ColorRect" parent="."]
+offset_left = 160.0
+offset_top = -118.0
+offset_right = 190.0
+offset_bottom = -110.0
+color = Color(0.18, 0.18, 0.22, 1)
+
+[node name="FlagPole" type="ColorRect" parent="."]
+offset_left = -2.0
+offset_top = -200.0
+offset_right = 2.0
+offset_bottom = -140.0
+color = Color(0.55, 0.42, 0.32, 1)
+
+[node name="FlagGreen" type="ColorRect" parent="."]
+offset_left = 2.0
+offset_top = -198.0
+offset_right = 36.0
+offset_bottom = -178.0
+color = Color(0.18, 0.55, 0.32, 1)
+
+[node name="FlagYellow" type="ColorRect" parent="."]
+offset_left = 10.0
+offset_top = -195.0
+offset_right = 28.0
+offset_bottom = -181.0
+color = Color(0.95, 0.85, 0.18, 1)
+
+[node name="Courtyard" type="ColorRect" parent="."]
+offset_left = -220.0
+offset_top = -90.0
+offset_right = 220.0
+offset_bottom = 200.0
+color = Color(0.78, 0.7, 0.55, 1)
+
+[node name="CourtyardStripe1" type="ColorRect" parent="."]
+offset_left = -220.0
+offset_top = 0.0
+offset_right = 220.0
+offset_bottom = 2.0
+color = Color(0.62, 0.55, 0.45, 1)
+
+[node name="CourtyardStripe2" type="ColorRect" parent="."]
+offset_left = -220.0
+offset_top = 100.0
+offset_right = 220.0
+offset_bottom = 102.0
+color = Color(0.62, 0.55, 0.45, 1)
+
+[node name="DoorLabel1" type="Label" parent="."]
+offset_left = -180.0
+offset_top = -160.0
+offset_right = -80.0
+offset_bottom = -144.0
+text = "Café Colombo"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.55, 0.32, 0.18, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 0.85)
+theme_override_constants/outline_size = 3
+
+[node name="DoorLabel2" type="Label" parent="."]
+offset_left = -60.0
+offset_top = -160.0
+offset_right = 60.0
+offset_bottom = -144.0
+text = "Confeitaria 18"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.62, 0.32, 0.42, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 0.85)
+theme_override_constants/outline_size = 3
+
+[node name="DoorLabel3" type="Label" parent="."]
+offset_left = 80.0
+offset_top = -160.0
+offset_right = 180.0
+offset_bottom = -144.0
+text = "Museu Histórico"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.42, 0.4, 0.22, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 0.85)
+theme_override_constants/outline_size = 3
+
+[node name="Sign" type="Label" parent="."]
+offset_left = -140.0
+offset_top = 130.0
+offset_right = 140.0
+offset_bottom = 152.0
+text = "FORTE DE COPACABANA"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.55, 0.4, 0.32, 1)
+theme_override_colors/font_outline_color = Color(1, 0.95, 0.8, 0.85)
+theme_override_constants/outline_size = 3
+
+[node name="Walls" type="Node2D" parent="."]
+
+[node name="Top" type="StaticBody2D" parent="Walls"]
+position = Vector2(0, -90)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Top"]
+shape = SubResource("WallH")
+
+[node name="Left" type="StaticBody2D" parent="Walls"]
+position = Vector2(-225, 60)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Left"]
+shape = SubResource("WallV")
+
+[node name="Right" type="StaticBody2D" parent="Walls"]
+position = Vector2(225, 60)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Right"]
+shape = SubResource("WallV")
+
+[node name="Bottom" type="StaticBody2D" parent="Walls"]
+position = Vector2(0, 270)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Bottom"]
+shape = SubResource("WallH")
+
+[node name="PlayerSpawn" type="Marker2D" parent="."]
+position = Vector2(0, 60)
+
+[node name="DoorColombo" parent="." instance=ExtResource("3_door")]
+position = Vector2(-130, -100)
+prompt_text = "Entrer au Café Colombo"
+
+[node name="DoorConfeitaria" parent="." instance=ExtResource("3_door")]
+position = Vector2(0, -100)
+prompt_text = "Entrer à la Confeitaria 18"
+
+[node name="DoorMuseu" parent="." instance=ExtResource("3_door")]
+position = Vector2(130, -100)
+prompt_text = "Entrer au Museu Histórico"
+
+[node name="ExitToCopa" parent="." instance=ExtResource("2_exit")]
+position = Vector2(0, 200)
+target_district = "copacabana"
+label_text = "↓ COPACABANA"
+
+[node name="CollisionShape2D" parent="ExitToCopa" index="0"]
+shape = SubResource("ExitShape")
+
+[node name="TaxiStand" parent="." instance=ExtResource("1_taxi")]
+position = Vector2(-180, 160)
+
+[node name="ForteColomboInterior" parent="." instance=ExtResource("4_colombo")]
+position = Vector2(1000, 5000)
+
+[node name="ForteConfeitariaInterior" parent="." instance=ExtResource("5_confeitaria")]
+position = Vector2(1000, 6000)
+
+[node name="ForteMuseuInterior" parent="." instance=ExtResource("6_museu")]
+position = Vector2(1000, 7000)

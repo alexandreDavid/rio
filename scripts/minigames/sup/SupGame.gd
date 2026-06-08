@@ -57,7 +57,7 @@ func _ready() -> void:
 	if status_label:
 		status_label.text = "Contourne les 4 îlots dans l'ordre. Le courant pousse vers l'ouest."
 	if prompt_label:
-		prompt_label.text = "[WASD / Flèches] pagayer"
+		prompt_label.text = "Joystick : pagayer" if OS.has_feature("mobile") else "[WASD / Flèches] pagayer"
 
 func _render_checkpoints() -> void:
 	if cp_markers == null:

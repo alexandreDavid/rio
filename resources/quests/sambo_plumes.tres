@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_fetch"]
+script = ExtResource("2_obj")
+id = "fetch_plumes"
+description = "Récupérer la caisse de plumes chez le fournisseur de Niterói"
+optional = false
+
+[sub_resource type="Resource" id="obj_return"]
+script = ExtResource("2_obj")
+id = "deliver_plumes"
+description = "Ramener les plumes à la costumière du Sambódromo"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "sambo_plumes"
+display_name = "Plumes de l'école"
+description = "La costumière en chef de l'école de samba est à deux doigts de l'aneurysme : sa caisse de plumes pour le défilé a été livrée par erreur chez son fournisseur de Niterói. Le défilé est dans une semaine. Va les rapatrier."
+journal_text = "Traverser à Niterói chez le fournisseur, ramener les plumes au Sambódromo."
+giver_npc_id = "sambo_costumeira"
+ink_knot = "spot_sambo_costumeira_offer"
+objectives = Array[Resource]([SubResource("obj_fetch"), SubResource("obj_return")])
+money_reward = 1700
+reputation_rewards = {4: 4, 3: 2}
+required_reputation = {4: 10}
+required_act = 0

@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_deliver"]
+script = ExtResource("2_obj")
+id = "deliver_envelope"
+description = "Remettre l'enveloppe au contact devant le MAC de Niterói"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "niteroi_envelope"
+display_name = "Enveloppe pour Niterói"
+description = "Un type ferme du port de Niterói te tend une enveloppe scellée. Cire rouge, pas de nom. À remettre à un contact qui attend devant le MAC. Pas de questions, juste les jambes."
+journal_text = "Traverser à Niterói et déposer l'enveloppe au contact devant le MAC Niemeyer."
+giver_npc_id = "niteroi_porto_contato"
+ink_knot = "spot_niteroi_porto_contato_offer"
+objectives = Array[Resource]([SubResource("obj_deliver")])
+money_reward = 1100
+reputation_rewards = {2: 3, 0: -1}
+required_reputation = {}
+required_act = 0

@@ -36,7 +36,10 @@ var _walk_tween: Tween = null
 # du joueur si la distance dépasse APPROACH_TRIGGER_DIST. Donne du vivant aux échanges.
 const APPROACH_TRIGGER_DIST: float = 70.0
 const APPROACH_STOP_DIST: float = 36.0
-const APPROACH_SPEED: float = 130.0
+const APPROACH_SPEED: float = 140.0
+# Plafond dur : même si le NPC est très loin, il rejoint le joueur en au plus
+# ce temps (il accélère au besoin). Évite l'attente de plusieurs secondes.
+const APPROACH_MAX_TIME: float = 1.4
 var _approach_tween: Tween = null
 
 # Mode escort/follow : NPC suit le joueur. Activé par les quêtes d'escorte
@@ -123,9 +126,12 @@ func _process(_delta: float) -> void:
 		var should_show: bool = _qi_has_available and _qi_player_nearby()
 		if should_show != _qi_label.visible:
 			_qi_label.visible = should_show
-	# Bob vertical pour attirer l'œil quand visible.
+	# Bob vertical + léger pulse de taille pour attirer l'œil quand visible.
 	if _qi_label.visible:
 		_qi_label.position.y = QI_OFFSET_Y + sin(now * 5.0) * QI_BOB_AMPLITUDE
+		var pulse: float = 1.0 + sin(now * 6.0) * 0.14
+		_qi_label.pivot_offset = _qi_label.size / 2.0
+		_qi_label.scale = Vector2(pulse, pulse)
 
 func _qi_player_nearby() -> bool:
 	if GameManager.player == null:
@@ -252,8 +258,9 @@ func _try_apply_atlas_region() -> bool:
 
 # Génère et applique un sprite pixel-art via CharacterSpriteFactory. Le NPC
 # affiche par défaut sa cellule DOWN/idle (1ère colonne, 1ère ligne).
-const PROCEDURAL_CELL_W: int = 16
-const PROCEDURAL_CELL_H: int = 24
+# Synchronisé avec la factory (taille de cellule unique source de vérité).
+const PROCEDURAL_CELL_W: int = CharacterSpriteFactory.CELL_W
+const PROCEDURAL_CELL_H: int = CharacterSpriteFactory.CELL_H
 
 func _setup_procedural_sprite() -> void:
 	var spr: Sprite2D = _sprite as Sprite2D
@@ -263,11 +270,12 @@ func _setup_procedural_sprite() -> void:
 	spr.texture = sheet
 	spr.region_enabled = true
 	spr.region_rect = Rect2(0, 0, PROCEDURAL_CELL_W, PROCEDURAL_CELL_H)
-	# Scale pour matcher SPRITE_TARGET_HEIGHT (48 px) : 24 px source × 2 = 48.
+	# Scale pour matcher SPRITE_TARGET_HEIGHT à partir de la hauteur de cellule.
 	var s: float = SPRITE_TARGET_HEIGHT / float(PROCEDURAL_CELL_H)
 	spr.scale = Vector2(s, s)
-	# Désactive le filtrage pour garder le pixel chunky (pixel-perfect look).
-	spr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	# LINEAR : feuille haute résolution réduite en douceur (rendu lissé,
+	# cohérent avec le joueur — plus le pixel-art chunky d'avant).
+	spr.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 
 # Helper static : charge un sprite individuel (idle ou walk-sheet 3×3) depuis
 # assets/sprites/npcs/<id>.png ou <id>_walk.png et l'applique au Sprite2D fourni.
@@ -463,7 +471,8 @@ func _approach_player_if_far() -> void:
 	if _approach_tween and _approach_tween.is_valid():
 		_approach_tween.kill()
 	_approach_tween = create_tween()
-	_approach_tween.tween_property(self, "global_position", target, step / APPROACH_SPEED)
+	var approach_time: float = minf(step / APPROACH_SPEED, APPROACH_MAX_TIME)
+	_approach_tween.tween_property(self, "global_position", target, approach_time)
 	await _approach_tween.finished
 	stop_walk()
 	face(_dir_toward_player())

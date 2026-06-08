@@ -20,6 +20,23 @@ func _ready() -> void:
 		panel.gui_input.connect(_on_panel_gui_input)
 	hide()
 
+# Garde-fou anti soft-lock : si un dialogue est marqué actif mais que cette UI
+# n'affiche rien depuis > STUCK_TIMEOUT (cas d'un dialogue démarré sans pouvoir
+# s'afficher — ex. déclenché hors gameplay), on le ferme pour rendre la main au
+# joueur plutôt que de le laisser figé.
+const STUCK_TIMEOUT: float = 2.0
+var _stuck_timer: float = 0.0
+
+func _process(delta: float) -> void:
+	if DialogueBridge.is_active() and not visible:
+		_stuck_timer += delta
+		if _stuck_timer > STUCK_TIMEOUT:
+			push_warning("[DialogueUI] dialogue actif mais non affiché > %ss — récupération (déblocage joueur)" % STUCK_TIMEOUT)
+			DialogueBridge.end_dialogue()
+			_stuck_timer = 0.0
+	else:
+		_stuck_timer = 0.0
+
 func _unhandled_input(event: InputEvent) -> void:
 	if not visible:
 		return

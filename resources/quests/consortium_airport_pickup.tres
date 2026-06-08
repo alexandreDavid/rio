@@ -27,4 +27,4 @@ objectives = Array[Resource]([SubResource("obj_meet"), SubResource("obj_deliver"
 money_reward = 800
 reputation_rewards = {2: 4, 0: -2}
 required_reputation = {}
-required_act = 0
+required_act = 2

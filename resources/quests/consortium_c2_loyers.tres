@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_collect_condos"]
+script = ExtResource("2_obj")
+id = "collect_condos"
+description = "Faire la tournée de loyers des condomínios (Barra, Riserva Uno)"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "consortium_c2_loyers"
+display_name = "Tournée des condomínios"
+description = "La maison gère des condomínios à Barra. Tu fais la tournée, tu encaisses, tu notes les mauvais payeurs pour Magalhães."
+journal_text = "Rejoindre Barra da Tijuca et faire la tournée des loyers."
+giver_npc_id = "consortium_contact"
+ink_knot = "spot_consortium_contact_c2_offer"
+objectives = Array[Resource]([SubResource("obj_collect_condos")])
+money_reward = 600
+reputation_rewards = {}
+required_reputation = {}
+required_act = 3
+quest_type = 1
+prerequisite_quest_ids = Array[String](["consortium_c1_recouvrement"])

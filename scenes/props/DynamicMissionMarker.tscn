@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/DynamicMissionMarker.gd" id="1_marker"]
+[ext_resource type="Script" path="res://scripts/world/Interactable.gd" id="2_inter"]
 
 [sub_resource type="CircleShape2D" id="ZoneShape"]
 radius = 28.0
@@ -33,7 +34,9 @@ horizontal_alignment = 1
 theme_override_font_sizes/font_size = 26
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 
-[node name="Trigger" type="Area2D" parent="."]
+[node name="Interactable" type="Area2D" parent="."]
+script = ExtResource("2_inter")
+prompt = "Valider l'étape"
 
-[node name="TriggerShape" type="CollisionShape2D" parent="Trigger"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Interactable"]
 shape = SubResource("ZoneShape")

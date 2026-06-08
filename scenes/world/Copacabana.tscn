@@ -249,30 +249,6 @@ position = Vector2(940, 200)
 [node name="DeliveryPoint" parent="." instance=ExtResource("8_drop")]
 position = Vector2(1800, -96)
 
-[node name="ConvoyDropPoint" parent="." instance=ExtResource("8_drop")]
-position = Vector2(220, -180)
-quest_id = "act2_miguel_favela"
-objective_id = "deliver_convoy"
-payout = 0
-
-[node name="PurgePointMorro" parent="." instance=ExtResource("8_drop")]
-position = Vector2(180, -260)
-quest_id = "act4_policia_purga"
-objective_id = "purge_morro"
-payout = 0
-
-[node name="PurgePointCalcadao" parent="." instance=ExtResource("8_drop")]
-position = Vector2(1100, 96)
-quest_id = "act4_policia_purga"
-objective_id = "purge_calcadao"
-payout = 0
-
-[node name="PurgePointAtlantica" parent="." instance=ExtResource("8_drop")]
-position = Vector2(1500, 32)
-quest_id = "act4_policia_purga"
-objective_id = "purge_atlantica"
-payout = 0
-
 [node name="Concierge" parent="." instance=ExtResource("10_concierge")]
 position = Vector2(1700, 100)
 

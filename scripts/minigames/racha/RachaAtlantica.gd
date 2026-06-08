@@ -58,7 +58,7 @@ func _ready() -> void:
 	if status_label:
 		status_label.text = "Racha da Atlântica · 3 tours · clockwise"
 	if prompt_label:
-		prompt_label.text = "[WASD / Flèches] accélérer"
+		prompt_label.text = "Joystick : accélérer" if OS.has_feature("mobile") else "[WASD / Flèches] accélérer"
 
 func _init_racers() -> void:
 	# Spawn grille de départ : 4 cases derrière CP0, alignement horizontal.

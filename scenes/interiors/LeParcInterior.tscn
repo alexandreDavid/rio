@@ -110,7 +110,6 @@ offset_right = 110.0
 offset_bottom = -80.0
 color = Color(0.95, 0.55, 0.62, 1)
 
-# Piscine olympique au centre
 [node name="Pool" type="ColorRect" parent="."]
 offset_left = -110.0
 offset_top = -20.0
@@ -139,7 +138,6 @@ offset_right = 110.0
 offset_bottom = 14.0
 color = Color(0.95, 0.95, 0.92, 0.4)
 
-# Loungers
 [node name="LoungerL1" type="ColorRect" parent="."]
 offset_left = -150.0
 offset_top = -5.0
@@ -168,7 +166,6 @@ offset_right = 150.0
 offset_bottom = 25.0
 color = Color(0.95, 0.95, 0.92, 1)
 
-# Court tennis au sud-est
 [node name="TennisCourt" type="ColorRect" parent="."]
 offset_left = 80.0
 offset_top = 70.0
@@ -190,7 +187,6 @@ offset_right = 220.0
 offset_bottom = 107.0
 color = Color(0.95, 0.95, 0.92, 1)
 
-# Spa au sud-ouest
 [node name="SpaEntry" type="ColorRect" parent="."]
 offset_left = -200.0
 offset_top = 70.0
@@ -259,7 +255,6 @@ position = Vector2(0, 125)
 [node name="Carrasco" parent="." instance=ExtResource("3_carrasco")]
 position = Vector2(0, 70)
 
-# Residents ambient
 [node name="ResidentSwimmer" parent="." instance=ExtResource("2_wander")]
 position = Vector2(-50, 5)
 color = Color(0.95, 0.85, 0.62, 1)

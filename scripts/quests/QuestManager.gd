@@ -93,6 +93,21 @@ func missing_prerequisites(quest_id: String) -> Array[String]:
 func is_available(quest_id: String) -> bool:
 	return get_state(quest_id) == State.AVAILABLE and meets_requirements(quest_id)
 
+# Seuils de réputation encore non atteints pour quest_id. Chaque entrée :
+# {axis, threshold, current}. Sert à expliquer un lock côté dialogue/UI.
+func missing_reputation(quest_id: String) -> Array:
+	var out: Array = []
+	var quest: Quest = _quests.get(quest_id)
+	if quest == null:
+		return out
+	for axis_key in quest.required_reputation:
+		var axis: int = int(axis_key)
+		var threshold: int = int(quest.required_reputation[axis_key])
+		var current: int = ReputationSystem.get_value(axis)
+		if current < threshold:
+			out.append({"axis": axis, "threshold": threshold, "current": current})
+	return out
+
 func complete_objective(quest_id: String, objective_id: String, auto_pay_reward: bool = true) -> void:
 	# `auto_pay_reward` = true par défaut : la complétion finale paie automatiquement
 	# le `money_reward` de la quête. Les appelants qui ont déjà versé le payout via
@@ -138,5 +153,22 @@ func serialize() -> Dictionary:
 	return {"state": _state.duplicate(), "objectives": _objectives.duplicate(true)}
 
 func deserialize(data: Dictionary) -> void:
-	_state = data.get("state", {})
-	_objectives = data.get("objectives", {})
+	# Tolérance aux quêtes disparues : une save peut référencer un quest_id
+	# retiré depuis (refactor de contenu). On écarte ces entrées plutôt que de
+	# garder un état orphelin (que _complete() déréférencerait via _quests[id]).
+	# Les quêtes sont toutes enregistrées au boot avant ce load, donc _quests
+	# est complet ici.
+	_state = _keep_known(data.get("state", {}))
+	_objectives = _keep_known(data.get("objectives", {}))
+
+func _keep_known(saved: Dictionary) -> Dictionary:
+	var kept: Dictionary = {}
+	var dropped: int = 0
+	for quest_id in saved:
+		if _quests.has(quest_id):
+			kept[quest_id] = saved[quest_id]
+		else:
+			dropped += 1
+	if dropped > 0:
+		push_warning("QuestManager: %d quête(s) inconnue(s) ignorée(s) au chargement" % dropped)
+	return kept

@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3]
+[gd_scene load_steps=14 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/Phone.gd" id="1_phone"]
 
@@ -182,19 +182,20 @@ horizontal_alignment = 1
 theme_override_font_sizes/font_size = 11
 theme_override_colors/font_color = Color(0.6, 0.6, 0.65, 1)
 
-[node name="Pages" type="Control" parent="Frame/Screens/Home"]
-offset_top = 80.0
+[node name="AppsScroll" type="ScrollContainer" parent="Frame/Screens/Home"]
+offset_top = 62.0
 offset_right = 368.0
-offset_bottom = 460.0
+offset_bottom = 486.0
+horizontal_scroll_mode = 0
 
-[node name="Page1" type="GridContainer" parent="Frame/Screens/Home/Pages"]
-anchor_right = 1.0
-anchor_bottom = 1.0
+[node name="Apps" type="GridContainer" parent="Frame/Screens/Home/AppsScroll"]
+custom_minimum_size = Vector2(344, 0)
+size_flags_horizontal = 3
 columns = 2
 theme_override_constants/h_separation = 20
 theme_override_constants/v_separation = 20
 
-[node name="Taxi" type="Button" parent="Frame/Screens/Home/Pages/Page1"]
+[node name="Taxi" type="Button" parent="Frame/Screens/Home/AppsScroll/Apps"]
 custom_minimum_size = Vector2(150, 150)
 text = "🚕
 Taxi"
@@ -205,7 +206,7 @@ theme_override_styles/pressed = SubResource("AppButtonStyle")
 theme_override_font_sizes/font_size = 24
 theme_override_colors/font_color = Color(0.18, 0.14, 0.1, 1)
 
-[node name="Stats" type="Button" parent="Frame/Screens/Home/Pages/Page1"]
+[node name="Stats" type="Button" parent="Frame/Screens/Home/AppsScroll/Apps"]
 custom_minimum_size = Vector2(150, 150)
 text = "💪
 Saúde"
@@ -216,7 +217,7 @@ theme_override_styles/pressed = SubResource("AppButtonStyleStats")
 theme_override_font_sizes/font_size = 24
 theme_override_colors/font_color = Color(0.12, 0.18, 0.12, 1)
 
-[node name="Cronica" type="Button" parent="Frame/Screens/Home/Pages/Page1"]
+[node name="Cronica" type="Button" parent="Frame/Screens/Home/AppsScroll/Apps"]
 custom_minimum_size = Vector2(150, 150)
 text = "📜
 Crônica"
@@ -227,7 +228,18 @@ theme_override_styles/pressed = SubResource("AppButtonStyleCronica")
 theme_override_font_sizes/font_size = 24
 theme_override_colors/font_color = Color(0.22, 0.12, 0.08, 1)
 
-[node name="Ajustes" type="Button" parent="Frame/Screens/Home/Pages/Page1"]
+[node name="Diario" type="Button" parent="Frame/Screens/Home/AppsScroll/Apps"]
+custom_minimum_size = Vector2(150, 150)
+text = "📖
+Diário"
+tooltip_text = "Codex narratif — relire les dialogues importants déjà vécus"
+theme_override_styles/normal = SubResource("AppButtonStyleCronica")
+theme_override_styles/hover = SubResource("AppButtonStyleCronica")
+theme_override_styles/pressed = SubResource("AppButtonStyleCronica")
+theme_override_font_sizes/font_size = 24
+theme_override_colors/font_color = Color(0.22, 0.12, 0.08, 1)
+
+[node name="Ajustes" type="Button" parent="Frame/Screens/Home/AppsScroll/Apps"]
 custom_minimum_size = Vector2(150, 150)
 text = "⚙
 Ajustes"
@@ -238,15 +250,7 @@ theme_override_styles/pressed = SubResource("AppButtonStyleAjustes")
 theme_override_font_sizes/font_size = 24
 theme_override_colors/font_color = Color(0.95, 0.95, 0.95, 1)
 
-[node name="Page2" type="GridContainer" parent="Frame/Screens/Home/Pages"]
-visible = false
-anchor_right = 1.0
-anchor_bottom = 1.0
-columns = 2
-theme_override_constants/h_separation = 20
-theme_override_constants/v_separation = 20
-
-[node name="Missions" type="Button" parent="Frame/Screens/Home/Pages/Page2"]
+[node name="Missions" type="Button" parent="Frame/Screens/Home/AppsScroll/Apps"]
 custom_minimum_size = Vector2(150, 150)
 text = "📋
 Missões"
@@ -257,7 +261,7 @@ theme_override_styles/pressed = SubResource("AppButtonStyleMissions")
 theme_override_font_sizes/font_size = 24
 theme_override_colors/font_color = Color(0.12, 0.18, 0.22, 1)
 
-[node name="Photos" type="Button" parent="Frame/Screens/Home/Pages/Page2"]
+[node name="Photos" type="Button" parent="Frame/Screens/Home/AppsScroll/Apps"]
 custom_minimum_size = Vector2(150, 150)
 text = "📸
 Álbum"
@@ -268,7 +272,7 @@ theme_override_styles/pressed = SubResource("AppButtonStylePhotos")
 theme_override_font_sizes/font_size = 24
 theme_override_colors/font_color = Color(0.08, 0.18, 0.22, 1)
 
-[node name="Noticias" type="Button" parent="Frame/Screens/Home/Pages/Page2"]
+[node name="Noticias" type="Button" parent="Frame/Screens/Home/AppsScroll/Apps"]
 custom_minimum_size = Vector2(150, 150)
 text = "📰
 Notícias"
@@ -279,7 +283,7 @@ theme_override_styles/pressed = SubResource("AppButtonStyleNoticias")
 theme_override_font_sizes/font_size = 24
 theme_override_colors/font_color = Color(0.22, 0.18, 0.14, 1)
 
-[node name="Conquistas" type="Button" parent="Frame/Screens/Home/Pages/Page2"]
+[node name="Conquistas" type="Button" parent="Frame/Screens/Home/AppsScroll/Apps"]
 custom_minimum_size = Vector2(150, 150)
 text = "🏆
 Conquistas"
@@ -290,7 +294,7 @@ theme_override_styles/pressed = SubResource("AppButtonStyleConquistas")
 theme_override_font_sizes/font_size = 22
 theme_override_colors/font_color = Color(0.22, 0.16, 0.06, 1)
 
-[node name="Mapa" type="Button" parent="Frame/Screens/Home/Pages/Page2"]
+[node name="Mapa" type="Button" parent="Frame/Screens/Home/AppsScroll/Apps"]
 custom_minimum_size = Vector2(150, 150)
 text = "🗺
 Mapa"
@@ -300,42 +304,6 @@ theme_override_styles/hover = SubResource("AppButtonStyleMapa")
 theme_override_styles/pressed = SubResource("AppButtonStyleMapa")
 theme_override_font_sizes/font_size = 24
 theme_override_colors/font_color = Color(0.08, 0.22, 0.16, 1)
-
-[node name="PageNav" type="HBoxContainer" parent="Frame/Screens/Home"]
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -60.0
-offset_top = 466.0
-offset_right = 60.0
-offset_bottom = 486.0
-alignment = 1
-theme_override_constants/separation = 10
-
-[node name="ArrowLeft" type="Button" parent="Frame/Screens/Home/PageNav"]
-custom_minimum_size = Vector2(28, 20)
-text = "‹"
-flat = true
-theme_override_font_sizes/font_size = 18
-theme_override_colors/font_color = Color(0.7, 0.7, 0.75, 1)
-
-[node name="Dot1" type="Label" parent="Frame/Screens/Home/PageNav"]
-text = "●"
-vertical_alignment = 1
-theme_override_font_sizes/font_size = 14
-theme_override_colors/font_color = Color(0.95, 0.92, 0.85, 1)
-
-[node name="Dot2" type="Label" parent="Frame/Screens/Home/PageNav"]
-text = "○"
-vertical_alignment = 1
-theme_override_font_sizes/font_size = 14
-theme_override_colors/font_color = Color(0.6, 0.6, 0.65, 1)
-
-[node name="ArrowRight" type="Button" parent="Frame/Screens/Home/PageNav"]
-custom_minimum_size = Vector2(28, 20)
-text = "›"
-flat = true
-theme_override_font_sizes/font_size = 18
-theme_override_colors/font_color = Color(0.95, 0.92, 0.85, 1)
 
 [node name="Taxi" type="Control" parent="Frame/Screens"]
 visible = false
@@ -522,101 +490,111 @@ horizontal_alignment = 1
 theme_override_font_sizes/font_size = 10
 theme_override_colors/font_color = Color(0.6, 0.6, 0.65, 1)
 
-[node name="Box" type="VBoxContainer" parent="Frame/Screens/Ajustes"]
-offset_left = 16.0
-offset_top = 80.0
-offset_right = 352.0
-offset_bottom = 460.0
+[node name="Scroll" type="ScrollContainer" parent="Frame/Screens/Ajustes"]
+offset_left = 12.0
+offset_top = 62.0
+offset_right = 360.0
+offset_bottom = 480.0
+horizontal_scroll_mode = 0
+
+[node name="Box" type="VBoxContainer" parent="Frame/Screens/Ajustes/Scroll"]
+custom_minimum_size = Vector2(344, 0)
+size_flags_horizontal = 3
 theme_override_constants/separation = 16
 
-[node name="MusicRow" type="VBoxContainer" parent="Frame/Screens/Ajustes/Box"]
+[node name="MusicRow" type="VBoxContainer" parent="Frame/Screens/Ajustes/Scroll/Box"]
 theme_override_constants/separation = 4
 
-[node name="MusicLabel" type="Label" parent="Frame/Screens/Ajustes/Box/MusicRow"]
+[node name="MusicLabel" type="Label" parent="Frame/Screens/Ajustes/Scroll/Box/MusicRow"]
 text = "🎵 Musique"
 theme_override_font_sizes/font_size = 13
 theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
 
-[node name="MusicSlider" type="HSlider" parent="Frame/Screens/Ajustes/Box/MusicRow"]
+[node name="MusicSlider" type="HSlider" parent="Frame/Screens/Ajustes/Scroll/Box/MusicRow"]
 min_value = 0.0
 max_value = 1.0
 step = 0.01
 value = 0.7
 custom_minimum_size = Vector2(0, 36)
 
-[node name="SfxRow" type="VBoxContainer" parent="Frame/Screens/Ajustes/Box"]
+[node name="SfxRow" type="VBoxContainer" parent="Frame/Screens/Ajustes/Scroll/Box"]
 theme_override_constants/separation = 4
 
-[node name="SfxLabel" type="Label" parent="Frame/Screens/Ajustes/Box/SfxRow"]
+[node name="SfxLabel" type="Label" parent="Frame/Screens/Ajustes/Scroll/Box/SfxRow"]
 text = "🔔 Effets"
 theme_override_font_sizes/font_size = 13
 theme_override_colors/font_color = Color(0.55, 0.95, 0.55, 1)
 
-[node name="SfxSlider" type="HSlider" parent="Frame/Screens/Ajustes/Box/SfxRow"]
+[node name="SfxSlider" type="HSlider" parent="Frame/Screens/Ajustes/Scroll/Box/SfxRow"]
 min_value = 0.0
 max_value = 1.0
 step = 0.01
 value = 0.85
 custom_minimum_size = Vector2(0, 36)
 
-[node name="AmbientRow" type="VBoxContainer" parent="Frame/Screens/Ajustes/Box"]
+[node name="AmbientRow" type="VBoxContainer" parent="Frame/Screens/Ajustes/Scroll/Box"]
 theme_override_constants/separation = 4
 
-[node name="AmbientLabel" type="Label" parent="Frame/Screens/Ajustes/Box/AmbientRow"]
+[node name="AmbientLabel" type="Label" parent="Frame/Screens/Ajustes/Scroll/Box/AmbientRow"]
 text = "🌊 Ambiance"
 theme_override_font_sizes/font_size = 13
 theme_override_colors/font_color = Color(0.55, 0.78, 0.95, 1)
 
-[node name="AmbientSlider" type="HSlider" parent="Frame/Screens/Ajustes/Box/AmbientRow"]
+[node name="AmbientSlider" type="HSlider" parent="Frame/Screens/Ajustes/Scroll/Box/AmbientRow"]
 min_value = 0.0
 max_value = 1.0
 step = 0.01
 value = 0.55
 custom_minimum_size = Vector2(0, 36)
 
-[node name="Hint" type="Label" parent="Frame/Screens/Ajustes/Box"]
+[node name="Hint" type="Label" parent="Frame/Screens/Ajustes/Scroll/Box"]
 text = "Réglages sauvegardés automatiquement."
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 10
 theme_override_colors/font_color = Color(0.55, 0.55, 0.6, 1)
 
-[node name="ReplayTutorial" type="Button" parent="Frame/Screens/Ajustes/Box"]
+[node name="AppearanceEditor" type="Button" parent="Frame/Screens/Ajustes/Scroll/Box"]
+text = "🧍 Aparência (seu personagem)"
+custom_minimum_size = Vector2(0, 44)
+theme_override_font_sizes/font_size = 13
+
+[node name="ReplayTutorial" type="Button" parent="Frame/Screens/Ajustes/Scroll/Box"]
 text = "Revoir le guide d'accueil"
 custom_minimum_size = Vector2(0, 44)
 theme_override_font_sizes/font_size = 13
 
-[node name="ShowCredits" type="Button" parent="Frame/Screens/Ajustes/Box"]
+[node name="ShowCredits" type="Button" parent="Frame/Screens/Ajustes/Scroll/Box"]
 text = "✦ Crédits"
 custom_minimum_size = Vector2(0, 44)
 theme_override_font_sizes/font_size = 13
 
-[node name="QuitGame" type="Button" parent="Frame/Screens/Ajustes/Box"]
+[node name="QuitGame" type="Button" parent="Frame/Screens/Ajustes/Scroll/Box"]
 text = "Quitter le jeu"
 custom_minimum_size = Vector2(0, 44)
 theme_override_font_sizes/font_size = 13
 modulate = Color(1, 0.75, 0.75, 1)
 
-[node name="SlotsHeader" type="Label" parent="Frame/Screens/Ajustes/Box"]
+[node name="SlotsHeader" type="Label" parent="Frame/Screens/Ajustes/Scroll/Box"]
 text = "💾 Sauvegardes"
 theme_override_font_sizes/font_size = 13
 theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
 
-[node name="SlotRow" type="VBoxContainer" parent="Frame/Screens/Ajustes/Box"]
+[node name="SlotRow" type="VBoxContainer" parent="Frame/Screens/Ajustes/Scroll/Box"]
 theme_override_constants/separation = 4
 
-[node name="Slot1" type="Button" parent="Frame/Screens/Ajustes/Box/SlotRow"]
+[node name="Slot1" type="Button" parent="Frame/Screens/Ajustes/Scroll/Box/SlotRow"]
 text = "Slot 1"
 custom_minimum_size = Vector2(0, 44)
 theme_override_font_sizes/font_size = 12
 alignment = 0
 
-[node name="Slot2" type="Button" parent="Frame/Screens/Ajustes/Box/SlotRow"]
+[node name="Slot2" type="Button" parent="Frame/Screens/Ajustes/Scroll/Box/SlotRow"]
 text = "Slot 2"
 custom_minimum_size = Vector2(0, 44)
 theme_override_font_sizes/font_size = 12
 alignment = 0
 
-[node name="Slot3" type="Button" parent="Frame/Screens/Ajustes/Box/SlotRow"]
+[node name="Slot3" type="Button" parent="Frame/Screens/Ajustes/Scroll/Box/SlotRow"]
 text = "Slot 3"
 custom_minimum_size = Vector2(0, 44)
 theme_override_font_sizes/font_size = 12

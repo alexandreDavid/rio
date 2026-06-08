@@ -51,6 +51,11 @@ func _process(delta: float) -> void:
 	_try_trigger_visit()
 
 func _try_trigger_visit() -> void:
+	# Hors gameplay (Intro, menu, character creator, chargement) il n'y a pas de
+	# joueur ni de DialogueUI : déclencher ici poserait _active_npc_id sans jamais
+	# pouvoir afficher ni fermer le dialogue → soft-lock au démarrage de la partie.
+	if GameManager.player == null or not is_instance_valid(GameManager.player):
+		return
 	# Cooldown global
 	var now: float = Time.get_ticks_msec() / 1000.0
 	if now - _last_visit_time < COOLDOWN_SEC:

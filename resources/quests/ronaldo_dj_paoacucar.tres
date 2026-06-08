@@ -20,5 +20,5 @@ ink_knot = "ronaldo_dj_offer"
 objectives = Array[Resource]([SubResource("obj_set")])
 money_reward = 0
 reputation_rewards = {2: 3, 4: 2}
-required_reputation = {}
+required_reputation = {2: 8}
 required_act = 0

@@ -13,6 +13,10 @@ const ARENA_H: float = 1080.0
 
 const BIKE_RADIUS: float = 14.0
 const BIKE_SPEED: float = 320.0
+# Brise du lac : pousse en continu vers le sud-ouest. Distingue le contre-la-montre
+# de la Lagoa de la course pure du Racha (asphalte sans vent) — il faut corriger
+# sa trajectoire. ~16 % de BIKE_SPEED : sensible, jamais bloquant.
+const WIND: Vector2 = Vector2(-50.0, 16.0)
 const CHECKPOINT_RADIUS: float = 60.0
 
 # Checkpoints autour du lac (centre 960,540), ordre clockwise.
@@ -53,7 +57,7 @@ func _ready() -> void:
 	if status_label:
 		status_label.text = "Boucle clockwise : Nord → Est → Sud → Ouest → Nord."
 	if prompt_label:
-		prompt_label.text = "[WASD / Flèches] pédaler"
+		prompt_label.text = "Joystick : pédaler" if OS.has_feature("mobile") else "[WASD / Flèches] pédaler"
 
 func _render_checkpoints() -> void:
 	if cp_markers == null:
@@ -95,7 +99,7 @@ func _update_bike(delta: float) -> void:
 	)
 	if dir.length() > 1.0:
 		dir = dir.normalized()
-	_bike_pos += dir * BIKE_SPEED * delta
+	_bike_pos += (dir * BIKE_SPEED + WIND) * delta
 	_bike_pos.x = clamp(_bike_pos.x, BIKE_RADIUS, ARENA_W - BIKE_RADIUS)
 	_bike_pos.y = clamp(_bike_pos.y, BIKE_RADIUS, ARENA_H - BIKE_RADIUS)
 	if bike_node:

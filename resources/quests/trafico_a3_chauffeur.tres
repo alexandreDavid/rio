@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_drive_botafogo"]
+script = ExtResource("2_obj")
+id = "drive_botafogo"
+description = "Conduire le coffre jusqu'à Botafogo sans te faire suivre"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "trafico_a3_chauffeur"
+display_name = "Sous le Bondinho"
+description = "Le coffre est chargé. Tu prends la route vers Botafogo, sous le Bondinho, et tu livres. Pas de détour, pas de témoin."
+journal_text = "Rejoindre Botafogo avec le chargement (voyage en taxi ou à pied)."
+giver_npc_id = "trafico_contact"
+ink_knot = "spot_trafico_contact_a3_offer"
+objectives = Array[Resource]([SubResource("obj_drive_botafogo")])
+money_reward = 450
+reputation_rewards = {}
+required_reputation = {}
+required_act = 0
+quest_type = 1
+prerequisite_quest_ids = Array[String](["trafico_a2_pickup"])

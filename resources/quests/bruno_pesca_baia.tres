@@ -20,6 +20,6 @@ ink_knot = "bruno_pesca_offer"
 objectives = Array[Resource]([SubResource("obj_haul_baia")])
 money_reward = 220
 reputation_rewards = {2: 3, 3: 1}
-required_reputation = {}
+required_reputation = {2: 6}
 required_act = 0
 prerequisite_quest_ids = Array[String](["bruno_carga"])

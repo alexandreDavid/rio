@@ -5,6 +5,10 @@ extends CanvasLayer
 # réputation / argent / dette), Journal et Missões (placeholders ouvrant
 # les UIs existantes).
 
+# App Notícias extraite : la donnée vit dans NewsFeed (préchargé par chemin, même
+# pattern que DialogueBridge avec ses *Dialogues.gd).
+const NewsFeed: Script = preload("res://scripts/ui/phone/NewsFeed.gd")
+
 const REP_AXIS_NAMES: Array[String] = ["CIVIC", "POLICE", "STREET", "TOURIST", "CHARISMA"]
 const REP_AXIS_LABELS: Dictionary = {
 	"CIVIC":    "Respect",
@@ -67,6 +71,7 @@ const REP_AXIS_COLORS: Dictionary = {
 @onready var app_taxi: Button = $Frame/Screens/Home/AppsScroll/Apps/Taxi
 @onready var app_stats: Button = $Frame/Screens/Home/AppsScroll/Apps/Stats
 @onready var app_journal: Button = null  # fusionné dans Crônica
+@onready var app_diario: Button = $Frame/Screens/Home/AppsScroll/Apps/Diario
 @onready var app_cronica: Button = $Frame/Screens/Home/AppsScroll/Apps/Cronica
 @onready var app_ajustes: Button = $Frame/Screens/Home/AppsScroll/Apps/Ajustes
 @onready var app_missions: Button = $Frame/Screens/Home/AppsScroll/Apps/Missions
@@ -90,6 +95,8 @@ func _ready() -> void:
 		app_stats.pressed.connect(func(): _show_screen("stats"))
 	if app_journal:
 		app_journal.pressed.connect(_open_journal)
+	if app_diario:
+		app_diario.pressed.connect(_open_journal)
 	if app_missions:
 		app_missions.pressed.connect(_open_missions)
 	if app_cronica:
@@ -395,7 +402,7 @@ func _add_act_tracker() -> void:
 		stats_box.add_child(section)
 		var hint: Label = Label.new()
 		hint.text = "Le pouvoir est à toi. Sambódromo t'attend pour le défilé."
-		hint.add_theme_font_size_override("font_size", 11)
+		hint.add_theme_font_size_override("font_size", 12)
 		hint.add_theme_color_override("font_color", Color(0.7, 0.7, 0.75))
 		hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		stats_box.add_child(hint)
@@ -407,7 +414,7 @@ func _add_act_tracker() -> void:
 		return
 	section.text = "🎯 Acte %d → %d" % [act, act + 1]
 	stats_box.add_child(section)
-	# Barre de progression dette (acte 1→2 = 500, acte 2→3 = 25000).
+	# Barre de progression dette (seuils lus depuis CampaignManager).
 	var threshold: int = CampaignManager.ACT1_THRESHOLD if act == 1 else CampaignManager.ACT2_THRESHOLD
 	var paid: int = CampaignManager.debt_paid
 	var pct_bar: HBoxContainer = HBoxContainer.new()
@@ -426,7 +433,7 @@ func _add_act_tracker() -> void:
 	pct_bar.add_child(bar)
 	var val: Label = Label.new()
 	val.text = "%d / %d" % [min(paid, threshold), threshold]
-	val.add_theme_font_size_override("font_size", 10)
+	val.add_theme_font_size_override("font_size", 12)
 	pct_bar.add_child(val)
 	stats_box.add_child(pct_bar)
 	# Pivots manquants
@@ -437,7 +444,7 @@ func _add_act_tracker() -> void:
 		var row: Label = Label.new()
 		var name: String = q.display_name if q != null and q.display_name != "" else pid
 		row.text = "  %s %s" % [("✓" if done else "▢"), name]
-		row.add_theme_font_size_override("font_size", 11)
+		row.add_theme_font_size_override("font_size", 12)
 		row.add_theme_color_override("font_color", Color(0.55, 0.85, 0.55) if done else Color(0.7, 0.7, 0.75))
 		stats_box.add_child(row)
 
@@ -445,7 +452,7 @@ func _add_act3_hint() -> void:
 	var endgame: int = CampaignManager.chosen_endgame
 	var hint: Label = Label.new()
 	hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	hint.add_theme_font_size_override("font_size", 11)
+	hint.add_theme_font_size_override("font_size", 12)
 	hint.add_theme_color_override("font_color", Color(0.7, 0.7, 0.75))
 	if endgame == CampaignManager.Endgame.NONE:
 		hint.text = "Trois voies, mutuellement exclusives :\n  • Ramos (Bar) → Polícia\n  • Miguel (Morro) → Tráfico\n  • Padre (Chapelle) → Prefeito"
@@ -741,12 +748,12 @@ func _build_photo_row(fname: String) -> Control:
 	info.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	var name_label: Label = Label.new()
 	name_label.text = fname
-	name_label.add_theme_font_size_override("font_size", 11)
+	name_label.add_theme_font_size_override("font_size", 12)
 	name_label.add_theme_color_override("font_color", Color(0.92, 0.92, 0.95))
 	info.add_child(name_label)
 	var size_label: Label = Label.new()
 	size_label.text = _photo_size_text(fname)
-	size_label.add_theme_font_size_override("font_size", 10)
+	size_label.add_theme_font_size_override("font_size", 12)
 	size_label.add_theme_color_override("font_color", Color(0.65, 0.65, 0.7))
 	info.add_child(size_label)
 	hbox.add_child(info)
@@ -783,100 +790,17 @@ func _close_photo_viewer() -> void:
 		viewer_image.texture = null
 
 # ------------------------------------------------------------------
-# Notícias app — manchettes réactives selon l'état narratif courant.
+# Notícias app — la donnée (état → manchettes) vit dans NewsFeed.gd ; ici on ne
+# garde que le rendu des cartes. Premier palier de décomposition de Phone par app.
 # ------------------------------------------------------------------
-
-const NEWS_COLOR_AMBIENT: Color = Color(0.85, 0.85, 0.80)
-const NEWS_COLOR_CIVIC: Color = Color(0.55, 0.95, 0.55)
-const NEWS_COLOR_POLICE: Color = Color(0.55, 0.78, 0.95)
-const NEWS_COLOR_WARN: Color = Color(0.95, 0.62, 0.45)
-const NEWS_COLOR_SOCIETY: Color = Color(0.85, 0.55, 0.95)
-const NEWS_COLOR_WIN: Color = Color(0.95, 0.85, 0.40)
 
 func _refresh_noticias() -> void:
 	if noticias_box == null:
 		return
 	for child in noticias_box.get_children():
 		child.queue_free()
-	var items: Array = _build_news_items()
-	for item in items:
+	for item in NewsFeed.build_items():
 		noticias_box.add_child(_build_news_row(item))
-
-func _build_news_items() -> Array:
-	# Renvoie un tableau de Dictionaries {text, source, color}, du plus récent
-	# (haut) au plus contextuel (bas). Filtré sur l'état campagne/quêtes/dette.
-	var out: Array = []
-	var act: int = CampaignManager.current_act
-	var debt: int = CampaignManager.debt_remaining()
-	var day: int = TimeOfDay.day_count
-	var endgame: int = CampaignManager.chosen_endgame
-
-	# Manchettes endgame (acte 5 — règne).
-	if act >= 5:
-		match endgame:
-			CampaignManager.Endgame.PREFEITO:
-				out.append({"text": "Subprefeitura civica anunciada — Coronel do Bairro recebe a faixa", "source": "O Globo Rio", "color": NEWS_COLOR_WIN})
-			CampaignManager.Endgame.POLICIA:
-				out.append({"text": "Operação Madrugada encerra ciclo de violência — Chefe de Polícia condecorado", "source": "Jornal do Brasil", "color": NEWS_COLOR_WIN})
-			CampaignManager.Endgame.TRAFICO:
-				out.append({"text": "Hierarquia do Morro consolidada — novo Patrão silencia o bairro", "source": "Extra", "color": NEWS_COLOR_WIN})
-
-	# Pacto da Barra — pivot business.
-	if CampaignManager.has_flag("barra_pacto_sealed"):
-		out.append({"text": "Riserva Uno formaliza parceria de segurança privada — três condomínios alinhados", "source": "Veja Rio", "color": NEWS_COLOR_SOCIETY})
-
-	# Mendonça / commissaire — danger.
-	if CampaignManager.has_flag("commissaire_alerted"):
-		out.append({"text": "PM intensifica rondas na Barra após denúncia anônima de extorsão", "source": "Extra", "color": NEWS_COLOR_WARN})
-
-	# Endorsements — campagne politique en cours.
-	if QuestManager.is_active("act3_prefeito_endorsements") or QuestManager.is_completed("act3_prefeito_endorsements"):
-		out.append({"text": "Coalizão civica reúne padre, comerciantes e padaria histórica", "source": "O Globo Rio", "color": NEWS_COLOR_CIVIC})
-
-	# Pivot acte 2 — révélation Concierge.
-	if CampaignManager.has_flag("tio_ze_revealed"):
-		out.append({"text": "Concierge do Palace mantém perfil discreto — vizinhos surpreendem", "source": "Sociedade Rio", "color": NEWS_COLOR_SOCIETY})
-
-	# Operação Carnaval — Ramos / acte 2.
-	if QuestManager.is_completed("act2_ramos_operacao"):
-		out.append({"text": "PM divulga balanço de Operação Carnaval — silêncio sobre fontes", "source": "Jornal do Brasil", "color": NEWS_COLOR_POLICE})
-
-	# Orfanato — padre / acte 2.
-	if QuestManager.is_completed("act2_padre_orfanato"):
-		out.append({"text": "Paróquia salva orfanato em campanha relâmpago — agradecimentos públicos", "source": "Diário do Bairro", "color": NEWS_COLOR_CIVIC})
-
-	# Convoi favela — Miguel / acte 2.
-	if QuestManager.is_completed("act2_miguel_favela"):
-		out.append({"text": "Comboio de mantimentos chega ao Morro — voluntários anônimos", "source": "Extra", "color": NEWS_COLOR_SOCIETY})
-
-	# Crise dette élevée (joueur en retard).
-	if act >= 2 and debt > 30000:
-		out.append({"text": "Jovens cariocas enfrentam dívidas familiares herdadas — fenômeno cresce", "source": "Folha Rio", "color": NEWS_COLOR_WARN})
-	elif act >= 3 and debt > 0 and debt <= 5000:
-		out.append({"text": "Histórias de superação no calçadão — perseverança paga dívidas", "source": "Diário do Bairro", "color": NEWS_COLOR_CIVIC})
-
-	# Niterói — chaîne consortium boucle vers la baie.
-	if QuestManager.is_completed("bruno_carga"):
-		out.append({"text": "MAC Niemeyer prepara exposição de junho — curadoria recebe peça inédita", "source": "Veja Rio", "color": NEWS_COLOR_AMBIENT})
-
-	# Réputation extrême.
-	if ReputationSystem.get_value(ReputationSystem.Axis.POLICE) >= 50:
-		out.append({"text": "Comunidade elogia 'cidadão exemplar' anônimo — PM agradece", "source": "Jornal do Brasil", "color": NEWS_COLOR_POLICE})
-	if ReputationSystem.get_value(ReputationSystem.Axis.STREET) >= 50:
-		out.append({"text": "Lendas urbanas no Morro — sobrinho misterioso protege os pequenos", "source": "Extra", "color": NEWS_COLOR_SOCIETY})
-
-	# Carnaval — proche pendant acte 5 (reinado).
-	if act >= 5:
-		out.append({"text": "Sambódromo afinado — ensaios técnicos liberam ingressos do bloco", "source": "O Globo Rio", "color": NEWS_COLOR_AMBIENT})
-	else:
-		out.append({"text": "Carnaval 2026 — preparativos começam nos blocos do bairro", "source": "O Globo Rio", "color": NEWS_COLOR_AMBIENT})
-
-	# Météo & vie de quartier — toujours présents pour donner du grain.
-	out.append({"text": "Posto 5 registra recorde de surfistas no fim de semana", "source": "Extra", "color": NEWS_COLOR_AMBIENT})
-	out.append({"text": "Tempo na praia : sol forte, 32°C, ventos leves de sul", "source": "Diário do Bairro", "color": NEWS_COLOR_AMBIENT})
-	if day >= 5:
-		out.append({"text": "Vendedores de milho assados disputam território no calçadão", "source": "Sociedade Rio", "color": NEWS_COLOR_AMBIENT})
-	return out
 
 # Districts groupés par région géographique pour l'app Mapa.
 const MAPA_REGIONS: Array = [
@@ -988,7 +912,7 @@ func _build_achievement_row(entry: Dictionary) -> Control:
 	if reward > 0:
 		desc_text += "  ·  +R$ %d" % reward
 	desc.text = desc_text
-	desc.add_theme_font_size_override("font_size", 10)
+	desc.add_theme_font_size_override("font_size", 12)
 	desc.add_theme_color_override("font_color", Color(0.7, 0.7, 0.75) if unlocked else Color(0.4, 0.4, 0.45))
 	desc.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	info.add_child(desc)
@@ -1012,7 +936,7 @@ func _build_progress_row(current: int, max_value: int) -> Control:
 	row.add_child(bar)
 	var lbl: Label = Label.new()
 	lbl.text = "%d/%d" % [current, max_value]
-	lbl.add_theme_font_size_override("font_size", 9)
+	lbl.add_theme_font_size_override("font_size", 12)
 	lbl.add_theme_color_override("font_color", Color(0.6, 0.6, 0.65))
 	row.add_child(lbl)
 	return row
@@ -1104,13 +1028,13 @@ func _build_news_row(item: Dictionary) -> Control:
 	card.add_child(vbox)
 	var source: Label = Label.new()
 	source.text = item.get("source", "")
-	source.add_theme_font_size_override("font_size", 9)
+	source.add_theme_font_size_override("font_size", 12)
 	source.add_theme_color_override("font_color", Color(0.6, 0.6, 0.65))
 	vbox.add_child(source)
 	var headline: Label = Label.new()
 	headline.text = item.get("text", "")
 	headline.add_theme_font_size_override("font_size", 12)
-	headline.add_theme_color_override("font_color", item.get("color", NEWS_COLOR_AMBIENT))
+	headline.add_theme_color_override("font_color", item.get("color", NewsFeed.COLOR_AMBIENT))
 	headline.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	vbox.add_child(headline)
 	return card

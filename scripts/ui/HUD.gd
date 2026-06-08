@@ -20,15 +20,14 @@ var _money_init_done: bool = false
 # titre pour qu'il soit clair d'où vient le +R$ X (sinon le joueur croit
 # gagner de l'argent du ciel après avoir payé un bribe ou autre).
 var _next_money_source: String = ""
-@onready var journal_button: Button = $JournalButton
-@onready var save_button: Button = $SaveButton
 @onready var photo_button: Button = $PhotoButton
+@onready var district_fade: ColorRect = $DistrictFade
 @onready var close_sheet_button: Button = $CharacterSheet/Margin/Layout/Close
 @onready var toast_stack: VBoxContainer = $ToastStack
 const MAX_TOASTS: int = 4
-@onready var quest_tracker: PanelContainer = $QuestTracker
-@onready var quest_tracker_name: Label = $QuestTracker/Margin/VBox/QuestName
-@onready var quest_tracker_objective: Label = $QuestTracker/Margin/VBox/QuestObjective
+# Dernier toast jalon affiché (texte). Rejouable via tap sur le panneau Objectif
+# (ObjectiveBanner) pour ne pas perdre l'info si le toast a défilé trop vite.
+var _last_milestone_text: String = ""
 
 # Clé = nom d'axe renvoyé par EventBus.reputation_changed (ReputationSystem.Axis.keys()).
 # Valeur = teinte appliquée à la barre pour distinguer les axes d'un coup d'œil.
@@ -60,12 +59,12 @@ func _ready() -> void:
 	EventBus.time_of_day_changed.connect(_on_phase_changed)
 	EventBus.debt_paid.connect(_on_debt_paid)
 	EventBus.act_changed.connect(_on_act_changed)
+	# Pendant un mini-jeu, on neutralise le bouton 📱 : l'ouvrir mettrait le
+	# jeu en pause sèche en plein milieu (le mini-jeu a son propre bouton Quitter).
+	EventBus.minigame_started.connect(_on_minigame_started)
+	EventBus.minigame_ended.connect(_on_minigame_ended)
 	EventBus.quest_accepted.connect(_on_quest_change_check_main)
 	EventBus.quest_completed.connect(_on_quest_change_check_main)
-	EventBus.quest_accepted.connect(_refresh_tracker_for)
-	EventBus.quest_completed.connect(_refresh_tracker_for)
-	EventBus.quest_updated.connect(_refresh_tracker_for_obj)
-	call_deferred("_refresh_tracker")
 	SaveSystem.save_committed.connect(_on_save_committed)
 	SaveSystem.save_loaded.connect(_on_save_loaded)
 	DynamicMissionManager.mission_completed.connect(_on_dynamic_mission_completed)
@@ -90,13 +89,36 @@ func _ready() -> void:
 		_setup_phone_badge()
 	if close_sheet_button:
 		close_sheet_button.pressed.connect(_toggle_phone)
-	if journal_button:
-		journal_button.pressed.connect(_toggle_journal)
-	if save_button:
-		save_button.pressed.connect(_on_save_pressed)
 	if photo_button:
 		photo_button.pressed.connect(_on_photo_pressed)
 	_init_abilities()
+	_setup_button_feedback()
+	# Fondu doux à chaque changement de district (masque la téléportation).
+	DistrictManager.district_changed.connect(_on_district_fade)
+
+# Petit retour tactile : les boutons HUD s'enfoncent légèrement au toucher.
+func _setup_button_feedback() -> void:
+	for b in [menu_button, photo_button]:
+		if b == null:
+			continue
+		b.button_down.connect(_press_button.bind(b, true))
+		b.button_up.connect(_press_button.bind(b, false))
+
+func _press_button(b: Button, down: bool) -> void:
+	if b == null:
+		return
+	b.pivot_offset = b.size / 2.0
+	var tw: Tween = create_tween()
+	tw.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tw.tween_property(b, "scale", Vector2(0.88, 0.88) if down else Vector2.ONE, 0.1)
+
+# Flash noir bref qui s'estompe : on arrive « en fondu » dans le nouveau district.
+func _on_district_fade(_district_id: String) -> void:
+	if district_fade == null:
+		return
+	district_fade.color = Color(0, 0, 0, 0.7)
+	var tw: Tween = create_tween()
+	tw.tween_property(district_fade, "color:a", 0.0, 0.35)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not (event is InputEventKey) or not event.pressed or event.echo:
@@ -175,9 +197,6 @@ func _toggle_cronica() -> void:
 	elif phone.has_method("open_cronica"):
 		phone.open_cronica()
 
-func _on_save_pressed() -> void:
-	SaveSystem.save_game()
-
 func _on_photo_pressed() -> void:
 	# Cache temporairement le HUD pour un cliché propre, puis attend une frame.
 	var was_visible: bool = visible
@@ -199,11 +218,6 @@ func _on_photo_pressed() -> void:
 		AchievementSystem.notify_first_photo()
 	else:
 		_flash_toast("📸 Échec de l'écriture", Color(0.95, 0.55, 0.45, 1))
-
-func _toggle_journal() -> void:
-	var journal: Node = get_tree().current_scene.get_node_or_null("JournalUI")
-	if journal and journal.has_method("toggle"):
-		journal.toggle()
 
 func _process(_delta: float) -> void:
 	# Stamina bar.
@@ -347,6 +361,14 @@ func _on_debt_paid(_amount: int, remaining: int) -> void:
 	if remaining <= 0 and CampaignManager.current_act == 3 and CampaignManager.chosen_endgame == CampaignManager.Endgame.NONE:
 		_flash_toast("Dette soldée — Va voir Ramos / Miguel / Padre pour clore ton règne")
 
+func _on_minigame_started(_id: String) -> void:
+	if menu_button:
+		menu_button.disabled = true
+
+func _on_minigame_ended(_id: String, _result: Dictionary) -> void:
+	if menu_button:
+		menu_button.disabled = false
+
 func _on_act_changed(new_act: int) -> void:
 	_refresh_debt()
 	_refresh_day()
@@ -377,6 +399,20 @@ func _refresh_debt() -> void:
 		debt_label.text = "Reinado : %s" % CampaignManager.reign_title()
 		debt_label.modulate = Color(1, 0.92, 0.55, 1)
 		return
+	# Objectif court terme = seuil de dette pour franchir l'acte. Évite que le
+	# joueur croie devoir farmer les 50 000 R$ d'un coup (le couronnement solde
+	# le reliquat) — on affiche l'acompte du prochain palier d'acte.
+	var threshold: int = CampaignManager.next_act_threshold()
+	if threshold > 0:
+		var nxt: int = CampaignManager.current_act + 1
+		if CampaignManager.debt_paid >= threshold:
+			debt_label.text = "Acte %d→%d : R$ %d ✓" % [CampaignManager.current_act, nxt, threshold]
+			debt_label.modulate = Color(0.55, 0.85, 0.55, 1)
+		else:
+			debt_label.text = "Acte %d→%d : R$ %d/%d" % [CampaignManager.current_act, nxt, CampaignManager.debt_paid, threshold]
+			debt_label.modulate = Color(1, 1, 1, 1)
+		return
+	# Acte 4 : plus de palier, on montre la dette restante (soldée au couronnement).
 	var remaining: int = CampaignManager.debt_remaining()
 	if remaining <= 0:
 		debt_label.text = "Dette: soldée"
@@ -436,8 +472,17 @@ func _on_quest_change_check_main(quest_id: String) -> void:
 		var hint: Dictionary = MAIN_NEXT_HINT[quest_id]
 		for next_id in hint.get("hide_signals", []):
 			_signaled_main_ids[next_id] = true
+		_last_milestone_text = hint.text
 		_flash_toast(hint.text, Color(0.95, 0.8, 0.4, 1), 3.5)
 	_check_new_main_available()
+
+# Rejoue le dernier toast jalon (tap sur le panneau Objectif). Retourne false
+# s'il n'y a aucun jalon mémorisé — l'appelant ouvre alors le diário à la place.
+func replay_last_milestone() -> bool:
+	if _last_milestone_text == "":
+		return false
+	_flash_toast(_last_milestone_text, Color(0.95, 0.8, 0.4, 1), 4.0)
+	return true
 
 # Mapping quest_id (juste complétée) → toast jalon avec NPC + lieu de la suite.
 # `hide_signals` = MAIN à pré-marquer comme déjà signalées pour empêcher les
@@ -655,80 +700,18 @@ func _flash_toast(text: String, color: Color = Color(0.7, 0.95, 0.7, 1), duratio
 	label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.7))
 	label.add_theme_constant_override("outline_size", 4)
 	toast_stack.add_child(label)
-	# Anim d'entrée : scale 0.85 → 1.0 avec léger overshoot.
+	# Anim d'entrée : scale 0.85 → 1.0 (léger overshoot) + fondu d'apparition.
 	label.pivot_offset = label.size / 2.0
 	label.scale = Vector2(0.85, 0.85)
+	var target_alpha: float = color.a
+	label.modulate.a = 0.0
 	var entrance: Tween = create_tween()
+	entrance.set_parallel(true)
 	entrance.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	entrance.tween_property(label, "scale", Vector2.ONE, 0.22)
+	entrance.tween_property(label, "modulate:a", target_alpha, 0.2)
 	# Fade-out + queue_free.
 	var fade: Tween = create_tween()
 	fade.tween_interval(duration)
 	fade.tween_property(label, "modulate:a", 0.0, 0.4)
 	fade.tween_callback(func(): if is_instance_valid(label): label.queue_free())
-
-# ─── Quest tracker (panel haut-droite) ───────────────────────────────────────
-# Affiche la quête MAIN active prioritaire (sinon une SIDE) + son 1er objectif
-# non complété. Caché si aucune quête active.
-
-func _refresh_tracker_for(_quest_id: String) -> void:
-	_refresh_tracker()
-
-func _refresh_tracker_for_obj(_quest_id: String, _obj_id: String) -> void:
-	_refresh_tracker()
-
-var _tracker_last_text: String = ""
-
-func _refresh_tracker() -> void:
-	if quest_tracker == null:
-		return
-	var quest: Quest = _pick_tracked_quest()
-	if quest == null:
-		quest_tracker.visible = false
-		_tracker_last_text = ""
-		return
-	var prefix: String = "✦" if quest.quest_type == Quest.QuestType.MAIN else "•"
-	var name_text: String = "%s %s" % [prefix, quest.display_name]
-	var obj_desc: String = _first_pending_obj_desc(quest)
-	if quest_tracker_name:
-		quest_tracker_name.text = name_text
-	if quest_tracker_objective:
-		quest_tracker_objective.text = "→ %s" % obj_desc
-	# Anim subtile uniquement quand le contenu change réellement.
-	var combined: String = name_text + " / " + obj_desc
-	var was_invisible: bool = not quest_tracker.visible
-	quest_tracker.visible = true
-	if combined != _tracker_last_text or was_invisible:
-		_tracker_last_text = combined
-		_play_tracker_punch()
-
-func _play_tracker_punch() -> void:
-	if quest_tracker == null:
-		return
-	quest_tracker.pivot_offset = quest_tracker.size / 2.0
-	quest_tracker.scale = Vector2(0.92, 0.92)
-	var tw: Tween = create_tween()
-	tw.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	tw.tween_property(quest_tracker, "scale", Vector2.ONE, 0.22)
-
-# Préfère la MAIN active la plus récente ; à défaut, n'importe quelle active.
-func _pick_tracked_quest() -> Quest:
-	var active: Array[String] = QuestManager.get_active_ids()
-	var fallback: Quest = null
-	# Itère en ordre inverse pour prioriser la plus récente
-	for i in range(active.size() - 1, -1, -1):
-		var q: Quest = QuestManager.get_quest(active[i])
-		if q == null:
-			continue
-		if q.quest_type == Quest.QuestType.MAIN:
-			return q
-		if fallback == null:
-			fallback = q
-	return fallback
-
-func _first_pending_obj_desc(quest: Quest) -> String:
-	var state: Dictionary = QuestManager.get_objectives_state(quest.id)
-	for obj in quest.objectives:
-		if not bool(state.get(obj.id, false)):
-			return obj.description
-	return "Retourner voir le contact"

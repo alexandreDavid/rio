@@ -14,11 +14,15 @@ const PAGES: Array = [
 	},
 	{
 		"title": "Le HUD",
-		"text": "En haut à droite :\n📱 téléphone (apps)\n📖 journal narratif\n💾 sauvegarder\n📸 prendre une photo (touche F)\n\nLa carte de quête (top droite) indique ta priorité actuelle. ✦ = trame, • = activité.",
+		"text": "En haut à droite : 📱 le téléphone (toutes les apps).\nEn bas à droite : 📸 prendre une photo.\nPas de bouton sauvegarde : le jeu s'enregistre tout seul.\n\nEn haut au centre : ton panneau Objectif. Il affiche en permanence l'acte en cours, le prochain pas à faire et le lieu où aller.",
+	},
+	{
+		"title": "Toujours savoir où aller",
+		"text": "Une flèche dorée — la boussole — pointe en continu vers ton objectif.\n\n📍 Sur place : un anneau marque le point exact.\n➤ Hors écran : la flèche se colle au bord, dans la bonne direction.\n🚕 Autre quartier : elle te renvoie au taxi avec le nom du quartier.\n\nUn message a défilé trop vite ? Tape le panneau Objectif pour revoir le dernier jalon.",
 	},
 	{
 		"title": "Le téléphone",
-		"text": "📱 ouvre tes apps :\n🚕 Taxi — voyager entre quartiers\n💪 Saúde — stats, dette, tracker d'acte\n📜 Crônica — toutes les quêtes\n📰 Notícias — manchettes du bairro\n📸 Álbum — tes photos\n🏆 Conquistas — jalons\n⚙ Ajustes — volumes audio",
+		"text": "📱 ouvre tes apps :\n🚕 Taxi — voyager entre quartiers\n💪 Saúde — stats, dette, tracker d'acte\n📜 Crônica — toutes les quêtes\n📖 Diário — relire les moments forts\n📰 Notícias — manchettes du bairro\n📸 Álbum — tes photos\n🏆 Conquistas — jalons\n⚙ Ajustes — volumes, sauvegardes",
 	},
 	{
 		"title": "Première étape",

@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_flip_calcadao"]
+script = ExtResource("2_obj")
+id = "flip_calcadao"
+description = "Retourner le calçadão avec la preuve (Copa)"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "prefeito_d8_campagne"
+display_name = "A virada"
+description = "Avec le dossier, tu peux retourner l'opinion. Le calçadão entier bascule du côté civique — et la dette s'efface au grand jour, par la vérité, pas par la soumission."
+journal_text = "Retourner sur le calçadão de Copacabana et renverser l'opinion avec la preuve."
+giver_npc_id = "prefeito_tioze"
+ink_knot = "spot_prefeito_tioze_d8_offer"
+objectives = Array[Resource]([SubResource("obj_flip_calcadao")])
+money_reward = 3000
+reputation_rewards = {}
+required_reputation = {}
+required_act = 0
+quest_type = 1
+prerequisite_quest_ids = Array[String](["prefeito_d7_tioze"])

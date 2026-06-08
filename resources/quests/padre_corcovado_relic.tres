@@ -26,5 +26,5 @@ ink_knot = "padre_corcovado_offer"
 objectives = Array[Resource]([SubResource("obj_bless"), SubResource("obj_return")])
 money_reward = 200
 reputation_rewards = {0: 5, 4: 2}
-required_reputation = {}
+required_reputation = {0: 10}
 required_act = 0

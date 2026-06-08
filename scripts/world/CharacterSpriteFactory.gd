@@ -82,8 +82,8 @@ const PALETTE_PANTS_COLOR: Array[Color] = [
 
 # --- Format sheet ---
 
-const CELL_W: int = 16
-const CELL_H: int = 24
+const CELL_W: int = 64
+const CELL_H: int = 96
 const DIR_DOWN: int = 0
 const DIR_UP: int = 1
 const DIR_RIGHT: int = 2
@@ -438,6 +438,115 @@ static func random_config(seed_value: int) -> Dictionary:
 static func _pick(rng: RandomNumberGenerator, arr: Array) -> Variant:
 	return arr[rng.randi() % arr.size()]
 
+# --- Couche éditeur (création de perso joueur) ---
+#
+# L'éditeur manipule des INDICES (int) dans des listes propres, pas des Color :
+# ça se sérialise trivialement en JSON et reste lisible dans la save. Les
+# listes EDITOR_* sont dédupliquées (les PALETTE_* portaient des doublons de
+# pondération pour le random — inadaptés à un cycle UI).
+
+const EDITOR_SHIRT_PATTERNS: Array[String] = ["solid", "stripe_h", "pocket"]
+const EDITOR_HAT_STYLES: Array[String] = ["none", "cap", "fedora", "beret", "scarf"]
+
+# Ordre d'affichage des attributs dans l'éditeur.
+const ATTRIBUTES: Array[String] = [
+	"skin", "hair_style", "hair_color",
+	"shirt_color", "shirt_pattern",
+	"pants_color", "hat_style", "hat_color",
+]
+
+const ATTRIBUTE_LABELS: Dictionary = {
+	"skin": "Pele",
+	"hair_style": "Cabelo",
+	"hair_color": "Cor do cabelo",
+	"shirt_color": "Camisa",
+	"shirt_pattern": "Estampa",
+	"pants_color": "Calça",
+	"hat_style": "Chapéu",
+	"hat_color": "Cor do chapéu",
+}
+
+# Libellés FR/PT-BR par valeur, alignés sur l'ordre des PALETTE_* / EDITOR_*.
+const VALUE_LABELS: Dictionary = {
+	"skin": ["Clara", "Morena clara", "Morena", "Negra"],
+	"hair_color": ["Preto", "Castanho escuro", "Castanho", "Loiro", "Ruivo", "Grisalho"],
+	"hair_style": ["Curto", "Médio", "Longo", "Coque", "Espetado", "Careca"],
+	"shirt_color": ["Vermelho", "Azul", "Verde", "Amarelo", "Bege", "Marrom", "Rosa", "Branco", "Preto"],
+	"shirt_pattern": ["Liso", "Listrado", "Bolso"],
+	"pants_color": ["Marrom", "Jeans", "Preto", "Cinza", "Bege"],
+	"hat_style": ["Nenhum", "Boné", "Fedora", "Boina", "Lenço"],
+	"hat_color": ["Preto", "Marrom", "Palha", "Vermelho", "Branco"],
+}
+
+# Apparence par défaut du joueur (sobrinho carioca lambda) — indices.
+const DEFAULT_INDICES: Dictionary = {
+	"skin": 1,           # morena clara
+	"hair_style": 0,     # curto
+	"hair_color": 1,     # castanho escuro
+	"shirt_color": 1,    # azul
+	"shirt_pattern": 0,  # liso
+	"pants_color": 1,    # jeans
+	"hat_style": 0,      # nenhum
+	"hat_color": 0,      # preto
+}
+
+# Nombre d'options sélectionnables pour un attribut donné.
+static func option_count(attr: String) -> int:
+	match attr:
+		"skin":          return PALETTE_SKIN.size()
+		"hair_color":    return PALETTE_HAIR_COLOR.size()
+		"hair_style":    return PALETTE_HAIR_STYLE.size()
+		"shirt_color":   return PALETTE_SHIRT_COLOR.size()
+		"shirt_pattern": return EDITOR_SHIRT_PATTERNS.size()
+		"pants_color":   return PALETTE_PANTS_COLOR.size()
+		"hat_style":     return EDITOR_HAT_STYLES.size()
+		"hat_color":     return PALETTE_HAT_COLOR.size()
+	return 1
+
+# Renvoie une copie des indices par défaut.
+static func default_indices() -> Dictionary:
+	return DEFAULT_INDICES.duplicate(true)
+
+# Nettoie un dict d'indices : remplit les clés manquantes avec le défaut et
+# borne chaque valeur dans [0, option_count). Résilient aux saves partielles.
+static func sanitize_indices(idx: Dictionary) -> Dictionary:
+	var out: Dictionary = {}
+	for attr in ATTRIBUTES:
+		var n: int = option_count(attr)
+		var v: int = int(idx.get(attr, DEFAULT_INDICES.get(attr, 0)))
+		out[attr] = clampi(v, 0, n - 1)
+	return out
+
+# Construit une config factory (Color/String) à partir d'indices.
+static func config_from_indices(idx: Dictionary) -> Dictionary:
+	var s: Dictionary = sanitize_indices(idx)
+	return {
+		"skin": PALETTE_SKIN[s["skin"]],
+		"hair_color": PALETTE_HAIR_COLOR[s["hair_color"]],
+		"hair_style": PALETTE_HAIR_STYLE[s["hair_style"]],
+		"shirt_color": PALETTE_SHIRT_COLOR[s["shirt_color"]],
+		"shirt_pattern": EDITOR_SHIRT_PATTERNS[s["shirt_pattern"]],
+		"pants_color": PALETTE_PANTS_COLOR[s["pants_color"]],
+		"hat_style": EDITOR_HAT_STYLES[s["hat_style"]],
+		"hat_color": PALETTE_HAT_COLOR[s["hat_color"]],
+	}
+
+# Libellé lisible d'une valeur d'attribut (pour l'UI de l'éditeur).
+static func value_label(attr: String, i: int) -> String:
+	var labels: Array = VALUE_LABELS.get(attr, [])
+	if i >= 0 and i < labels.size():
+		return String(labels[i])
+	return str(i)
+
+# Tire des indices aléatoires (pour le bouton « Aleatório » de l'éditeur).
+static func random_indices(seed_value: int) -> Dictionary:
+	var rng: RandomNumberGenerator = RandomNumberGenerator.new()
+	rng.seed = seed_value
+	var out: Dictionary = {}
+	for attr in ATTRIBUTES:
+		out[attr] = rng.randi() % option_count(attr)
+	return out
+
 # Construit (ou récupère du cache) une feuille 3×3 pour la config donnée.
 static func build_sheet(config: Dictionary) -> ImageTexture:
 	var key: int = _config_hash(config)
@@ -460,67 +569,129 @@ static func _config_hash(config: Dictionary) -> int:
 		parts.append(str(config.get(k, "")))
 	return "|".join(parts).hash()
 
-# Dessine une cellule 16×24 à l'offset (ox, oy) pour la direction `dir` et
-# le frame de marche `frame` (0=idle, 1=stepL, 2=stepR).
+# Dessine une cellule 64×96 à l'offset (ox, oy) pour la direction `dir`
+# (0=DOWN, 1=UP, 2=RIGHT) et le frame de marche `frame` (0=idle, 1=pas G,
+# 2=pas D). Silhouette arrondie (ellipses / rects à coins ronds), ombrage
+# multi-tons (lumière haut-gauche + occlusion aux jonctions), contour doux —
+# pensé pour un affichage filtré LINEAR (rendu illustré, non pixelisé).
+# Repère vertical (sur 96 px) : 8..46 tête · 44..52 cou · 50..76 torse ·
+# 74..94 jambes.
 static func _draw_cell(img: Image, ox: int, oy: int, dir: int, frame: int, c: Dictionary) -> void:
 	var skin: Color = c.get("skin", Color(0.92, 0.78, 0.62))
 	var hair_color: Color = c.get("hair_color", Color(0.18, 0.12, 0.08))
 	var hair_style: String = c.get("hair_style", "short")
-	var shirt_color: Color = c.get("shirt_color", Color(0.85, 0.55, 0.4))
+	var shirt: Color = c.get("shirt_color", Color(0.85, 0.55, 0.4))
 	var shirt_pattern: String = c.get("shirt_pattern", "solid")
-	var pants_color: Color = c.get("pants_color", Color(0.30, 0.25, 0.20))
+	var pants: Color = c.get("pants_color", Color(0.30, 0.25, 0.20))
 	var hat_style: String = c.get("hat_style", "none")
 	var hat_color: Color = c.get("hat_color", Color(0.18, 0.18, 0.22))
-	var outline: Color = Color(0.06, 0.05, 0.08, 1.0)
+
+	var line: Color = Color(0.10, 0.07, 0.10, 1.0)
+	var skin_sh: Color = skin.darkened(0.15)
+	var skin_sh2: Color = skin.darkened(0.30)
+	var skin_hi: Color = skin.lightened(0.12)
+	var shirt_sh: Color = shirt.darkened(0.18)
+	var shirt_sh2: Color = shirt.darkened(0.34)
+	var shirt_hi: Color = shirt.lightened(0.12)
+	var pants_sh: Color = pants.darkened(0.20)
+	var pants_sh2: Color = pants.darkened(0.36)
 	var face_visible: bool = (dir != DIR_UP)
 
-	# Cheveux (au-dessus + autour de la tête selon hair_style).
-	_draw_hair(img, ox, oy, dir, hair_style, hair_color)
-	# Tête (rows 4-9). Vue de dos = couvert tout entier de cheveux.
-	var head_main: Color = skin if face_visible else hair_color
-	_fill_rect(img, ox + 2, oy + 4, 12, 6, head_main)
-	# Frange / contour cheveux côté visage (DOWN ou RIGHT).
-	if face_visible and hair_style != "bald":
-		_fill_rect(img, ox + 2, oy + 4, 1, 2, hair_color)
-		_fill_rect(img, ox + 13, oy + 4, 1, 2, hair_color)
-		_fill_rect(img, ox + 2, oy + 4, 12, 1, hair_color)
-	# Yeux.
-	if dir == DIR_DOWN:
-		img.set_pixel(ox + 5, oy + 7, outline)
-		img.set_pixel(ox + 10, oy + 7, outline)
-	elif dir == DIR_RIGHT:
-		img.set_pixel(ox + 10, oy + 7, outline)
-	# Cou.
-	if face_visible:
-		_fill_rect(img, ox + 6, oy + 9, 4, 1, skin)
-
-	# Corps (rows 10-17).
-	_fill_rect(img, ox + 3, oy + 10, 10, 8, shirt_color)
-	# Motif du shirt.
-	_draw_shirt_pattern(img, ox, oy, shirt_pattern, shirt_color)
-	# Bras (côtés du corps).
-	var arm_color: Color = shirt_color.darkened(0.15)
-	_fill_rect(img, ox + 1, oy + 10, 2, 5, arm_color)
-	_fill_rect(img, ox + 13, oy + 10, 2, 5, arm_color)
-	# Mains (skin tone).
-	_fill_rect(img, ox + 1, oy + 14, 2, 1, skin)
-	_fill_rect(img, ox + 13, oy + 14, 2, 1, skin)
-
-	# Jambes (rows 18-23) avec décalage de marche.
-	var l_off: int = 0
-	var r_off: int = 0
+	# Marche : une jambe levée/avancée, léger contre-balancement de buste.
+	var lift_l: int = 0
+	var lift_r: int = 0
+	var bob: int = 0
 	if frame == 1:
-		l_off = -1
+		lift_l = 4
+		bob = 1
 	elif frame == 2:
-		r_off = -1
-	_fill_rect(img, ox + 4, oy + 18 + l_off, 3, 6 - l_off, pants_color)
-	_fill_rect(img, ox + 9, oy + 18 + r_off, 3, 6 - r_off, pants_color)
+		lift_r = 4
+		bob = 1
 
-	# Chapeau optionnel (couvre les cheveux du sommet).
-	_draw_hat(img, ox, oy, dir, hat_style, hat_color)
+	# --- Jambes (sous le torse) ---
+	_rrect_o(img, ox + 24, oy + 74 - bob, 7, 21 - lift_l, pants, line, 2)
+	_fill_rect(img, ox + 28, oy + 76 - bob, 2, 16 - lift_l, pants_sh)
+	_rrect_o(img, ox + 33, oy + 74 - bob, 7, 21 - lift_r, pants, line, 2)
+	_fill_rect(img, ox + 37, oy + 76 - bob, 2, 16 - lift_r, pants_sh)
+	# chaussures (plus larges, sombres)
+	_rrect_o(img, ox + 22, oy + 92 - lift_l, 10, 4, pants_sh2, line, 2)
+	_rrect_o(img, ox + 33, oy + 92 - lift_r, 10, 4, pants_sh2, line, 2)
 
-	# Contour bas (ombre fine).
-	_fill_rect(img, ox + 4, oy + 23, 8, 1, outline)
+	# --- Bras (derrière le torse) + mains ---
+	var swing: int = 0
+	if frame == 1: swing = 1
+	elif frame == 2: swing = -1
+	_rrect_o(img, ox + 12, oy + 50 - bob + swing, 8, 22, shirt_sh, line, 3)
+	_rrect_o(img, ox + 44, oy + 50 - bob - swing, 8, 22, shirt_sh, line, 3)
+	_disc_o(img, ox + 16, oy + 73 - bob + swing, 4, 4, skin, line)
+	_disc_o(img, ox + 48, oy + 73 - bob - swing, 4, 4, skin_sh, line)
+
+	# --- Torse / chemise (épaules larges, taille resserrée) ---
+	_rrect_o(img, ox + 17, oy + 49 - bob, 30, 28, shirt, line, 7)
+	_fill_rect(img, ox + 40, oy + 52 - bob, 5, 22, shirt_sh)    # flanc droit
+	_fill_rect(img, ox + 19, oy + 52 - bob, 2, 22, shirt_hi)    # bord gauche
+	_fill_rect(img, ox + 22, oy + 49 - bob, 20, 3, shirt_sh2)   # occlusion col
+	_draw_shirt_pattern(img, ox, oy - bob, shirt_pattern, shirt)
+
+	# --- Cou ---
+	if face_visible:
+		_rrect_o(img, ox + 26, oy + 40, 12, 11, skin, line, 2)
+		_fill_rect(img, ox + 26, oy + 47, 12, 3, skin_sh2)  # ombre portée menton
+
+	# --- Tête (ellipse arrondie, 3 tons) ---
+	var head_main: Color = skin if face_visible else hair_color
+	var hcx: int = ox + 32
+	var hcy: int = oy + 27
+	_disc_o(img, hcx, hcy, 16, 19, head_main, line)
+	if face_visible:
+		# modelé : flanc droit ombré, joue gauche éclairée, occlusion bas.
+		_disc(img, hcx + 6, hcy + 1, 9, 17, skin_sh)
+		_disc(img, hcx + 9, hcy + 2, 6, 15, skin_sh2)
+		_disc(img, hcx - 8, hcy - 2, 5, 12, skin_hi)
+		_disc(img, hcx, hcy + 14, 12, 6, skin_sh)   # mâchoire ombrée
+		# oreilles
+		_disc_o(img, hcx - 16, hcy + 2, 3, 4, skin, line)
+		_disc_o(img, hcx + 16, hcy + 2, 3, 4, skin_sh, line)
+
+	# --- Visage ---
+	var white: Color = Color(0.97, 0.97, 0.94)
+	var iris: Color = Color(0.28, 0.20, 0.14)
+	var mouth: Color = skin.darkened(0.42)
+	if dir == DIR_DOWN:
+		# yeux
+		_disc(img, hcx - 7, hcy - 1, 4, 3, white)
+		_disc(img, hcx + 7, hcy - 1, 4, 3, white)
+		_disc(img, hcx - 6, hcy - 1, 2, 2, iris)
+		_disc(img, hcx + 8, hcy - 1, 2, 2, iris)
+		img.set_pixel(hcx - 7, hcy - 2, white)        # éclat
+		img.set_pixel(hcx + 7, hcy - 2, white)
+		# sourcils
+		_fill_rect(img, hcx - 10, hcy - 7, 7, 2, hair_color)
+		_fill_rect(img, hcx + 4, hcy - 7, 7, 2, hair_color)
+		# nez (arête claire + ombre droite)
+		_fill_rect(img, hcx - 1, hcy + 1, 2, 7, skin_hi)
+		_fill_rect(img, hcx + 1, hcy + 3, 2, 5, skin_sh2)
+		# bouche (léger sourire) + lèvre éclairée dessous
+		_fill_rect(img, hcx - 6, hcy + 11, 12, 2, mouth)
+		img.set_pixel(hcx - 7, hcy + 10, mouth)
+		img.set_pixel(hcx + 6, hcy + 10, mouth)
+		_fill_rect(img, hcx - 5, hcy + 13, 10, 1, skin_hi)
+	elif dir == DIR_RIGHT:
+		# profil tourné vers +x : nez saillant, un œil, bouche courte
+		_disc(img, hcx + 13, hcy + 2, 4, 6, skin)        # bombé du nez/joue
+		_fill_rect(img, hcx + 16, hcy + 1, 3, 3, skin)   # pointe du nez
+		img.set_pixel(hcx + 18, hcy + 3, line)
+		_disc(img, hcx + 5, hcy - 1, 3, 3, white)
+		_disc(img, hcx + 6, hcy - 1, 2, 2, iris)
+		_fill_rect(img, hcx + 2, hcy - 7, 7, 2, hair_color)
+		_fill_rect(img, hcx + 8, hcy + 11, 7, 2, mouth)
+		_disc_o(img, hcx - 11, hcy + 2, 3, 4, skin_sh, line)  # oreille arrière
+
+	# --- Cheveux (par-dessus la tête) ---
+	_draw_hair(img, ox, oy, dir, hair_style, hair_color)
+
+	# --- Chapeau ---
+	_draw_hat(img, ox, oy, dir, hat_style, hat_color, line)
 
 # --- Helpers de dessin ---
 
@@ -530,69 +701,147 @@ static func _fill_rect(img: Image, x: int, y: int, w: int, h: int, c: Color) -> 
 			if xx >= 0 and xx < img.get_width() and yy >= 0 and yy < img.get_height():
 				img.set_pixel(xx, yy, c)
 
-static func _draw_hair(img: Image, ox: int, oy: int, _dir: int, style: String, c: Color) -> void:
-	match style:
-		"bald":
-			pass
-		"short":
-			# Calotte courte 4 rangs.
-			_fill_rect(img, ox + 4, oy + 0, 8, 1, c)
-			_fill_rect(img, ox + 3, oy + 1, 10, 1, c)
-			_fill_rect(img, ox + 2, oy + 2, 12, 2, c)
-		"medium":
-			# Comme short + descend sur les côtés du visage (rows 4-7).
-			_fill_rect(img, ox + 4, oy + 0, 8, 1, c)
-			_fill_rect(img, ox + 3, oy + 1, 10, 1, c)
-			_fill_rect(img, ox + 2, oy + 2, 12, 2, c)
-			_fill_rect(img, ox + 2, oy + 4, 1, 4, c)
-			_fill_rect(img, ox + 13, oy + 4, 1, 4, c)
-		"long":
-			# Calotte courte + cheveux qui descendent jusqu'au cou (rows 4-9).
-			_fill_rect(img, ox + 4, oy + 0, 8, 1, c)
-			_fill_rect(img, ox + 3, oy + 1, 10, 1, c)
-			_fill_rect(img, ox + 2, oy + 2, 12, 2, c)
-			_fill_rect(img, ox + 2, oy + 4, 2, 6, c)
-			_fill_rect(img, ox + 12, oy + 4, 2, 6, c)
-		"bun":
-			# Calotte courte + chignon en boule au sommet.
-			_fill_rect(img, ox + 4, oy + 0, 8, 1, c)
-			_fill_rect(img, ox + 3, oy + 1, 10, 1, c)
-			_fill_rect(img, ox + 2, oy + 2, 12, 2, c)
-			# Chignon : petit dôme au-dessus.
-			_fill_rect(img, ox + 6, oy - 2, 4, 2, c)
-			_fill_rect(img, ox + 7, oy - 3, 2, 1, c)
-		"spiky":
-			# Pointes irrégulières sur le sommet.
-			_fill_rect(img, ox + 3, oy + 2, 10, 2, c)
-			_fill_rect(img, ox + 2, oy + 1, 1, 2, c)
-			_fill_rect(img, ox + 5, oy + 0, 1, 2, c)
-			_fill_rect(img, ox + 8, oy + 0, 1, 2, c)
-			_fill_rect(img, ox + 11, oy + 0, 1, 2, c)
-			_fill_rect(img, ox + 13, oy + 1, 1, 2, c)
+# Ellipse pleine centrée (cx, cy), demi-axes (rx, ry).
+static func _disc(img: Image, cx: int, cy: int, rx: int, ry: int, c: Color) -> void:
+	if rx <= 0 or ry <= 0:
+		return
+	for yy in range(cy - ry, cy + ry + 1):
+		var ny: float = float(yy - cy) / float(ry)
+		if absf(ny) > 1.0:
+			continue
+		var hw: int = int(round(sqrt(maxf(0.0, 1.0 - ny * ny)) * float(rx)))
+		_fill_rect(img, cx - hw, yy, hw * 2 + 1, 1, c)
 
-static func _draw_hat(img: Image, ox: int, oy: int, _dir: int, style: String, c: Color) -> void:
+# Ellipse `fill` avec contour 1 px `line` (dessine la ligne légèrement plus
+# large puis le remplissage par-dessus).
+static func _disc_o(img: Image, cx: int, cy: int, rx: int, ry: int, fill: Color, line: Color) -> void:
+	_disc(img, cx, cy, rx + 1, ry + 1, line)
+	_disc(img, cx, cy, rx, ry, fill)
+
+# Rectangle à coins arrondis (rayon r).
+static func _rrect(img: Image, x: int, y: int, w: int, h: int, c: Color, r: int) -> void:
+	if w <= 0 or h <= 0:
+		return
+	r = clampi(r, 0, mini(w, h) / 2)
+	for yy in range(h):
+		for xx in range(w):
+			var dx: int = 0
+			var dy: int = 0
+			if xx < r: dx = r - xx
+			elif xx >= w - r: dx = xx - (w - r - 1)
+			if yy < r: dy = r - yy
+			elif yy >= h - r: dy = yy - (h - r - 1)
+			if dx * dx + dy * dy <= r * r:
+				var px: int = x + xx
+				var py: int = y + yy
+				if px >= 0 and px < img.get_width() and py >= 0 and py < img.get_height():
+					img.set_pixel(px, py, c)
+
+# Rect arrondi `fill` + contour 1 px `line`.
+static func _rrect_o(img: Image, x: int, y: int, w: int, h: int, fill: Color, line: Color, r: int) -> void:
+	if w <= 0 or h <= 0:
+		return
+	_rrect(img, x, y, w, h, line, r)
+	if w > 2 and h > 2:
+		_rrect(img, x + 1, y + 1, w - 2, h - 2, fill, maxi(1, r - 1))
+
+# Calotte de cheveux : ellipse remplie mais bornée à `max_y` (les rangées
+# sous le front ne sont PAS peintes → le visage reste visible). Aucun
+# effacement transparent : on ne peint que des pixels opaques.
+static func _hair_cap(img: Image, cx: int, cy: int, rx: int, ry: int, c: Color, max_y: int) -> void:
+	if rx <= 0 or ry <= 0:
+		return
+	for yy in range(cy - ry, mini(cy + ry, max_y) + 1):
+		var ny: float = float(yy - cy) / float(ry)
+		if absf(ny) > 1.0:
+			continue
+		var hw: int = int(round(sqrt(maxf(0.0, 1.0 - ny * ny)) * float(rx)))
+		_fill_rect(img, cx - hw, yy, hw * 2 + 1, 1, c)
+
+# Cheveux posés PAR-DESSUS la tête. Tête centrée x≈32 (cy≈oy+27), sourcils
+# à y≈oy+20, yeux à y≈oy+26. La calotte est bornée au front (FH) : elle ne
+# descend jamais sur le visage. Les mèches latérales longent les tempes
+# (x16..20 / x44..48), hors de la zone des yeux (x25..43).
+static func _draw_hair(img: Image, ox: int, oy: int, dir: int, style: String, c: Color) -> void:
+	if style == "bald":
+		return
+	var hi: Color = c.lightened(0.26)
+	var sh: Color = c.darkened(0.26)
+	var cx: int = ox + 32
+	var fh: int = oy + 19  # ligne de front (bas de la calotte, au-dessus des sourcils)
+
+	if dir == DIR_UP:
+		# De dos : tout le crâne est chevelu, pas de visage à préserver.
+		_disc(img, cx, oy + 27, 18, 21, c)
+		_disc(img, cx + 7, oy + 28, 9, 16, sh)
+		_disc(img, cx - 7, oy + 18, 6, 9, hi)
+	elif style != "spiky":
+		_hair_cap(img, cx, oy + 26, 18, 20, c, fh)
+		_hair_cap(img, cx - 6, oy + 20, 8, 12, hi, fh - 4)   # reflet
+		_hair_cap(img, cx + 9, oy + 22, 6, 12, sh, fh)       # ombre droite
+
+	var side_bot: int = oy + 22
+	match style:
+		"short":
+			side_bot = oy + 27
+		"medium":
+			side_bot = oy + 42
+		"long":
+			side_bot = oy + 60
+			if dir == DIR_UP:
+				_disc(img, cx, oy + 50, 17, 16, c)   # masse dans la nuque
+				_disc(img, cx + 6, oy + 52, 9, 12, sh)
+		"bun":
+			_disc_o(img, cx, oy + 5, 7, 6, c, sh)    # chignon au sommet
+			_disc(img, cx - 2, oy + 3, 3, 3, hi)
+			side_bot = oy + 24
+		"spiky":
+			if dir != DIR_UP:
+				_hair_cap(img, cx, oy + 26, 17, 18, c, fh)  # base
+				for sx in [-14, -8, -2, 4, 10, 15]:
+					_fill_rect(img, cx + sx - 1, oy + 2, 4, 15, c)
+				_fill_rect(img, cx - 12, oy + 6, 3, 7, hi)
+			side_bot = oy + 24
+	# Mèches latérales (cadrent le visage) — uniquement de face/profil.
+	if dir != DIR_UP:
+		var sh_h: int = side_bot - (oy + 16)
+		if sh_h > 0:
+			_fill_rect(img, ox + 16, oy + 16, 4, sh_h, c)
+			_fill_rect(img, ox + 44, oy + 16, 4, sh_h, c)
+			_fill_rect(img, ox + 45, oy + 16, 2, sh_h, sh)
+
+# Chapeau : posé sur le sommet du crâne. Ne descend jamais sous y≈oy+22
+# (au-dessus des yeux oy+26). Aucun effacement transparent.
+static func _draw_hat(img: Image, ox: int, oy: int, _dir: int, style: String, c: Color, line: Color) -> void:
+	var sh: Color = c.darkened(0.26)
+	var hi: Color = c.lightened(0.18)
+	var cx: int = ox + 32
 	match style:
 		"none":
 			pass
 		"cap":
-			# Casquette : couronne plate + visière.
-			_fill_rect(img, ox + 2, oy + 1, 12, 2, c)
-			_fill_rect(img, ox + 1, oy + 3, 14, 1, c)  # visière
+			# Casquette : couronne bombée (bornée au front) + visière avant.
+			_hair_cap(img, cx, oy + 22, 18, 18, c, oy + 19)
+			_hair_cap(img, cx - 6, oy + 16, 7, 8, hi, oy + 16)
+			_hair_cap(img, cx + 8, oy + 18, 6, 9, sh, oy + 19)
+			_rrect_o(img, ox + 30, oy + 17, 26, 5, c, line, 2)  # visière
 		"fedora":
-			# Fedora : couronne plus haute + bord large.
-			_fill_rect(img, ox + 3, oy + 0, 10, 1, c)
-			_fill_rect(img, ox + 4, oy + 1, 8, 2, c)
-			_fill_rect(img, ox + 1, oy + 3, 14, 1, c)  # large bord
+			_rrect_o(img, ox + 22, oy + 2, 20, 15, c, line, 6)  # couronne
+			_fill_rect(img, ox + 23, oy + 12, 18, 2, sh)        # ruban
+			_disc_o(img, cx, oy + 17, 26, 4, c, line)           # bord large
+			_disc(img, cx - 8, oy + 7, 4, 4, hi)
 		"beret":
-			# Béret : disque souple incliné.
-			_fill_rect(img, ox + 4, oy + 1, 8, 2, c)
-			_fill_rect(img, ox + 3, oy + 2, 10, 1, c)
-			_fill_rect(img, ox + 11, oy + 0, 2, 1, c)  # pic incliné
+			_disc_o(img, cx - 1, oy + 11, 17, 8, c, line)
+			_disc(img, cx - 7, oy + 8, 5, 4, hi)
+			_disc(img, cx + 8, oy + 13, 5, 4, sh)
+			_fill_rect(img, ox + 46, oy + 5, 3, 3, c)            # petit pic
 		"scarf":
-			# Foulard : couvre cheveux + descend sur les oreilles.
-			_fill_rect(img, ox + 2, oy + 0, 12, 4, c)
-			_fill_rect(img, ox + 2, oy + 4, 1, 2, c)
-			_fill_rect(img, ox + 13, oy + 4, 1, 2, c)
+			# Foulard : épouse le crâne (borné un peu plus bas) + pans latéraux.
+			_hair_cap(img, cx, oy + 24, 18, 19, c, oy + 22)
+			_hair_cap(img, cx + 8, oy + 22, 6, 10, sh, oy + 22)
+			_hair_cap(img, cx - 7, oy + 16, 5, 6, hi, oy + 16)
+			_fill_rect(img, ox + 16, oy + 20, 4, 14, c)          # pan gauche
+			_fill_rect(img, ox + 44, oy + 20, 4, 14, c)          # pan droit
 
 static func _draw_shirt_pattern(img: Image, ox: int, oy: int, pattern: String, base: Color) -> void:
 	match pattern:
@@ -601,10 +850,10 @@ static func _draw_shirt_pattern(img: Image, ox: int, oy: int, pattern: String, b
 		"stripe_h":
 			# Bandes horizontales alternées (un peu plus claires).
 			var lighter: Color = base.lightened(0.18)
-			_fill_rect(img, ox + 3, oy + 11, 10, 1, lighter)
-			_fill_rect(img, ox + 3, oy + 14, 10, 1, lighter)
-			_fill_rect(img, ox + 3, oy + 17, 10, 1, lighter)
+			for sy in [54, 60, 66, 72]:
+				_fill_rect(img, ox + 19, oy + sy, 26, 3, lighter)
 		"pocket":
-			# Petite poche carrée sur le côté droit du torse.
-			var darker: Color = base.darkened(0.25)
-			_fill_rect(img, ox + 9, oy + 12, 3, 3, darker)
+			# Poche cousue à coins ronds sur le côté droit du torse.
+			var darker: Color = base.darkened(0.22)
+			_rrect_o(img, ox + 35, oy + 58, 9, 11, darker, base.darkened(0.4), 2)
+			_fill_rect(img, ox + 36, oy + 60, 7, 1, base.lightened(0.1))

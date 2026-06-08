@@ -25,6 +25,10 @@ const DIR_RIGHT: int = 2
 const DIR_LEFT: int = 3
 
 const DEFAULT_WALK_SPEED: float = 90.0
+# Plafond dur sur la durée d'un déplacement scripté : au-delà, le node accélère
+# pour ne jamais faire patienter le joueur plusieurs secondes (un perso qui
+# vient jusqu'à lui). Les courtes marches cinématiques ne sont pas affectées.
+const MAX_WALK_TIME: float = 2.4
 
 var _running: bool = false
 
@@ -63,7 +67,7 @@ func walk_npc_to(npc_id: String, target: Vector2, speed: float = DEFAULT_WALK_SP
 	if npc.has_method("play_walk"):
 		npc.call("play_walk", dir)
 	var dist: float = npc.global_position.distance_to(target)
-	var duration: float = max(0.2, dist / speed)
+	var duration: float = clampf(dist / speed, 0.2, MAX_WALK_TIME)
 	var t: Tween = create_tween()
 	t.tween_property(npc, "global_position", target, duration)
 	await t.finished
@@ -87,11 +91,13 @@ func walk_node_to(node: Node2D, target: Vector2, speed: float = DEFAULT_WALK_SPE
 			dir = DIR_DOWN if dy > 0 else DIR_UP
 		node.call("play_walk", dir)
 	var dist: float = node.global_position.distance_to(target)
-	var duration: float = max(0.2, dist / speed)
+	var duration: float = clampf(dist / speed, 0.2, MAX_WALK_TIME)
 	var t: Tween = create_tween()
 	t.tween_property(node, "global_position", target, duration)
 	await t.finished
-	if node.has_method("stop_walk"):
+	# Le node peut avoir été libéré pendant le tween (changement de scène, ou
+	# teardown des tests) — revérifier avant de toucher stop_walk.
+	if is_instance_valid(node) and node.has_method("stop_walk"):
 		node.call("stop_walk")
 
 # Lance un dialogue et bloque jusqu'à sa fin.

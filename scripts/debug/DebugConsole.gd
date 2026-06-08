@@ -95,8 +95,15 @@ func _skip_to_act(target: int) -> void:
 		# rejoue après un skip (le joueur n'a jamais cliqué Sortir).
 		CampaignManager.set_flag("intro_bump_seen")
 		CampaignManager.set_flag("intro_seen")
+		# Le prologue est requis par TOUS les patrons (Ramos/Tito/Padre/Magalhães).
+		# Sans ça, un acte 2 skippé reste bloqué sur « Va voir Ramos » : il
+		# n'offre rien tant que Pedrinho n'est pas retrouvé.
+		_complete_quest("prologue_pedrinho")
 		_complete_quest("act1_heritage")
 		_pay_up_to(CampaignManager.ACT1_THRESHOLD)
+		# Acte 2 immédiatement testable : nuit passée + famille vue → patrons dispo.
+		CampaignManager.set_flag("act1_closed")
+		CampaignManager.set_flag("home_visit_done")
 	# Acte 2 → 3 (nuit chez tio Zé puis 5k payés, pas de pacte voie scellée)
 	if target >= 3 and CampaignManager.current_act < 3:
 		for f in _PAYLOADS["act2_skip_flags"]:

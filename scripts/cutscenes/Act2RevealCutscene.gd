@@ -11,6 +11,10 @@ const URGENT_WALK_SPEED: float = 180.0  # plus rapide (urgence) — sur la derni
 const SUSPENSE_PAUSE: float = 0.6       # le Concierge fixe le joueur avant de parler
 
 static func run() -> void:
+	# Refonte : reveal « concierge = tio Zé » désormais via les spots tio Zé
+	# des voies (acte 2 légacy supprimé). Neutralisée, conservée vestigiale.
+	if true:
+		return
 	if CampaignManager.has_flag("act2_reveal_played"):
 		return
 	if GameManager.player == null:

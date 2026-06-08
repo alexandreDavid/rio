@@ -1,7 +1,7 @@
 extends RefCounted
 class_name Act3IntroCutscene
 
-# Cinématique d'entrée d'acte 3 : à 25 000 R$ payés, Dom Nilton lui-même quitte
+# Cinématique d'entrée d'acte 3 : au passage à l'acte 3, Dom Nilton lui-même quitte
 # son banc de l'Av. Atlântica et vient appeler le joueur. Marque officiellement
 # le passage à la phase de choix de voie. Joue une seule fois (flag act3_intro_played).
 # Si le joueur n'est pas sur Copacabana au moment de la bascule, on diffère

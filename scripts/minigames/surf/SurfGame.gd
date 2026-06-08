@@ -21,6 +21,10 @@ const ARENA_RIGHT: float = ARENA_W
 const BOARD_W: float = 60.0
 const BOARD_H: float = 120.0
 const BOARD_SPEED: float = 520.0
+# Inertie de la planche : ce qui distingue le surf du vélo (Bike répond au quart
+# de tour). On carve — la vitesse glisse vers la cible et la planche dérive quand
+# on lâche. Accélération en px/s² ; ~0.37 s pour atteindre la pleine vitesse.
+const BOARD_ACCEL: float = 1400.0
 
 const WAVE_H: float = 60.0
 const WAVE_START_SPEED: float = 220.0
@@ -42,6 +46,7 @@ var _time_left: float = DURATION
 var _lives: int = LIVES_START
 var _ended: bool = false
 var _wave_speed: float = WAVE_START_SPEED
+var _board_vel: Vector2 = Vector2.ZERO   # inertie de carve
 var _spawn_timer: float = 0.5
 var _spawn_interval: float = WAVE_SPAWN_INTERVAL_START
 var _iframes_left: float = 0.0
@@ -84,7 +89,9 @@ func _move_board(delta: float) -> void:
 	)
 	if dir.length() > 1.0:
 		dir = dir.normalized()
-	board.position += dir * BOARD_SPEED * delta
+	# Inertie : la vitesse glisse vers la cible (≠ Bike qui applique dir direct).
+	_board_vel = _board_vel.move_toward(dir * BOARD_SPEED, BOARD_ACCEL * delta)
+	board.position += _board_vel * delta
 	board.position.x = clamp(board.position.x, ARENA_LEFT, ARENA_RIGHT - BOARD_W)
 	board.position.y = clamp(board.position.y, ARENA_TOP, ARENA_BOTTOM - BOARD_H)
 	# Flash quand on a des i-frames.

@@ -50,7 +50,6 @@ offset_right = 2.0
 offset_bottom = 160.0
 color = Color(0.82, 0.82, 0.85, 0.6)
 
-# Atrium central avec verrière
 [node name="AtriumCeiling" type="ColorRect" parent="."]
 offset_left = -100.0
 offset_top = -150.0
@@ -72,7 +71,6 @@ offset_right = 100.0
 offset_bottom = -100.0
 color = Color(0.55, 0.55, 0.58, 1)
 
-# Boutique gauche (mode)
 [node name="ShopFashion" type="StaticBody2D" parent="."]
 position = Vector2(-180, -110)
 
@@ -110,7 +108,6 @@ horizontal_alignment = 1
 theme_override_font_sizes/font_size = 8
 theme_override_colors/font_color = Color(0.18, 0.18, 0.22, 1)
 
-# Boutique électronique
 [node name="ShopElectro" type="StaticBody2D" parent="."]
 position = Vector2(-60, -110)
 
@@ -148,7 +145,6 @@ horizontal_alignment = 1
 theme_override_font_sizes/font_size = 8
 theme_override_colors/font_color = Color(0.95, 0.95, 0.85, 1)
 
-# Food court
 [node name="FoodCourtBar" type="StaticBody2D" parent="."]
 position = Vector2(120, -110)
 
@@ -186,7 +182,6 @@ horizontal_alignment = 1
 theme_override_font_sizes/font_size = 8
 theme_override_colors/font_color = Color(0.18, 0.18, 0.22, 1)
 
-# Tables food court (sud de l'atrium)
 [node name="Table1" type="ColorRect" parent="."]
 offset_left = -100.0
 offset_top = 0.0
@@ -208,7 +203,6 @@ offset_right = 120.0
 offset_bottom = 30.0
 color = Color(0.85, 0.78, 0.65, 1)
 
-# Plante déco
 [node name="PlantA" type="ColorRect" parent="."]
 offset_left = -210.0
 offset_top = -30.0
@@ -223,7 +217,6 @@ offset_right = 210.0
 offset_bottom = -10.0
 color = Color(0.32, 0.55, 0.32, 1)
 
-# Escalators (en haut, allant vers étages)
 [node name="EscalatorUp" type="ColorRect" parent="."]
 offset_left = 160.0
 offset_top = -80.0
@@ -252,7 +245,6 @@ offset_right = 198.0
 offset_bottom = -57.0
 color = Color(0.32, 0.32, 0.35, 0.6)
 
-# Titre
 [node name="Title" type="Label" parent="."]
 offset_left = -120.0
 offset_top = -178.0
@@ -299,7 +291,6 @@ is_exit = true
 [node name="SpawnPoint" type="Marker2D" parent="."]
 position = Vector2(0, 125)
 
-# Shoppers ambient
 [node name="ShopperA" parent="." instance=ExtResource("2_wander")]
 position = Vector2(-160, 60)
 color = Color(0.85, 0.62, 0.78, 1)
@@ -327,7 +318,6 @@ speed = 40.0
 pause_at_waypoints = 0.3
 look_at_player_distance = 40.0
 
-# Vendeur food court
 [node name="FoodVendor" parent="." instance=ExtResource("2_wander")]
 position = Vector2(120, -90)
 color = Color(0.42, 0.32, 0.22, 1)

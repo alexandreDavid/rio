@@ -1,0 +1,138 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/props/BuildingDoor.tscn" id="1_door"]
+[ext_resource type="PackedScene" path="res://scenes/props/ReactiveDialogueSpot.tscn" id="2_reactive"]
+
+[sub_resource type="RectangleShape2D" id="WallH"]
+size = Vector2(360, 12)
+
+[sub_resource type="RectangleShape2D" id="WallV"]
+size = Vector2(12, 220)
+
+[sub_resource type="RectangleShape2D" id="CounterShape"]
+size = Vector2(220, 22)
+
+[node name="ForteColomboInterior" type="Node2D"]
+
+[node name="Floor" type="ColorRect" parent="."]
+offset_left = -180.0
+offset_top = -110.0
+offset_right = 180.0
+offset_bottom = 110.0
+color = Color(0.95, 0.92, 0.85, 1)
+
+[node name="TileBand1" type="ColorRect" parent="."]
+offset_left = -180.0
+offset_top = -50.0
+offset_right = 180.0
+offset_bottom = -48.0
+color = Color(0.78, 0.62, 0.42, 1)
+
+[node name="TileBand2" type="ColorRect" parent="."]
+offset_left = -180.0
+offset_top = 50.0
+offset_right = 180.0
+offset_bottom = 52.0
+color = Color(0.78, 0.62, 0.42, 1)
+
+[node name="Sign" type="Label" parent="."]
+offset_left = -160.0
+offset_top = -130.0
+offset_right = 160.0
+offset_bottom = -114.0
+text = "CAFÉ COLOMBO DO FORTE"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.55, 0.32, 0.18, 1)
+
+[node name="WallTop" type="StaticBody2D" parent="."]
+position = Vector2(0, -110)
+
+[node name="Shape" type="CollisionShape2D" parent="WallTop"]
+shape = SubResource("WallH")
+
+[node name="WallBottom" type="StaticBody2D" parent="."]
+position = Vector2(0, 110)
+
+[node name="Shape" type="CollisionShape2D" parent="WallBottom"]
+shape = SubResource("WallH")
+
+[node name="WallLeft" type="StaticBody2D" parent="."]
+position = Vector2(-180, 0)
+
+[node name="Shape" type="CollisionShape2D" parent="WallLeft"]
+shape = SubResource("WallV")
+
+[node name="WallRight" type="StaticBody2D" parent="."]
+position = Vector2(180, 0)
+
+[node name="Shape" type="CollisionShape2D" parent="WallRight"]
+shape = SubResource("WallV")
+
+[node name="Counter" type="StaticBody2D" parent="."]
+position = Vector2(0, -60)
+
+[node name="Shape" type="CollisionShape2D" parent="Counter"]
+shape = SubResource("CounterShape")
+
+[node name="Rect" type="ColorRect" parent="Counter"]
+offset_left = -110.0
+offset_top = -11.0
+offset_right = 110.0
+offset_bottom = 11.0
+color = Color(0.45, 0.28, 0.18, 1)
+
+[node name="EspressoMachine" type="ColorRect" parent="Counter"]
+offset_left = -40.0
+offset_top = -20.0
+offset_right = 0.0
+offset_bottom = -11.0
+color = Color(0.7, 0.7, 0.72, 1)
+
+[node name="CupStack" type="ColorRect" parent="Counter"]
+offset_left = 30.0
+offset_top = -18.0
+offset_right = 60.0
+offset_bottom = -11.0
+color = Color(0.92, 0.92, 0.9, 1)
+
+[node name="Window" type="ColorRect" parent="."]
+offset_left = 140.0
+offset_top = -100.0
+offset_right = 178.0
+offset_bottom = -60.0
+color = Color(0.55, 0.78, 0.92, 0.7)
+
+[node name="BaristaSpot" parent="." instance=ExtResource("2_reactive")]
+position = Vector2(0, -38)
+npc_id = "forte_colombo_barista"
+prompt = "Parler au barista"
+character_seed = 80201
+variants = [{
+"id": "intro",
+"speaker": "Barista (Colombo)",
+"text": "*essuie une tasse, sourire de service* Bem-vindo au Colombo do Forte, freguês. Vue sur la baie, café 100% Minas. Tu veux un cafezinho ? Trois reais.",
+"choices": ["Plus tard, obrigado"]
+}]
+
+[node name="Table1" type="ColorRect" parent="."]
+offset_left = -120.0
+offset_top = 10.0
+offset_right = -80.0
+offset_bottom = 50.0
+color = Color(0.62, 0.42, 0.28, 1)
+
+[node name="Table2" type="ColorRect" parent="."]
+offset_left = 80.0
+offset_top = 10.0
+offset_right = 120.0
+offset_bottom = 50.0
+color = Color(0.62, 0.42, 0.28, 1)
+
+[node name="ExitDoor" parent="." instance=ExtResource("1_door")]
+position = Vector2(0, 105)
+prompt_text = "Sortir du café"
+is_exit = true
+
+[node name="SpawnPoint" type="Marker2D" parent="."]
+position = Vector2(0, 75)

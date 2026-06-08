@@ -1,20 +1,12 @@
 extends NPC
 
-# Carlos : café ISSIMO + livraisons vélo.
-# Acte 2 : signe la pétition de l'orfanato si demandée.
+# Carlos : café ISSIMO + livraisons vélo (SIDE). Conserve aussi le gala SIDE
+# de la Contessa et le tour de la Lagoa.
 
 const QUEST: String = "bike_delivery"
 const OBJ: String = "one_delivery"
-const ORFANATO: String = "act2_padre_orfanato"
-const ORFANATO_OBJ: String = "signed_carlos"
-const ENDORSE: String = "act3_prefeito_endorsements"
-const ENDORSE_OBJ: String = "endorse_carlos"
 const GALA: String = "act2_contessa_gala"
 const GALA_OBJ: String = "secured_sponsor"
-const AUDIENCIA: String = "act4_prefeito_audiencia"
-const AUDIENCIA_OBJ: String = "heard_carlos"
-const TRIBUTO: String = "act4_trafico_tributo"
-const TRIBUTO_OBJ: String = "tribute_carlos"
 const LAGOA: String = "carlos_lagoa_volta"
 
 func _on_interacted(_by: Node) -> void:
@@ -23,42 +15,17 @@ func _on_interacted(_by: Node) -> void:
 	var knot: String = NPCAffinity.knot_for_tier_or_phase(data.id, data.ink_knot,
 			"carlos_chat_warm", "carlos_chat_familiar",
 			"carlos_chat_morning", "carlos_chat_afternoon", "carlos_chat_evening")
-	# Acte 3 endorsement Prefeito (avant le finale eleicao).
-	if QuestManager.is_active(ENDORSE):
-		var end_state: Dictionary = QuestManager.get_objectives_state(ENDORSE)
-		if not end_state.get(ENDORSE_OBJ, false):
-			DialogueBridge.start_dialogue(data.id, "carlos_act3_endorse")
-			return
-	# Acte 4 priorité : doléance (Prefeito) ou tribut (Tráfico).
-	if QuestManager.is_active(AUDIENCIA):
-		var aud: Dictionary = QuestManager.get_objectives_state(AUDIENCIA)
-		if not aud.get(AUDIENCIA_OBJ, false):
-			DialogueBridge.start_dialogue(data.id, "carlos_act4_audiencia")
-			return
-	if QuestManager.is_active(TRIBUTO):
-		var trib: Dictionary = QuestManager.get_objectives_state(TRIBUTO)
-		if not trib.get(TRIBUTO_OBJ, false):
-			DialogueBridge.start_dialogue(data.id, "carlos_act4_tributo")
-			return
 	if QuestManager.is_active(GALA):
 		var gala_state: Dictionary = QuestManager.get_objectives_state(GALA)
 		if not gala_state.get(GALA_OBJ, false):
 			DialogueBridge.start_dialogue(data.id, "carlos_act2_gala")
 			return
-	if QuestManager.is_active(ORFANATO):
-		var orf: Dictionary = QuestManager.get_objectives_state(ORFANATO)
-		if not orf.get(ORFANATO_OBJ, false):
-			knot = "carlos_act2_petition"
-			DialogueBridge.start_dialogue(data.id, knot)
-			return
 	# Side quest : tour de la Lagoa (après une livraison vélo).
 	if QuestManager.is_active(LAGOA):
-		knot = "carlos_lagoa_remind"
-		DialogueBridge.start_dialogue(data.id, knot)
+		DialogueBridge.start_dialogue(data.id, "carlos_lagoa_remind")
 		return
 	elif QuestManager.is_available(LAGOA) and QuestManager.is_completed(QUEST):
-		knot = "carlos_lagoa_offer"
-		DialogueBridge.start_dialogue(data.id, knot)
+		DialogueBridge.start_dialogue(data.id, "carlos_lagoa_offer")
 		return
 	if QuestManager.is_completed(QUEST):
 		knot = "carlos_thanks"

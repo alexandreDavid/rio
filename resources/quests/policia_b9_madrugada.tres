@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_complete_madrugada"]
+script = ExtResource("2_obj")
+id = "complete_madrugada"
+description = "Lancer l'Operação Madrugada avec le Capitão Ramos"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "policia_b9_madrugada"
+display_name = "Operação Madrugada"
+description = "La dernière nuit. Ramos a son mandat ; la PM tombe sur le morro. Si tu y es, tu deviens Chefe de Polícia honoraire — le bairro saura à qui il doit la paix."
+journal_text = "Retrouver Ramos pour lancer l'Operação Madrugada."
+giver_npc_id = "policia_seguranca"
+ink_knot = "spot_policia_seguranca_b9_offer"
+objectives = Array[Resource]([SubResource("obj_complete_madrugada")])
+money_reward = 0
+reputation_rewards = {}
+required_reputation = {}
+required_act = 0
+quest_type = 1
+prerequisite_quest_ids = Array[String](["policia_b8_seguranca"])

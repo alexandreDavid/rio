@@ -3,7 +3,6 @@
 [ext_resource type="Script" path="res://scripts/player/PlayerController.gd" id="1_player"]
 [ext_resource type="Script" path="res://scripts/player/Inventory.gd" id="2_inv"]
 [ext_resource type="Script" path="res://scripts/player/Stamina.gd" id="3_stam"]
-[ext_resource type="Texture2D" path="res://assets/sprites/player_walk.png" id="4_chars"]
 
 [sub_resource type="RectangleShape2D" id="PlayerShape"]
 size = Vector2(14, 20)
@@ -18,10 +17,10 @@ shape = SubResource("PlayerShape")
 [node name="Visual" type="Node2D" parent="."]
 
 [node name="Sprite2D" type="Sprite2D" parent="Visual"]
-texture = ExtResource("4_chars")
+texture_filter = 2
 region_enabled = true
-region_rect = Rect2(0, 0, 256, 256)
-scale = Vector2(0.1875, 0.1875)
+region_rect = Rect2(0, 0, 64, 96)
+scale = Vector2(0.5, 0.5)
 
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(3, 3)

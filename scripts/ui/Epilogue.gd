@@ -36,6 +36,11 @@ const EPILOGUES: Dictionary = {
 		"subtitle": "« A maison bleue ne ferme jamais »",
 		"body": "L'Operação Madrugada a duré quatre heures. À 7h, la presse braquait ses caméras sur Capitão Ramos — et toi, deux pas derrière, casquette plate, bras croisés. Le Morro a perdu trois caches d'armes et une tonne de poudre. Tito a disparu vers Niterói.\n\nLe lendemain, t'as ta plaque officielle, ton bureau au poste, et un bureau secondaire à l'Academia (Ramos insiste). La famille bleue te tape dans le dos jusqu'à te laisser des bleus. Le Padre te bénit dans la rue, mãe pleure de soulagement et te repasse ton uniforme à la vapeur tous les soirs.\n\nVovó, elle, n'a rien dit. Elle a simplement éteint la radio quand le journaliste a parlé d'« opération exemplaire ». Elle tricote toujours, mais plus lentement. Tu sais qu'elle pense à tio Zé, à l'oncle qui a fui ce que tu as embrassé.\n\nLe Consortium s'est dissous officiellement. Officieusement, Dom Nilton tient une nouvelle blanchisserie à Botafogo, en règle, taxée. Tu lui as fait passer le mot que la rente du calçadão s'arrêtait. Il t'a répondu d'un clin d'œil malaisant.\n\nLe Palace a un nouveau Concierge — Zé est parti la veille de l'opération. Personne ne sait où. Tu ne demandes pas. La maison bleue ne ferme jamais. Et toi non plus.",
 	},
+	CampaignManager.Endgame.CONSORTIUM: {
+		"title": "Sócio do Consórcio",
+		"subtitle": "« A casa sempre ganha »",
+		"body": "Le Pacto da Barra a été paraphé dans un bureau climatisé du Riserva Uno, vue mer, sans un témoin du bairro. Magalhães a glissé le stylo dans ta poche de poitrine comme on épingle une médaille. Plus de dette : une rente, dans l'autre sens.\n\nLe lendemain, tu ne descends plus la favela — une berline aux vitres teintées t'y conduit quand il le faut. Les commerçants signent des « partenariats » avant même que tu demandes. Le calçadão baisse les yeux. Le Bar do Morro a retiré la photo de tio Zé du mur, par prudence.\n\nMãe a accepté l'argent sans le compter, le regard ailleurs. Vovó a posé son tricot quand tu es entré avec la voiture en bas, et ne l'a pas repris. « Tu paies plus, maintenant. Tu fais payer. » Elle n'a pas dit si c'était une fierté.\n\nLe Consortium ne va nulle part : il a un nouveau sócio carioca, présentable, né dans le morro — toi, sa meilleure vitrine. Dom Nilton et Magalhães trinquent à São Paulo et à Barra le même soir.\n\nTio Zé, derrière la réception du Palace, t'a vu passer en berline une seule fois. Il n'a pas balayé plus lentement, pas relevé la tête. Il a juste arrêté, une seconde, comme quelqu'un qui reconnaît une histoire qu'il a déjà vécue — et il a continué à balayer. La casa sempre ganha. Et tu es la casa.",
+	},
 	CampaignManager.Endgame.TRAFICO: {
 		"title": "Patrão do Morro",
 		"subtitle": "« O sangue do Zé corre nesta calçada »",
@@ -147,4 +152,5 @@ func _path_label(path: int) -> String:
 		CampaignManager.Endgame.PREFEITO: return "prefeito"
 		CampaignManager.Endgame.POLICIA: return "policia"
 		CampaignManager.Endgame.TRAFICO: return "trafico"
+		CampaignManager.Endgame.CONSORTIUM: return "consortium"
 	return "unknown"
