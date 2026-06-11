@@ -84,6 +84,7 @@ func save_game() -> bool:
 		"journal": NarrativeJournal.serialize(),
 		"affinity": NPCAffinity.serialize(),
 		"achievements": AchievementSystem.serialize(),
+		"activity": ActivityRewards.serialize(),
 		"player": _serialize_player(),
 	}
 	var path: String = current_save_path()
@@ -124,6 +125,7 @@ func load_game() -> bool:
 	DistrictManager.deserialize(data.get("district", {}))
 	NarrativeJournal.deserialize(data.get("journal", {}))
 	NPCAffinity.deserialize(data.get("affinity", {}))
+	ActivityRewards.deserialize(data.get("activity", {}))
 	AchievementSystem.deserialize(data.get("achievements", {}))
 	_deserialize_player(data.get("player", {}))
 	_broadcast_post_load()

@@ -10,7 +10,12 @@ extends Node
 const CHECK_INTERVAL_SEC: float = 60.0       # on vérifie chaque minute
 const COOLDOWN_SEC: float = 480.0            # 8 min mini entre 2 visites
 const MIN_DEBT_FOR_VISIT: int = 100          # pas de visite si la dette est presque finie
-const VISIT_CHANCE: float = 0.45             # probabilité par check si toutes conditions remplies
+# Probabilité de base par check ; grimpe avec les jours qui passent (le
+# Carnaval approche, les créanciers s'impatientent) — voir _visit_chance().
+const VISIT_CHANCE: float = 0.30
+
+func _visit_chance() -> float:
+	return clampf(VISIT_CHANCE + 0.02 * float(TimeOfDay.day_count), VISIT_CHANCE, 0.85)
 
 # Pondération des scénarios. Plus la dette est élevée, plus les durs scénarios
 # (raid, ultimatum) montent. Calculé dynamiquement dans _pick_scenario().

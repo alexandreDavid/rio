@@ -65,6 +65,7 @@ func _ready() -> void:
 	EventBus.minigame_ended.connect(_on_minigame_ended)
 	EventBus.quest_accepted.connect(_on_quest_change_check_main)
 	EventBus.quest_completed.connect(_on_quest_change_check_main)
+	EventBus.notification_requested.connect(func(t: String, c: Color): _flash_toast(t, c, 2.4))
 	SaveSystem.save_committed.connect(_on_save_committed)
 	SaveSystem.save_loaded.connect(_on_save_loaded)
 	DynamicMissionManager.mission_completed.connect(_on_dynamic_mission_completed)
@@ -389,7 +390,7 @@ func _refresh_day() -> void:
 			TimeOfDay.Phase.EVENING: "🌙 Soir",
 		}
 		var phase_text: String = icons.get(TimeOfDay.current_phase, "")
-		day_label.text = "Jour %d · Acte %d · %s" % [TimeOfDay.day_count, CampaignManager.current_act, phase_text]
+		day_label.text = "%s · Acte %d · %s" % [CarnavalCalendar.hud_label(), CampaignManager.current_act, phase_text]
 
 func _refresh_debt() -> void:
 	if debt_label == null:

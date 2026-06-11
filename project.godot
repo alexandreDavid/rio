@@ -43,6 +43,8 @@ CreditorVisitManager="*res://scripts/core/CreditorVisitManager.gd"
 NPCAffinity="*res://scripts/core/NPCAffinity.gd"
 AchievementSystem="*res://scripts/core/AchievementSystem.gd"
 Settings="*res://scripts/core/Settings.gd"
+CarnavalCalendar="*res://scripts/core/CarnavalCalendar.gd"
+ActivityRewards="*res://scripts/core/ActivityRewards.gd"
 DebugConsole="*res://scripts/debug/DebugConsole.gd"
 
 [display]

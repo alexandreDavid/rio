@@ -24,6 +24,13 @@ func _on_dialogue_ended(npc_id: String) -> void:
 func count(npc_id: String) -> int:
 	return int(_counts.get(npc_id, 0))
 
+# Crédit d'affinité hors dialogue (ex. activité partagée : un match de volley
+# avec Camila compte comme une vraie interaction — cf. ActivityRewards).
+func bump(npc_id: String, amount: int = 1) -> void:
+	if npc_id == "":
+		return
+	_counts[npc_id] = int(_counts.get(npc_id, 0)) + amount
+
 func tier(npc_id: String) -> int:
 	var c: int = count(npc_id)
 	if c >= FAMILIAR_THRESHOLD:
