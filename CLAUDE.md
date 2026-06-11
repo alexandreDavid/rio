@@ -7,7 +7,7 @@ Langue de travail : **français** (code, commentaires, dialogues, UI).
 ## Stack
 - Godot **4.6** Forward+ (`project.godot` line `config/features`)
 - Scripts GDScript statiquement typés — préférer `Node2D` explicite aux `Variant` non typés
-- Dialogues : knots structurés (dicts `const KNOTS`) dans `scripts/dialogues/Act1..4Dialogues.gd` + `SideQuestDialogues.gd`, fusionnés au runtime par `DialogueBridge._merge_external_dialogues()`. `DialogueBridge` expose un contrat de signaux (`line_shown` / `choices_presented` / `dialogue_finished`) indépendant du moteur : `InkStoryLoader.gd` reste branché comme backend interchangeable, mais **le plugin inkgd n'est pas installé** et `ink/milho.ink` est un vestige non chargé — tout le contenu réel vit dans les dicts ci-dessus
+- Dialogues : knots structurés (dicts `const KNOTS`) dans `scripts/dialogues/Act1..4Dialogues.gd` + `Side{Plage,Services,Baia}Dialogues.gd` (SIDE re-splités par domaine), fusionnés au runtime par `DialogueBridge._merge_external_dialogues()`. `DialogueBridge` expose un contrat de signaux (`line_shown` / `choices_presented` / `dialogue_finished`) indépendant du moteur : `InkStoryLoader.gd` reste branché comme backend interchangeable, mais **le plugin inkgd n'est pas installé** et `ink/milho.ink` est un vestige non chargé — tout le contenu réel vit dans les dicts ci-dessus
 
 ## Autoloads (singletons)
 Ordre important dans `project.godot` — ne pas changer sans raison :
@@ -28,9 +28,9 @@ y = 64..128      Calçadão (motif vague noir/blanc)
 y = 128..400     Sable
 y = 400..600     Mer
 ```
-Constantes clés : `BUILDING_Y=-32`, `SECOND_ROW_Y=-160`, `POSTO_Y=168`, `PALACE_X=1700`, `POLICE_X=1200`, `ACADEMIA_X=700`, `COP_BAR_X=1380`.
+Constantes clés (dans `scripts/world/CopacabanaConfig.gd`, préchargé `Cfg` par le générateur) : `BUILDING_Y=-32`, `SECOND_ROW_Y=-160`, `POSTO_Y=168`, `PALACE_X=1700`, `POLICE_X=1200`, `ACADEMIA_X=700`, `COP_BAR_X=1380`.
 
-Limite de la zone jouable : `map_start_x=160`, `map_end_x=2200`, `total_w=2400` pour les strips de tiles.
+Limite de la zone jouable (bâtiments NPC) : `map_start_x=160`, `map_end_x=2200`. Les strips de tiles (sable, calçadão, route, mer) couvrent toute la map décorée : `Cfg.MAP_LEFT=-300` → `Cfg.MAP_RIGHT=3200`, soit `Cfg.MAP_TOTAL_W=3500` (inclut Forte à l'ouest et Leme à l'est).
 
 ## Z-index convention
 ```
@@ -54,7 +54,7 @@ Bandes Y des tuiles opaques (scannées par alpha > 128) :
 
 Colonnes (début de chaque tile) : `108, 266, 425, 584, 744, 903, 1062`. Largeur tile ≈ 143 px, hauteur ≈ 136 px.
 
-Régions utilisées (`scripts/world/CopacabanaGenerator.gd:65+`) :
+Régions utilisées (`scripts/world/CopacabanaConfig.gd`) :
 | Constante | Rect2 |
 |---|---|
 | `SAND_TILE_REGION` | `(128, 92, 103, 96)` |
@@ -111,7 +111,7 @@ Si un knot tente `accept_quest` sur une quête bloquée, `DialogueBridge._show_l
 ## Workflows fréquents
 - **Ajouter un NPC** : copier `scenes/npcs/NPC.tscn` → adapter script + ajouter les knots dans le bon `scripts/dialogues/*Dialogues.gd` → instancier dans `Copacabana.tscn` avec `position`
 - **Ajouter une quête** : créer un `.tres` dans `resources/quests/` → ajouter les knots d'offre/rappel/fin dans `scripts/dialogues/*Dialogues.gd` (l'`ink_knot` de la quête y pointe) → enregistrer dans `MainBoot.QUEST_RESOURCES` ; tagger `quest_type = 1` si MAIN et lister `prerequisite_quest_ids` ; vérifier avec `tools/check_quest_gating.gd`
-- **Ajouter un knot de dialogue** : éditer le fichier d'acte/domaine concerné (`Act1..4Dialogues.gd` / `SideQuestDialogues.gd`) — `const KNOTS` ; key = `ink_knot`, value = `{speaker, text, choices, on_choose?}`. La résolution runtime est par clé globale, le fichier choisi n'a pas d'incidence fonctionnelle (juste l'organisation)
+- **Ajouter un knot de dialogue** : éditer le fichier d'acte/domaine concerné (`Act1..4Dialogues.gd` / `Side{Plage,Services,Baia}Dialogues.gd`) — `const KNOTS` ; key = `ink_knot`, value = `{speaker, text, choices, on_choose?}`. La résolution runtime est par clé globale, le fichier choisi n'a pas d'incidence fonctionnelle (juste l'organisation)
 - **Ajouter une tuile / régler le tileset** : utiliser l'agent `tileset-atlas` (cf `.claude/agents/`)
 - **Tester** : `./run_tests.sh` (~3100 assertions, headless via `IntegrationTest.tscn` + `PlaythroughDriver.tscn`) ou ouvrir Godot
 - **Skip d'acte (debug build)** : `Ctrl+F1..F4` (`scripts/debug/DebugConsole.gd`) → reset / skip vers acte 2/3/4 avec pivots auto-complétés ; `Ctrl+Shift+F4` voie Tráfico, `Ctrl+Alt+F4` voie Prefeito

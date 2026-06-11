@@ -1,0 +1,648 @@
+extends "res://scripts/tests/IntegrationTestBase.gd"
+
+# Groupe : Monde, spots & navigation. Extrait du monolithe IntegrationTest.
+# run() rejoue les tests dans l'ordre d'origine (await préservé).
+
+func run() -> void:
+	await _test_interiors_no_overlap()
+	await _test_mac_door_destination_wired()
+	await _test_vehicles_follow_player_on_district_change()
+	await _test_copacabana_palace_declutter()
+	await _test_reactive_spots_visible()
+	await _test_spot_actions_reference_valid_quests()
+	await _test_beto_via_spots_end_to_end()
+	await _test_district_spawn_clear_of_exits()
+	await _test_walk_entries_clear_of_exits()
+	_test_npc_base_knots_exist()
+	_test_cutscene_dependencies()
+	await _test_intro_bump_flow()
+	_test_reactive_spots_default_variant()
+	_test_runtime_spot_action_applies()
+	_test_quest_objectives_reachable()
+	_test_navigation_director_targets()
+	await _test_mobile_controls_invariants()
+
+
+# Garde-fou : les intérieurs hors-monde (positions y≈-3000 dans Copacabana)
+# doivent rester distants l'un de l'autre, sinon ils se rendent les uns sur
+# les autres (cas réel : ForteColombo placé sur TioZeHouseInterior à (7200,
+# -3000)). Pairwise distance ≥ MIN_DIST.
+func _test_interiors_no_overlap() -> void:
+	_section("Intérieurs hors monde — pas de chevauchement")
+	var packed: PackedScene = load("res://scenes/world/Copacabana.tscn") as PackedScene
+	if packed == null:
+		_assert(false, "Copacabana.tscn charge")
+		return
+	var root: Node = packed.instantiate()
+	add_child(root)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var interiors: Array = []
+	for n in _all_descendants(root):
+		if not (n is Node2D):
+			continue
+		if String(n.name).ends_with("Interior"):
+			interiors.append(n)
+	const MIN_DIST: float = 500.0
+	for i in interiors.size():
+		for j in range(i + 1, interiors.size()):
+			var a: Node2D = interiors[i] as Node2D
+			var b: Node2D = interiors[j] as Node2D
+			var d: float = a.global_position.distance_to(b.global_position)
+			_assert(d >= MIN_DIST,
+				"intérieurs '%s' et '%s' distants de %.0f px (min %.0f)"
+					% [a.name, b.name, d, MIN_DIST])
+	root.queue_free()
+	await get_tree().process_frame
+
+
+# Garde-fou : la porte d'entrée du MAC (Niterói) doit avoir une destination
+# correctement câblée à runtime (vers MACInterior/SpawnPoint). Si le wiring
+# silencieux échoue, destination reste Vector2.ZERO → joueur téléporté au
+# monde origin = Copacabana. Cas réel signalé en jeu.
+func _test_mac_door_destination_wired() -> void:
+	_section("Niterói — DoorMAC.destination câblée vers MACInterior")
+	var packed: PackedScene = load("res://scenes/world/Copacabana.tscn") as PackedScene
+	if packed == null:
+		_assert(false, "Copacabana.tscn charge")
+		return
+	var root: Node = packed.instantiate()
+	add_child(root)
+	# Attendre 2 frames pour laisser le call_deferred du wiring de Niterói
+	# s'exécuter (NiteroiDistrict._ready fait call_deferred("_wire_mac_doors")).
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var niteroi: Node = _find_by_name_in(root, "NiteroiDistrict")
+	_assert(niteroi != null, "NiteroiDistrict instancié")
+	if niteroi != null:
+		var door: Node = niteroi.get_node_or_null("DoorMAC")
+		var spawn: Node = niteroi.get_node_or_null("MACInterior/SpawnPoint")
+		_assert(door != null, "DoorMAC présent")
+		_assert(spawn != null, "MACInterior/SpawnPoint présent")
+		if door != null and "destination" in door:
+			var dest: Vector2 = door.destination
+			_assert(dest != Vector2.ZERO,
+				"DoorMAC.destination câblée (≠ (0,0) — sinon téléport au monde origin = Copa)")
+			if spawn is Node2D:
+				var expected: Vector2 = (spawn as Node2D).global_position
+				_assert(dest.distance_to(expected) < 5.0,
+					"DoorMAC.destination = MAC SpawnPoint (delta < 5 px)")
+	root.queue_free()
+	await get_tree().process_frame
+
+
+# Garde-fou véhicules : après un changement de district (taxi ou piéton),
+# Politique véhicules : un seul de chaque type dans tout le jeu, chacun avec
+# une `home_position` (pos d'instanciation). Au changement de district, tout
+# véhicule non monté retourne à sa home_position — ne suit PAS le joueur.
+func _test_vehicles_follow_player_on_district_change() -> void:
+	_section("Véhicules — retour à la home_position au changement de district")
+	var packed: PackedScene = load("res://scenes/world/Copacabana.tscn") as PackedScene
+	if packed == null:
+		_assert(false, "Copacabana.tscn charge")
+		return
+	var root: Node = packed.instantiate()
+	add_child(root)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var player: Node = GameManager.player
+	_assert(player != null, "GameManager.player présent")
+	if player == null:
+		root.queue_free(); return
+	var vehicles: Array = get_tree().get_nodes_in_group("vehicle")
+	_assert(vehicles.size() >= 1, "Au moins un Rideable (groupe 'vehicle')")
+	# Pas plus d'1 véhicule par type (Bike / Car / Sup).
+	var counts: Dictionary = {}
+	for v in vehicles:
+		if v is Rideable:
+			var vid: String = String((v as Rideable).vehicle_id)
+			counts[vid] = int(counts.get(vid, 0)) + 1
+	for vid in counts:
+		_assert(int(counts[vid]) == 1,
+			"un seul véhicule '%s' dans le monde entier (compté %d)" % [vid, counts[vid]])
+	# Cache les home_positions avant de bouger.
+	var homes: Dictionary = {}
+	for v in vehicles:
+		if v is Rideable and not (v as Rideable).is_ridden():
+			homes[v] = (v as Node2D).global_position
+	# Bouge le joueur loin et déplace les véhicules ailleurs manuellement, puis
+	# travel_to → les véhicules doivent retomber sur leur home_position.
+	for v in vehicles:
+		if v is Node2D and v is Rideable and not (v as Rideable).is_ridden():
+			(v as Node2D).global_position = Vector2(99999, 99999)  # ailleurs
+	var fare: int = DistrictManager.get_fare("niteroi")
+	var inv: Node = (player as Node).get_node_or_null("Inventory")
+	if inv:
+		inv.call("add_money", fare + 100)
+	DistrictManager.travel_to("niteroi")
+	await get_tree().process_frame
+	for v in vehicles:
+		if not (v is Rideable):
+			continue
+		if (v as Rideable).is_ridden():
+			continue
+		if not homes.has(v):
+			continue
+		var d: float = (v as Node2D).global_position.distance_to(homes[v])
+		_assert(d < 5.0,
+			"véhicule '%s' revenu à sa home_position (delta %.0f px)" % [v.name, d])
+	root.queue_free()
+	await get_tree().process_frame
+
+
+func _test_copacabana_palace_declutter() -> void:
+	_section("Copacabana — Palace décongestionné + Beto visible/atteignable")
+	var packed: PackedScene = load("res://scenes/world/Copacabana.tscn") as PackedScene
+	if packed == null:
+		_assert(false, "Copacabana.tscn charge")
+		return
+	var root: Node = packed.instantiate()
+	add_child(root)
+	await get_tree().process_frame
+	for nm in ["TraficoTioZeSpot", "PoliciaTioZeSpot", "ConsortiumTioZeSpot", "PrefeitoTioZeSpot"]:
+		var s: Node = _find_by_name_in(root, nm)
+		_assert(s != null and "required_flag" in s and String(s.required_flag) != "",
+			"%s : required_flag posé (pas de foule fantôme au Palace)" % nm)
+	var beto: Node = _find_by_name_in(root, "BetoSpot")
+	_assert(beto != null, "BetoSpot présent")
+	if beto != null:
+		_assert(int(beto.character_seed) != 0,
+			"Beto visible (character_seed ≠ 0 — sinon introuvable)")
+		var bp: Vector2 = (beto as Node2D).global_position
+		for nm2 in ["Concierge", "TouristVIP", "MadameDubois", "RenatoSpot", "TraficoTioZeSpot"]:
+			var o: Node = _find_by_name_in(root, nm2)
+			if o is Node2D:
+				_assert(bp.distance_to((o as Node2D).global_position) > 120.0,
+					"BetoSpot éloigné de '%s' (mission jouable)" % nm2)
+	root.queue_free()
+	await get_tree().process_frame
+
+
+func _test_reactive_spots_visible() -> void:
+	_section("ReactiveDialogueSpot — spots quêteurs visibles (anti-introuvable)")
+	var scenes: Array = ["res://scenes/world/Copacabana.tscn"]
+	var dir: DirAccess = DirAccess.open("res://scenes/districts/")
+	if dir:
+		dir.list_dir_begin()
+		var fn: String = dir.get_next()
+		while fn != "":
+			if fn.ends_with(".tscn"):
+				scenes.append("res://scenes/districts/" + fn)
+			fn = dir.get_next()
+	for sc in scenes:
+		var packed: PackedScene = load(sc) as PackedScene
+		if packed == null:
+			continue
+		var root: Node = packed.instantiate()
+		add_child(root)
+		await get_tree().process_frame
+		_check_spots_visible(root, sc.get_file())
+		root.queue_free()
+		await get_tree().process_frame
+
+
+# Palace décongestionné : les 4 « tio Zé concierge » (un par voie) doivent
+# être gated par required_flag (sinon 4 figures identiques en permanence devant
+# le Palace) et Beto doit être visible (character_seed) et hors du cluster
+# Palace (sinon mission beto_lost injouable — il était invisible et noyé).
+# Garde-fou général : toute action `accept_quest` / `finish_quest` portée par
+# une variante de ReactiveDialogueSpot doit pointer vers une quête réellement
+# enregistrée, et l'objectif (pour finish_quest) doit exister sur cette quête.
+# Aurait attrapé C1 de l'audit (act3_policia_intel/intel_vizinha morts).
+func _test_spot_actions_reference_valid_quests() -> void:
+	_section("Spots — actions accept_quest/finish_quest valides")
+	# Re-registre des quêtes pour garantir QuestManager._quests peuplé.
+	for path in QUEST_RESOURCES:
+		if ResourceLoader.exists(path):
+			var q: Resource = load(path)
+			if q is Quest:
+				QuestManager.register_quest(q)
+	var scenes: Array = ["res://scenes/world/Copacabana.tscn"]
+	var dir: DirAccess = DirAccess.open("res://scenes/districts/")
+	if dir:
+		dir.list_dir_begin()
+		var fn: String = dir.get_next()
+		while fn != "":
+			if fn.ends_with(".tscn"):
+				scenes.append("res://scenes/districts/" + fn)
+			fn = dir.get_next()
+	for sc in scenes:
+		var packed: PackedScene = load(sc) as PackedScene
+		if packed == null:
+			continue
+		var root: Node = packed.instantiate()
+		add_child(root)
+		await get_tree().process_frame
+		_check_spot_actions(root, sc.get_file())
+		root.queue_free()
+		await get_tree().process_frame
+
+
+# Beto end-to-end via les vrais spots (Seu Jorge favela → Beto calçadão →
+# retour Jorge). Verrouille le découplage : VizinhaSpot ne donne plus la quête,
+# Jorge oui ; flags renommés proprement.
+func _test_beto_via_spots_end_to_end() -> void:
+	_section("Beto — chaîne complète via les spots (Jorge → Beto → retour)")
+	_reset_campaign_state()
+	# Prérequis : Jorge n'offre la quête qu'après le prologue résolu.
+	QuestManager.accept("prologue_pedrinho")
+	for obj_id in ["ask_mae", "ask_vovo", "ask_garoto", "find_pedrinho", "bring_home"]:
+		QuestManager.complete_objective("prologue_pedrinho", obj_id)
+	_assert(QuestManager.is_completed("prologue_pedrinho"), "prérequis prologue OK")
+	var fav: Node = (load(_FAVELA) as PackedScene).instantiate()
+	add_child(fav)
+	var cop: Node = (load(_COPA) as PackedScene).instantiate()
+	add_child(cop)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var jorge: Node = _find_by_name_in(fav, "JorgeSpot")
+	var beto: Node = _find_by_name_in(cop, "BetoSpot")
+	_assert(jorge != null and beto != null, "JorgeSpot et BetoSpot présents")
+	# 1) Seu Jorge propose la quête.
+	if jorge:
+		jorge._on_interacted(null)
+		if DialogueBridge.is_active():
+			DialogueBridge.choose(0)
+	_assert(QuestManager.is_active("beto_lost"),
+		"beto_lost accepté via Seu Jorge (pas VizinhaSpot)")
+	_assert(CampaignManager.has_flag("beto_quest_taken"),
+		"flag beto_quest_taken posé")
+	# 2) Beto sur le calçadão : objectif find_beto.
+	if beto:
+		beto._on_interacted(null)
+		if DialogueBridge.is_active():
+			DialogueBridge.choose(0)
+	_assert(QuestManager.get_objectives_state("beto_lost").get("find_beto", false),
+		"find_beto clos via BetoSpot")
+	_assert(CampaignManager.has_flag("beto_found"),
+		"flag beto_found posé")
+	# 3) Retour chez Jorge : quête complétée.
+	if jorge:
+		jorge._on_interacted(null)
+		if DialogueBridge.is_active():
+			DialogueBridge.choose(0)
+	_assert(QuestManager.is_completed("beto_lost"),
+		"beto_lost complétée via retour chez Jorge")
+	_assert(CampaignManager.has_flag("beto_returned"),
+		"flag beto_returned posé")
+	fav.queue_free()
+	cop.queue_free()
+	await get_tree().process_frame
+	await get_tree().process_frame
+	_reset_campaign_state()
+
+
+func _test_district_spawn_clear_of_exits() -> void:
+	_section("Districts — spawns hors des Area2D de sortie (anti ping-pong)")
+	var dir: DirAccess = DirAccess.open("res://scenes/districts/")
+	if dir == null:
+		_assert(false, "ouverture scenes/districts/")
+		return
+	dir.list_dir_begin()
+	var fname: String = dir.get_next()
+	while fname != "":
+		if fname.ends_with(".tscn"):
+			var packed: PackedScene = load("res://scenes/districts/" + fname) as PackedScene
+			if packed:
+				var root: Node = packed.instantiate()
+				add_child(root)
+				await get_tree().process_frame
+				_check_spawns_vs_exits(root, fname)
+				root.queue_free()
+				await get_tree().process_frame
+		fname = dir.get_next()
+
+
+func _test_walk_entries_clear_of_exits() -> void:
+	_section("WALK_ENTRIES — points d'arrivée hors des sorties (anti ping-pong piéton)")
+	for target_id in DistrictManager.WALK_ENTRIES:
+		if target_id == "copacabana":
+			continue  # arrivées en world-space, audit séparé
+		var scene_path: String = String(_DISTRICT_SCENE_PATHS.get(target_id, ""))
+		if scene_path == "":
+			continue
+		var packed: PackedScene = load(scene_path) as PackedScene
+		if packed == null:
+			continue
+		var root: Node = packed.instantiate()
+		add_child(root)
+		await get_tree().process_frame
+		# Index exits by target_district pour retrouver « la sortie qui revient
+		# vers le from_id de WALK_ENTRY ».
+		var exits_by_target: Dictionary = {}
+		for child in root.get_children():
+			if child is DistrictExit:
+				exits_by_target[String(child.target_district)] = child
+		for from_id in DistrictManager.WALK_ENTRIES[target_id]:
+			var local: Vector2 = DistrictManager.WALK_ENTRIES[target_id][from_id]
+			var exit: DistrictExit = exits_by_target.get(from_id)
+			if exit == null:
+				continue  # sortie symétrique pas modélisée — pas de risque ping-pong
+			var cs: CollisionShape2D = exit.get_node_or_null("CollisionShape2D")
+			if cs == null or not (cs.shape is RectangleShape2D):
+				continue
+			var half: Vector2 = (cs.shape as RectangleShape2D).size * 0.5
+			var c: Vector2 = exit.position + cs.position  # tous deux en local
+			var inside: bool = absf(local.x - c.x) < half.x + _SPAWN_EXIT_MARGIN \
+					and absf(local.y - c.y) < half.y + _SPAWN_EXIT_MARGIN
+			_assert(not inside,
+				"WALK_ENTRIES[%s][%s] %s hors de '%s' (sinon retour immédiat vers %s)"
+					% [target_id, from_id, local, exit.name, from_id])
+		root.queue_free()
+		await get_tree().process_frame
+
+
+# Garde-fou général : le knot de base (NPCData.ink_knot) est le fallback de
+# _on_interacted. S'il manque dans PLACEHOLDER_DIALOGUES, start_dialogue
+# n'émet ni ligne ni choix mais garde _active_npc_id → le jeu se fige (cas
+# ramos_intro). On vérifie TOUS les NPCData, pas juste une liste manuelle.
+func _test_npc_base_knots_exist() -> void:
+	_section("NPC — knot de base (ink_knot) défini pour chaque NPCData")
+	var dialogues: Dictionary = DialogueBridge.all_dialogues()
+	var dir: DirAccess = DirAccess.open(NPC_DATA_DIR)
+	if dir == null:
+		_assert(false, "ouverture %s" % NPC_DATA_DIR)
+		return
+	dir.list_dir_begin()
+	var fname: String = dir.get_next()
+	while fname != "":
+		if fname.ends_with(".tres"):
+			var res: Resource = load(NPC_DATA_DIR + fname)
+			if res is NPCData:
+				var nd: NPCData = res as NPCData
+				_assert(nd.ink_knot != "" and dialogues.has(nd.ink_knot),
+					"NPCData '%s' : knot de base '%s' présent (anti-freeze)"
+						% [nd.id, nd.ink_knot])
+		fname = dir.get_next()
+
+
+func _test_cutscene_dependencies() -> void:
+	_section("Dépendances des cinématiques (NPCs + knots)")
+	var dialogues: Dictionary = DialogueBridge.all_dialogues()
+	# Index NPCData par id pour vérifier la présence.
+	var npc_ids: Dictionary = {}
+	var dir: DirAccess = DirAccess.open(NPC_DATA_DIR)
+	if dir != null:
+		dir.list_dir_begin()
+		var fname: String = dir.get_next()
+		while fname != "":
+			if fname.ends_with(".tres"):
+				var res: Resource = load(NPC_DATA_DIR + fname)
+				if res is NPCData:
+					npc_ids[(res as NPCData).id] = true
+			fname = dir.get_next()
+	for cs in CUTSCENE_REQUIREMENTS:
+		for npc_id in cs.npcs:
+			_assert(npc_ids.has(npc_id), "%s : NPCData '%s' présent" % [cs.name, npc_id])
+		for knot in cs.knots:
+			_assert(dialogues.has(knot), "%s : knot '%s' présent" % [cs.name, knot])
+
+
+func _test_intro_bump_flow() -> void:
+	_section("Cinématique bump : clic Sortir de la maison → Seu João débarque")
+	# Sauvegarde flags
+	var saved_flags: Dictionary = CampaignManager.flags.duplicate()
+	CampaignManager.flags.clear()
+
+	# Charge le monde Copacabana (instancie FavelaDoMorro, HouseInterior, Player…)
+	var packed: PackedScene = load("res://scenes/world/Copacabana.tscn") as PackedScene
+	_assert(packed != null, "Copacabana.tscn charge")
+	var world: Node = packed.instantiate()
+	add_child(world)
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+
+	var player: Node = world.get_node_or_null("Player")
+	_assert(player != null, "Player présent dans le monde")
+	var house: Node = world.get_node_or_null("TioZeHouseInterior")
+	_assert(house != null, "TioZeHouseInterior présent")
+	var exit_door: Node = house.get_node_or_null("ExitDoor") if house else null
+	_assert(exit_door != null, "ExitDoor présente dans HouseInterior")
+	var sj: Node = NPCScheduler.get_npc("seu_joao")
+	_assert(sj != null, "Seu João enregistré au scheduler")
+
+	# État initial : Seu João caché + ExitDoor a le hook intro_bump_door
+	if exit_door != null:
+		_assert(exit_door.get("intro_bump_door") == true, "ExitDoor.intro_bump_door activé")
+	if sj != null:
+		_assert(not (sj as Node2D).visible, "Seu João caché au démarrage (avant bump)")
+		var sj_inter: Node = sj.get_node_or_null("Interactable")
+		if sj_inter != null and "enabled" in sj_inter:
+			_assert(not sj_inter.enabled, "Seu João Interactable désactivé au démarrage")
+
+	GameManager.player = player
+
+	# Simule le clic Sortir : émet directement le signal interacted de la porte.
+	if exit_door != null:
+		var door_inter: Node = exit_door.get_node_or_null("Interactable")
+		_assert(door_inter != null, "ExitDoor a un Interactable")
+		if door_inter:
+			door_inter.interacted.emit(player)
+	# Attends quelques frames pour que la cutscene démarre (set position + visible)
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+
+	if sj != null:
+		_assert((sj as Node2D).visible, "Seu João rendu visible par la cinématique")
+	# Vérifie que le joueur n'a PAS été téléporté dehors (still inside la maison)
+	var player_pos: Vector2 = (player as Node2D).global_position
+	_assert(player_pos.x > 6000 and player_pos.x < 8000, "Joueur reste dans HouseInterior (pas téléporté)")
+
+	# Cleanup : skip le reste de la cutscene (dialogue bloque sur dialogue_finished en headless)
+	CampaignManager.set_flag("intro_bump_seen")
+	world.queue_free()
+	await get_tree().process_frame
+	CampaignManager.flags = saved_flags
+
+
+func _test_reactive_spots_default_variant() -> void:
+	_section("ReactiveDialogueSpot — chaque spot a un fallback")
+	for entry in REACTIVE_SPOTS:
+		var packed: PackedScene = load(entry.scene) as PackedScene
+		if packed == null:
+			_assert(false, "scène %s charge" % entry.scene)
+			continue
+		var instance: Node = packed.instantiate()
+		add_child(instance)
+		for spot_name in entry.spots:
+			var spot: Node = _find_by_name_in(instance, spot_name)
+			_assert(spot != null, "%s/%s présent" % [entry.scene, spot_name])
+			if spot == null:
+				continue
+			# Reset flags pour simuler un état neuf.
+			var saved_flags: Dictionary = CampaignManager.flags.duplicate()
+			CampaignManager.flags.clear()
+			var act_save: int = CampaignManager.current_act
+			CampaignManager.current_act = 1
+			var v: Dictionary = spot._pick_variant()
+			_assert(not v.is_empty(),
+				"%s : variante par défaut existe (état vide)" % spot_name)
+			# Restore.
+			CampaignManager.flags = saved_flags
+			CampaignManager.current_act = act_save
+		instance.queue_free()
+		await get_tree().process_frame
+
+
+func _test_runtime_spot_action_applies() -> void:
+	_section("ReactiveDialogueSpot — action runtime appliquée via choose()")
+	# Régression : choose() lisait PLACEHOLDER_DIALOGUES et ignorait les
+	# dialogues runtime → finish_quest/accept_quest des spots ne
+	# s'appliquaient JAMAIS en jeu (prologue + 3 voies bloqués).
+	if QuestManager._quests.get("prologue_pedrinho") == null:
+		var q: Quest = load("res://resources/quests/prologue_pedrinho.tres") as Quest
+		if q:
+			QuestManager.register_quest(q)
+	# Repart d'un état AVAILABLE propre (erase seul → UNAVAILABLE → accept refuse).
+	QuestManager._objectives.erase("prologue_pedrinho")
+	QuestManager._state["prologue_pedrinho"] = QuestManager.State.AVAILABLE
+	_assert(QuestManager.accept("prologue_pedrinho"), "prologue_pedrinho accepté")
+	DialogueBridge.register_runtime_dialogue("spot_regress_runtime", {
+		"speaker": "Test",
+		"text": "...",
+		"choices": ["ok"],
+		"on_choose": {"0": {"finish_quest": {"quest": "prologue_pedrinho", "objective": "ask_mae", "payout": 0}}},
+	})
+	DialogueBridge.start_dialogue("regress_runtime", "spot_regress_runtime")
+	DialogueBridge.choose(0)
+	_assert(QuestManager.is_objective_done("prologue_pedrinho", "ask_mae"),
+		"finish_quest d'un knot runtime complète l'objectif via choose()")
+	# Laisse l'état neutre (AVAILABLE, non démarré) pour les tests suivants.
+	QuestManager._objectives.erase("prologue_pedrinho")
+	QuestManager._state["prologue_pedrinho"] = QuestManager.State.AVAILABLE
+
+
+func _test_quest_objectives_reachable() -> void:
+	_section("Chaque objectif est complétable (dialogue OU script connu)")
+	var dialogues: Dictionary = DialogueBridge.all_dialogues()
+	# Construis l'index { quest_id: [objective_ids] } depuis les finish_quest dans dialogues.
+	var dialogue_completions: Dictionary = {}
+	for knot in dialogues:
+		var on_choose: Dictionary = dialogues[knot].get("on_choose", {})
+		for idx in on_choose:
+			var act: Dictionary = on_choose[idx]
+			if act.has("finish_quest"):
+				var fq: Dictionary = act.finish_quest
+				var qid: String = fq.get("quest", "")
+				var oid: String = fq.get("objective", "")
+				if qid != "" and oid != "":
+					if not dialogue_completions.has(qid):
+						dialogue_completions[qid] = []
+					dialogue_completions[qid].append(oid)
+	# Pour chaque quête, chaque objectif doit être complétable via dialogue ou liste connue.
+	for path in QUEST_RESOURCES:
+		if not ResourceLoader.exists(path):
+			continue
+		var q: Quest = load(path) as Quest
+		if q == null:
+			continue
+		var dlg_obj_ids: Array = dialogue_completions.get(q.id, [])
+		var script_obj_ids: Array = SCRIPT_COMPLETED_OBJECTIVES.get(q.id, [])
+		for obj in q.objectives:
+			if obj.optional:
+				continue
+			var reachable: bool = dlg_obj_ids.has(obj.id) or script_obj_ids.has(obj.id)
+			_assert(reachable,
+				"quête '%s' objectif '%s' complétable (dialogue ou script connu)" % [q.id, obj.id])
+
+
+func _test_navigation_director_targets() -> void:
+	_section("NavigationDirector — cibles de guidage")
+	var nd: Node = get_node_or_null("/root/NavigationDirector")
+	_assert(nd != null, "autoload NavigationDirector présent")
+	if nd == null:
+		return
+	var step: Dictionary = nd.STEP
+	var valid_anchors: Array = ["", "calcadao", "atlantica", "palace", "consortium", "taxi", "cart"]
+	# 1. Intégrité de chaque entrée du registre de destinations.
+	for key in step:
+		var e: Dictionary = step[key]
+		_assert(String(e.get("text", "")) != "", "STEP %s a un texte" % key)
+		var d: String = e.get("dist", "")
+		_assert(d == "" or DistrictManager.DISTRICTS.has(d), "STEP %s district valide (%s)" % [key, d])
+		var a: String = e.get("anchor", "")
+		_assert(a in valid_anchors or a.begins_with("npc:"), "STEP %s anchor valide (%s)" % [key, a])
+	# 2. Chaque étape des quêtes MAIN de voie (A/B/C/D) a une cible résoluble.
+	var voie_prefixes: Array = ["trafico_a", "policia_b", "consortium_c", "prefeito_d"]
+	for path in QUEST_RESOURCES:
+		var res: Resource = load(path)
+		if not (res is Quest):
+			continue
+		var q: Quest = res as Quest
+		if q.quest_type != Quest.QuestType.MAIN:
+			continue
+		var is_voie: bool = false
+		for p in voie_prefixes:
+			if q.id.begins_with(p):
+				is_voie = true
+				break
+		if not is_voie:
+			continue
+		for obj in q.objectives:
+			var key2: String = "%s/%s" % [q.id, obj.id]
+			_assert(step.has(key2), "cible de guidage pour étape MAIN %s" % key2)
+
+
+# --- Vérifications « le jeu est jouable en mobile » ---
+
+# Tout le gameplay doit être atteignable au doigt : déplacement (joystick
+# virtuel), interaction (bouton à l'écran), téléphone (bouton 📱 du HUD),
+# choix de dialogue (boutons ≥ 44 pt). Aucune feature gated derrière le clavier.
+func _test_mobile_controls_invariants() -> void:
+	_section("Mobile — contrôles tactiles et cibles ≥ 44 pt")
+	# Actions d'input présentes (le bouton tactile InteractButton émet l'action
+	# "interact" ; le joystick pilote move_*).
+	for act in ["interact", "move_forward", "move_back", "move_left", "move_right"]:
+		_assert(InputMap.has_action(act), "action input '%s' définie" % act)
+	# MobileControls : joystick + bouton interact tactile, dimensionnés ≥ 44 pt.
+	var mc_packed: PackedScene = load("res://scenes/ui/MobileControls.tscn") as PackedScene
+	_assert(mc_packed != null, "MobileControls.tscn charge")
+	if mc_packed:
+		var mc: Node = mc_packed.instantiate()
+		add_child(mc)
+		await get_tree().process_frame
+		var ib: Button = mc.get_node_or_null("InteractButton") as Button
+		var joy: Node = mc.get_node_or_null("Joystick")
+		_assert(ib != null, "InteractButton (tactile) présent")
+		_assert(joy != null, "Joystick virtuel présent")
+		if ib:
+			var sz: Vector2 = ib.size
+			_assert(sz.x >= 44.0 and sz.y >= 44.0,
+				"InteractButton ≥ 44×44 pt (actuel %dx%d)" % [sz.x, sz.y])
+		mc.queue_free()
+		await get_tree().process_frame
+	# Mini-jeux : contrôles tactiles dédiés disponibles.
+	_assert(ResourceLoader.exists("res://scenes/ui/MinigameTouchControls.tscn"),
+		"MinigameTouchControls.tscn présent (mini-jeux jouables au doigt)")
+	# HUD : bouton 📱 d'ouverture du téléphone (entrée tactile vers les apps).
+	var hud_packed: PackedScene = load("res://scenes/ui/HUD.tscn") as PackedScene
+	_assert(hud_packed != null, "HUD.tscn charge")
+	if hud_packed:
+		var hud: Node = hud_packed.instantiate()
+		add_child(hud)
+		await get_tree().process_frame
+		var phone_btn: Button = hud.get_node_or_null("MenuButton") as Button
+		_assert(phone_btn != null and phone_btn.text.find("📱") >= 0,
+			"HUD : bouton 📱 (ouvre le téléphone au doigt)")
+		hud.queue_free()
+		await get_tree().process_frame
+	# DialogueUI : les choix sont des Button tappables ≥ 44 pt de haut.
+	var du_packed: PackedScene = load("res://scenes/ui/DialogueUI.tscn") as PackedScene
+	_assert(du_packed != null, "DialogueUI.tscn charge")
+	if du_packed:
+		var du: Node = du_packed.instantiate()
+		add_child(du)
+		await get_tree().process_frame
+		# Appel direct du handler (déterministe — évite la flakiness du
+		# round-trip de signal global selon l'ordre des tests).
+		du._on_choices_presented(["Choix A", "Choix B"])
+		await get_tree().process_frame
+		var cont: Node = du.get_node_or_null("Panel/Choices")
+		var ok_btn: bool = false
+		if cont and cont.get_child_count() >= 2:
+			var b0: Button = cont.get_child(0) as Button
+			ok_btn = b0 != null and b0.custom_minimum_size.y >= 44.0
+		_assert(ok_btn, "choix de dialogue = Button ≥ 44 pt de haut")
+		du.queue_free()
+		await get_tree().process_frame
+

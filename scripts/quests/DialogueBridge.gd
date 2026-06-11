@@ -82,7 +82,9 @@ const _EXTERNAL_DIALOGUES: Array[Script] = [
 	preload("res://scripts/dialogues/Act2Dialogues.gd"),
 	preload("res://scripts/dialogues/Act3Dialogues.gd"),
 	preload("res://scripts/dialogues/Act4Dialogues.gd"),
-	preload("res://scripts/dialogues/SideQuestDialogues.gd"),
+	preload("res://scripts/dialogues/SidePlageDialogues.gd"),
+	preload("res://scripts/dialogues/SideServicesDialogues.gd"),
+	preload("res://scripts/dialogues/SideBaiaDialogues.gd"),
 ]
 
 func _merge_external_dialogues() -> void:
