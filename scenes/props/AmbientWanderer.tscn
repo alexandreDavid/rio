@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://scripts/world/AmbientWanderer.gd" id="1_wanderer"]
 
 [node name="AmbientWanderer" type="Node2D"]
+z_index = 4
 script = ExtResource("1_wanderer")
 
 [node name="Shadow" type="ColorRect" parent="."]

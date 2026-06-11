@@ -7,6 +7,7 @@
 size = Vector2(56, 56)
 
 [node name="LostDog" type="Node2D"]
+z_index = 4
 script = ExtResource("1_pick")
 interactable = NodePath("Interactable")
 quest_id = "lost_dog"

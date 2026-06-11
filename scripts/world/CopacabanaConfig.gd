@@ -20,7 +20,8 @@ const BUILDING_COLORS: Array = [
 const WINDOW_COLOR: Color = Color(0.25, 0.35, 0.55, 1)
 const DOOR_COLOR: Color = Color(0.35, 0.25, 0.18, 1)
 
-const POSTO_COUNT: int = 5
+# 6 postos comme dans la réalité : Posto 6 collé au Forte (ouest), Posto 1 au Leme (est).
+const POSTO_COUNT: int = 6
 const POSTO_START_X: float = 300.0
 const POSTO_END_X: float = 2100.0
 const POSTO_Y: float = 168.0
@@ -38,6 +39,18 @@ const BUILDINGS_TEXTURE: String = "res://assets/sprites/buildings_ai_clean.png"
 const MAP_LEFT: float = -300.0
 const MAP_RIGHT: float = 3200.0
 const MAP_TOTAL_W: float = 3500.0  # MAP_RIGHT - MAP_LEFT
+
+# Courbe de la baie : le rivage suit un arc parabolique (croissant de Copacabana).
+# La mer mord au plus profond au centre de la map décorée, et recule vers les
+# deux pointes rocheuses (Forte à l'ouest, Pedra do Leme à l'est).
+const SHORE_CENTER_X: float = 1450.0   # (MAP_LEFT + MAP_RIGHT) / 2
+const SHORE_MIN_Y: float = 372.0       # rivage au centre de la baie
+const SHORE_EDGE_Y: float = 435.0      # rivage aux extrémités décorées
+const SHORE_HALF_SPAN: float = 1750.0  # MAP_TOTAL_W / 2
+
+static func shore_y(x: float) -> float:
+	var t: float = clampf((x - SHORE_CENTER_X) / SHORE_HALF_SPAN, -1.0, 1.0)
+	return SHORE_MIN_Y + (SHORE_EDGE_Y - SHORE_MIN_Y) * t * t
 
 const COMMERCES: Array = [
 	{"x": 500.0, "label": "", "region": Rect2(70, 540, 440, 450)},
@@ -64,6 +77,30 @@ const PHARMACY_Y: float = SECOND_ROW_Y
 const PADARIA_X: float = 850.0
 const PADARIA_SIZE: Vector2 = Vector2(110, 76)
 const PADARIA_Y: float = SECOND_ROW_Y
+
+# Rues transversales réelles reliant l'Av. Atlântica à la bande favela.
+# Largeurs serrées pour passer entre les bâtiments fixes (commerces, police…).
+const CROSS_STREETS: Array = [
+	{"x": 600.0, "w": 48.0, "name": "R. SANTA CLARA"},
+	{"x": 1111.0, "w": 32.0, "name": "R. SIQUEIRA CAMPOS"},   # alignée Túnel Velho
+	{"x": 2150.0, "w": 56.0, "name": "AV. PRINCESA ISABEL"},  # frontière réelle Copa/Leme, alignée Túnel Novo
+]
+
+# Entrées de métro réelles (décor) sur Nossa Senhora de Copacabana.
+const METRO_STATIONS: Array = [
+	{"x": 420.0, "name": "CANTAGALO"},
+	{"x": 1075.0, "name": "SIQUEIRA CAMPOS"},  # côté ouest de la rue, dégage le poste de police
+	{"x": 1900.0, "name": "CARDEAL ARCOVERDE"},
+]
+
+# Ciclovia de l'Av. Atlântica — bande terracotta côté plage, sur toute la map.
+const CICLOVIA_TOP: float = 48.0
+const CICLOVIA_BOT: float = 64.0
+const CICLOVIA_COLOR: Color = Color(0.72, 0.34, 0.27, 1)
+
+# Quiosques décoratifs du calçadão (xs choisis pour éviter lampadaires,
+# Quiosque do Zé à x=500 et le valet du Palace à x~1820).
+const QUIOSQUE_XS: Array = [350.0, 780.0, 1250.0, 1750.0, 2060.0]
 
 const FAVELA_COLORS: Array = [
 	Color(0.88, 0.35, 0.32, 1),  # rouge brique

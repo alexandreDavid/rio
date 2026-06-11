@@ -174,6 +174,27 @@ offset_right = 140.0
 offset_bottom = -140.0
 color = Color(0.4, 0.55, 0.7, 1)
 
+[node name="RunwayBayExtension" type="ColorRect" parent="."]
+offset_left = 260.0
+offset_top = -60.0
+offset_right = 340.0
+offset_bottom = 0.0
+color = Color(0.22, 0.22, 0.26, 1)
+
+[node name="RunwayBayExtensionLine" type="ColorRect" parent="."]
+offset_left = 270.0
+offset_top = -60.0
+offset_right = 340.0
+offset_bottom = -58.0
+color = Color(0.95, 0.95, 0.92, 0.7)
+
+[node name="RunwayBayEdgeFoam" type="ColorRect" parent="."]
+offset_left = 260.0
+offset_top = -62.0
+offset_right = 340.0
+offset_bottom = -60.0
+color = Color(0.88, 0.92, 0.95, 0.55)
+
 [node name="Runway" type="ColorRect" parent="."]
 offset_left = -340.0
 offset_top = 0.0
@@ -216,7 +237,7 @@ offset_right = 240.0
 offset_bottom = 32.0
 color = Color(0.95, 0.95, 0.92, 1)
 
-[node name="PlaneFuselage" type="ColorRect" parent="."]
+[node name="PlaneGroundFuselage" type="ColorRect" parent="."]
 offset_left = 40.0
 offset_top = -8.0
 offset_right = 200.0
@@ -230,7 +251,7 @@ offset_right = 218.0
 offset_bottom = 4.0
 color = Color(0.85, 0.85, 0.85, 1)
 
-[node name="PlaneTail" type="ColorRect" parent="."]
+[node name="PlaneGroundTail" type="ColorRect" parent="."]
 offset_left = 32.0
 offset_top = -22.0
 offset_right = 48.0
@@ -334,6 +355,35 @@ offset_top = 80.0
 offset_right = 232.0
 offset_bottom = 96.0
 color = Color(0.42, 0.32, 0.28, 1)
+
+[node name="SDUSignPanel" type="ColorRect" parent="."]
+offset_left = 270.0
+offset_top = -12.0
+offset_right = 310.0
+offset_bottom = 0.0
+color = Color(0.18, 0.22, 0.55, 1)
+
+[node name="SDUSignLabel" type="Label" parent="."]
+offset_left = 268.0
+offset_top = -14.0
+offset_right = 312.0
+offset_bottom = 0.0
+text = "SDU"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.98, 0.95, 0.85, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 2
+
+[node name="PaoAcucarArrowLabel" type="Label" parent="."]
+offset_left = 220.0
+offset_top = -160.0
+offset_right = 340.0
+offset_bottom = -145.0
+text = "← Pão de Açúcar"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 8
+theme_override_colors/font_color = Color(0.88, 0.85, 0.72, 0.75)
 
 [node name="Sign" type="Label" parent="."]
 offset_left = -120.0

@@ -133,6 +133,130 @@ theme_override_font_sizes/font_size = 13
 text = "ATERRO DO FLAMENGO"
 horizontal_alignment = 1
 
+[node name="MAMBase" type="ColorRect" parent="." unique_id=700010001]
+offset_left = 180.0
+offset_top = -60.0
+offset_right = 340.0
+offset_bottom = -40.0
+color = Color(0.72, 0.72, 0.68, 1)
+
+[node name="MAMPilotiL" type="ColorRect" parent="." unique_id=700010002]
+offset_left = 188.0
+offset_top = -40.0
+offset_right = 196.0
+offset_bottom = -20.0
+color = Color(0.62, 0.62, 0.58, 1)
+
+[node name="MAMPilotiR" type="ColorRect" parent="." unique_id=700010003]
+offset_left = 326.0
+offset_top = -40.0
+offset_right = 334.0
+offset_bottom = -20.0
+color = Color(0.62, 0.62, 0.58, 1)
+
+[node name="MAMPilotiC" type="ColorRect" parent="." unique_id=700010004]
+offset_left = 254.0
+offset_top = -40.0
+offset_right = 262.0
+offset_bottom = -20.0
+color = Color(0.62, 0.62, 0.58, 1)
+
+[node name="MAMFacadeGlass" type="ColorRect" parent="." unique_id=700010005]
+offset_left = 186.0
+offset_top = -80.0
+offset_right = 336.0
+offset_bottom = -60.0
+color = Color(0.4, 0.58, 0.72, 0.75)
+
+[node name="MAMRoof" type="ColorRect" parent="." unique_id=700010006]
+offset_left = 178.0
+offset_top = -86.0
+offset_right = 342.0
+offset_bottom = -80.0
+color = Color(0.58, 0.58, 0.54, 1)
+
+[node name="MAMLabel" type="Label" parent="." unique_id=700010007]
+offset_left = 190.0
+offset_top = -78.0
+offset_right = 330.0
+offset_bottom = -64.0
+text = "MAM"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.95, 0.95, 0.92, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.7)
+theme_override_constants/outline_size = 2
+
+[node name="ImperialPalmTrunkA" type="ColorRect" parent="." unique_id=700010008]
+offset_left = -310.0
+offset_top = -40.0
+offset_right = -306.0
+offset_bottom = 30.0
+color = Color(0.38, 0.28, 0.20, 1)
+
+[node name="ImperialPalmFrondA" type="ColorRect" parent="." unique_id=700010009]
+offset_left = -328.0
+offset_top = -68.0
+offset_right = -288.0
+offset_bottom = -40.0
+color = Color(0.28, 0.50, 0.28, 1)
+
+[node name="ImperialPalmTrunkB" type="ColorRect" parent="." unique_id=700010010]
+offset_left = -160.0
+offset_top = -38.0
+offset_right = -156.0
+offset_bottom = 30.0
+color = Color(0.38, 0.28, 0.20, 1)
+
+[node name="ImperialPalmFrondB" type="ColorRect" parent="." unique_id=700010011]
+offset_left = -178.0
+offset_top = -65.0
+offset_right = -138.0
+offset_bottom = -38.0
+color = Color(0.28, 0.50, 0.28, 1)
+
+[node name="ImperialPalmTrunkC" type="ColorRect" parent="." unique_id=700010012]
+offset_left = 60.0
+offset_top = -42.0
+offset_right = 64.0
+offset_bottom = 30.0
+color = Color(0.38, 0.28, 0.20, 1)
+
+[node name="ImperialPalmFrondC" type="ColorRect" parent="." unique_id=700010013]
+offset_left = 42.0
+offset_top = -70.0
+offset_right = 82.0
+offset_bottom = -42.0
+color = Color(0.28, 0.50, 0.28, 1)
+
+[node name="BurlePathA" type="ColorRect" parent="." unique_id=700010014]
+offset_left = -320.0
+offset_top = 48.0
+offset_right = -200.0
+offset_bottom = 56.0
+color = Color(0.78, 0.72, 0.58, 0.85)
+
+[node name="BurlePathB" type="ColorRect" parent="." unique_id=700010015]
+offset_left = -220.0
+offset_top = 60.0
+offset_right = -60.0
+offset_bottom = 68.0
+color = Color(0.78, 0.72, 0.58, 0.85)
+
+[node name="BurlePathC" type="ColorRect" parent="." unique_id=700010016]
+offset_left = -80.0
+offset_top = 52.0
+offset_right = 80.0
+offset_bottom = 60.0
+color = Color(0.78, 0.72, 0.58, 0.85)
+
+[node name="BurlePathD" type="ColorRect" parent="." unique_id=700010017]
+offset_left = 60.0
+offset_top = 62.0
+offset_right = 240.0
+offset_bottom = 70.0
+color = Color(0.78, 0.72, 0.58, 0.85)
+
 [node name="Walls" type="Node2D" parent="." unique_id=864842494]
 
 [node name="Top" type="StaticBody2D" parent="Walls" unique_id=1715274634]
@@ -255,7 +379,7 @@ price = 7
 flavor_text_offer = "Guaraná batido com gelo, energia natural da Amazônia !"
 
 [node name="SkaterA" parent="." unique_id=1178446299 instance=ExtResource("3_wander")]
-position = Vector2(-160, 130)
+position = Vector2(-240, 130)
 color = Color(0.85, 0.4, 0.55, 1)
 size = Vector2(10, 16)
 roam_zone = Rect2(-100, -30, 200, 60)

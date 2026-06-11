@@ -163,6 +163,172 @@ horizontal_alignment = 1
 theme_override_font_sizes/font_size = 13
 theme_override_colors/font_color = Color(0.95, 0.92, 0.85, 1)
 
+[node name="ChristBody" type="ColorRect" parent="."]
+offset_left = -5.0
+offset_top = -228.0
+offset_right = 5.0
+offset_bottom = -190.0
+color = Color(0.92, 0.88, 0.78, 1)
+
+[node name="ChristPedestalMid" type="ColorRect" parent="."]
+offset_left = -14.0
+offset_top = -195.0
+offset_right = 14.0
+offset_bottom = -190.0
+color = Color(0.82, 0.78, 0.68, 1)
+
+[node name="ChristPedestalBase" type="ColorRect" parent="."]
+offset_left = -22.0
+offset_top = -200.0
+offset_right = 22.0
+offset_bottom = -194.0
+color = Color(0.72, 0.68, 0.58, 1)
+
+[node name="EsplanadeArc1" type="ColorRect" parent="."]
+offset_left = -200.0
+offset_top = -6.0
+offset_right = 200.0
+offset_bottom = -2.0
+color = Color(0.68, 0.64, 0.55, 1)
+
+[node name="EsplanadeArc2" type="ColorRect" parent="."]
+offset_left = -160.0
+offset_top = -12.0
+offset_right = 160.0
+offset_bottom = -9.0
+color = Color(0.62, 0.58, 0.50, 0.7)
+
+[node name="EsplanadeArc3" type="ColorRect" parent="."]
+offset_left = -120.0
+offset_top = -18.0
+offset_right = 120.0
+offset_bottom = -15.0
+color = Color(0.60, 0.56, 0.48, 0.55)
+
+[node name="RailL" type="ColorRect" parent="."]
+offset_left = -340.0
+offset_top = 6.0
+offset_right = -80.0
+offset_bottom = 8.0
+color = Color(0.30, 0.28, 0.28, 1)
+
+[node name="RailR" type="ColorRect" parent="."]
+offset_left = -340.0
+offset_top = 14.0
+offset_right = -80.0
+offset_bottom = 16.0
+color = Color(0.30, 0.28, 0.28, 1)
+
+[node name="TremWagon" type="ColorRect" parent="."]
+offset_left = -290.0
+offset_top = -8.0
+offset_right = -200.0
+offset_bottom = 10.0
+color = Color(0.78, 0.22, 0.18, 1)
+
+[node name="TremWindow1" type="ColorRect" parent="."]
+offset_left = -282.0
+offset_top = -4.0
+offset_right = -268.0
+offset_bottom = 4.0
+color = Color(0.65, 0.82, 0.92, 0.9)
+
+[node name="TremWindow2" type="ColorRect" parent="."]
+offset_left = -258.0
+offset_top = -4.0
+offset_right = -244.0
+offset_bottom = 4.0
+color = Color(0.65, 0.82, 0.92, 0.9)
+
+[node name="TremWindow3" type="ColorRect" parent="."]
+offset_left = -234.0
+offset_top = -4.0
+offset_right = -220.0
+offset_bottom = 4.0
+color = Color(0.65, 0.82, 0.92, 0.9)
+
+[node name="TremLabel" type="Label" parent="."]
+offset_left = -300.0
+offset_top = 10.0
+offset_right = -190.0
+offset_bottom = 24.0
+text = "Trem do Corcovado"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 8
+theme_override_colors/font_color = Color(0.85, 0.82, 0.72, 0.9)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.7)
+theme_override_constants/outline_size = 2
+
+[node name="TijucaL1" type="ColorRect" parent="."]
+offset_left = -360.0
+offset_top = -100.0
+offset_right = -200.0
+offset_bottom = 0.0
+color = Color(0.12, 0.22, 0.14, 1)
+
+[node name="TijucaL2" type="ColorRect" parent="."]
+offset_left = -360.0
+offset_top = -130.0
+offset_right = -240.0
+offset_bottom = -100.0
+color = Color(0.14, 0.24, 0.15, 1)
+
+[node name="TijucaL3" type="ColorRect" parent="."]
+offset_left = -360.0
+offset_top = -155.0
+offset_right = -280.0
+offset_bottom = -130.0
+color = Color(0.13, 0.22, 0.14, 0.9)
+
+[node name="TijucaR1" type="ColorRect" parent="."]
+offset_left = 200.0
+offset_top = -100.0
+offset_right = 360.0
+offset_bottom = 0.0
+color = Color(0.12, 0.22, 0.14, 1)
+
+[node name="TijucaR2" type="ColorRect" parent="."]
+offset_left = 240.0
+offset_top = -130.0
+offset_right = 360.0
+offset_bottom = -100.0
+color = Color(0.14, 0.24, 0.15, 1)
+
+[node name="TijucaR3" type="ColorRect" parent="."]
+offset_left = 280.0
+offset_top = -155.0
+offset_right = 360.0
+offset_bottom = -130.0
+color = Color(0.13, 0.22, 0.14, 0.9)
+
+[node name="TijucaTuftL1" type="ColorRect" parent="."]
+offset_left = -355.0
+offset_top = -115.0
+offset_right = -320.0
+offset_bottom = -100.0
+color = Color(0.16, 0.26, 0.17, 1)
+
+[node name="TijucaTuftL2" type="ColorRect" parent="."]
+offset_left = -315.0
+offset_top = -108.0
+offset_right = -275.0
+offset_bottom = -94.0
+color = Color(0.15, 0.24, 0.16, 1)
+
+[node name="TijucaTuftR1" type="ColorRect" parent="."]
+offset_left = 320.0
+offset_top = -115.0
+offset_right = 355.0
+offset_bottom = -100.0
+color = Color(0.16, 0.26, 0.17, 1)
+
+[node name="TijucaTuftR2" type="ColorRect" parent="."]
+offset_left = 275.0
+offset_top = -108.0
+offset_right = 315.0
+offset_bottom = -94.0
+color = Color(0.15, 0.24, 0.16, 1)
+
 [node name="Walls" type="Node2D" parent="."]
 
 [node name="Top" type="StaticBody2D" parent="Walls"]
@@ -349,7 +515,7 @@ flavor_text_offer = "Geladinha pra subida do morro, freguês."
 flavor_text_broke = "Os trocos primeiro, depois a água."
 
 [node name="Tourist1" parent="." instance=ExtResource("3_wander")]
-position = Vector2(-100, 110)
+position = Vector2(-100, 60)
 color = Color(0.95, 0.85, 0.4, 1)
 roam_zone = Rect2(-100, -20, 200, 40)
 speed = 22.0
@@ -365,7 +531,7 @@ pause_random_jitter = 1.5
 look_at_player_distance = 70.0
 
 [node name="Tourist3" parent="." instance=ExtResource("3_wander")]
-position = Vector2(180, 130)
+position = Vector2(100, 155)
 color = Color(0.85, 0.4, 0.55, 1)
 roam_zone = Rect2(-100, -20, 200, 40)
 speed = 16.0

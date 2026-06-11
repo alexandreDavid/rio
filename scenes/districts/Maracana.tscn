@@ -78,6 +78,27 @@ offset_right = 340.0
 offset_bottom = -100.0
 color = Color(0.42, 0.4, 0.45, 1)
 
+[node name="StadiumRoofRing" type="ColorRect" parent="."]
+offset_left = -350.0
+offset_top = -192.0
+offset_right = 350.0
+offset_bottom = -178.0
+color = Color(0.88, 0.87, 0.85, 1)
+
+[node name="StadiumRoofOverhangL" type="ColorRect" parent="."]
+offset_left = -350.0
+offset_top = -178.0
+offset_right = -330.0
+offset_bottom = -100.0
+color = Color(0.78, 0.77, 0.75, 1)
+
+[node name="StadiumRoofOverhangR" type="ColorRect" parent="."]
+offset_left = 330.0
+offset_top = -178.0
+offset_right = 350.0
+offset_bottom = -100.0
+color = Color(0.78, 0.77, 0.75, 1)
+
 [node name="StadiumInnerR1" type="ColorRect" parent="."]
 offset_left = -300.0
 offset_top = -150.0
@@ -85,12 +106,81 @@ offset_right = 300.0
 offset_bottom = -130.0
 color = Color(0.55, 0.45, 0.5, 1)
 
+[node name="TorcidaFlamengoStrip" type="ColorRect" parent="."]
+offset_left = -280.0
+offset_top = -148.0
+offset_right = -100.0
+offset_bottom = -132.0
+color = Color(0.85, 0.18, 0.22, 0.85)
+
+[node name="TorcidaFluminenseStrip" type="ColorRect" parent="."]
+offset_left = 100.0
+offset_top = -148.0
+offset_right = 280.0
+offset_bottom = -132.0
+color = Color(0.42, 0.18, 0.32, 0.85)
+
 [node name="PitchSliver" type="ColorRect" parent="."]
 offset_left = -180.0
 offset_top = -130.0
 offset_right = 180.0
 offset_bottom = -110.0
 color = Color(0.32, 0.55, 0.32, 1)
+
+[node name="RampHelicL" type="ColorRect" parent="."]
+offset_left = -336.0
+offset_top = -100.0
+offset_right = -316.0
+offset_bottom = 0.0
+color = Color(0.62, 0.58, 0.52, 1)
+
+[node name="RampHelicR" type="ColorRect" parent="."]
+offset_left = 316.0
+offset_top = -100.0
+offset_right = 336.0
+offset_bottom = 0.0
+color = Color(0.62, 0.58, 0.52, 1)
+
+[node name="BilheteriaPanel" type="ColorRect" parent="."]
+offset_left = -80.0
+offset_top = -10.0
+offset_right = 80.0
+offset_bottom = 0.0
+color = Color(0.35, 0.28, 0.22, 1)
+
+[node name="BilheteriaLabel" type="Label" parent="."]
+offset_left = -80.0
+offset_top = -10.0
+offset_right = 80.0
+offset_bottom = 8.0
+text = "BILHETERIA"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 9
+theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
+
+[node name="BelliniPedestal" type="ColorRect" parent="."]
+offset_left = -4.0
+offset_top = 12.0
+offset_right = 4.0
+offset_bottom = 24.0
+color = Color(0.62, 0.58, 0.52, 1)
+
+[node name="BelliniStatue" type="ColorRect" parent="."]
+offset_left = -5.0
+offset_top = -2.0
+offset_right = 5.0
+offset_bottom = 14.0
+color = Color(0.72, 0.68, 0.62, 1)
+
+[node name="BelliniLabel" type="Label" parent="."]
+offset_left = -40.0
+offset_top = 24.0
+offset_right = 40.0
+offset_bottom = 36.0
+text = "Bellini 1958"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 8
+theme_override_colors/font_color = Color(0.88, 0.82, 0.65, 0.85)
 
 [node name="LightTowerL" type="ColorRect" parent="."]
 offset_left = -310.0
@@ -308,7 +398,7 @@ flavor_text = "Soixante mille gorges qui se synchronisent en une seule samba. Le
 money_reward = 70
 
 [node name="CervejaVendor" parent="." instance=ExtResource("5_vendor")]
-position = Vector2(220, 100)
+position = Vector2(220, 55)
 vendor_id = "maracana_cerveja"
 item_label = "Cerveja gelada"
 price = 8
@@ -316,7 +406,7 @@ stamina_recover = 18.0
 flavor_text_offer = "Geladinha pra molhar a torcida ! Brahma, Antarctica, escolha aí."
 
 [node name="ChurrasquinhoVendor" parent="." instance=ExtResource("5_vendor")]
-position = Vector2(-220, 100)
+position = Vector2(-240, 55)
 vendor_id = "maracana_churrasco"
 item_label = "Churrasquinho"
 price = 12
@@ -345,7 +435,7 @@ look_at_player_distance = 50.0
 active_phases = [1, 2]
 
 [node name="FanC" parent="." instance=ExtResource("3_wander")]
-position = Vector2(180, 140)
+position = Vector2(180, 195)
 color = Color(0.2, 0.65, 0.4, 1)
 size = Vector2(10, 18)
 speed = 24.0
@@ -355,7 +445,7 @@ look_at_player_distance = 50.0
 active_phases = [1, 2]
 
 [node name="FanD" parent="." instance=ExtResource("3_wander")]
-position = Vector2(-180, 150)
+position = Vector2(-180, 205)
 color = Color(0.95, 0.85, 0.2, 1)
 size = Vector2(10, 18)
 speed = 22.0
