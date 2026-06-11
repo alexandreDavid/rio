@@ -12,7 +12,7 @@ const KNOTS: Dictionary = {
 	# --- ACTE 3 : Dom Nilton vient personnellement marquer le pivot ---
 	"consortium_act3_intro": {
 		"speaker": "Dom Nilton (consortium)",
-		"text": "*claque la porte de sa Maverick blanche, traverse l'avenida sans regarder les voitures* Sobrinho. Vingt-cinq mille reais en quelques semaines. Tu m'as surpris — sincèrement. *te plante une carte de visite dans la poche* Maintenant écoute-moi : la moitié restante, tu vas pas la sortir de ton milho. Trois portes s'ouvrent à toi à partir de ce soir. Tu peux te poser dans la maison bleue avec Capitão Ramos. Tu peux porter un sac pour Tito et faire la corrida du Carnaval. Ou tu peux serrer des mains à la chapelle avec le padre et te présenter Prefeito. *recule d'un pas* T'as le Carnaval pour clôturer. Choisis vite.",
+		"text": "*claque la porte de sa Maverick blanche, traverse l'avenida sans regarder les voitures* Sobrinho. Vingt-cinq mille reais en quelques semaines. Tu m'as surpris — sincèrement. *te plante une carte de visite dans la poche* Maintenant écoute-moi : la moitié restante, tu vas pas la sortir de ton milho. Trois portes s'ouvrent à toi à partir de ce soir. Tu peux te poser dans la maison bleue avec Capitão Ramos. Tu peux porter un sac pour Tito et faire la corrida du Carnaval. Ou tu peux serrer des mains à la chapelle avec le padre et te présenter Prefeito. *recule d'un pas* T'as le Carnaval pour clôturer. Choisis vite, malandro.",
 		"choices": ["Compris, Dom Nilton"],
 	},
 	"consortium_settled": {
@@ -42,7 +42,7 @@ const KNOTS: Dictionary = {
 	# Act4Dialogues.gd — fusionnés via register_runtime_dialogue dans _ready.)
 	"tito_voie_active": {
 		"speaker": "Tito",
-		"text": "*claque la langue, te jauge* Tu portes bien, sobrinho. Maintenant le morro a son propre rythme — mon contact gère, calçadão de Copa. Va le voir, il sait quoi te confier. Quand viendra la corrida finale du Carnaval, tu reviens me parler. D'ici là, pas de zèle, pas de bavures.",
+		"text": "*claque la langue, te jauge* Tu portes bien, sobrinho. Maintenant le morro a son propre rythme — mon contact gère, calçadão de Copa. Va le voir, il sait quoi te confier. Quand viendra la corrida finale du Carnaval, tu reviens me parler. D'ici là, suave — pas de zèle, pas de bavures.",
 		"choices": ["Compris, Tito"],
 	},
 	# (tito_trafico_corrida → Act4Dialogues.gd)
@@ -57,7 +57,7 @@ const KNOTS: Dictionary = {
 	},
 	"ramos_pacto_policia_remind": {
 		"speaker": "Capitão Ramos",
-		"text": "*tapote la table* Le visage, sobrinho. Calçadão de Copa, mon contact en civil traîne près des cocos. Tu repères, tu rapportes. La loi attend.",
+		"text": "*tapote la table* Le visage, garoto. Calçadão de Copa, mon contact en civil traîne près des cocos. Tu repères, tu rapportes. La loi attend.",
 		"choices": ["J'y vais, Capitão"],
 	},
 	# (ramos_policia_madrugada → Act4Dialogues.gd)
@@ -113,14 +113,14 @@ const KNOTS: Dictionary = {
 	},
 	"seu_joao_chat_evening": {
 		"speaker": "Seu João",
-		"text": "*allume sa petite lampe à pile au-dessus de la charrette* Boa noite, sobrinho. La nuit, les touristes paient plus — ils savent moins compter en cerveja.",
+		"text": "*allume sa petite lampe à pile au-dessus de la charrette* Boa noite, sobrinho. La nuit, les gringos paient plus — ils savent moins compter en cerveja.",
 		"choices": ["Boa noite, tio"],
 	},
 	# Variantes affinité : ces knots remplacent le fallback neutre quand le joueur
 	# a parlé plusieurs fois à Seu João (NPCAffinity).
 	"seu_joao_chat_warm": {
 		"speaker": "Seu João",
-		"text": "*te reconnaît, te sourit* Sobrinho ! *fait un signe vers la charrette* Ça avance ?",
+		"text": "*te reconnaît, te sourit* Sobrinho ! *fait un signe vers la charrette* E aí, ça avance ?",
 		"choices": ["Ça avance, tio"],
 	},
 	"seu_joao_chat_familiar": {
@@ -131,7 +131,7 @@ const KNOTS: Dictionary = {
 	# --- Acte 5 : défilé du Carnaval (couronnement public) ---
 	"seu_joao_carnaval_offer": {
 		"speaker": "Seu João",
-		"text": "Sobrinho ! L'école de samba veut te mettre devant pour le défilé. Une vrai bagunça : tamborim, surdo, cuíca, agogô. Tu mènes le bloc, la foule te porte. C'est ton couronnement, comprends ? Va au Sambódromo, le taxi t'y dépose. Et tu rentres reinado pour de bom.",
+		"text": "Sobrinho ! L'école de samba veut te mettre devant pour le défilé. Une vraie bagunça : tamborim, surdo, cuíca, agogô. Tu mènes le bloc, la foule te porte. C'est ton couronnement, comprends ? Va au Sambódromo, le taxi t'y dépose. Et tu rentres reinado pour de bom.",
 		"choices": ["J'y vais, tio", "Plus tard"],
 		"on_choose": {
 			"0": {"accept_quest": "act4_carnaval_desfile"},
@@ -144,7 +144,7 @@ const KNOTS: Dictionary = {
 	},
 	"seu_joao_carnaval_done": {
 		"speaker": "Seu João",
-		"text": "*essuie une larme* J'ai vu ça à la télé, sobrinho. Toute la Sapucaí qui chante ton nom. Ton oncle Zé serait fier. Maintenant tu peux dormir tranquille — Copacabana est à toi.",
+		"text": "*essuie une larme* Caraca, sobrinho… j'ai vu ça à la télé. Toute la Sapucaí qui chante ton nom. Ton oncle Zé serait fier. Maintenant tu peux dormir tranquille — Copacabana est à toi.",
 		"choices": ["Obrigado, tio"],
 	},
 	# --- ACTE 3 : Le carnet do Capitão (intel intermédiaire, voie Polícia) ---
@@ -221,12 +221,12 @@ const KNOTS: Dictionary = {
 	},
 	"pecheur_chat_afternoon": {
 		"speaker": "Seu Pedro",
-		"text": "*siroterait presque sa cachaça à l'ombre du parasol* Boa tarde. La marée descend, je sors plus la canne avant cinq heures. *sourit* Profite de la plage pendant que t'as la patience.",
+		"text": "*siroterait presque sa cachaça à l'ombre du parasol* Boa tarde. La marée descend, je sors plus la canne avant cinq heures. *sourit* Tranquilo — profite de la plage pendant que t'as la patience.",
 		"choices": ["Obrigado, Pedro"],
 	},
 	"pecheur_chat_evening": {
 		"speaker": "Seu Pedro",
-		"text": "*allume une seconde lampe à pile, range les hameçons* Boa noite. La nuit sur le calçadão, c'est mon moment — pas de touristes, pas de chiens, juste les vagues. Sit-toi un moment si tu veux.",
+		"text": "*allume une seconde lampe à pile, range les hameçons* Boa noite. La nuit sur le calçadão, c'est mon moment — pas de touristes, pas de chiens, juste les vagues. Assieds-toi un moment si tu veux.",
 		"choices": ["Boa noite, Pedro"],
 	},
 	"pecheur_fish": {
@@ -254,12 +254,12 @@ const KNOTS: Dictionary = {
 	},
 	"tito_playing": {
 		"speaker": "Tito",
-		"text": "Oi moço ! Je joue ici avec mes amis. Tu vas où ?",
+		"text": "Oi moço ! On fait une pelada avec mes amis. Tu vas où ?",
 		"choices": ["Juste de passage"],
 	},
 	"tito_encounter": {
 		"speaker": "Tito",
-		"text": "Pai m'a envoyé ? Ah bon, je rentre alors. Merci moço !",
+		"text": "Pai m'a envoyé ? Ah bon, je rentre alors. Valeu, moço !",
 		"choices": ["Rentre vite"],
 		"on_choose": {
 			"0": {"finish_quest": {"quest": "pedros_son", "objective": "find_tito", "payout": 0}},
@@ -268,7 +268,7 @@ const KNOTS: Dictionary = {
 	# Bar do Policial — Jorge
 	"jorge_intro": {
 		"speaker": "Jorge",
-		"text": "E aí parceiro ! Bem-vindo ao Bar do Policial. Une caipirinha ?",
+		"text": "E aí parceiro ! Bem-vindo ao Bar do Policial. Une caipirinha ? *attrape un verre, le remplit sans te demander* Comme d'habitude, Zé — *s'arrête net, repose le verre, essuie le comptoir* …Pardon. L'habitude. Tu lui ressembles, de dos.",
 		"choices": ["Caipirinha (R$ 10)", "Tu as un truc ?", "Plus tard"],
 		"on_choose": {
 			"0": {"pay_bribe": 10, "rep": {2: 1, 0: 1}},
@@ -290,7 +290,7 @@ const KNOTS: Dictionary = {
 	},
 	"jorge_done": {
 		"speaker": "Jorge",
-		"text": "Obrigado amigo. Elle m'a envoyé un clin d'œil hier soir. Tu as bien fait ton boulot.",
+		"text": "Obrigado, mermão. Elle m'a envoyé un clin d'œil hier soir. Tu as bien fait ton boulot.",
 		"choices": ["De rien"],
 	},
 	"beatriz_receives_flowers": {
@@ -335,11 +335,14 @@ const KNOTS: Dictionary = {
 	# Bar — Quiosque do Zé
 	"ze_intro": {
 		"speaker": "Zé",
-		"text": "Salve, parceiro ! Bem-vindo ao quiosque. Uma cerveja gelada ?",
-		"choices": ["Cerveja (R$ 8)", "Tu as du boulot ?", "Plus tard"],
+		"text": "Salve, parceiro ! Bem-vindo ao quiosque. Uma cerveja gelada ? *remarque ton maillot* Torcedor do {time}, né ? Ici on sert tout le monde — même les jours de Fla x Flu. Surtout les jours de Fla x Flu.",
+		"choices": ["Cerveja (R$ 8)", "Tu as du boulot ?", "Plus tard", "« Zé, c'est ma tournée ou la tienne ? »"],
 		"on_choose": {
 			"0": {"pay_bribe": 8, "rep": {2: 1, 0: 1}},
 			"1": {"next": "ze_offer"},
+			"3": {"jeitinho": {"npc": "ze_bar", "tier": 2, "ok": {"rep": {2: 1, 0: 1, 4: 1}},
+				"ko_speaker": "Zé",
+				"ko_text": "*rit* La tienne, parceiro, forcément la tienne ! La maison offre aux frères de comptoir — et toi t'en es pas encore un. Huit reais."}},
 		},
 	},
 	"ze_offer": {
@@ -357,12 +360,12 @@ const KNOTS: Dictionary = {
 	},
 	"ze_done": {
 		"speaker": "Zé",
-		"text": "Boa ! Reviens boire une cerveja quand tu veux. La maison offre.",
+		"text": "Maneiro ! Reviens boire une cerveja quand tu veux. La maison offre.",
 		"choices": ["Obrigado"],
 	},
 	"ronaldo_invitation": {
 		"speaker": "Ronaldo",
-		"text": "Zé m'invite ce soir ? Parfait, j'apporte mon violão. Dis-lui que j'y serai à 20h pile.",
+		"text": "Zé m'invite ce soir ? Demorô, j'apporte mon violão. Dis-lui que j'y serai à 20h pile.",
 		"choices": ["OK"],
 		"on_choose": {
 			"0": {"finish_quest": {"quest": "ze_invitation", "objective": "tell_ronaldo", "payout": 0}},

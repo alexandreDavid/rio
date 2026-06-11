@@ -105,8 +105,30 @@ func start_dialogue(npc_id: String, ink_knot: String) -> void:
 		return
 	if _has_placeholder(ink_knot):
 		var d: Dictionary = _get_placeholder(ink_knot)
-		line_shown.emit(d.speaker, d.text)
+		line_shown.emit(d.speaker, _sub_placeholders(d.text))
 		choices_presented.emit(d.choices)
+
+# Time de coração du joueur (flag posé à l'intro). "" si pas encore choisi.
+const TIME_FLAGS: Dictionary = {
+	"time_flamengo": "Flamengo",
+	"time_vasco": "Vasco",
+	"time_fluminense": "Fluminense",
+	"time_botafogo": "Botafogo",
+}
+
+func time_coracao() -> String:
+	for flag in TIME_FLAGS:
+		if has_flag(flag):
+			return TIME_FLAGS[flag]
+	return ""
+
+# Substitue les placeholders culturels dans les textes de knots.
+# {time} → time de coração (fallback neutre si non choisi, ex. vieille save).
+func _sub_placeholders(text: String) -> String:
+	if text.find("{time}") == -1:
+		return text
+	var t: String = time_coracao()
+	return text.replace("{time}", t if t != "" else "Flamengo")
 
 func choose(choice_index: int) -> void:
 	print("[DialogueBridge] choose(%d) called" % choice_index)
@@ -120,6 +142,11 @@ func choose(choice_index: int) -> void:
 	var dlg: Dictionary = _get_placeholder(_active_knot)
 	var on_choose: Dictionary = dlg.get("on_choose", {})
 	var action = on_choose.get(str(choice_index), null)
+	# Jeitinho : la 3e voie carioca — résoudre par la relation plutôt que par
+	# l'argent ou la force. Gate par NPCAffinity : si on connaît assez le
+	# contact, l'action "ok" s'applique ; sinon refus doux, sans pénalité.
+	if action != null and action.has("jeitinho"):
+		action = _resolve_jeitinho(action.jeitinho)
 	if action != null and action.has("next"):
 		# Effets latéraux applicables avant de chaîner sur le knot suivant.
 		# Si l'acceptation échoue (prereq manquant), on saute aussi les autres side effects
@@ -136,12 +163,30 @@ func choose(choice_index: int) -> void:
 		NarrativeJournal.mark_read(_active_knot)
 		if _has_placeholder(_active_knot):
 			var d: Dictionary = _get_placeholder(_active_knot)
-			line_shown.emit(d.speaker, d.text)
+			line_shown.emit(d.speaker, _sub_placeholders(d.text))
 			choices_presented.emit(d.choices)
 		return
 	if action != null:
 		_apply_placeholder_action(action)
 	end_dialogue()
+
+# Résout une action jeitinho : {"npc": id, "tier": min, "ok": {action},
+# "ko_speaker"?, "ko_text"?}. Renvoie l'action à appliquer (ok ou refus).
+# Le refus est un knot runtime sans aucun effet : tenter le jeitinho ne coûte
+# jamais rien — c'est la relation qui manque, pas la compétence.
+func _resolve_jeitinho(j: Dictionary) -> Dictionary:
+	var npc: String = String(j.get("npc", ""))
+	var min_tier: int = int(j.get("tier", NPCAffinity.Tier.ACQUAINTANCE))
+	if npc != "" and NPCAffinity.tier(npc) >= min_tier:
+		return j.get("ok", {})
+	var knot_id: String = "jeitinho_ko_%s_%s" % [_active_knot, npc]
+	register_runtime_dialogue(knot_id, {
+		"speaker": String(j.get("ko_speaker", "Sobrinho")),
+		"text": String(j.get("ko_text",
+			"Tu lâches le nom… et ça tombe à plat. Vous vous connaissez à peine. Le jeitinho, ça se construit — un café, un service, une conversation. Reviens quand ce sera une vraie relation.")),
+		"choices": ["C'est noté"],
+	})
+	return {"next": knot_id}
 
 func end_dialogue() -> void:
 	print("[DialogueBridge] end_dialogue (was active: %s)" % _active_npc_id)

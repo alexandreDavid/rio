@@ -10,7 +10,7 @@ const KNOTS: Dictionary = {
 	# --- Bruno : SIDE Pesca da Baía (prereq bruno_carga) ---
 	"bruno_pesca_offer": {
 		"speaker": "Bruno",
-		"text": "*pose sa canne sur la planche, te tend la sienne* Sobrinho. Cette baie, elle a mille robalos par mètre carré, et personne ne les sort plus. *sourit* Sors-en un — un seul — et je te paie de la cachaça. Le ponton là-bas, c'est mon spot depuis trente-quatre ans.",
+		"text": "*pose sa canne sur la planche, te tend la sienne* Sobrinho. Cette baie, elle a mille robalos par mètre carré, et personne ne les sort plus. *sourit* Sors-en un — un seul — et je te paie de la cachaça, beleza ? Le ponton là-bas, c'est mon spot depuis trente-quatre ans.",
 		"choices": ["J'essaie maintenant", "Plus tard"],
 		"on_choose": {
 			"0": {"accept_quest": "bruno_pesca_baia"},
@@ -18,12 +18,12 @@ const KNOTS: Dictionary = {
 	},
 	"bruno_pesca_remind": {
 		"speaker": "Bruno",
-		"text": "*pointe le bout du ponton, l'eau qui clapote* La canne t'attend, sobrinho. Une session, un poisson — t'es bon.",
+		"text": "*pointe le bout du ponton, l'eau qui clapote* La canne t'attend, sobrinho. Une session, un poisson — demorô.",
 		"choices": ["J'y vais"],
 	},
 	"bruno_pesca_done": {
 		"speaker": "Bruno",
-		"text": "*sort la cachaça promise, la décapsule* Tu l'as sorti. *te tend la bouteille* Trente-quatre ans que je voyais des touristes essayer sans rien attraper. Toi en deux essais. *te scrute* T'es de la famille des pêcheurs, sobrinho. C'est dans le sang ou pas.",
+		"text": "*sort la cachaça promise, la décapsule* Tu l'as sorti. *te tend la bouteille* Trente-quatre ans que je voyais des touristes essayer sans rien attraper. Caraca — toi, en deux essais. *te scrute* T'es de la famille des pêcheurs, sobrinho. C'est dans le sang ou pas.",
 		"choices": ["Obrigado, Bruno"],
 	},
 	"helena_default": {
@@ -38,7 +38,7 @@ const KNOTS: Dictionary = {
 	},
 	"helena_chat_familiar": {
 		"speaker": "Helena",
-		"text": "*pose deux cafés sur le banc avant même que tu t'assoies* Vous êtes le seul Carioca régulier que j'ai. *te tend une tasse* Bruno parle de vous comme d'un sobrinho. Moi aussi maintenant.",
+		"text": "*pose deux cafés sur le banc avant même que tu t'assoies* Vous êtes le seul carioca da gema régulier que j'ai. *te tend une tasse* Bruno parle de vous comme d'un sobrinho. Moi aussi maintenant.",
 		"choices": ["Obrigado, Helena"],
 	},
 	"helena_chat_morning": {
@@ -63,7 +63,7 @@ const KNOTS: Dictionary = {
 	},
 	"yara_chat_afternoon": {
 		"speaker": "Yara",
-		"text": "*essuie son fusain avec un chiffon* Boa tarde. Le soleil tape trop fort sur le blanc du MAC, je vois plus rien. Pause-café.",
+		"text": "*essuie son fusain avec un chiffon* Boa tarde. Fala sério, le soleil tape trop fort sur le blanc du MAC — je vois plus rien. Pause-café.",
 		"choices": ["Bon repos"],
 	},
 	"yara_chat_evening": {
@@ -73,12 +73,12 @@ const KNOTS: Dictionary = {
 	},
 	"carlos_chat_morning": {
 		"speaker": "Carlos",
-		"text": "*ouvre le bar, encore en chaussons* Bom dia, sobrinho. Le premier café est sur la maison — j'en bois trois moi-même avant huit heures.",
+		"text": "*ouvre le bar, encore en chaussons* Bom dia, sobrinho. Le premier café est sur la maison — pô, j'en bois trois moi-même avant huit heures.",
 		"choices": ["Obrigado, Carlos"],
 	},
 	"carlos_chat_afternoon": {
 		"speaker": "Carlos",
-		"text": "*sert un caldo glacé à un coureur en sueur* Boa tarde. Les joggers de la Lagoa, c'est mon segment de l'après-midi. Tu veux quelque chose ?",
+		"text": "*sert un caldo glacé à un coureur en sueur* Boa tarde. Les joggers de la Lagoa, c'est mon segment de l'après-midi. Tu veux quelque chose, freguês ?",
 		"choices": ["Pas pour moi, Carlos"],
 	},
 	"carlos_chat_evening": {
@@ -88,7 +88,7 @@ const KNOTS: Dictionary = {
 	},
 	"padaria_chat_morning": {
 		"speaker": "Seu Tonio",
-		"text": "*sort la première fournée du four, vapeur qui monte* Bom dia ! C'est l'heure du pão fresco, sobrinho. Soixante reais d'ouvriers attendent dehors, mais toi t'as la priorité.",
+		"text": "*sort la première fournée du four, vapeur qui monte* Bom dia ! C'est l'heure du pão fresco, sobrinho. Une torcida d'ouvriers attend dehors, mais toi t'as la priorité.",
 		"choices": ["Obrigado, seu Tonio"],
 	},
 	"padaria_chat_afternoon": {
@@ -98,7 +98,7 @@ const KNOTS: Dictionary = {
 	},
 	"padaria_chat_evening": {
 		"speaker": "Seu Tonio",
-		"text": "*éteint le four, garde la lumière de la vitrine allumée* Boa noite. La nuit, je reste pour les habitués. *te montre une chaise* Tu peux t'asseoir si tu veux pas rentrer tout de suite.",
+		"text": "*éteint le four, garde la lumière de la vitrine allumée* Boa noite. La nuit, je reste pour les habitués. *te montre une chaise* Tranquilo, tu peux t'asseoir si tu veux pas rentrer tout de suite.",
 		"choices": ["Boa noite, seu Tonio"],
 	},
 	"policier_chat_morning": {
@@ -108,7 +108,7 @@ const KNOTS: Dictionary = {
 	},
 	"policier_chat_afternoon": {
 		"speaker": "Agente Silva",
-		"text": "*surveille l'avenue Atlântica, mains dans le dos* Boa tarde. C'est l'heure des pickpockets de plage. Tu vois quelque chose, tu me préviens.",
+		"text": "*surveille l'avenue Atlântica, mains dans le dos* Boa tarde. C'est l'heure des malandros de plage. Tu vois quelque chose, tu me préviens.",
 		"choices": ["Compris, agente"],
 	},
 	"policier_chat_evening": {
@@ -248,11 +248,16 @@ const KNOTS: Dictionary = {
 			"*payer 300 R$ pour qu'il ferme l'enquête*",
 			"*intimider* « Tu arrêtes ou ça finit mal. »",
 			"*le convaincre* « Vincenzo te livrera un plus gros poisson si tu changes de cible. »",
+			"*en ami* « Roberto. C'est moi. Fais-moi confiance : pas cette une-là. »",
 		],
 		"on_choose": {
 			"0": {"finish_quest": {"quest": "baia_silence_press", "objective": "silence_journalist", "payout": 300}, "pay_bribe": 300, "rep": {2: 2, 0: -2}, "set_flag": "roberto_silenced"},
 			"1": {"finish_quest": {"quest": "baia_silence_press", "objective": "silence_journalist", "payout": 0}, "rep": {2: 5, 0: -4, 1: -2}, "set_flag": "roberto_silenced"},
 			"2": {"finish_quest": {"quest": "baia_silence_press", "objective": "silence_journalist", "payout": 0}, "rep": {2: 1, 4: 4, 0: 1}, "set_flag": "roberto_silenced"},
+			"3": {"jeitinho": {"npc": "roberto_maia", "tier": 1,
+				"ok": {"finish_quest": {"quest": "baia_silence_press", "objective": "silence_journalist", "payout": 0}, "rep": {4: 3, 0: 1}, "set_flag": "roberto_silenced"},
+				"ko_speaker": "Roberto Maia",
+				"ko_text": "*fronce les sourcils* « C'est moi » ? On s'est croisés une fois, jeune homme. L'amitié, ça ne s'invoque pas — ça se prouve. Sortez de mon bureau."}},
 		},
 	},
 	"roberto_silenced": {

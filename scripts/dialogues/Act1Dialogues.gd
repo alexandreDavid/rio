@@ -29,7 +29,20 @@ const KNOTS: Dictionary = {
 		"speaker": "Narrateur",
 		"text": "À toi de choisir comment t'en sortir.\n\nDeviens un pilier de la communauté. Entre dans la police. Prends la rue. Ou signe avec le consortium.\n\nSelon les gens que tu aides, les gens que tu trahis, et la tête que tu gardes quand tout dérape, tu finiras Prefeito, Chefe de Polícia, Rei do Tráfico — ou sócio do Consórcio.",
 		"choices": ["Continuer"],
-		"on_choose": {"0": {"next": "game_intro_controles"}},
+		"on_choose": {"0": {"next": "game_intro_time"}},
+	},
+	# Le time de coração est une identité carioca : posé une fois, lu partout
+	# via le placeholder {time} (substitué par DialogueBridge) et les flags time_*.
+	"game_intro_time": {
+		"speaker": "Narrateur",
+		"text": "Une dernière chose — et ici, c'est pas un détail.\n\nÀ Rio, on te demandera ton time de coração avant ton nom de famille. Zé était Mengão jusqu'à la moelle, mais toi, tu choisis ton camp.",
+		"choices": ["Flamengo, óbvio ❤️🖤", "Vasco da Gama ⚪⚫", "Fluminense 💚❤️", "Botafogo ⭐"],
+		"on_choose": {
+			"0": {"set_flag": "time_flamengo", "next": "game_intro_controles"},
+			"1": {"set_flag": "time_vasco", "next": "game_intro_controles"},
+			"2": {"set_flag": "time_fluminense", "next": "game_intro_controles"},
+			"3": {"set_flag": "time_botafogo", "next": "game_intro_controles"},
+		},
 	},
 	"game_intro_controles": {
 		"speaker": "Narrateur",
@@ -54,7 +67,7 @@ const KNOTS: Dictionary = {
 	},
 	"seu_joao_debt_who": {
 		"speaker": "Seu João",
-		"text": "Le consortium, tu verras. Trois types qui traînent sur l'Av. Atlântica. Un comptable, un gros monsieur, et un qui chante du pagode. T'as jusqu'au Carnaval pour payer. Commence par la charrette, vends du milho. Cinq cents reais d'acompte les calmeront pour quelques jours.",
+		"text": "Le consortium, tu verras. Trois types qui traînent sur l'Av. Atlântica. Un comptable, un gros monsieur, et un qui chante du pagode. T'as jusqu'au Carnaval pour payer. Commence par la charrette, vends du milho. Cinq cents reais d'acompte les calmeront pour quelques jours, beleza ?",
 		"choices": ["D'accord"],
 		"on_choose": {
 			"0": {"accept_quest": "act1_heritage", "set_flag": "act1_started"},
@@ -116,7 +129,7 @@ const KNOTS: Dictionary = {
 	# --- Soirée 1 : Seu João félicite le 1er acompte (set_flag first_payment_done) ---
 	"seu_joao_evening_first_payment": {
 		"speaker": "Seu João",
-		"text": "*pose sa cachaça, te regarde longuement* Cinq cents reais. Ton oncle Zé, il a mis trente ans à pas pouvoir les rassembler, ces cinq cents. Toi, en une journée. *avale, voix éraillée* Le quartier va parler, sobrinho. Le consortium aussi. Quand ils voient un môme qui paye à temps, ils se demandent d'où vient l'argent. Sois discret. Et fais attention à Ramos — il a senti l'odeur fraîche d'un nouveau visage rentable.",
+		"text": "*pose sa cachaça, te regarde longuement* Caraca… cinq cents reais. Ton oncle Zé, il a mis trente ans à pas pouvoir les rassembler, ces cinq cents. Toi, en une journée. *avale, voix éraillée* Le quartier va parler, sobrinho. Le consortium aussi. Quand ils voient un môme qui paye à temps, ils se demandent d'où vient l'argent. Sois discret. Et fais attention à Ramos — il a senti l'odeur fraîche d'un nouveau visage rentable.",
 		"choices": ["Ramos ?", "Et après ?", "Bonne nuit, tio"],
 		"on_choose": {
 			"0": {"next": "seu_joao_evening_ramos"},
@@ -130,13 +143,13 @@ const KNOTS: Dictionary = {
 	},
 	"seu_joao_evening_what_next": {
 		"speaker": "Seu João",
-		"text": "Après ? Tu retournes au calçadão demain matin, et tu poses 500 de plus. Et 500 de plus. Et 500 de plus. Cinquante mille avant le Carnaval, sobrinho. *rire amer* Ou tu choisis un parrain. Ramos, Tito, ou le padre de la chapelle. Tous les trois te trouveront avant que tu les trouves.",
+		"text": "Après ? Tu retournes au calçadão demain matin, et tu poses 500 de plus. Et 500 de plus. Et 500 de plus. Cinquante mille avant le Carnaval, sobrinho. *rire amer* Ou tu choisis un parrain, pô. Ramos, Tito, ou le padre de la chapelle. Tous les trois te trouveront avant que tu les trouves.",
 		"choices": ["D'accord, tio"],
 	},
 	# --- Soirée 2 : Seu João après le reveal du Concierge (flag tio_ze_revealed) ---
 	"seu_joao_evening_act2_reveal": {
 		"speaker": "Seu João",
-		"text": "*sa cachaça à mi-chemin de la bouche, suspendue* Tu l'as vu. *long silence* Zé n'est pas mort. Il est concierge au Palace, tu m'as bien entendu. Il a fait croire à sa noyade pour échapper au consortium. Il a laissé sa femme — ta mère — enterrer un cercueil vide. *boit cul sec* Maintenant tu sais. Tu fais ce que tu veux de cette information. Mais ne le dis pas à ta mère. Pas encore.",
+		"text": "*sa cachaça à mi-chemin de la bouche, suspendue* Tu l'as vu. *long silence* Zé n'est pas mort. Il est concierge au Palace, tu m'as bien entendu. Il a fait croire à sa noyade pour échapper au consortium. Il a laissé sa sœur — ta mère — enterrer un cercueil vide. *boit cul sec* Maintenant tu sais. Tu fais ce que tu veux de cette information. Mais ne le dis pas à ta mère. Pas encore.",
 		"choices": ["Pourquoi pas ?", "Comment t'as su ?"],
 		"on_choose": {
 			"0": {"next": "seu_joao_evening_why_silent"},
@@ -168,7 +181,7 @@ const KNOTS: Dictionary = {
 	},
 	"consortium_intro": {
 		"speaker": "Dom Nilton (consortium)",
-		"text": "Ah, le neveu de Zé. Assieds-toi. Cinquante mille reais. T'as jusqu'au Carnaval. Cinq cents d'acompte et je te laisse respirer une semaine. Sinon…",
+		"text": "Ah, le neveu de Zé. Assieds-toi. Cinquante mille reais. T'as jusqu'au Carnaval, malandro. Cinq cents d'acompte et je te laisse respirer une semaine. Sinon…",
 		"choices": ["Sinon quoi ?", "Je reviendrai avec l'acompte"],
 		"on_choose": {
 			"0": {"next": "consortium_threat"},
@@ -185,7 +198,7 @@ const KNOTS: Dictionary = {
 	},
 	"consortium_pay": {
 		"speaker": "Dom Nilton (consortium)",
-		"text": "Combien tu poses sur la table aujourd'hui ?",
+		"text": "Combien tu poses sur la table aujourd'hui, freguês ?",
 		"choices": ["Poser R$ 100", "Poser R$ 500", "Poser tout ce que j'ai (max 5k)", "Rien pour l'instant"],
 		"on_choose": {
 			"0": {"pay_debt": 100},
@@ -195,7 +208,7 @@ const KNOTS: Dictionary = {
 	},
 	"consortium_after_threshold": {
 		"speaker": "Dom Nilton (consortium)",
-		"text": "Pas mal, pas mal. Tu tiens la distance. Continue comme ça. On se reverra pour le reste. *un clin d'œil malaisant*",
+		"text": "Maneiro, maneiro. Tu tiens la distance. Continue comme ça. On se reverra pour le reste. *un clin d'œil malaisant*",
 		"choices": ["D'accord"],
 	},
 	# --- Visites surprise des créanciers (CreditorVisitManager) ---
@@ -210,7 +223,7 @@ const KNOTS: Dictionary = {
 	},
 	"creditor_visit_ultimatum": {
 		"speaker": "Dom Nilton (consortium)",
-		"text": "*te coupe la route, deux types derrière lui en arrière-plan* Sobrinho, ça fait des semaines. Cinq cents reais sur la table aujourd'hui, ou Claudinho commence à composer ta samba funèbre demain. *jette un coup d'œil aux deux types* Ils dorment mal, eux. Ça les soulagerait, un peu d'action.",
+		"text": "*te coupe la route, deux types derrière lui en arrière-plan* Fala sério, sobrinho — ça fait des semaines. Cinq cents reais sur la table aujourd'hui, ou Claudinho commence à composer ta samba funèbre demain. *jette un coup d'œil aux deux types* Ils dorment mal, eux. Ça les soulagerait, un peu d'action.",
 		"choices": ["Poser 500 R$", "Négocier (200 R$, perdre rep)", "Je n'ai pas l'argent"],
 		"on_choose": {
 			"0": {"pay_debt": 500, "rep": {1: 2}},
@@ -370,30 +383,39 @@ const KNOTS: Dictionary = {
 	"cop_shakedown": {
 		"speaker": "PM",
 		"text": "Alvará de vendedor ambulante ? Me deixa ver…",
-		"choices": ["Payer R$ 20", "Refuser"],
+		"choices": ["Payer R$ 20", "Refuser", "« Demande au Capitão Ramos qui vend le milho de Zé. »"],
 		"on_choose": {
 			"0": {"pay_bribe": 20, "rep": {1: 3, 0: -2}},
 			"1": {"rep": {0: 2, 1: -5}},
+			"2": {"jeitinho": {"npc": "ramos", "tier": 1, "ok": {"rep": {1: 1, 2: 1}},
+				"ko_speaker": "PM",
+				"ko_text": "*hausse un sourcil* Ramos ? *parle dans sa radio, écoute, te regarde* Le Capitão sait pas qui t'es, freguês. Mauvaise pioche. L'alvará, ou la rente."}},
 		},
 	},
 	# Shakedown récurrent — acte 1. Le PM blasé, la rente du calçadão.
 	"cop_shakedown_recurring": {
 		"speaker": "PM",
 		"text": "*soupire, te reconnaît* Ah, c'est encore toi le neveu de Zé. Tu connais la chanson, freguês — la rente du calçadão.",
-		"choices": ["Payer R$ 50", "Refuser"],
+		"choices": ["Payer R$ 50", "Refuser", "« Le Capitão et moi, on se connaît. Vérifie. »"],
 		"on_choose": {
 			"0": {"pay_bribe": 50, "rep": {1: 1}},
 			"1": {"rep": {0: 1, 1: -8}},
+			"2": {"jeitinho": {"npc": "ramos", "tier": 1, "ok": {"rep": {1: 1, 4: 1}},
+				"ko_speaker": "PM",
+				"ko_text": "*sourit, pas dupe* Tout le monde « connaît » le Capitão, freguês. Lui par contre, il te connaît pas. Cinquante."}},
 		},
 	},
 	# Shakedown récurrent — acte 2. Le PM a entendu parler du joueur, le tarif monte.
 	"cop_shakedown_recurring_act2": {
 		"speaker": "PM",
 		"text": "*claque sa matraque dans sa main, sourit sans humour* Ah, le sobrinho qui paye à Nilton. Tu fais des entrées et des sorties maintenant, eh ? La rente s'ajuste à la prospérité, freguês.",
-		"choices": ["Payer R$ 80", "Refuser"],
+		"choices": ["Payer R$ 80", "Refuser", "« Appelle Ramos avant de me parler de rente. »"],
 		"on_choose": {
 			"0": {"pay_bribe": 80, "rep": {1: 1}},
 			"1": {"rep": {0: 1, 1: -10}},
+			"2": {"jeitinho": {"npc": "ramos", "tier": 2, "ok": {"rep": {1: 1, 4: 1}},
+				"ko_speaker": "PM",
+				"ko_text": "*compose le numéro, raccroche au bout de deux sonneries* Il a pas décroché pour toi, sobrinho. La prospérité, ça se paie. Quatre-vingts."}},
 		},
 	},
 	# Shakedown récurrent — acte 3+. Le PM sait que le joueur va choisir une voie.
@@ -422,7 +444,7 @@ const KNOTS: Dictionary = {
 	},
 	"miguel_offer": {
 		"speaker": "Miguel",
-		"text": "Un colis à livrer derrière les immeubles, côté rue. 50 reais. Pas de questions.",
+		"text": "Suave. Un colis à livrer derrière les immeubles, côté rue. 50 reais. Pas de questions.",
 		"choices": ["J'accepte", "Refuser", "Je préviens la police"],
 		"on_choose": {
 			"0": {"accept_quest": "deliver_package_01", "rep": {2: 2, 0: -3}},
@@ -437,7 +459,7 @@ const KNOTS: Dictionary = {
 	},
 	"miguel_done": {
 		"speaker": "Miguel",
-		"text": "Boa. On se reverra peut-être.",
+		"text": "Boa, é nóis. On se reverra peut-être.",
 		"choices": ["OK"],
 	},
 }

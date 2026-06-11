@@ -155,10 +155,11 @@ func _list_scenes_under(root: String) -> Array:
 # Pour chaque knot avec on_choose, l'index de chaque choix doit être < taille
 # du tableau choices, et chaque action doit avoir au moins une primitive connue
 # (next, accept_quest, finish_quest, set_flag, set_endgame, pay_debt, pay_bribe,
-# earn, rep). Un choix sans action ferme implicitement le dialogue (autorisé).
+# earn, rep, jeitinho). Un choix sans action ferme implicitement le dialogue (autorisé).
 const KNOWN_VERBS: Array = [
 	"next", "accept_quest", "finish_quest", "set_flag", "set_endgame",
 	"pay_debt", "pay_bribe", "earn", "rep", "return_cart", "complete_minigame",
+	"jeitinho",
 ]
 
 # Knots référencés par les NPC dispatchers. Si un NPC essaie de jouer un knot
@@ -226,7 +227,13 @@ const NPC_DISPATCH_KNOTS: Dictionary = {
 # character_appearance ne dessine RIEN — le joueur ne peut pas le trouver
 # (cas « le contact du capitão est introuvable »). Tout spot est censé être un
 # personnage SAUF ceux explicitement logiques (un lieu qu'on inspecte).
-const _LOGICAL_SPOTS: Array = ["PedrinhoSpot"]  # « Inspecter la citerne » (lieu)
+# « Inspecter la citerne » (lieu) + souvenirs muets de Zé (objets : leur visuel
+# est le prop dessiné par CopacabanaGenerator._spawn_ze_memories, pas un perso).
+const _LOGICAL_SPOTS: Array = [
+	"PedrinhoSpot",
+	"ZeMemory_ze_mem_bench", "ZeMemory_ze_mem_carving", "ZeMemory_ze_mem_rod",
+	"MemorialSpot",  # mémorial de rue (voie tráfico) : un lieu, pas un perso
+]
 
 func _check_spots_visible(root: Node, scene: String) -> void:
 	for node in _all_descendants(root):

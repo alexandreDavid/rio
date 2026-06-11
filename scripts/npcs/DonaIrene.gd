@@ -17,7 +17,14 @@ func _on_interacted(_by: Node) -> void:
 		return
 	var knot: String = data.ink_knot  # irene_intro
 	if QuestManager.is_completed(QUEST):
-		knot = "irene_walk_offer"
+		# Jalon d'affinité : à tier FAMILIAR, Dona Irene invite à sa feijoada
+		# du samedi — une seule fois. Ensuite, accueil chaleureux permanent.
+		if CampaignManager.has_flag("feijoada_irene"):
+			knot = "irene_after_feijoada"
+		elif NPCAffinity.tier(data.id) >= NPCAffinity.Tier.FAMILIAR:
+			knot = "irene_feijoada_invite"
+		else:
+			knot = "irene_walk_offer"
 	elif QuestManager.is_active(QUEST):
 		var objs: Dictionary = QuestManager.get_objectives_state(QUEST)
 		if objs.get(OBJ_FIND, false) and not objs.get(OBJ_RETURN, false):

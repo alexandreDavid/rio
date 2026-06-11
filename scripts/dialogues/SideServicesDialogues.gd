@@ -94,7 +94,7 @@ const KNOTS: Dictionary = {
 	},
 	"farma_reward": {
 		"speaker": "Dona Carmen",
-		"text": "Tu as livré ? Merci, mon grand ! Voilà tes 60 reais. Passe quand tu veux, j'ai toujours du travail.",
+		"text": "Tu as livré ? Valeu, mon grand ! Voilà tes 60 reais. Passe quand tu veux, j'ai toujours du travail.",
 		"choices": ["Merci"],
 		"on_choose": {
 			"0": {"finish_quest": {"quest": "pharmacy_tito", "objective": "deliver_medicine", "payout": 60}, "rep": {0: 2}},
@@ -116,7 +116,7 @@ const KNOTS: Dictionary = {
 	# --- Bar do Policial : recrutement serveur ---
 	"patrao_intro": {
 		"speaker": "Patrão",
-		"text": "Eh garoto, t'as l'air vif. Mon serveur s'est barré à Niterói, j'ai besoin d'un coup de main pour les soirs chargés. Ça t'intéresse ? 40 reais le service, et après on causera shifts.",
+		"text": "Eh garoto, t'as l'air vif. Mon serveur s'est barré à Niterói, j'ai besoin d'un coup de main pour les soirs chargés. Ça t'intéresse ? 40 reais le service, et après on causera shifts. Beleza ?",
 		"choices": ["J'accepte", "Tu paies combien ?", "Plus tard"],
 		"on_choose": {
 			"0": {"accept_quest": "bar_waiter"},
@@ -125,7 +125,7 @@ const KNOTS: Dictionary = {
 	},
 	"patrao_pay_detail": {
 		"speaker": "Patrão",
-		"text": "40 reais le premier service, le temps que je voie si tu casses pas trop de verres. Après c'est 25 reais le shift, plus les pourboires des touristes pompettes. Alors ?",
+		"text": "40 reais le premier service, le temps que je voie si tu casses pas trop de verres. Après c'est 25 reais le shift, plus les pourboires des gringos pompettes. Alors ?",
 		"choices": ["OK, j'embauche", "Plus tard"],
 		"on_choose": {
 			"0": {"accept_quest": "bar_waiter"},
@@ -188,6 +188,42 @@ const KNOTS: Dictionary = {
 			"1": {"earn": 35, "rep": {0: 1, 4: 1}},
 		},
 	},
+	# --- Feijoada du samedi : le jalon d'affinité où le quartier t'adopte. ---
+	# Offerte une seule fois, à tier FAMILIAR (NPCAffinity), après lost_dog.
+	# Aucune récompense monétaire : la comida est sociale (skill ame-carioca).
+	"irene_feijoada_invite": {
+		"speaker": "Dona Irene",
+		"text": "*pose son tricot, te regarde longtemps* Querido… ça fait des semaines que tu passes, que tu promènes Bingo, que tu demandes de mes nouvelles. *sourit* Samedi, je fais ma feijoada. Celle avec la couenne, le chou, l'orange coupée fine — la recette de ma mère, de Madureira. Il y aura les voisines, Seu Tonio, peut-être le Padre. *te prend la main* Tu viens ? Pas comme livreur. Comme convive.",
+		"choices": ["Avec honneur, Dona Irene", "Je ne voudrais pas déranger…"],
+		"on_choose": {
+			"0": {"next": "irene_feijoada_scene"},
+			"1": {"next": "irene_feijoada_insiste"},
+		},
+	},
+	"irene_feijoada_insiste": {
+		"speaker": "Dona Irene",
+		"text": "*fronce les sourcils, faussement sévère* Déranger ? *agite sa cuillère en bois* Querido, à Rio, refuser une feijoada c'est comme insulter la grand-mère de quelqu'un. Samedi. Midi. Et tu as intérêt à venir le ventre vide.",
+		"choices": ["D'accord, d'accord — j'y serai"],
+		"on_choose": {
+			"0": {"next": "irene_feijoada_scene"},
+		},
+	},
+	"irene_feijoada_scene": {
+		"speaker": "Narrateur",
+		"text": "Samedi, midi. La table déborde sur le trottoir — la marmite noire au centre, le riz, la farofa, les oranges. Seu Tonio raconte trois fois la même histoire et tout le monde rit quand même. Bingo dort sous la table, le museau sur ton pied.\n\nDona Irene te ressert sans te demander. Quelqu'un t'appelle par ton prénom — pas « le neveu de Zé », pas « le gamin du milho ». Ton prénom.\n\nC'est peut-être ça, payer une dette : exister ici.",
+		"choices": ["*rester jusqu'au soir*"],
+		"on_choose": {
+			"0": {"set_flag": "feijoada_irene", "rep": {0: 3, 4: 2}},
+		},
+	},
+	"irene_after_feijoada": {
+		"speaker": "Dona Irene",
+		"text": "*lève les yeux de son tricot, le visage qui s'éclaire* Querido ! Les voisines me demandent encore quand tu reviens manger. *baisse la voix* J'ai gardé un tupperware de feijoada pour toi. Ne le dis pas à Seu Tonio.",
+		"choices": ["Vous êtes la meilleure, Dona Irene", "Bingo a besoin de courir ?"],
+		"on_choose": {
+			"1": {"next": "irene_walk_offer"},
+		},
+	},
 	"irene_receives_bread": {
 		"speaker": "Dona Irene",
 		"text": "Oh ! Le pain de Seu Tonio, encore chaud ! *respire la croûte* Tu es un ange, querido. Tiens, prends un peu de monnaie pour ta course.",
@@ -199,7 +235,7 @@ const KNOTS: Dictionary = {
 	# --- Padaria São Sebastião (Seu Tonio) ---
 	"padaria_intro": {
 		"speaker": "Seu Tonio",
-		"text": "Bom dia ! Pão de queijo direct du four, café com leite, et le pastel du jour. Sers-toi.",
+		"text": "Bom dia, freguês ! Pão de queijo direct du four, café com leite, et le pastel du jour. Sers-toi.",
 		"choices": ["Pão de queijo (R$ 4)", "Café com leite (R$ 6)", "Pastel (R$ 8)", "Une mission ?", "Plus tard"],
 		"on_choose": {
 			"0": {"pay_bribe": 4, "rep": {0: 1, 2: 1}},
@@ -223,7 +259,7 @@ const KNOTS: Dictionary = {
 	},
 	"padaria_baking_offer": {
 		"speaker": "Seu Tonio",
-		"text": "Tu m'as bien dépanné avec Dona Irene. Tu veux apprendre le métier ? Le four, la plaque, les ingrédients — tout est là. Tu sors une fournée, tu remplis le panier, tu gardes les pourboires.",
+		"text": "Tu m'as bien dépanné avec Dona Irene — valeu. Tu veux apprendre le métier ? Le four, la plaque, les ingrédients — tout est là. Tu sors une fournée, tu remplis le panier, tu gardes les pourboires.",
 		"choices": ["J'enfile le tablier", "Comment ça marche ?", "Plus tard"],
 		"on_choose": {
 			"0": {"accept_quest": "padaria_baking"},
@@ -255,7 +291,7 @@ const KNOTS: Dictionary = {
 	},
 	"otavio_explain": {
 		"speaker": "Otávio",
-		"text": "Tu vois la borne juste là ? Tu pointes, t'es en service. Une voiture arrive, tu la prends, tu la gares. Le client ressort, il veut sa voiture — tu cours. Plus tu es rapide, plus le tip grimpe. 90 secondes par service, jusqu'à cinq clients. Ça te tente ?",
+		"text": "Tu vois la borne juste là ? Tu pointes, t'es en service. Une voiture arrive, tu la prends, tu la gares, suave. Le client ressort, il veut sa voiture — tu cours. Plus tu es rapide, plus le tip grimpe. 90 secondes par service, jusqu'à cinq clients. Ça te tente ?",
 		"choices": ["Je m'inscris", "Plus tard"],
 		"on_choose": {
 			"0": {"accept_quest": "valet_palace"},
@@ -338,7 +374,7 @@ const KNOTS: Dictionary = {
 	},
 	"ivan_after_verified": {
 		"speaker": "Iván",
-		"text": "*range un verre, voix basse* Caldeira t'attend. Va lui dire ce que tu sais. Et ne reviens pas si tu vois quelqu'un te suivre.",
+		"text": "*range un verre, voix basse* Caldeira t'attend. Va lui dire ce que tu sais, tranquilo. Et ne reviens pas si tu vois quelqu'un te suivre.",
 		"choices": ["Compris"],
 	},
 	"ivan_after_done": {
@@ -348,7 +384,7 @@ const KNOTS: Dictionary = {
 	},
 	"ivan_default": {
 		"speaker": "Iván",
-		"text": "*essuie un verre, sourire fatigué* Chez moi le pôr-do-sol commence à dix-sept heures et finit à minuit. Caipirinha ? Cerveja gelada ? *pose le verre* On parle, on écoute. Tout passe par ce bar.",
+		"text": "*essuie un verre, sourire fatigué* Chez moi le pôr-do-sol commence à dix-sept heures et finit à minuit. Caipirinha, freguês ? Cerveja gelada ? *pose le verre* On parle, on écoute. Tout passe par ce bar.",
 		"choices": ["Une cerveja"],
 	},
 	# --- Conquistas — paragraphes rétrospectifs, marqués read au déblocage ---
@@ -366,10 +402,10 @@ const KNOTS: Dictionary = {
 	"conquista_first_familiar": {"speaker": "Crônica", "text": "Quelqu'un m'a appelé sobrinho sans hésiter, comme si on se connaissait depuis des années. C'était presque le cas.", "choices": ["Fermer"]},
 	"conquista_three_familiar": {"speaker": "Crônica", "text": "Trois personnes du bairro me considèrent comme de la famille. C'est plus que je n'avais à mon arrivée. C'est plus que la plupart en accumulent.", "choices": ["Fermer"]},
 	"conquista_first_photo": {"speaker": "Crônica", "text": "J'ai pris ma première photo. Une vague, un détail du calçadão, le mont du Pão de Açúcar en arrière-plan. On garde ce qu'on voit pour ne pas oublier qu'on l'a vu.", "choices": ["Fermer"]},
-	"conquista_pesca_baia": {"speaker": "Crônica", "text": "Bruno m'a tendu sa canne sans rien dire. J'ai sorti un robalo de la baie de Guanabara au troisième essai. Trente-quatre ans qu'il en parlait — et c'est moi qui l'ai sorti.", "choices": ["Fermer"]},
+	"conquista_pesca_baia": {"speaker": "Crônica", "text": "Bruno m'a tendu sa canne sans rien dire. J'ai sorti un robalo de la baie de Guanabara au troisième essai. Trente-quatre ans qu'il en parlait — et c'est moi qui l'ai sorti. Caraca.", "choices": ["Fermer"]},
 	"conquista_wealthy_10k": {"speaker": "Crônica", "text": "Dix mille reais versés. La cinquième ligne du carnet noir de Dom Nilton. Il a marqué un trait épais dessous — première étape.", "choices": ["Fermer"]},
 	"conquista_carnaval_complete": {"speaker": "Crônica", "text": "Le défilé du Sambódromo. J'ai mené ma faction sous les projecteurs jusqu'à l'aube. La Sapucaí chante encore mon nom — ou un nom approchant.", "choices": ["Fermer"]},
-	"conquista_chatterbox": {"speaker": "Crônica", "text": "Dix personnes du bairro me reconnaissent et m'ont parlé au moins une fois. À Copacabana, c'est presque une famille élargie.", "choices": ["Fermer"]},
+	"conquista_chatterbox": {"speaker": "Crônica", "text": "Dix personnes du bairro me reconnaissent et m'ont parlé au moins une fois. À Copacabana, c'est presque une famille élargie. É nóis.", "choices": ["Fermer"]},
 	"conquista_globetrotter": {"speaker": "Crônica", "text": "Cinq quartiers visités. Du Morro à la Barra, du Corcovado à Niterói. Chaque rue m'a appris quelque chose — surtout celles que je n'aurais pas dû prendre.", "choices": ["Fermer"]},
 	"conquista_respeitado": {"speaker": "Crônica", "text": "Une réputation qui m'a pris des mois à bâtir. Les gens qui me croisent baissent ou hochent la tête — selon ce qu'on dit de moi.", "choices": ["Fermer"]},
 	"conquista_beach_athlete": {"speaker": "Crônica", "text": "J'ai sué sur le sable et dans l'eau. Volley, surf, paddle, basquete — la praia te juge par la sueur, pas par les mots.", "choices": ["Fermer"]},

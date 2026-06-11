@@ -12,7 +12,7 @@ const KNOTS: Dictionary = {
 	# --- Side quest Barra Riserva Uno : "protection" du condomínio ---
 	"consortium_barra_offer": {
 		"speaker": "Dom Nilton (consortium)",
-		"text": "*déplie un plan de la Barra* Riserva Uno. Condomínio fermé, six tours, piscines olympiques. Le gérant — Magalhães — il dit toujours non quand on parle « protection ». *te scrute* J'aimerais qu'il dise oui. Tu prends le taxi pour la Barra, tu lui fais comprendre la couleur du ciel. Et tu reviens signer. Huit cents reais et cinq cents de dette en moins.",
+		"text": "*déplie un plan de la Barra* Riserva Uno. Condomínio fermé, six tours, piscines olympiques. Le gérant — Magalhães — il dit toujours non quand on parle « protection ». *te scrute* J'aimerais qu'il dise oui. Tu prends le taxi pour la Barra, tu lui fais comprendre la couleur du ciel. Et tu reviens signer. Huit cents reais et cinq cents de dette en moins. Beleza ?",
 		"choices": ["J'y vais", "Pas le moment"],
 		"on_choose": {
 			"0": {"accept_quest": "consortium_barra_security"},
@@ -30,7 +30,7 @@ const KNOTS: Dictionary = {
 	},
 	"consortium_barra_done": {
 		"speaker": "Dom Nilton (consortium)",
-		"text": "*range le contrat dans une enveloppe en cuir* Premier mois de protection signé. *te tend une liasse* Huit cents reais et cinq cents de dette en moins. Magalhães enverra le suivant tout seul — il a compris le système. Tu es bon dans ce qu'on fait, sobrinho. Trop bon, peut-être.",
+		"text": "*range le contrat dans une enveloppe en cuir* Demorô. Premier mois de protection signé. *te tend une liasse* Huit cents reais et cinq cents de dette en moins. Magalhães enverra le suivant tout seul — il a compris le système. Tu es bon dans ce qu'on fait, sobrinho. Trop bon, peut-être.",
 		"choices": ["Obrigado, Dom Nilton"],
 		"on_choose": {
 			"0": {"finish_quest": {"quest": "consortium_barra_security", "objective": "close_deal", "payout": 800}, "pay_debt": 500, "rep": {1: 3, 0: -2}},
@@ -123,7 +123,7 @@ const KNOTS: Dictionary = {
 	},
 	"bruno_offer": {
 		"speaker": "Bruno",
-		"text": "*pointe un colis en carton près du bollard* Cette caisse, elle attend Helena, la curatrice du MAC, depuis trois jours. *montre ses genoux* Moi je remonte plus la rampe — opération l'an dernier, jamais récupéré. Tu me la portes là-haut ? Cent quatre-vingts reais, et tu fais une heureuse.",
+		"text": "*pointe un colis en carton près du bollard* Cette caisse, elle attend Helena, la curatrice du MAC, depuis trois jours. *montre ses genoux* Pô, moi je remonte plus la rampe — opération l'an dernier, jamais récupéré. Tu me la portes là-haut ? Cent quatre-vingts reais, et tu fais une heureuse.",
 		"choices": ["D'accord, je l'emmène", "Plus tard"],
 		"on_choose": {
 			"0": {"accept_quest": "bruno_carga"},
@@ -136,13 +136,13 @@ const KNOTS: Dictionary = {
 	},
 	"bruno_after_carga": {
 		"speaker": "Bruno",
-		"text": "*te tend une cachaça artisanale, scellée* Helena m'a appelé. *sourit pour la première fois* Tiens, c'est pour toi. Distillerie de Paraty, ma région. *redevient sérieux* Si t'as encore besoin d'un passage à Rio, je peux t'embarquer gratis. Une fois.",
+		"text": "*te tend une cachaça artisanale, scellée* Helena m'a appelé. Valeu, hein. *sourit pour la première fois* Tiens, c'est pour toi. Distillerie de Paraty, ma région. *redevient sérieux* Si t'as encore besoin d'un passage à Rio, je peux t'embarquer gratis. Une fois.",
 		"choices": ["Obrigado, Bruno"],
 	},
 	# --- Chaîne consortium 2 : Le Parc Residences ---
 	"consortium_le_parc_offer": {
 		"speaker": "Dom Nilton (consortium)",
-		"text": "*pose une enveloppe sur la table* Riserva Uno a payé. Magalhães a fait passer le mot — c'est tout le bénéfice de la trouille bien placée. *te scrute* Le Parc Residences, à deux cents mètres à l'ouest. Sr. Carrasco, le gérant. Plus combatif, plus ancien, plus connecté. Mais il sait que tu viens, maintenant. Mille reais, sept cents de dette en moins. Tu prends ?",
+		"text": "*pose une enveloppe sur la table* Riserva Uno a payé. Magalhães a fait passer le mot — c'est tout le bénéfice de la trouille bien placée. *te scrute* Le Parc Residences, à deux cents mètres à l'ouest. Sr. Carrasco, le gérant. Plus combatif, plus ancien, plus connecté. Mais il sait que tu viens, maintenant. Mille reais, sept cents de dette en moins. Tu prends, malandro ?",
 		"choices": ["J'y vais", "Pas le moment"],
 		"on_choose": {
 			"0": {"accept_quest": "consortium_le_parc"},
@@ -155,7 +155,7 @@ const KNOTS: Dictionary = {
 	},
 	"consortium_le_parc_after_intimidate": {
 		"speaker": "Dom Nilton (consortium)",
-		"text": "*sourire en coin* Tu l'as déjà secoué ? Bon travail. Retourne signer, sobrinho — il sait maintenant qu'on a un système.",
+		"text": "*sourire en coin* Tu l'as déjà secoué ? Golaço. Retourne signer, sobrinho — il sait maintenant qu'on a un système.",
 		"choices": ["Compris"],
 	},
 	"consortium_le_parc_done": {
@@ -214,7 +214,7 @@ const KNOTS: Dictionary = {
 	},
 	"consortium_peninsula_done": {
 		"speaker": "Dom Nilton (consortium)",
-		"text": "*compte les billets en silence, glisse une grosse enveloppe* Quinze cents reais. Neuf cents de moins sur la dette. *se penche en avant, voix basse* Mendonça a signé, sobrinho. C'est historique. Trois condomínios de la Barra paient maintenant — quarante mille reais par mois récurrents. Tu m'as rendu plus fort que je ne l'étais. *expression change* Mais le commissaire — son cousin — il connaît ton visage maintenant. Évite le calçadão une semaine. Et quand tu reverras Capitão Ramos, il aura une raison de moins de te protéger.",
+		"text": "*compte les billets en silence, glisse une grosse enveloppe* Quinze cents reais. Neuf cents de moins sur la dette. *se penche en avant, voix basse* Mendonça a signé, sobrinho. Caraca — c'est historique. Trois condomínios de la Barra paient maintenant — quarante mille reais par mois récurrents. Tu m'as rendu plus fort que je ne l'étais. *expression change* Mais le commissaire — son cousin — il connaît ton visage maintenant. Évite le calçadão une semaine. Et quand tu reverras Capitão Ramos, il aura une raison de moins de te protéger.",
 		"choices": ["Obrigado, Dom Nilton"],
 		"on_choose": {
 			"0": {"finish_quest": {"quest": "consortium_peninsula", "objective": "close_deal_mendonca", "payout": 1500}, "pay_debt": 900, "rep": {1: -5, 0: -4, 2: 3}, "set_flag": "commissaire_alerted"},
@@ -229,9 +229,13 @@ const KNOTS: Dictionary = {
 	"mendonca_first_visit": {
 		"speaker": "Sr. Mendonça",
 		"text": "*ne lève pas les yeux, continue de signer des documents* Carrasco m'a prévenu. Magalhães aussi, indirectement. *signe encore, voix sans émotion* Vous êtes le sobrinho de Zé. Vingt-trois ans, presque pas d'éducation formelle, dette de cinquante mille au consortium. *te regarde enfin* Mon cousin commissaire connaît tout votre dossier. Si vous touchez à un cheveu de mon personnel, vous dormez en prison cette nuit. Donc — qu'est-ce que vous voulez réellement ?",
-		"choices": ["*déposer la liste blanchiment sur le bureau, en silence*", "*partir sans rien dire*"],
+		"choices": ["*déposer la liste blanchiment sur le bureau, en silence*", "*partir sans rien dire*", "« Dom Salvatore et moi avons des amis communs. Demandez-lui. »"],
 		"on_choose": {
 			"0": {"finish_quest": {"quest": "consortium_peninsula", "objective": "intimidate_mendonca", "payout": 0}, "rep": {2: 3, 1: -2}},
+			"2": {"jeitinho": {"npc": "don_salvatore", "tier": 1,
+				"ok": {"finish_quest": {"quest": "consortium_peninsula", "objective": "intimidate_mendonca", "payout": 0}, "rep": {4: 3}},
+				"ko_speaker": "Sr. Mendonça",
+				"ko_text": "*décroche son téléphone, deux mots, raccroche* Salvatore ne vous connaît pas, monsieur. *sourire froid* Première règle du système : ne jamais invoquer un nom qui ne répond pas."}},
 		},
 	},
 	"mendonca_close_deal": {
@@ -272,7 +276,7 @@ const KNOTS: Dictionary = {
 	},
 	"ramos_bench": {
 		"speaker": "Capitão Ramos",
-		"text": "120 au développé. Et je fais encore un peu de jiu-jitsu. Un vrai capitão, tu vois. Bon, si tu changes d'avis, je suis là.",
+		"text": "120 au développé. Et je fais encore un peu de jiu-jitsu. Un vrai capitão, tu vois. Bon, si tu changes d'avis, je suis là. Tranquilo.",
 		"choices": ["Salut"],
 	},
 	# --- ACTE 2 : test de loyauté Tito (avant d'ouvrir la voie tráfico finale) ---
@@ -295,13 +299,13 @@ const KNOTS: Dictionary = {
 	},
 	"carlos_thanks": {
 		"speaker": "Carlos",
-		"text": "Formidável ! Tu peux refaire un tour chaque fois que tu veux. La station vélo est là pour toi.",
+		"text": "Maneiro demais ! Tu peux refaire un tour chaque fois que tu veux. La station vélo est là pour toi.",
 		"choices": ["Merci"],
 	},
 	# --- VOIE TRÁFICO : intro acte 2 (échantillon, pas de pacte voie scellé) ---
 	"tito_intro_a1_offer": {
 		"speaker": "Tito",
-		"text": "*te jauge, recrache la fumée* T'as payé tes 500 au consortium. Bom. Tu veux comprendre comment le morro paie ? Porte un paquet pour mon contact du calçadão. Une seule course. Tu fermes ta gueule, tu reviens. Après tu décides — moi, Ramos, le Padre, Magalhães. Mais d'abord tu portes.",
+		"text": "*te jauge, recrache la fumée* T'as payé tes 500 au consortium. Bom. Tu veux comprendre comment le morro paie ? Porte un paquet pour mon contact du calçadão. Une seule course, mermão. Tu fermes ta gueule, tu reviens. Après tu décides — moi, Ramos, le Padre, Magalhães. Mais d'abord tu portes.",
 		"choices": ["Je porte ton paquet", "Plus tard"],
 		"on_choose": {
 			"0": {"accept_quest": "trafico_a1_livraison", "rep": {2: 1}},
@@ -311,7 +315,7 @@ const KNOTS: Dictionary = {
 	# --- VOIE POLÍCIA : intro acte 2 ---
 	"ramos_intro_b1_offer": {
 		"speaker": "Capitão Ramos",
-		"text": "*te jauge par-dessus son café* T'as payé tes 500 au consortium. Un môme du morro ponctuel, c'est rare. *pose sa tasse* Je te demande un seul service avant qu'on parle vraiment : repère un visage utile sur le calçadão et reviens me le rapporter. Pas d'uniforme, pas d'engagement. Après, on verra.",
+		"text": "*te jauge par-dessus son café* T'as payé tes 500 au consortium. Un môme du morro ponctuel, c'est rare. *pose sa tasse* Je te demande un seul service avant qu'on parle vraiment : repère un visage utile sur le calçadão et reviens me le rapporter. Pas d'uniforme, pas d'engagement — suave. Après, on verra.",
 		"choices": ["Compris, Capitão", "Plus tard"],
 		"on_choose": {
 			"0": {"accept_quest": "policia_b1_intel", "rep": {1: 1}},
@@ -352,7 +356,7 @@ const KNOTS: Dictionary = {
 	},
 	"pecheur_act2_choose": {
 		"speaker": "Seu Pedro",
-		"text": "Trois choix, mon gars. Tu en parles à Ramos — la Polícia coupera le robinet et te paiera bien. Tu en parles à Miguel — le Morro saura, et il y a peut-être quelque chose à grappiller. Ou tu te tais, et tu rentres chez toi dormir. Que Dieu te guide.",
+		"text": "Trois choix, cara. Tu en parles à Ramos — la Polícia coupera le robinet et te paiera bien. Tu en parles à Miguel — le Morro saura, et il y a peut-être quelque chose à grappiller. Ou tu te tais, et tu rentres chez toi dormir. Que Dieu te guide.",
 		"choices": ["Je vais voir Ramos (R$ 400)", "Je préviens Miguel (R$ 300)", "Je me tais"],
 		"on_choose": {
 			"0": {"finish_quest": {"quest": "act2_pecheur_secret", "objective": "decide_pecheur", "payout": 400}, "set_flag": "pecheur_to_ramos", "rep": {1: 5, 2: -2}},

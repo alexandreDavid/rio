@@ -18,7 +18,7 @@ const KNOTS: Dictionary = {
 	},
 	"carlos_lagoa_remind": {
 		"speaker": "Carlos",
-		"text": "T'as essayé la Lagoa ? La borne de location est juste à côté du chemin. Quatre points cardinaux, dans l'ordre.",
+		"text": "Pô, t'as toujours pas essayé la Lagoa ? La borne de location est juste à côté du chemin. Quatre points cardinaux, dans l'ordre.",
 		"choices": ["J'y vais"],
 	},
 	# --- Escort / accompagnement (Contessa Bianchi) ---
@@ -33,7 +33,13 @@ const KNOTS: Dictionary = {
 	"contessa_snob": {
 		"speaker": "Contessa Bianchi",
 		"text": "*te regarde de haut en bas* Mmm non. Reviens quand tu auras un peu plus… de charme. (Charisma requis : 10)",
-		"choices": ["Compris"],
+		"choices": ["Compris", "« Le concierge du Palace répond de moi, Contessa. »"],
+		"on_choose": {
+			"1": {"jeitinho": {"npc": "concierge", "tier": 1,
+				"ok": {"accept_quest": "escort_contessa", "rep": {4: 1}},
+				"ko_speaker": "Contessa Bianchi",
+				"ko_text": "*lève un sourcil amusé* Curieux. Le concierge ne m'a jamais parlé de toi. *agite la main* Les références, ragazzo, ça se cultive."}},
+		},
 	},
 	"contessa_waiting": {
 		"speaker": "Contessa Bianchi",
@@ -55,11 +61,15 @@ const KNOTS: Dictionary = {
 	},
 	"jorge_escort_arrival": {
 		"speaker": "Jorge",
-		"text": "*lève un sourcil en voyant la Contessa* Tiens, tiens… on fait dans le luxe ce soir ? Je vous sers quoi, signora ?",
-		"choices": ["Deux caipirinhas, merci", "On passait juste saluer"],
+		"text": "*lève un sourcil en voyant la Contessa* Caraca… on fait dans le luxe ce soir ? Je vous sers quoi, signora ?",
+		"choices": ["Deux caipirinhas, merci", "On passait juste saluer", "« Jorge, c'est pour moi que tu les fais. »"],
 		"on_choose": {
 			"0": {"finish_quest": {"quest": "escort_contessa", "objective": "escort_to_bar", "payout": 0}, "pay_bribe": 20, "rep": {3: 1}},
 			"1": {"finish_quest": {"quest": "escort_contessa", "objective": "escort_to_bar", "payout": 0}},
+			"2": {"jeitinho": {"npc": "jorge", "tier": 2,
+				"ok": {"finish_quest": {"quest": "escort_contessa", "objective": "escort_to_bar", "payout": 0}, "rep": {3: 1, 4: 1}},
+				"ko_speaker": "Jorge",
+				"ko_text": "*rit en essuyant un verre* Pour toi ? Freguês, je connais ton visage, pas ton nom. La maison offre aux habitués — deviens-en un."}},
 		},
 	},
 	# --- Variantes affinité (NPCAffinity) pour les NPCs majeurs récurrents ---
@@ -135,7 +145,7 @@ const KNOTS: Dictionary = {
 	# --- Side quest : tour guidé pour le touriste VIP ---
 	"tourist_vip_tour_offer": {
 		"speaker": "Touriste VIP",
-		"text": "*ajuste son chapeau de paille trop neuf* Hey amigo ! Tu parle français ? Je veux voir le vrai Rio — le Cristo, le Pão de Açúcar, la Lagoa. Pas les pièges à touristes du Palace. Tu m'emmènes ? Je donne 100 reais à chaque arrêt et 600 de plus à la fin. C'est bon pour toi ?",
+		"text": "*ajuste son chapeau de paille trop neuf* Hey amigo ! Tu parle français ? Je veux voir le vrai Rio — le Cristo, le Pão de Açúcar, la Lagoa. Pas les pièges à touristes du Palace. Tu m'emmènes ? Je donne 100 reais à chaque arrêt et 600 de plus à la fin. C'est bon pour toi ? « Bélézza », comme vous dites !",
 		"choices": ["Marché conclu, monsieur", "Non merci"],
 		"on_choose": {
 			"0": {"accept_quest": "tourist_vip_tour"},
@@ -148,7 +158,7 @@ const KNOTS: Dictionary = {
 	},
 	"tourist_vip_tour_done": {
 		"speaker": "Touriste VIP",
-		"text": "*sourit, lunettes de soleil et appareil photo en bandoulière* Quel quartier merveilleux ! Mes amis vont être jaloux. Voilà ton bonus, amigo, comme promis. Si je reviens l'an prochain, tu seras mon guide officiel.",
+		"text": "*sourit, lunettes de soleil et appareil photo en bandoulière* Quel quartier merveilleux ! « Caraca », comme dit mon chauffeur ! Mes amis vont être jaloux. Voilà ton bonus, amigo, comme promis. Si je reviens l'an prochain, tu seras mon guide officiel.",
 		"choices": ["Bon retour, monsieur"],
 	},
 	"ronaldo_act2_gala": {
@@ -161,7 +171,7 @@ const KNOTS: Dictionary = {
 	},
 	"carlos_act2_gala": {
 		"speaker": "Carlos",
-		"text": "Un gala télévisé ? *éclate de rire* L'expresso ISSIMO en pause publicitaire ? Cher confrère, tu fais une bonne affaire à mon café aujourd'hui. Je sponsorise. Préviens la Contessa : trois machines, deux baristas et l'enseigne sur la scène.",
+		"text": "Un gala télévisé ? *éclate de rire* Fala sério ! L'expresso ISSIMO en pause publicitaire ? Cher confrère, tu fais une bonne affaire à mon café aujourd'hui. Je sponsorise. Préviens la Contessa : trois machines, deux baristas et l'enseigne sur la scène.",
 		"choices": ["Marché conclu"],
 		"on_choose": {
 			"0": {"finish_quest": {"quest": "act2_contessa_gala", "objective": "secured_sponsor", "payout": 0}},
@@ -197,7 +207,7 @@ const KNOTS: Dictionary = {
 	# --- Side quest : torcida au Maracanã ---
 	"ronaldo_torcida_offer": {
 		"speaker": "Ronaldo",
-		"text": "*tape sur sa caisse* Ça va te plaire, sobrinho. Le Brésil joue ce soir au Maracanã contre l'Argentine. Le chef de torcida cherche un tambourineiro pour mener la tribune nord. Les supporters paient bien le rythme — plus tu déchires, plus le pourboire enfle. Le taxi de l'Av. Atlântica te dépose à l'esplanade.",
+		"text": "*tape sur sa caisse* Ça va te plaire, sobrinho. Le Brésil joue ce soir au Maracanã contre l'Argentine. Le chef de torcida cherche un tambourineiro pour mener la tribune nord. Les supporters paient bien le rythme — plus tu déchires, plus le pourboire enfle. Et te fatigue pas à dire que t'es {time} : ce soir, tout le monde est Brésil. Le taxi de l'Av. Atlântica te dépose à l'esplanade.",
 		"choices": ["Eu vou nessa", "Pas mon truc"],
 		"on_choose": {
 			"0": {"accept_quest": "ronaldo_maracana_torcida"},
@@ -224,7 +234,7 @@ const KNOTS: Dictionary = {
 	},
 	"ronaldo_basket_remind": {
 		"speaker": "Ronaldo",
-		"text": "Le terrain de l'Aterro t'attend. Vise la jauge verte, c'est tout. Taxi puis terrain.",
+		"text": "Le terrain de l'Aterro t'attend. Vise la jauge verte et reste tranquilo, c'est tout. Taxi puis terrain.",
 		"choices": ["J'y vais"],
 	},
 	"ronaldo_basket_done": {
@@ -298,7 +308,7 @@ const KNOTS: Dictionary = {
 	# --- Lucas — duel de surf à Arpoador (ZonaSul) ---
 	"lucas_intro": {
 		"speaker": "Lucas",
-		"text": "*serre sa planche sous le bras, regarde l'horizon* Tu surfes, ou tu poses pour les touristes ? Arpoador, c'est pas pour les frileux. Le poste 7, c'est notre table — on y mange les newbies au petit déjeuner. *te scanne* Tu m'as l'air solide. T'oserais ?",
+		"text": "*serre sa planche sous le bras, regarde l'horizon* Tu surfes, ou tu poses pour les gringos ? Arpoador, c'est pas pour les frileux. Le poste 7, c'est notre table — on y mange les newbies au petit déjeuner. *te scanne* Tu m'as l'air solide. T'oserais ?",
 		"choices": ["Présente-toi"],
 		"on_choose": {
 			"0": {"next": "lucas_offer"},
@@ -314,7 +324,7 @@ const KNOTS: Dictionary = {
 	},
 	"lucas_remind": {
 		"speaker": "Lucas",
-		"text": "*pointe la mer du menton* La SurfStation t'attend. Tiens-toi sur la planche, lis la vague avant qu'elle te lise. Reviens me voir quand t'as bouclé une session.",
+		"text": "*pointe la mer du menton* La SurfStation t'attend. Reste suave sur la planche, lis la vague avant qu'elle te lise. Reviens me voir quand t'as bouclé une session.",
 		"choices": ["J'y vais"],
 	},
 	"lucas_done": {
@@ -341,7 +351,7 @@ const KNOTS: Dictionary = {
 	},
 	"camila_remind": {
 		"speaker": "Camila",
-		"text": "*attend en regardant la mer* On t'attend sur le sable. Le filet est tendu, mes coéquipières s'échauffent. Reviens quand t'es prêt à enfiler le maillot.",
+		"text": "*attend en regardant la mer* On t'attend sur le sable, mermão. Le filet est tendu, mes coéquipières s'échauffent. Reviens quand t'es prêt à enfiler le maillot.",
 		"choices": ["J'arrive"],
 	},
 	"camila_done": {
@@ -361,9 +371,13 @@ const KNOTS: Dictionary = {
 	"diego_offer": {
 		"speaker": "Mestre Diego",
 		"text": "*tape une fois sur le berimbau* Cent reais. Pas pour moi — pour la roda, pour les jeunes que je forme ici. En échange, tu vois la série meia-lua de compasso → rasteira → armada. Une figure rare, je la garde pour les fins connaisseurs.",
-		"choices": ["OK (R$ 100)", "Trop cher"],
+		"choices": ["OK (R$ 100)", "Trop cher", "« Mestre, la roda connaît déjà mon nom. »"],
 		"on_choose": {
 			"0": {"finish_quest": {"quest": "diego_botafogo_capoeira", "objective": "tip_diego", "payout": 0}, "pay_bribe": 100, "rep": {0: 3, 4: 2}, "next": "diego_show"},
+			"2": {"jeitinho": {"npc": "diego", "tier": 1,
+				"ok": {"finish_quest": {"quest": "diego_botafogo_capoeira", "objective": "tip_diego", "payout": 0}, "rep": {0: 2, 2: 2}, "next": "diego_show"},
+				"ko_speaker": "Mestre Diego",
+				"ko_text": "*sourit sans s'arrêter de jouer* La roda connaît ton nom ? *regarde ses élèves, qui haussent les épaules* Pas encore, sobrinho. Reviens t'asseoir, écoute le berimbau, salue les anciens. Après on parlera famille."}},
 		},
 	},
 	"diego_show": {
@@ -428,7 +442,7 @@ const KNOTS: Dictionary = {
 	},
 	"chef_done": {
 		"speaker": "Chef",
-		"text": "Obrigado ! La maison te doit un dessert. Passe quand tu veux.",
+		"text": "Valeu ! La maison te doit un dessert. Passe quand tu veux.",
 		"choices": ["De rien"],
 	},
 	"lucia_to_chef": {
@@ -442,7 +456,7 @@ const KNOTS: Dictionary = {
 	# Boutique — Rio Style
 	"vendeuse_intro": {
 		"speaker": "Beatriz",
-		"text": "Oi querido ! Bem-vindo a Rio Style. Besoin d'un t-shirt pour briller sur le calçadão ?",
+		"text": "Oi querido ! Bem-vindo a Rio Style. Besoin d'un t-shirt maneiro pour briller sur le calçadão ?",
 		"choices": ["T-shirt Copacabana (R$ 25)", "Maillot de bain (R$ 40)", "Juste un coup d'œil"],
 		"on_choose": {
 			"0": {"pay_bribe": 25, "rep": {3: 2}},
