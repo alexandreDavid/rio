@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3]
+[gd_scene load_steps=24 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/props/TaxiStand.tscn" id="1_taxi"]
 [ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="2_wander"]
@@ -14,6 +14,7 @@
 [ext_resource type="PackedScene" path="res://scenes/props/DistrictEntrance.tscn" id="13_entrance"]
 [ext_resource type="Script" path="res://scripts/world/AmbientDrifter.gd" id="18_drift"]
 [ext_resource type="PackedScene" path="res://scenes/props/ReactiveDialogueSpot.tscn" id="19_reactive"]
+[ext_resource type="Script" path="res://scripts/world/EveningOnly.gd" id="20_evening"]
 
 [sub_resource type="RectangleShape2D" id="WallH_N"]
 size = Vector2(3900, 12)
@@ -897,6 +898,34 @@ offset_right = 1500.0
 offset_bottom = -150.0
 color = Color(0.32, 0.5, 0.62, 1)
 
+[node name="OceanAtrasPao" type="ColorRect" parent="."]
+offset_left = 1496.0
+offset_top = -204.0
+offset_right = 2300.0
+offset_bottom = 204.0
+color = Color(0.32, 0.5, 0.62, 1)
+
+[node name="OceanAtrasPaoWaveA" type="ColorRect" parent="."]
+offset_left = 1600.0
+offset_top = -60.0
+offset_right = 1720.0
+offset_bottom = -57.0
+color = Color(0.85, 0.92, 0.95, 1)
+
+[node name="OceanAtrasPaoWaveB" type="ColorRect" parent="."]
+offset_left = 1900.0
+offset_top = 60.0
+offset_right = 2020.0
+offset_bottom = 63.0
+color = Color(0.85, 0.92, 0.95, 1)
+
+[node name="MorroBaseSkirt" type="ColorRect" parent="."]
+offset_left = 1096.0
+offset_top = -151.0
+offset_right = 1504.0
+offset_bottom = -98.0
+color = Color(0.34, 0.41, 0.34, 1)
+
 [node name="BotafogoBayHighlight" type="ColorRect" parent="."]
 offset_left = 200.0
 offset_top = -200.0
@@ -946,47 +975,403 @@ offset_right = 700.0
 offset_bottom = -148.0
 color = Color(0.42, 0.32, 0.28, 1)
 
-[node name="MorroDaUrca" type="ColorRect" parent="."]
-offset_left = 1100.0
-offset_top = -380.0
-offset_right = 1380.0
+[node name="EnseadaBoat0" type="ColorRect" parent="."]
+offset_left = 250
+offset_top = -188
+offset_right = 266
+offset_bottom = -183
+color = Color(0.95, 0.95, 0.92, 1)
+
+[node name="EnseadaBoat0Mast" type="ColorRect" parent="."]
+offset_left = 258
+offset_top = -199
+offset_right = 260
+offset_bottom = -188
+color = Color(0.55, 0.5, 0.45, 0.9)
+
+[node name="EnseadaBoat1" type="ColorRect" parent="."]
+offset_left = 330
+offset_top = -172
+offset_right = 343
+offset_bottom = -167
+color = Color(0.88, 0.9, 0.92, 1)
+
+[node name="EnseadaBoat1Mast" type="ColorRect" parent="."]
+offset_left = 336
+offset_top = -183
+offset_right = 338
+offset_bottom = -172
+color = Color(0.55, 0.5, 0.45, 0.9)
+
+[node name="EnseadaBoat2" type="ColorRect" parent="."]
+offset_left = 470
+offset_top = -165
+offset_right = 485
+offset_bottom = -160
+color = Color(0.95, 0.93, 0.88, 1)
+
+[node name="EnseadaBoat2Mast" type="ColorRect" parent="."]
+offset_left = 477
+offset_top = -176
+offset_right = 479
+offset_bottom = -165
+color = Color(0.55, 0.5, 0.45, 0.9)
+
+[node name="EnseadaBoat3" type="ColorRect" parent="."]
+offset_left = 560
+offset_top = -185
+offset_right = 572
+offset_bottom = -180
+color = Color(0.4, 0.55, 0.7, 1)
+
+[node name="EnseadaBoat3Mast" type="ColorRect" parent="."]
+offset_left = 566
+offset_top = -196
+offset_right = 568
+offset_bottom = -185
+color = Color(0.55, 0.5, 0.45, 0.9)
+
+[node name="EnseadaBoat4" type="ColorRect" parent="."]
+offset_left = 690
+offset_top = -170
+offset_right = 707
+offset_bottom = -165
+color = Color(0.95, 0.95, 0.92, 1)
+
+[node name="EnseadaBoat4Mast" type="ColorRect" parent="."]
+offset_left = 698
+offset_top = -181
+offset_right = 700
+offset_bottom = -170
+color = Color(0.55, 0.5, 0.45, 0.9)
+
+[node name="EnseadaBoat5" type="ColorRect" parent="."]
+offset_left = 790
+offset_top = -188
+offset_right = 803
+offset_bottom = -183
+color = Color(0.92, 0.88, 0.8, 1)
+
+[node name="EnseadaBoat5Mast" type="ColorRect" parent="."]
+offset_left = 796
+offset_top = -199
+offset_right = 798
+offset_bottom = -188
+color = Color(0.55, 0.5, 0.45, 0.9)
+
+[node name="EnseadaBoat6" type="ColorRect" parent="."]
+offset_left = 880
+offset_top = -168
+offset_right = 895
+offset_bottom = -163
+color = Color(0.5, 0.42, 0.38, 1)
+
+[node name="EnseadaBoat6Mast" type="ColorRect" parent="."]
+offset_left = 887
+offset_top = -179
+offset_right = 889
+offset_bottom = -168
+color = Color(0.55, 0.5, 0.45, 0.9)
+
+[node name="EnseadaBoat7" type="ColorRect" parent="."]
+offset_left = 960
+offset_top = -182
+offset_right = 972
+offset_bottom = -177
+color = Color(0.95, 0.95, 0.92, 1)
+
+[node name="EnseadaBoat7Mast" type="ColorRect" parent="."]
+offset_left = 966
+offset_top = -193
+offset_right = 968
+offset_bottom = -182
+color = Color(0.55, 0.5, 0.45, 0.9)
+
+[node name="EnseadaBoat8" type="ColorRect" parent="."]
+offset_left = 1040
+offset_top = -170
+offset_right = 1054
+offset_bottom = -165
+color = Color(0.9, 0.92, 0.95, 1)
+
+[node name="EnseadaBoat8Mast" type="ColorRect" parent="."]
+offset_left = 1047
+offset_top = -181
+offset_right = 1049
+offset_bottom = -170
+color = Color(0.55, 0.5, 0.45, 0.9)
+
+[node name="BayCornerWest0" type="ColorRect" parent="."]
+offset_left = 200
+offset_top = -200
+offset_right = 242
+offset_bottom = -193
+color = Color(0.42, 0.65, 0.4, 1)
+
+[node name="BayCornerWest1" type="ColorRect" parent="."]
+offset_left = 200
+offset_top = -193
+offset_right = 230
+offset_bottom = -186
+color = Color(0.42, 0.65, 0.4, 1)
+
+[node name="BayCornerWest2" type="ColorRect" parent="."]
+offset_left = 200
+offset_top = -186
+offset_right = 220
+offset_bottom = -179
+color = Color(0.42, 0.65, 0.4, 1)
+
+[node name="BayCornerWest3" type="ColorRect" parent="."]
+offset_left = 200
+offset_top = -179
+offset_right = 212
+offset_bottom = -172
+color = Color(0.42, 0.65, 0.4, 1)
+
+[node name="BayCornerWest4" type="ColorRect" parent="."]
+offset_left = 200
+offset_top = -172
+offset_right = 205
+offset_bottom = -165
+color = Color(0.42, 0.65, 0.4, 1)
+
+[node name="BayCornerEast0" type="ColorRect" parent="."]
+offset_left = 1062
+offset_top = -157
+offset_right = 1096
+offset_bottom = -150
+color = Color(0.45, 0.44, 0.41, 1)
+
+[node name="BayCornerEast1" type="ColorRect" parent="."]
+offset_left = 1074
+offset_top = -164
+offset_right = 1096
+offset_bottom = -157
+color = Color(0.45, 0.44, 0.41, 1)
+
+[node name="BayCornerEast2" type="ColorRect" parent="."]
+offset_left = 1084
+offset_top = -171
+offset_right = 1096
+offset_bottom = -164
+color = Color(0.45, 0.44, 0.41, 1)
+
+[node name="MorroUrcaSlice0" type="ColorRect" parent="."]
+offset_left = 1170
+offset_top = -390.0
+offset_right = 1250
+offset_bottom = -370.0
+color = Color(0.45, 0.44, 0.41, 1)
+
+[node name="MorroUrcaSlice1" type="ColorRect" parent="."]
+offset_left = 1142
+offset_top = -370.0
+offset_right = 1278
+offset_bottom = -350.0
+color = Color(0.45, 0.44, 0.41, 1)
+
+[node name="MorroUrcaSlice2" type="ColorRect" parent="."]
+offset_left = 1124
+offset_top = -350.0
+offset_right = 1296
+offset_bottom = -330.0
+color = Color(0.45, 0.44, 0.41, 1)
+
+[node name="MorroUrcaSlice3" type="ColorRect" parent="."]
+offset_left = 1111
+offset_top = -330.0
+offset_right = 1309
+offset_bottom = -310.0
+color = Color(0.45, 0.44, 0.41, 1)
+
+[node name="MorroUrcaSlice4" type="ColorRect" parent="."]
+offset_left = 1101
+offset_top = -310.0
+offset_right = 1319
+offset_bottom = -290.0
+color = Color(0.45, 0.44, 0.41, 1)
+
+[node name="MorroUrcaSlice5" type="ColorRect" parent="."]
+offset_left = 1092
+offset_top = -290.0
+offset_right = 1328
+offset_bottom = -270.0
+color = Color(0.45, 0.44, 0.41, 1)
+
+[node name="MorroUrcaSlice6" type="ColorRect" parent="."]
+offset_left = 1086
+offset_top = -270.0
+offset_right = 1334
+offset_bottom = -250.0
+color = Color(0.45, 0.44, 0.41, 1)
+
+[node name="MorroUrcaSlice7" type="ColorRect" parent="."]
+offset_left = 1080
+offset_top = -250.0
+offset_right = 1340
+offset_bottom = -230.0
+color = Color(0.3, 0.44, 0.32, 1)
+
+[node name="MorroUrcaSlice8" type="ColorRect" parent="."]
+offset_left = 1076
+offset_top = -230.0
+offset_right = 1344
+offset_bottom = -210.0
+color = Color(0.3, 0.44, 0.32, 1)
+
+[node name="MorroUrcaSlice9" type="ColorRect" parent="."]
+offset_left = 1073
+offset_top = -210.0
+offset_right = 1347
+offset_bottom = -190.0
+color = Color(0.3, 0.44, 0.32, 1)
+
+[node name="MorroUrcaSlice10" type="ColorRect" parent="."]
+offset_left = 1071
+offset_top = -190.0
+offset_right = 1349
+offset_bottom = -170.0
+color = Color(0.3, 0.44, 0.32, 1)
+
+[node name="MorroUrcaSlice11" type="ColorRect" parent="."]
+offset_left = 1070
+offset_top = -170.0
+offset_right = 1350
 offset_bottom = -150.0
-color = Color(0.22, 0.28, 0.36, 1)
+color = Color(0.3, 0.44, 0.32, 1)
 
-[node name="MorroDaUrcaTop" type="ColorRect" parent="."]
-offset_left = 1140.0
-offset_top = -410.0
-offset_right = 1340.0
-offset_bottom = -380.0
-color = Color(0.2, 0.26, 0.34, 1)
+[node name="PaoAcucarSlice0" type="ColorRect" parent="."]
+offset_left = 1383
+offset_top = -520.0
+offset_right = 1457
+offset_bottom = -495.3
+color = Color(0.52, 0.5, 0.46, 1)
 
-[node name="PaoAcucarMorro" type="ColorRect" parent="."]
-offset_left = 1200.0
-offset_top = -460.0
-offset_right = 1500.0
+[node name="PaoAcucarSlice1" type="ColorRect" parent="."]
+offset_left = 1362
+offset_top = -495.3
+offset_right = 1478
+offset_bottom = -470.7
+color = Color(0.52, 0.5, 0.46, 1)
+
+[node name="PaoAcucarSlice2" type="ColorRect" parent="."]
+offset_left = 1349
+offset_top = -470.7
+offset_right = 1491
+offset_bottom = -446.0
+color = Color(0.46, 0.45, 0.42, 1)
+
+[node name="PaoAcucarSlice3" type="ColorRect" parent="."]
+offset_left = 1340
+offset_top = -446.0
+offset_right = 1500
+offset_bottom = -421.3
+color = Color(0.46, 0.45, 0.42, 1)
+
+[node name="PaoAcucarSlice4" type="ColorRect" parent="."]
+offset_left = 1333
+offset_top = -421.3
+offset_right = 1507
+offset_bottom = -396.7
+color = Color(0.46, 0.45, 0.42, 1)
+
+[node name="PaoAcucarSlice5" type="ColorRect" parent="."]
+offset_left = 1328
+offset_top = -396.7
+offset_right = 1512
+offset_bottom = -372.0
+color = Color(0.46, 0.45, 0.42, 1)
+
+[node name="PaoAcucarSlice6" type="ColorRect" parent="."]
+offset_left = 1324
+offset_top = -372.0
+offset_right = 1516
+offset_bottom = -347.3
+color = Color(0.46, 0.45, 0.42, 1)
+
+[node name="PaoAcucarSlice7" type="ColorRect" parent="."]
+offset_left = 1321
+offset_top = -347.3
+offset_right = 1519
+offset_bottom = -322.7
+color = Color(0.46, 0.45, 0.42, 1)
+
+[node name="PaoAcucarSlice8" type="ColorRect" parent="."]
+offset_left = 1319
+offset_top = -322.7
+offset_right = 1521
+offset_bottom = -298.0
+color = Color(0.46, 0.45, 0.42, 1)
+
+[node name="PaoAcucarSlice9" type="ColorRect" parent="."]
+offset_left = 1317
+offset_top = -298.0
+offset_right = 1523
+offset_bottom = -273.3
+color = Color(0.46, 0.45, 0.42, 1)
+
+[node name="PaoAcucarSlice10" type="ColorRect" parent="."]
+offset_left = 1316
+offset_top = -273.3
+offset_right = 1524
+offset_bottom = -248.7
+color = Color(0.46, 0.45, 0.42, 1)
+
+[node name="PaoAcucarSlice11" type="ColorRect" parent="."]
+offset_left = 1316
+offset_top = -248.7
+offset_right = 1524
+offset_bottom = -224.0
+color = Color(0.3, 0.42, 0.32, 1)
+
+[node name="PaoAcucarSlice12" type="ColorRect" parent="."]
+offset_left = 1315
+offset_top = -224.0
+offset_right = 1525
+offset_bottom = -199.3
+color = Color(0.3, 0.42, 0.32, 1)
+
+[node name="PaoAcucarSlice13" type="ColorRect" parent="."]
+offset_left = 1315
+offset_top = -199.3
+offset_right = 1525
+offset_bottom = -174.7
+color = Color(0.3, 0.42, 0.32, 1)
+
+[node name="PaoAcucarSlice14" type="ColorRect" parent="."]
+offset_left = 1315
+offset_top = -174.7
+offset_right = 1525
 offset_bottom = -150.0
-color = Color(0.24, 0.3, 0.4, 1)
+color = Color(0.3, 0.42, 0.32, 1)
 
-[node name="PaoAcucarMorroTop" type="ColorRect" parent="."]
-offset_left = 1260.0
-offset_top = -490.0
-offset_right = 1460.0
-offset_bottom = -460.0
-color = Color(0.18, 0.22, 0.32, 1)
-
-[node name="PaoAcucarPeak" type="ColorRect" parent="."]
-offset_left = 1320.0
-offset_top = -510.0
-offset_right = 1400.0
-offset_bottom = -490.0
-color = Color(0.22, 0.26, 0.34, 1)
+[node name="PaoAcucarLabel" type="Label" parent="."]
+offset_left = 1330.0
+offset_top = -560.0
+offset_right = 1510.0
+offset_bottom = -540.0
+text = "PÃO DE AÇÚCAR"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.92, 0.90, 0.82, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 3
 
 [node name="BondinhoCableLow" type="ColorRect" parent="."]
-offset_left = 1255.0
-offset_top = -410.0
-offset_right = 1340.0
-offset_bottom = -407.0
-color = Color(0.4, 0.4, 0.45, 1)
+offset_left = 640
+offset_top = -30
+offset_right = 1306
+offset_bottom = -28
+rotation = -0.5618
+color = Color(0.35, 0.35, 0.38, 0.9)
+
+[node name="BondinhoCabin2" type="ColorRect" parent="."]
+offset_left = 914
+offset_top = -214
+offset_right = 930
+offset_bottom = -202
+color = Color(0.85, 0.35, 0.3, 1)
 
 [node name="BondinhoCableHigh" type="ColorRect" parent="."]
 offset_left = 1280.0
@@ -1015,6 +1400,62 @@ offset_top = -104.0
 offset_right = 700.0
 offset_bottom = -100.0
 color = Color(0.95, 0.95, 0.95, 0.45)
+
+[node name="UrcaWaterfront" type="ColorRect" parent="."]
+offset_left = 700
+offset_top = -150
+offset_right = 1100
+offset_bottom = -100
+color = Color(0.8, 0.78, 0.74, 1)
+
+[node name="UrcaWaterfrontEdge" type="ColorRect" parent="."]
+offset_left = 700
+offset_top = -150
+offset_right = 1100
+offset_bottom = -148
+color = Color(0.68, 0.66, 0.62, 1)
+
+[node name="WaterfrontPalmTrunk0" type="ColorRect" parent="."]
+offset_left = 760
+offset_top = -128
+offset_right = 765
+offset_bottom = -102
+color = Color(0.45, 0.34, 0.22, 1)
+
+[node name="WaterfrontPalmTop0" type="ColorRect" parent="."]
+offset_left = 750
+offset_top = -140
+offset_right = 776
+offset_bottom = -126
+color = Color(0.3, 0.52, 0.32, 1)
+
+[node name="WaterfrontPalmTrunk1" type="ColorRect" parent="."]
+offset_left = 900
+offset_top = -128
+offset_right = 905
+offset_bottom = -102
+color = Color(0.45, 0.34, 0.22, 1)
+
+[node name="WaterfrontPalmTop1" type="ColorRect" parent="."]
+offset_left = 890
+offset_top = -140
+offset_right = 916
+offset_bottom = -126
+color = Color(0.3, 0.52, 0.32, 1)
+
+[node name="WaterfrontPalmTrunk2" type="ColorRect" parent="."]
+offset_left = 1020
+offset_top = -128
+offset_right = 1025
+offset_bottom = -102
+color = Color(0.45, 0.34, 0.22, 1)
+
+[node name="WaterfrontPalmTop2" type="ColorRect" parent="."]
+offset_left = 1010
+offset_top = -140
+offset_right = 1036
+offset_bottom = -126
+color = Color(0.3, 0.52, 0.32, 1)
 
 [node name="BotafogoPraiaSand" type="ColorRect" parent="."]
 offset_left = -1500.0
@@ -1857,6 +2298,133 @@ vertical_alignment = 1
 theme_override_font_sizes/font_size = 9
 theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
 
+[node name="MuretaUrcaBase" type="ColorRect" parent="."]
+offset_left = 706.0
+offset_top = -152.0
+offset_right = 1094.0
+offset_bottom = -144.0
+color = Color(0.72, 0.68, 0.62, 1)
+
+[node name="MuretaUrcaTop" type="ColorRect" parent="."]
+offset_left = 704.0
+offset_top = -155.0
+offset_right = 1096.0
+offset_bottom = -152.0
+color = Color(0.88, 0.85, 0.78, 1)
+
+[node name="MuretaUrcaStain" type="ColorRect" parent="."]
+offset_left = 820.0
+offset_top = -151.0
+offset_right = 940.0
+offset_bottom = -149.0
+color = Color(0.62, 0.58, 0.52, 0.6)
+
+[node name="MuretaUrcaLabel" type="Label" parent="."]
+offset_left = 740.0
+offset_top = -170.0
+offset_right = 1060.0
+offset_bottom = -156.0
+text = "Mureta da Urca"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 9
+theme_override_colors/font_color = Color(0.55, 0.5, 0.42, 1)
+
+[node name="VoileiroEnsA" type="ColorRect" parent="."]
+offset_left = 420.0
+offset_top = -182.0
+offset_right = 450.0
+offset_bottom = -174.0
+color = Color(0.92, 0.92, 0.88, 0.9)
+
+[node name="VoileiroEnsAMast" type="ColorRect" parent="."]
+offset_left = 432.0
+offset_top = -200.0
+offset_right = 436.0
+offset_bottom = -182.0
+color = Color(0.78, 0.72, 0.62, 0.9)
+
+[node name="VoileiroEnsASail" type="ColorRect" parent="."]
+offset_left = 436.0
+offset_top = -198.0
+offset_right = 455.0
+offset_bottom = -182.0
+color = Color(0.98, 0.98, 0.95, 0.8)
+
+[node name="VoileiroEnsB" type="ColorRect" parent="."]
+offset_left = 600.0
+offset_top = -180.0
+offset_right = 634.0
+offset_bottom = -172.0
+color = Color(0.88, 0.32, 0.32, 0.9)
+
+[node name="VoileiroEnsBMast" type="ColorRect" parent="."]
+offset_left = 614.0
+offset_top = -197.0
+offset_right = 618.0
+offset_bottom = -180.0
+color = Color(0.78, 0.72, 0.62, 0.9)
+
+[node name="VoileiroEnsC" type="ColorRect" parent="."]
+offset_left = 780.0
+offset_top = -178.0
+offset_right = 820.0
+offset_bottom = -170.0
+color = Color(0.92, 0.92, 0.88, 0.9)
+
+[node name="VoileiroEnsCMast" type="ColorRect" parent="."]
+offset_left = 797.0
+offset_top = -196.0
+offset_right = 801.0
+offset_bottom = -178.0
+color = Color(0.78, 0.72, 0.62, 0.9)
+
+[node name="VoileiroEnsCSail" type="ColorRect" parent="."]
+offset_left = 801.0
+offset_top = -194.0
+offset_right = 822.0
+offset_bottom = -178.0
+color = Color(0.95, 0.95, 0.88, 0.75)
+
+[node name="IateClubeFachada" type="ColorRect" parent="."]
+offset_left = 240.0
+offset_top = -48.0
+offset_right = 400.0
+offset_bottom = 40.0
+color = Color(0.95, 0.92, 0.85, 1)
+
+[node name="IateClubeRoof" type="ColorRect" parent="."]
+offset_left = 236.0
+offset_top = -54.0
+offset_right = 404.0
+offset_bottom = -48.0
+color = Color(0.22, 0.48, 0.38, 1)
+
+[node name="IateClubeFlag" type="ColorRect" parent="."]
+offset_left = 316.0
+offset_top = -76.0
+offset_right = 332.0
+offset_bottom = -62.0
+color = Color(0.85, 0.22, 0.22, 0.9)
+
+[node name="IateClubeFlagPole" type="ColorRect" parent="."]
+offset_left = 320.0
+offset_top = -80.0
+offset_right = 322.0
+offset_bottom = -48.0
+color = Color(0.55, 0.5, 0.42, 1)
+
+[node name="IateClubeSign" type="Label" parent="."]
+offset_left = 242.0
+offset_top = -30.0
+offset_right = 398.0
+offset_bottom = -14.0
+text = "IATE CLUBE"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.22, 0.48, 0.38, 1)
+theme_override_colors/font_outline_color = Color(0.95, 0.92, 0.85, 0.8)
+theme_override_constants/outline_size = 2
+
 [node name="Walls" type="Node2D" parent="."]
 
 [node name="North" type="StaticBody2D" parent="Walls"]
@@ -1973,7 +2541,7 @@ label_text = "↓ LAGOA / IPANEMA"
 shape = SubResource("ExitZonaSulShape")
 
 [node name="TaxiStand" parent="." instance=ExtResource("1_taxi")]
-position = Vector2(-700, -45)
+position = Vector2(-580, -45)
 
 [node name="ViewpointAterro" parent="." instance=ExtResource("3_view")]
 position = Vector2(-400, -600)
@@ -2097,7 +2665,7 @@ pause_at_waypoints = 1.8
 pause_random_jitter = 0.8
 
 [node name="BeachWalker" parent="." instance=ExtResource("2_wander")]
-position = Vector2(-700, -125)
+position = Vector2(-480, -125)
 color = Color(0.95, 0.65, 0.55, 1)
 size = Vector2(10, 17)
 roam_zone = Rect2(-500, -25, 1000, 50)
@@ -2151,7 +2719,7 @@ hat_color = Color(0.92, 0.85, 0.55, 1)
 look_at_player_distance = 70.0
 
 [node name="UrcaTouristB" parent="." instance=ExtResource("2_wander")]
-position = Vector2(820, -45)
+position = Vector2(720, -45)
 color = Color(0.4, 0.65, 0.95, 1)
 size = Vector2(10, 18)
 roam_zone = Rect2(-100, -20, 200, 40)
@@ -2191,7 +2759,7 @@ theme_override_constants/outline_size = 3
 position = Vector2(880, -10)
 
 [node name="Diego" parent="." instance=ExtResource("14_diego")]
-position = Vector2(-700, -120)
+position = Vector2(-360, -110)
 
 [node name="Sofia" parent="." instance=ExtResource("15_sofia")]
 position = Vector2(820, -10)
@@ -2333,3 +2901,124 @@ variants = [{
 "text": "*compte des billets pliés en quatre* Cartons à vendre, freguês : disques, maillots, vieilles photos. Tu cherches quelque chose ?",
 "choices": ["Pas aujourd'hui"]
 }]
+
+[node name="MuretaNoturna" type="Node2D" parent="."]
+script = ExtResource("20_evening")
+
+[node name="MuretaGlow" type="ColorRect" parent="MuretaNoturna"]
+offset_left = 730.0
+offset_top = -176.0
+offset_right = 1070.0
+offset_bottom = -140.0
+color = Color(1.0, 0.8, 0.45, 0.13)
+
+[node name="SitterBody0" type="ColorRect" parent="MuretaNoturna"]
+offset_left = 770.0
+offset_top = -162.0
+offset_right = 778.0
+offset_bottom = -152.0
+color = Color(0.92, 0.85, 0.4, 1)
+
+[node name="SitterHead0" type="ColorRect" parent="MuretaNoturna"]
+offset_left = 772.0
+offset_top = -167.0
+offset_right = 776.0
+offset_bottom = -163.0
+color = Color(0.72, 0.55, 0.42, 1)
+
+[node name="SitterLegs0" type="ColorRect" parent="MuretaNoturna"]
+offset_left = 771.0
+offset_top = -152.0
+offset_right = 777.0
+offset_bottom = -145.0
+color = Color(0.3, 0.3, 0.35, 1)
+
+[node name="SitterBody1" type="ColorRect" parent="MuretaNoturna"]
+offset_left = 858.0
+offset_top = -162.0
+offset_right = 866.0
+offset_bottom = -152.0
+color = Color(0.4, 0.7, 0.8, 1)
+
+[node name="SitterHead1" type="ColorRect" parent="MuretaNoturna"]
+offset_left = 860.0
+offset_top = -167.0
+offset_right = 864.0
+offset_bottom = -163.0
+color = Color(0.45, 0.32, 0.24, 1)
+
+[node name="SitterLegs1" type="ColorRect" parent="MuretaNoturna"]
+offset_left = 859.0
+offset_top = -152.0
+offset_right = 865.0
+offset_bottom = -145.0
+color = Color(0.3, 0.3, 0.35, 1)
+
+[node name="SitterBody2" type="ColorRect" parent="MuretaNoturna"]
+offset_left = 988.0
+offset_top = -162.0
+offset_right = 996.0
+offset_bottom = -152.0
+color = Color(0.85, 0.4, 0.45, 1)
+
+[node name="SitterHead2" type="ColorRect" parent="MuretaNoturna"]
+offset_left = 990.0
+offset_top = -167.0
+offset_right = 994.0
+offset_bottom = -163.0
+color = Color(0.6, 0.45, 0.35, 1)
+
+[node name="SitterLegs2" type="ColorRect" parent="MuretaNoturna"]
+offset_left = 989.0
+offset_top = -152.0
+offset_right = 995.0
+offset_bottom = -145.0
+color = Color(0.3, 0.3, 0.35, 1)
+
+[node name="ViolaoBody" type="ColorRect" parent="MuretaNoturna"]
+offset_left = 866.0
+offset_top = -158.0
+offset_right = 874.0
+offset_bottom = -153.0
+color = Color(0.62, 0.42, 0.22, 1)
+
+[node name="ViolaoNeck" type="ColorRect" parent="MuretaNoturna"]
+offset_left = 873.0
+offset_top = -156.0
+offset_right = 880.0
+offset_bottom = -155.0
+color = Color(0.45, 0.3, 0.16, 1)
+
+[node name="Garrafa0" type="ColorRect" parent="MuretaNoturna"]
+offset_left = 790.0
+offset_top = -159.0
+offset_right = 792.0
+offset_bottom = -155.0
+color = Color(0.75, 0.5, 0.15, 0.95)
+
+[node name="Garrafa1" type="ColorRect" parent="MuretaNoturna"]
+offset_left = 845.0
+offset_top = -159.0
+offset_right = 847.0
+offset_bottom = -155.0
+color = Color(0.75, 0.5, 0.15, 0.95)
+
+[node name="Garrafa2" type="ColorRect" parent="MuretaNoturna"]
+offset_left = 1010.0
+offset_top = -159.0
+offset_right = 1012.0
+offset_bottom = -155.0
+color = Color(0.75, 0.5, 0.15, 0.95)
+
+[node name="MuretaNoturnaLabel" type="Label" parent="MuretaNoturna"]
+offset_left = 800.0
+offset_top = -186.0
+offset_right = 1000.0
+offset_bottom = -172.0
+text = "violão na mureta"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 9
+theme_override_colors/font_color = Color(0.98, 0.88, 0.6, 0.9)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.8)
+theme_override_constants/outline_size = 3
+

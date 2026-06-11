@@ -145,6 +145,102 @@ const EVENT_POOL: Array = [
 		"spawn_zones": ["nossa_senhora", "av_atlantica"],
 	},
 	{
+		"id": "mare_limpa",
+		"label": "Marée propre",
+		"speaker": "Sobrinho",
+		"text": "Trois carcasses de canots calcinés sur le sable de Leme, rubalise de la PM autour. Plus loin, Seu Pedro répare ses filets. Il te voit, porte deux doigts à son chapeau, sans un mot. La nuit, dit-on sur le calçadão, la mer dort enfin. Ton info a fait ça.",
+		"money": 0,
+		"rep_axis": 0,
+		"rep_amount": 2,
+		"icon": "🚤",
+		"spawn_zones": ["sand"],
+		"flag": "pecheur_to_ramos",
+	},
+	{
+		"id": "mare_do_morro",
+		"label": "Marée du morro",
+		"speaker": "Gamin du morro",
+		"text": "*un gosse te fourre un paquet de crevettes fraîches dans les mains et détale* « De la part de Miguel — la marée a été bonne ce mois-ci ! » *Tu ne demandes pas quelle marée. Sur le morro, on dit que les canots noirs passent désormais par un autre quai — et que le péage remonte la colline.*",
+		"money": 0,
+		"rep_axis": 2,
+		"rep_amount": 2,
+		"icon": "🦐",
+		"spawn_zones": ["calcadao"],
+		"flag": "pecheur_to_miguel",
+	},
+	{
+		"id": "pos_jogo_vitoria",
+		"label": "Lundi de gloire",
+		"speaker": "Sobrinho",
+		"text": "Le bairro a la gueule de bois des bons jours. Le PM fredonne, le padeiro offre le cafezinho, et trois inconnus te prennent dans leurs bras parce que tu portes les bonnes couleurs. Le {time} a gagné hier — aujourd'hui, tout le monde est de la famille.",
+		"money": 0,
+		"rep_axis": 4,
+		"rep_amount": 2,
+		"icon": "🎉",
+		"spawn_zones": ["calcadao", "av_atlantica"],
+		"flag": "jogo_vitoria",
+	},
+	{
+		"id": "pos_jogo_derrota",
+		"label": "Lundi de deuil",
+		"speaker": "Sobrinho",
+		"text": "Le calçadão est silencieux comme une église. Le kiosquier remballe les drapeaux sans un mot. Un vieux en maillot du {time} fixe la mer, les mains dans le dos. Tu t'assois à côté de lui. Vous ne dites rien. C'est exactement ce qu'il fallait dire.",
+		"money": 0,
+		"rep_axis": 0,
+		"rep_amount": 1,
+		"icon": "🖤",
+		"spawn_zones": ["calcadao"],
+		"flag": "jogo_derrota",
+	},
+	{
+		"id": "roda_pagode",
+		"label": "Roda de pagode",
+		"speaker": "Sobrinho",
+		"text": "Autour d'une table du quiosque, un cavaquinho, un pandeiro, un repique — et dix voix qui connaissent toutes les paroles. Quelqu'un te tend un tamborim sans te demander ton avis. Tu rates deux temps, tu trouves le troisième. À la fin du morceau, une dame te ressert de la farofa comme si t'étais de la famille.",
+		"money": 0,
+		"rep_axis": 4,  # CHARISMA
+		"rep_amount": 3,
+		"icon": "🪘",
+		"spawn_zones": ["calcadao"],
+		"phases": [2],  # le pagode, c'est le soir
+	},
+	{
+		"id": "altinha_circle",
+		"label": "Roda de altinha",
+		"speaker": "Sobrinho",
+		"text": "Cinq joueurs, un ballon qui ne touche jamais le sable. Le cercle s'ouvre, on te fait signe d'entrer. Tu tiens trois touches, t'en rates une, tu sauves la suivante d'un talon désespéré — le cercle hurle « CARACA ! ». Personne ne compte les points. C'est ça, le jeu.",
+		"money": 0,
+		"rep_axis": 2,  # STREET
+		"rep_amount": 2,
+		"icon": "⚽",
+		"spawn_zones": ["sand"],
+		"phases": [1],  # l'altinha, c'est l'après-midi
+	},
+	{
+		"id": "fla_flu_debate",
+		"label": "Fla x Flu",
+		"speaker": "Sobrinho",
+		"text": "Devant le bar, un type en rouge et noir et un autre en tricolor refont le derby de dimanche à grands gestes. Ils t'attrapent par l'épaule : « E aí, tu torces pra quem ? » Tu poses la main sur le cœur : {time}, depuis toujours. La moitié du bar applaudit, l'autre moitié te paie une bière pour essayer de te convertir.",
+		"money": 0,
+		"rep_axis": 4,  # CHARISMA
+		"rep_amount": 2,
+		"icon": "🔥",
+		"spawn_zones": ["av_atlantica"],
+		"phases": [2],  # les débats de bar, c'est le soir
+	},
+	{
+		"id": "sunset_applause",
+		"label": "Pôr do sol",
+		"speaker": "Sobrinho",
+		"text": "Le soleil glisse derrière le Forte et le ciel passe à l'orange brûlé. Autour de toi, les gens s'arrêtent un à un. Quand le disque disparaît, la plage entière applaudit — les vendeurs, les baigneurs, le PM en faction. Tu applaudis aussi. À Rio, on remercie le soleil.",
+		"money": 0,
+		"rep_axis": 0,  # CIVIC
+		"rep_amount": 1,
+		"icon": "🌅",
+		"spawn_zones": ["sand"],
+		"phases": [2],
+	},
+	{
 		"id": "ipanema_band",
 		"label": "Cordel de bossa",
 		"speaker": "Sobrinho",
@@ -172,7 +268,7 @@ func _ready() -> void:
 	_rng.randomize()
 	EventBus.time_of_day_changed.connect(_on_phase_changed)
 
-func _on_phase_changed(_phase: int) -> void:
+func _on_phase_changed(phase: int) -> void:
 	# Nettoie l'événement précédent.
 	_clear_active()
 	# On ne spawne que sur Copacabana ; ailleurs, le joueur ne le verra pas.
@@ -180,7 +276,19 @@ func _on_phase_changed(_phase: int) -> void:
 		return
 	if _rng.randf() > SPAWN_CHANCE:
 		return
-	var entry: Dictionary = EVENT_POOL[_rng.randi() % EVENT_POOL.size()]
+	# Les événements à "phases" ne sortent qu'aux bons moments de la journée
+	# (le pagode le soir, l'altinha l'après-midi…).
+	var pool: Array = EVENT_POOL.filter(
+		func(e: Dictionary) -> bool:
+			if e.has("phases") and not phase in e.phases:
+				return false
+			if e.has("flag") and not CampaignManager.has_flag(String(e.flag)):
+				return false
+			return true
+	)
+	if pool.is_empty():
+		return
+	var entry: Dictionary = pool[_rng.randi() % pool.size()]
 	_spawn(entry)
 
 func _clear_active() -> void:

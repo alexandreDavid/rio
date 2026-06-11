@@ -64,13 +64,13 @@ const DEFAULT_SCHEDULE: Dictionary = {
 	"ze_bar": [{"pos": Vector2(500, 96)}],
 	"jorge": [{"pos": Vector2(1335, -100)}],
 	"musicien": [
-		{"phase": 2, "pos": Vector2(9999, -9999)},  # rentre chez lui le soir
+		{"phase": 2, "pos": Vector2(522, 108)},  # le soir, il rejoint la roda du quiosque do Zé
 		{"pos": Vector2(600, 96)},
 	],
 	# joggeur : patrouille gérée par NPCPatrol — pas de règle scheduler pour ne pas l'interrompre.
 	"pecheur": [
 		{"phase": 2, "pos": Vector2(9999, -9999)},  # pêche s'arrête au coucher du soleil
-		{"pos": Vector2(200, 200)},
+		{"pos": Vector2(245, 225)},  # près du FishingSpot, dégagé de l'ExitToForte
 	],
 	"coconut_vendor": [
 		{"phase": 2, "pos": Vector2(9999, -9999)},  # ferme le kiosque le soir
