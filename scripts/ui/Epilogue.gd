@@ -80,7 +80,7 @@ func _show_epilogue() -> void:
 	if subtitle_label:
 		subtitle_label.text = data.subtitle
 	if body_label:
-		body_label.text = data.body
+		body_label.text = _with_ze_fate(data.body)
 	if run_label:
 		var ng_count: int = _read_ng_count()
 		if ng_count > 0:
@@ -154,3 +154,15 @@ func _path_label(path: int) -> String:
 		CampaignManager.Endgame.TRAFICO: return "trafico"
 		CampaignManager.Endgame.CONSORTIUM: return "consortium"
 	return "unknown"
+
+# Le dernier paragraphe (le sort de Zé au Palace) n'est vrai que si Zé y est
+# encore : s'il a été démasqué (tio_ze_revealed) sans être secouru
+# (ze_rescued), la Mafia da Baía l'a repris — l'épilogue l'assume.
+func _with_ze_fate(body: String) -> String:
+	if not CampaignManager.has_flag("tio_ze_revealed") or CampaignManager.has_flag("ze_rescued"):
+		return body
+	var parts: PackedStringArray = body.split("\n\n")
+	if parts.is_empty() or parts[parts.size() - 1].find("Palace") == -1:
+		return body
+	parts[parts.size() - 1] = "La réception du Palace a un nouveau concierge, jeune, efficace, sans histoire. Personne n'a revu le vieux balayeur. Tu sais où il est — de l'autre côté de la baie, dans une pièce qui sent le tabac froid. Tu savais, et tu n'es pas allé. C'est la seule dette que personne ne viendra jamais te réclamer."
+	return "\n\n".join(parts)

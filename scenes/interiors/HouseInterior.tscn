@@ -254,6 +254,22 @@ npc_id = "mae"
 prompt = "Parler à Mãe"
 character_seed = 70411
 variants = [{
+"id": "ze_hibiscus",
+"flag": "ze_rescued",
+"not_flag": "mae_hibiscus_seen",
+"set_flag_after": "mae_hibiscus_seen",
+"speaker": "Mãe",
+"text": "*elle arrose les hibiscus du balcon, dos à toi* Quelqu'un a laissé des fleurs sur la tombe, dimanche. Des hibiscus. *un long silence* La seule personne au monde qui savait que je préfère les hibiscus aux roses, c'était mon frère. *elle ne se retourne toujours pas* Les morts n'apportent pas de fleurs, meu filho. *sa voix ne tremble pas* Quand tu seras prêt à me dire ce que tu sais, je serai prête à l'entendre. Je le suis depuis huit ans.",
+"choices": ["…Bientôt, mãe. Promis."]
+}, {
+"id": "ze_secret",
+"flag": "tio_ze_revealed",
+"not_flag": "mae_secret_seen",
+"set_flag_after": "mae_secret_seen",
+"speaker": "Mãe",
+"text": "*elle raccommode une chemise qui n'est pas à ta taille* Tu as le regard de Zé, ces derniers temps. Celui de l'année avant la noyade — quand il portait quelque chose de trop lourd et qu'il croyait qu'on ne voyait rien. *elle coupe le fil avec les dents, comme sa mère avant elle* Les femmes de cette famille voient tout, meu filho. On attend juste que vous soyez prêts.",
+"choices": ["…Ce n'est rien, mãe"]
+}, {
 "id": "carnaval",
 "act": 5,
 "speaker": "Mãe",

@@ -14,6 +14,7 @@ const POST_DIALOG_PAUSE: float = 0.8  # respiration avant le panneau de fin
 static func run_policia() -> void:
 	await CutsceneRunner.play(func():
 		await CutsceneRunner.wait(PRE_DIALOG_PAUSE)
+		await CutsceneRunner.say("consortium", "nilton_settlement_policia")
 		await CutsceneRunner.wait(POST_DIALOG_PAUSE)
 	)
 
@@ -21,6 +22,7 @@ static func run_policia() -> void:
 static func run_trafico() -> void:
 	await CutsceneRunner.play(func():
 		await CutsceneRunner.wait(PRE_DIALOG_PAUSE)
+		await CutsceneRunner.say("consortium", "nilton_settlement_trafico")
 		await CutsceneRunner.wait(POST_DIALOG_PAUSE)
 	)
 
@@ -28,6 +30,7 @@ static func run_trafico() -> void:
 static func run_prefeito() -> void:
 	await CutsceneRunner.play(func():
 		await CutsceneRunner.wait(PRE_DIALOG_PAUSE)
+		await CutsceneRunner.say("consortium", "nilton_settlement_prefeito")
 		await CutsceneRunner.wait(POST_DIALOG_PAUSE)
 	)
 
@@ -36,6 +39,7 @@ static func run_consortium() -> void:
 	await CutsceneRunner.play(func():
 		await CutsceneRunner.wait(PRE_DIALOG_PAUSE)
 		await CutsceneRunner.say("magalhaes", "magalhaes_consortium_done")
+		await CutsceneRunner.say("consortium", "nilton_settlement_consortium")
 		await CutsceneRunner.wait(POST_DIALOG_PAUSE)
 	)
 

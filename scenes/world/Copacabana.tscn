@@ -256,13 +256,13 @@ position = Vector2(1700, 100)
 position = Vector2(1850, 122)
 
 [node name="MadameDubois" parent="." instance=ExtResource("66_dubois")]
-position = Vector2(1620, 105)
+position = Vector2(1560, 100)
 
 [node name="Musicien" parent="." instance=ExtResource("11_musicien")]
 position = Vector2(610, 118)
 
 [node name="Pecheur" parent="." instance=ExtResource("12_pecheur")]
-position = Vector2(200, 200)
+position = Vector2(245, 225)
 
 [node name="CoconutVendor" parent="." instance=ExtResource("14_coconut")]
 position = Vector2(420, 200)
@@ -408,6 +408,26 @@ variants = [{
 "text": "*un vieil homme en uniforme du Palace, il balaie sans te regarder, voix basse* Petit. Te retourne pas. *continue de balayer* Je connaissais ton oncle Zé. Mieux que personne. Il a porté pour Tito, lui aussi. Le morro lui a tout pris, et quand il a voulu partir, Tito l'a brûlé — comme il te brûlera. *te glisse un regard* Tu peux encore choisir de pas finir comme lui. *soupire* Mais tu y retourneras quand même. Alors écoute au moins ça — le gros coup passe par la baie, Niterói, la Mafia da Baía en relais. Réfléchis-y avant la corrida.",
 "choices": ["…J'y vais"]
 }, {
+"id": "medalhao_reveal",
+"quest_completed": "trafico_a7_tioze",
+"not_flag": "tio_ze_revealed",
+"actions": {"set_flag": "tio_ze_revealed"},
+"speaker": "Le concierge",
+"text": "*tu reviens vers le vieux balayeur. Sans un mot, tu sors le médaillon de bois — celui du grand-père, celui que Zé portait avant sa noyade. Le balai s'arrête.* *Il le prend. Le retourne du bon côté sans le regarder, d'un geste qui a quarante ans. Le rend. Ses mains tremblent.* Va-t'en maintenant, sobrinho. *Il ne t'a jamais appelé comme ça. Tu ne demandes rien. Tu sais.*",
+"choices": ["…Tio ?"]
+}, {
+"id": "returned",
+"flag": "ze_rescued",
+"speaker": "Le concierge",
+"text": "*le vieux balayeur est revenu à son poste, plus maigre, le geste intact. La direction n'a pas osé lui demander où il était passé.* *En te voyant, il incline imperceptiblement la tête — rien de plus. Mais le balai s'arrête une seconde entière.*",
+"choices": ["…"]
+}, {
+"id": "vanished",
+"flag": "tio_ze_revealed",
+"speaker": "Un employé du Palace",
+"text": "*un jeune balayeur que tu n'as jamais vu* Le vieux ? Parti il y a trois jours, sans prévenir ni réclamer sa paie. *hausse les épaules* Des types sont passés poser des questions sur lui, après. Le Palace cherche un remplaçant.",
+"choices": ["…"]
+}, {
 "id": "default",
 "speaker": "Le concierge",
 "text": "*balaie le perron du Palace, t'ignore poliment* Bienvenue au Copacabana Palace. *à voix basse, sans lever les yeux* …Toi, je te connais de quelque part.",
@@ -457,6 +477,26 @@ variants = [{
 "speaker": "Le concierge",
 "text": "*vieil homme en uniforme du Palace, balaie sans te regarder* Petit. Te retourne pas. *voix basse* Je connaissais ton oncle Zé. Mieux que personne. Tu nettoies le morro pour Ramos, hein ? *un temps* Et Ramos, il nettoie pour qui ? Le consortium. Les mêmes qui tiennent ta dette. Tu fais le ménage de qui, au juste, sobrinho ? *te glisse un regard, soupire, s'appuie sur son balai* Tu continueras quand même. Alors prends au moins ça : Ramos a son mandat. Une cargaison de la Mafia da Baía passe à Niterói — tu la saisis, au nom de la loi ou de Ramos, c'est selon. Pense à ce que j'ai dit, avant la Madrugada.",
 "choices": ["…J'y vais"]
+}, {
+"id": "medalhao_reveal",
+"quest_completed": "policia_b6_tioze",
+"not_flag": "tio_ze_revealed",
+"actions": {"set_flag": "tio_ze_revealed"},
+"speaker": "Le concierge",
+"text": "*tu reviens vers le vieux balayeur. Sans un mot, tu sors le médaillon de bois — celui du grand-père, celui que Zé portait avant sa noyade. Le balai s'arrête.* *Il le prend. Le retourne du bon côté sans le regarder, d'un geste qui a quarante ans. Le rend. Ses mains tremblent.* Va-t'en maintenant, sobrinho. *Il ne t'a jamais appelé comme ça. Tu ne demandes rien. Tu sais.*",
+"choices": ["…Tio ?"]
+}, {
+"id": "returned",
+"flag": "ze_rescued",
+"speaker": "Le concierge",
+"text": "*le vieux balayeur est revenu à son poste, plus maigre, le geste intact. La direction n'a pas osé lui demander où il était passé.* *En te voyant, il incline imperceptiblement la tête — rien de plus. Mais le balai s'arrête une seconde entière.*",
+"choices": ["…"]
+}, {
+"id": "vanished",
+"flag": "tio_ze_revealed",
+"speaker": "Un employé du Palace",
+"text": "*un jeune balayeur que tu n'as jamais vu* Le vieux ? Parti il y a trois jours, sans prévenir ni réclamer sa paie. *hausse les épaules* Des types sont passés poser des questions sur lui, après. Le Palace cherche un remplaçant.",
+"choices": ["…"]
 }, {
 "id": "default",
 "speaker": "Le concierge",
@@ -516,6 +556,26 @@ variants = [{
 "text": "*vieil homme en uniforme du Palace, balaie sans te regarder* Petit. Te retourne pas. *voix basse* Je connaissais ton oncle Zé. Mieux que personne. Le Consórcio ne t'a jamais prêté un centime — il t'a passé une laisse, et il a appelé ça une dette. J'ai vu comment, jadis. *un temps* Magalhães ne casse pas les jambes. Il casse les gens, lentement, et leur fait signer le constat. *soupire, s'appuie sur son balai* Tu vas signer quand même. Alors prends ça : la maison veut les trois condomínios de Barra alignés d'un coup — c'est le gros morceau, celui qui efface presque ta dette. Souviens-toi de ce que je t'ai dit, quand ce sera ton tour de tenir le stylo.",
 "choices": ["…J'y vais"]
 }, {
+"id": "medalhao_reveal",
+"quest_completed": "consortium_c6_tioze",
+"not_flag": "tio_ze_revealed",
+"actions": {"set_flag": "tio_ze_revealed"},
+"speaker": "Le concierge",
+"text": "*tu reviens vers le vieux balayeur. Sans un mot, tu sors le médaillon de bois — celui du grand-père, celui que Zé portait avant sa noyade. Le balai s'arrête.* *Il le prend. Le retourne du bon côté sans le regarder, d'un geste qui a quarante ans. Le rend. Ses mains tremblent.* Va-t'en maintenant, sobrinho. *Il ne t'a jamais appelé comme ça. Tu ne demandes rien. Tu sais.*",
+"choices": ["…Tio ?"]
+}, {
+"id": "returned",
+"flag": "ze_rescued",
+"speaker": "Le concierge",
+"text": "*le vieux balayeur est revenu à son poste, plus maigre, le geste intact. La direction n'a pas osé lui demander où il était passé.* *En te voyant, il incline imperceptiblement la tête — rien de plus. Mais le balai s'arrête une seconde entière.*",
+"choices": ["…"]
+}, {
+"id": "vanished",
+"flag": "tio_ze_revealed",
+"speaker": "Un employé du Palace",
+"text": "*un jeune balayeur que tu n'as jamais vu* Le vieux ? Parti il y a trois jours, sans prévenir ni réclamer sa paie. *hausse les épaules* Des types sont passés poser des questions sur lui, après. Le Palace cherche un remplaçant.",
+"choices": ["…"]
+}, {
 "id": "default",
 "speaker": "Le concierge",
 "text": "*balaie le perron du Palace* Bienvenue au Copacabana Palace. *sans lever les yeux* …Toi, je te connais de quelque part.",
@@ -551,7 +611,7 @@ variants = [{
 "set_flag_after": "prefeito_d8_done",
 "actions": {"finish_quest": {"quest": "prefeito_d8_campagne", "objective": "flip_calcadao", "payout": 1500}, "accept_quest": "prefeito_d9_eleicao", "pay_debt": 18000, "rep": {0: 8, 4: -5}},
 "speaker": "Le calçadão",
-"text": "*tu lis le dossier à voix haute, sur une caisse, devant la foule du calçadão. Au début ils rient. Puis ils écoutent. Les noms, les chiffres, le racket déguisé en dette. Quelqu'un crache vers le Riserva Uno. En une heure le quartier a basculé — pas par peur, par colère juste. Ta dette ? Personne ne te la réclamera plus en public. La vérité l'a effacée mieux qu'aucun paiement.* *Une bénévole arrive en courant, les yeux brillants :* « C'est le moment — l'élection est ce soir. Va retrouver le Padre, c'est lui qui ouvrira le scrutin. Après ça, on ne dira plus le neveu de Zé. On dira Coronel. »",
+"text": "*tu lis le dossier à voix haute, sur une caisse, devant la foule du calçadão. Au début ils rient. Puis ils écoutent. Les noms, les chiffres, le racket déguisé en dette. Quelqu'un crache vers le Riserva Uno. En une heure le quartier a basculé — pas par peur, par colère juste. Au premier rang, la mère de Pedrinho tient son fils par la main. C'est elle qui parle la première : « Lui, il a cherché mon gamin quand personne d'autre n'a levé le petit doigt. » Ta dette ? Personne ne te la réclamera plus en public. La vérité l'a effacée mieux qu'aucun paiement.* *Une bénévole arrive en courant, les yeux brillants :* « C'est le moment — l'élection est ce soir. Va retrouver le Padre, c'est lui qui ouvrira le scrutin. Après ça, on ne dira plus le neveu de Zé. On dira Coronel. »",
 "choices": ["Je vais voir le Padre"]
 }, {
 "id": "default",
@@ -574,9 +634,50 @@ variants = [{
 "text": "*vieil homme en uniforme du Palace, il s'arrête de balayer, te regarde vraiment cette fois* Petit. Tu es le seul à n'avoir pris ni flingue, ni plaque, ni stylo de la maison. *sort une enveloppe épaisse de sous sa veste, te la met dans les mains* Je connaissais ton oncle Zé. Mieux que personne. Voilà ce que j'ai vu, jadis, et que j'ai gardé : tout sur Magalhães et le consortium. Des noms, des comptes, des dates. *te serre le poignet, la voix plus ferme* Maintenant retourne sur le calçadão et lis-leur ça. Tout. À voix haute. Ils ont peur du consortium parce qu'ils croient être seuls. Montre-leur qu'ils ne le sont pas. C'est comme ça qu'on efface une dette : pas en payant, en disant la vérité.",
 "choices": ["J'y vais"]
 }, {
+"id": "medalhao_reveal",
+"quest_completed": "prefeito_d7_tioze",
+"not_flag": "tio_ze_revealed",
+"actions": {"set_flag": "tio_ze_revealed"},
+"speaker": "Le concierge",
+"text": "*tu reviens vers le vieux balayeur. Sans un mot, tu sors le médaillon de bois — celui du grand-père, celui que Zé portait avant sa noyade. Le balai s'arrête.* *Il le prend. Le retourne du bon côté sans le regarder, d'un geste qui a quarante ans. Le rend. Ses mains tremblent.* Va-t'en maintenant, sobrinho. *Il ne t'a jamais appelé comme ça. Tu ne demandes rien. Tu sais.*",
+"choices": ["…Tio ?"]
+}, {
+"id": "returned",
+"flag": "ze_rescued",
+"speaker": "Le concierge",
+"text": "*le vieux balayeur est revenu à son poste, plus maigre, le geste intact. La direction n'a pas osé lui demander où il était passé.* *En te voyant, il incline imperceptiblement la tête — rien de plus. Mais le balai s'arrête une seconde entière.*",
+"choices": ["…"]
+}, {
+"id": "vanished",
+"flag": "tio_ze_revealed",
+"speaker": "Un employé du Palace",
+"text": "*un jeune balayeur que tu n'as jamais vu* Le vieux ? Parti il y a trois jours, sans prévenir ni réclamer sa paie. *hausse les épaules* Des types sont passés poser des questions sur lui, après. Le Palace cherche un remplaçant.",
+"choices": ["…"]
+}, {
 "id": "default",
 "speaker": "Le concierge",
 "text": "*balaie le perron du Palace* Bienvenue au Copacabana Palace. *sans lever les yeux* …Toi, je te connais de quelque part.",
+"choices": ["…"]
+}]
+
+[node name="ZeEveSpot" parent="." instance=ExtResource("62_reactive")]
+position = Vector2(474, 130)
+npc_id = "ze_eve"
+prompt = "Le vieil homme aux dominos"
+character_seed = 909099
+required_flag = "ze_rescued"
+variants = [{
+"id": "eve",
+"act": 4,
+"not_flag": "ze_eve_seen",
+"set_flag_after": "ze_eve_seen",
+"speaker": "Zé",
+"text": "*sur le banc, un vieil homme aligne des dominos, seul. Sans lever la tête, il pousse la moitié du jeu vers toi.* Une partie. *vous jouez en silence. Il gagne. Il sourit.* Ton grand-père disait : le morro descend une fois par an, pour se rappeler qu'il est carioca. *il se lève, remet son chapeau* Demain, la Sapucaí. Ta mère sera dans la foule — troisième rang, côté Apoteose, comme toujours. *il pose deux doigts sur le médaillon, puis sur ton épaule* Vai, sobrinho.",
+"choices": ["Vai, tio"]
+}, {
+"id": "default",
+"speaker": "Zé",
+"text": "*il mélange les dominos sans hâte, comme quelqu'un qui a tout son temps, pour la première fois depuis des années*",
 "choices": ["…"]
 }]
 
@@ -663,11 +764,12 @@ variants = [{
 }, {
 "id": "tio_ze_offer",
 "act": 4,
+"flag": "tio_ze_revealed",
 "quest_not_active": "act4_tio_ze_rescue",
 "quest_not_completed": "act4_tio_ze_rescue",
 "actions": {"accept_quest": "act4_tio_ze_rescue"},
 "speaker": "Le Fixer",
-"text": "*hésite, baisse la voix* Garoto, cette info-là je te la fais à l'œil. Ton oncle Zé n'est pas mort. La Mafia da Baía le détient dans une planque à Niterói depuis des mois — un débiteur qu'ils gardent en vie au cas où. Va le chercher. Pas d'argent en jeu. Juste la famille.",
+"text": "*hésite, baisse la voix* Garoto… celle-là, je te la fais à l'œil. Le vieux balayeur du Palace — ton oncle. T'es pas le seul à avoir compris. Trois jours après que tu l'as reconnu, la Mafia da Baía est venue le reprendre : une dette en suspens qu'ils gardaient à l'œil depuis sa fuite. Ils le tiennent dans une planque à Niterói. Va le chercher. Pas d'argent en jeu. Juste la famille.",
 "choices": ["Je vais le sortir de là"]
 }, {
 "id": "press_offer",
@@ -695,7 +797,7 @@ variants = [{
 }]
 
 [node name="PalaceSacoche" parent="." instance=ExtResource("69_sacoche")]
-position = Vector2(1700, 36)
+position = Vector2(1735, 42)
 
 [node name="PalaceHeistSpot" parent="." instance=ExtResource("62_reactive")]
 position = Vector2(1700, -64)
@@ -873,7 +975,7 @@ position = Vector2(1640, 108)
 position = Vector2(1425, -96)
 
 [node name="LostDog" parent="." instance=ExtResource("39_dog")]
-position = Vector2(640, 240)
+position = Vector2(1060, 250)
 
 
 
