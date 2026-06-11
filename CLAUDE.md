@@ -13,9 +13,10 @@ Langue de travail : **français** (code, commentaires, dialogues, UI).
 Ordre important dans `project.godot` — ne pas changer sans raison :
 - **EventBus** (`scripts/core/EventBus.gd`) — bus global de signaux. Les systèmes ne se référencent jamais directement, ils émettent/écoutent ici.
 - **GameManager**, **ReputationSystem**, **TimeOfDay**, **QuestManager**, **DialogueBridge**, **SaveSystem**, **AudioManager**, **SelfCheck**, **BuildingManager**
+- **CarnavalCalendar** (jours PT via `TimeOfDay.day_count`, `hud_label()` J-x Carnaval, jogo du Domingo soir → flags `jogo_vitoria|jogo_derrota` le lendemain), **ActivityRewards** (mini-jeu qualifiant → réputation ciblée + `NPCAffinity.bump(npc)` + flag `mestre_<id>` au 3e succès — récompenses non fongibles)
 
 ## Layout de la map (`scripts/world/CopacabanaGenerator.gd`)
-Map horizontale orientée ouest→est. **LEME à l'est (x haut), FORTE à l'ouest (x bas).** 5 postes : Posto 5 côté forte, Posto 1 côté Leme.
+Map horizontale orientée ouest→est. **LEME à l'est (x haut), FORTE à l'ouest (x bas).** 6 postos (comme en vrai) : Posto 6 côté forte, Posto 1 côté Leme.
 
 Zones par bande Y (du nord au sud) :
 ```
@@ -23,12 +24,12 @@ y < -200         Favelas (Morro à l'ouest, Leme à l'est)
 y = -192..-128   2ème rangée d'immeubles + police + bar flic + academia
 y = -128..-64    Nossa Senhora de Copacabana (route intérieure)
 y = -64..0       1ère rangée d'immeubles + palace + commerces
-y = 0..64        Av. Atlântica (route front de mer)
+y = 0..64        Av. Atlântica (route front de mer ; ciclovia terracotta y=48..64)
 y = 64..128      Calçadão (motif vague noir/blanc)
-y = 128..400     Sable
-y = 400..600     Mer
+y = 128..~400    Sable (le rivage suit la courbe de la baie : `Cfg.shore_y(x)`)
+y = ~372..600    Mer (arc parabolique — 372 au centre x=1450, 435 aux pointes Forte/Leme)
 ```
-Constantes clés (dans `scripts/world/CopacabanaConfig.gd`, préchargé `Cfg` par le générateur) : `BUILDING_Y=-32`, `SECOND_ROW_Y=-160`, `POSTO_Y=168`, `PALACE_X=1700`, `POLICE_X=1200`, `ACADEMIA_X=700`, `COP_BAR_X=1380`.
+Constantes clés (dans `scripts/world/CopacabanaConfig.gd`, préchargé `Cfg` par le générateur) : `BUILDING_Y=-32`, `SECOND_ROW_Y=-160`, `POSTO_Y=168`, `PALACE_X=1700`, `POLICE_X=1200`, `ACADEMIA_X=700`, `COP_BAR_X=1380`. Rues transversales réelles (`Cfg.CROSS_STREETS`, trouées dans les deux rangées d'immeubles) : R. Santa Clara x=600, R. Siqueira Campos x=1111 (alignée Túnel Velho), Av. Princesa Isabel x=2150 (alignée Túnel Novo). Entrées de métro décoratives (`Cfg.METRO_STATIONS`) : Cantagalo, Siqueira Campos, Cardeal Arcoverde.
 
 Limite de la zone jouable (bâtiments NPC) : `map_start_x=160`, `map_end_x=2200`. Les strips de tiles (sable, calçadão, route, mer) couvrent toute la map décorée : `Cfg.MAP_LEFT=-300` → `Cfg.MAP_RIGHT=3200`, soit `Cfg.MAP_TOTAL_W=3500` (inclut Forte à l'ouest et Leme à l'est).
 
@@ -78,6 +79,7 @@ Helper : `_spawn_tile_strip(name, y_top, y_bot, region, z_idx=-5)` pour remplir 
 Instanciés **une seule fois** loin du monde joué (x=~900..3000, y=-3000) via `_spawn_interiors()`. On y téléporte le joueur via les portes (`BuildingDoor.tscn`) qui portent un `destination: Vector2` et un `prompt_text`. Les positions cibles sont les `SpawnPoint` dans chaque intérieur.
 
 ## Conventions
+- **Âme carioca** : avant d'écrire du contenu (dialogues, quêtes, événements), lire le skill `.claude/skills/ame-carioca` ; les besoins de design se tracent dans `docs/BACKLOG.md` (skill `backlog`). Le time de coração du joueur = flags `time_flamengo|time_vasco|time_fluminense|time_botafogo` (posés à l'intro) ; placeholder `{time}` substitué par `DialogueBridge._sub_placeholders`. Les événements de `RandomEventManager` peuvent être restreints par phase (`"phases": [2]`) ou par flag (`"flag": "jogo_vitoria"`), et `CopacabanaGenerator._spawn_evening_life()` n'apparaît qu'en phase EVENING ; `_spawn_domingo_life()` le Domingo ; `_rebuild_human_cost()` (mémorial, DESPEJO) suit les flags `voie_trafico`/`voie_consortium`.
 - Pas de singleton direct entre scripts métier : tout passe par **EventBus**
 - Typage statique systématique en GDScript (`var x: Vector2 = ...`, `func f() -> void`)
 - Commentaires en français, brefs, uniquement pour le *pourquoi*
@@ -105,6 +107,8 @@ Avancement d'acte = seuils de dette payée (`CampaignManager`, constantes `ACTn_
 **4 voies mutuellement exclusives** (`enum Endgame`, `VOIE_FLAGS`) : Tráfico (Tito), Polícia (Ramos), Consórcio (Magalhães), Prefeito (Padre). Chaque voie est linéaire en interne.
 
 À chaque MAIN complétée, `HUD.MAIN_NEXT_HINT[quest_id]` fournit le toast jalon ("✓ X — Va voir Y au [lieu]"). À étendre dans ce dictionnaire à chaque ajout de MAIN.
+
+**Canon de l'arc Zé** : Zé = frère de la mère du joueur ; il a simulé sa noyade (dette consortium + il portait pour Tito) et se cache comme concierge du Palace. La révélation se joue au spot tioze de la voie (variante `medalhao_reveal`, pose `tio_ze_revealed`) → sa re-capture par la Mafia da Baía en découle → `act4_tio_ze_rescue` (pose `ze_rescued`, il retourne au Palace). Les spots tioze, la mère (HouseInterior), l'épilogue et le ZeEveSpot (banc de dominos, veille du Carnaval) réagissent à ces deux flags. Dom Nilton solde la dette en personne au couronnement (knots `nilton_settlement_*`, joués par `Act3FinaleCutscenes`).
 
 Si un knot tente `accept_quest` sur une quête bloquée, `DialogueBridge._show_locked_message` affiche "Pas encore le bon moment — d'abord : <prereqs>". Le `QuestLog` sépare HISTÓRIA (✦ doré) et ATIVIDADES (• bleu).
 
