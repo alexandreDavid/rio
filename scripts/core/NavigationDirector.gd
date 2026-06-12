@@ -76,7 +76,9 @@ const STEP: Dictionary = {
 	"policia_b6_tioze/hear_concierge": {"text": "🎯 → Copa Palace : écouter le concierge", "dist": "copacabana", "anchor": "palace", "short": "Copa Palace"},
 	"policia_b7_saisie/seize_cargo": {"text": "🎯 → Niterói : saisir la cargaison", "dist": "niteroi", "anchor": "", "short": "Niterói"},
 	"policia_b8_seguranca/secure_crowd": {"text": "🎯 → Maracanã : sécuriser la foule", "dist": "maracana", "anchor": "", "short": "Maracanã"},
-	"policia_b9_madrugada/complete_madrugada": {"text": "🎯 → Bar do Policial : rejoindre Ramos pour la Madrugada", "dist": "copacabana", "anchor": "npc:ramos", "short": "Ramos"},
+	"policia_b9_madrugada/complete_madrugada": {"text": "🎯 → Morro (favela) : rejoindre les colonnes de la PM pour la Madrugada", "dist": "favela_morro", "anchor": "", "short": "Morro"},
+	"act2_pecheur_secret/observe_canots": {"text": "🎯 → Botafogo (mureta da Urca) : observer les canots à la nuit", "dist": "botafogo_flamengo", "anchor": "", "short": "Mureta"},
+	"act2_contessa_gala/secured_trio": {"text": "🎯 → Zona Sul (Garota de Ipanema) : engager le trio bossa", "dist": "zona_sul", "anchor": "", "short": "Ipanema"},
 	# --- VOIE CONSORTIUM (C1 → C9) ---
 	"consortium_c1_recouvrement/collect_calcadao": {"text": "🎯 → Copa (calçadão) : recouvrer auprès des vendeurs", "dist": "copacabana", "anchor": "calcadao", "short": "Calçadão"},
 	"consortium_c2_loyers/collect_condos": {"text": "🎯 → Copa (av. Atlântica) : encaisser chez les commerçants", "dist": "copacabana", "anchor": "atlantica", "short": "Av. Atlântica"},

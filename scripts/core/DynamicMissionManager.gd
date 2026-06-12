@@ -35,6 +35,16 @@ const CATEGORY_COLORS: Dictionary = {
 const TEMPLATES: Dictionary = {
 	Category.VOYOU: [
 		{
+			"title": "Course pour Ipanema",
+			"narrative": "Un client de la Zona Sul attend un paquet discret sur la plage, côté Posto 9. Prends le taxi de l'Av. Atlântica.",
+			"points": [Vector2(-11700, -2770)],
+		},
+		{
+			"title": "Relais de Niterói",
+			"narrative": "Un contact attend près des quais de Niterói. La barca, le paquet, pas de questions.",
+			"points": [Vector2(-18700, -2780)],
+		},
+		{
 			"title": "Récup' planque favela",
 			"narrative": "Miguel a planqué un sac dans le Morro. Récupère-le sans te faire voir.",
 			"points": [Vector2(200, -250)],
@@ -57,6 +67,16 @@ const TEMPLATES: Dictionary = {
 	],
 	Category.POLICE: [
 		{
+			"title": "Ronde de l'enseada",
+			"narrative": "Ramos veut une présence visible sur la plage de Botafogo. Taxi, uniforme, deux tours.",
+			"points": [Vector2(-14200, -6080)],
+		},
+		{
+			"title": "Présence au Maracanã",
+			"narrative": "Jour d'affluence sur l'esplanade du Maracanã — la PM veut un œil de plus.",
+			"points": [Vector2(-6500, -2750)],
+		},
+		{
 			"title": "Patrouille calçadão",
 			"narrative": "Inspecter trois zones du calçadão pour rassurer les touristes.",
 			"points": [Vector2(400, 96), Vector2(1100, 96), Vector2(1800, 96)],
@@ -78,6 +98,16 @@ const TEMPLATES: Dictionary = {
 		},
 	],
 	Category.MAIRE: [
+		{
+			"title": "Tracts pour la Zona Sul",
+			"narrative": "Porter la communication du bairro jusqu'à la plage d'Ipanema — le message voyage en taxi.",
+			"points": [Vector2(-12500, -2770)],
+		},
+		{
+			"title": "Visite de courtoisie au MAC",
+			"narrative": "Saluer l'équipe du musée de Niterói au nom du bairro. La culture, ça s'entretient.",
+			"points": [Vector2(-18250, -2760)],
+		},
 		{
 			"title": "Distribution de tracts",
 			"narrative": "Distribuer la communication municipale en trois points.",

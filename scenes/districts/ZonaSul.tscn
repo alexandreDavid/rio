@@ -1637,6 +1637,25 @@ variants = [{
 "choices": ["…"]
 }]
 
+[node name="BossaTrioSpot" parent="." instance=ExtResource("17_reactive")]
+position = Vector2(-280, 40)
+npc_id = "bossa_trio"
+prompt = "Le trio bossa"
+character_seed = 90210
+variants = [{
+"id": "gala_book",
+"objective_pending": ["act2_contessa_gala", "secured_trio"],
+"actions": {"finish_quest": {"quest": "act2_contessa_gala", "objective": "secured_trio", "payout": 0}, "rep": {4: 1}},
+"speaker": "Le trio bossa",
+"text": "*guitare, voix, cajón, devant le Garota de Ipanema — là où la chanson est née* Un gala à Copa ? Pour la Contessa ? *le guitariste regarde les deux autres, qui haussent les épaules en souriant* On joue ici depuis vingt ans, moço. Mais si la télé vient, que le bairro y gagne… *il gratte trois accords de Garota de Ipanema, exactement ceux que tu espérais* Dis-lui qu'on apporte nos propres chaises. On joue mieux assis sur les nôtres.",
+"choices": ["Beleza — vendredi soir"]
+}, {
+"id": "default",
+"speaker": "Le trio bossa",
+"text": "*ils enchaînent les classiques pour personne et pour tout le monde, le chapeau ouvert au pied du tabouret*",
+"choices": ["…"]
+}]
+
 [node name="TaxiStand" parent="." instance=ExtResource("1_taxi")]
 position = Vector2(-700, 50)
 

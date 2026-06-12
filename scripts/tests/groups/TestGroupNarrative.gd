@@ -152,17 +152,17 @@ func _test_voie_trafico_end_to_end() -> void:
 	# (PalaceSacoche, scenes/props/) — pas via le contact spot. Le test la coche
 	# manuellement (arrival hook) en l'absence du Pickable physique.
 	# A6 (réception cargo) est sur l'îlot offshore de Zona Sul — même instance.
-	# A3 (drive_botafogo) est cochée par MainBoot._on_district_changed.
+	# A3 (drive_botafogo) se joue au garage de l'enseada (TraficoChauffeurSpot).
 	await _run_voie_e2e({
 		"name": "Tráfico", "pact_npc": "tito", "pact_knot": "tito_pacto_trafico_offer",
 		"voie_flag": "voie_trafico", "q1": "trafico_a1_livraison", "q9": "trafico_a9_corrida",
 		"crown_knot": "tito_trafico_corrida", "endgame": CampaignManager.Endgame.TRAFICO,
 		"arrival": [
 			["trafico_a2_pickup", "pickup_palace"],
-			["trafico_a3_chauffeur", "drive_botafogo"],
 		],
 		"stations": [
 			[_COPA, "TraficoContactSpot"], [_COPA, "TraficoTioZeSpot"],
+			[_BOTAFOGO, "TraficoChauffeurSpot"],
 			[_ZONASUL, "TraficoZonaSulSpot"], [_FAVELA, "TraficoIntimSpot"],
 			[_ZONASUL, "TraficoCagarrasSpot"], [_NITEROI, "TraficoNiteroiSpot"],
 		],
@@ -174,6 +174,7 @@ func _test_voie_policia_end_to_end() -> void:
 		"name": "Polícia", "pact_npc": "ramos", "pact_knot": "ramos_pacto_policia_offer",
 		"voie_flag": "voie_policia", "q1": "policia_b1_intel", "q9": "policia_b9_madrugada",
 		"crown_knot": "ramos_policia_madrugada", "endgame": CampaignManager.Endgame.POLICIA,
+		"crown_spot": [_FAVELA, "OperacaoMadrugadaSpot"],
 		"stations": [
 			[_COPA, "PoliciaContactSpot"], [_COPA, "PoliciaTioZeSpot"],
 			[_FAVELA, "PoliciaFilatureSpot"], [_BOTAFOGO, "PoliciaEscorteSpot"],

@@ -351,8 +351,13 @@ const KNOTS: Dictionary = {
 		"text": "Sobrinho, écoute. Cette nuit, à 3h du matin, j'ai vu trois canots noirs faire la navette du large jusqu'à la pointe de Leme. Pas de pêcheurs — des hommes en treillis. Mes filets en ont senti l'odeur de l'essence pendant deux heures. Je sais pas à qui en parler. Toi, peut-être. Tu prends l'info ?",
 		"choices": ["J'écoute, Seu Pedro", "Pas mes oignons"],
 		"on_choose": {
-			"0": {"accept_quest": "act2_pecheur_secret", "next": "pecheur_act2_choose"},
+			"0": {"accept_quest": "act2_pecheur_secret", "next": "pecheur_act2_go_see"},
 		},
+	},
+	"pecheur_act2_go_see": {
+		"speaker": "Seu Pedro",
+		"text": "Mais me crois pas sur parole, cara — un vieux qui parle de canots fantômes, on l'écoute poliment et on l'oublie. *pointe l'est, au-delà du Leme* Va voir de tes propres yeux. La mureta da Urca, à Botafogo, domine toute l'entrée de la baie. Attends la nuit, regarde le large. Après, tu reviendras me dire à qui on parle.",
+		"choices": ["J'y vais"],
 	},
 	"pecheur_act2_choose": {
 		"speaker": "Seu Pedro",
@@ -366,11 +371,8 @@ const KNOTS: Dictionary = {
 	},
 	"pecheur_act2_remind": {
 		"speaker": "Seu Pedro",
-		"text": "Tu décides quand tu veux, sobrinho. Mais les canots reviennent chaque nuit.",
-		"choices": ["Je réfléchis"],
-		"on_choose": {
-			"0": {"next": "pecheur_act2_choose"},
-		},
+		"text": "*répare ses filets sans lever la tête* La mureta da Urca, sobrinho. Botafogo. Tant que t'as pas vu les canots de tes yeux, on a rien à se dire — et après, faudra choisir vite.",
+		"choices": ["J'y retourne"],
 	},
 	"pecheur_act2_done": {
 		"speaker": "Seu Pedro",
@@ -380,7 +382,7 @@ const KNOTS: Dictionary = {
 	# --- ACTE 2 : Gala da Contessa ---
 	"contessa_act2_offer": {
 		"speaker": "Contessa Bianchi",
-		"text": "*sirote un Aperol* Carioca. J'organise un gala pour le bairro — caritatif, télévisé, tout. Mais la production patine. Trouve-moi : une voix (ce Ronaldo qui joue dans la rue), un sponsor café (ton ami Carlos), et une sécurité solide (Jorge du Bar do Policial). 1500 reais et l'invitation d'honneur si tu réussis.",
+		"text": "*sirote un Aperol* Carioca. J'organise un gala pour le bairro — caritatif, télévisé, tout. Mais la production patine. Trouve-moi : une voix (ce Ronaldo qui joue dans la rue), un sponsor café (ton ami Carlos), une sécurité solide (Jorge du Bar do Policial)… et la touche finale : le trio bossa qui joue devant le Garota de Ipanema. Pas une reprise, ragazzo — l'original, là où la chanson est née. 1500 reais et l'invitation d'honneur si tu réussis.",
 		"choices": ["Con piacere, Contessa", "Pas pour moi"],
 		"on_choose": {
 			"0": {"accept_quest": "act2_contessa_gala"},
@@ -388,7 +390,7 @@ const KNOTS: Dictionary = {
 	},
 	"contessa_act2_remind": {
 		"speaker": "Contessa Bianchi",
-		"text": "Ronaldo, Carlos, Jorge. Trois oui, et le gala se monte. La presse arrive vendredi, ragazzo.",
+		"text": "Ronaldo, Carlos, Jorge — et mon trio d'Ipanema. Quatre oui, et le gala se monte. La presse arrive vendredi, ragazzo.",
 		"choices": ["Je file"],
 	},
 	"contessa_act2_done": {

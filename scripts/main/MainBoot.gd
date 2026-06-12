@@ -236,11 +236,8 @@ func _on_district_changed(district_id: String) -> void:
 			and CampaignManager.has_flag("should_visit_home") \
 			and not CampaignManager.has_flag("home_visit_done"):
 		CampaignManager.set_flag("home_visit_done")
-	# Voie Tráfico A3 : arriver à Botafogo livre le coffre (chauffeur).
-	if district_id == "botafogo_flamengo" and QuestManager.is_active("trafico_a3_chauffeur"):
-		var a3objs: Dictionary = QuestManager.get_objectives_state("trafico_a3_chauffeur")
-		if not a3objs.get("drive_botafogo", false):
-			QuestManager.complete_objective("trafico_a3_chauffeur", "drive_botafogo")
+	# Voie Tráfico A3 : la livraison du coffre se joue désormais au garage de
+	# l'enseada (TraficoChauffeurSpot, BotafogoFlamengo.tscn) — plus d'auto-check.
 	if not QuestManager.is_active("tourist_vip_tour"):
 		return
 	if not TOUR_OBJECTIVES.has(district_id):

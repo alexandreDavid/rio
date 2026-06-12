@@ -1604,6 +1604,26 @@ offset_right = 32.0
 offset_bottom = -498.0
 color = Color(0.4, 0.55, 0.85, 1)
 
+[node name="OperacaoMadrugadaSpot" parent="." instance=ExtResource("7_reactive")]
+position = Vector2(130, -440)
+npc_id = "operacao_madrugada"
+prompt = "Le point de ralliement de la PM"
+character_seed = 90208
+variants = [{
+"id": "madrugada",
+"flag": "madrugada_lancee",
+"objective_pending": ["policia_b9_madrugada", "complete_madrugada"],
+"actions": {"finish_quest": {"quest": "policia_b9_madrugada", "objective": "complete_madrugada", "payout": 5000}, "rep": {1: 10}, "set_endgame": "POLICIA"},
+"speaker": "Operação Madrugada",
+"text": "*4h47. Le morro retient son souffle. Ramos lève deux doigts — les colonnes de la PM montent les escadarias en silence, et toi tu montes avec elles, gilet trop grand, cœur trop fort.* *Ça dure quatre heures. Trois caches tombent. Personne ne tire. Quand le soleil touche les toits, Ramos pose sa main sur ton épaule, devant tous ses hommes :* « Le bairro saura à qui il doit sa paix. Chefe. »",
+"choices": ["*regarder le soleil se lever sur le morro*"]
+}, {
+"id": "default",
+"speaker": "PM en faction",
+"text": "*adossé au mur, radio qui grésille* Circule, irmão. Y a rien à voir ici. *il regarde ailleurs* Pas encore.",
+"choices": ["…"]
+}]
+
 [node name="PoliciaFilatureSpot" parent="." unique_id=185039548 instance=ExtResource("7_reactive")]
 position = Vector2(26, -486)
 npc_id = "policia_filature"

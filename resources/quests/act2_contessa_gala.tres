@@ -1,7 +1,13 @@
-[gd_resource type="Resource" script_class="Quest" load_steps=6 format=3]
+[gd_resource type="Resource" script_class="Quest" load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
 [ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_trio"]
+script = ExtResource("2_obj")
+id = "secured_trio"
+description = "Engager le trio bossa d'Ipanema (devant le Garota de Ipanema)"
+optional = false
 
 [sub_resource type="Resource" id="obj_band"]
 script = ExtResource("2_obj")
@@ -26,10 +32,10 @@ script = ExtResource("1_quest")
 id = "act2_contessa_gala"
 display_name = "Gala da Contessa"
 description = "La Contessa Bianchi monte un gala de bienfaisance pour le bairro. Elle a besoin d'une voix, d'un sponsor café et d'une sécurité fiable. Ramène-lui les trois et elle fera du joueur l'invité d'honneur."
-journal_text = "Sécuriser musique (Ronaldo), sponsor (Carlos), sécurité (Jorge)."
+journal_text = "Sécuriser Ronaldo (voix), Carlos (sponsor), Jorge (sécurité) et le trio bossa d'Ipanema."
 giver_npc_id = "contessa"
 ink_knot = "contessa_act2_offer"
-objectives = Array[Resource]([SubResource("obj_band"), SubResource("obj_sponsor"), SubResource("obj_security")])
+objectives = Array[Resource]([SubResource("obj_band"), SubResource("obj_sponsor"), SubResource("obj_security"), SubResource("obj_trio")])
 money_reward = 1500
 reputation_rewards = {3: 8, 4: 5}
 required_reputation = {4: 15}

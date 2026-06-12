@@ -13,7 +13,10 @@ func _on_interacted(_by: Node) -> void:
 			"", "",
 			"pecheur_chat_morning", "pecheur_chat_afternoon", "pecheur_chat_evening")
 	if QuestManager.is_active(QUEST_SECRET):
-		knot = "pecheur_act2_remind"
+		# Tant que le joueur n'a pas vu les canots depuis la mureta (Botafogo),
+		# Pedro renvoie à l'observation ; après, on choisit à qui parler.
+		var objs: Dictionary = QuestManager.get_objectives_state(QUEST_SECRET)
+		knot = "pecheur_act2_choose" if objs.get("observe_canots", false) else "pecheur_act2_remind"
 	elif QuestManager.is_completed(QUEST_SECRET):
 		knot = "pecheur_act2_done"
 	elif QuestManager.is_available(QUEST_SECRET):

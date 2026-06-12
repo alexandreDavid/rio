@@ -29,10 +29,10 @@ const KNOTS: Dictionary = {
 	},
 	"ramos_policia_madrugada": {
 		"speaker": "Capitão Ramos",
-		"text": "*boucle son ceinturon, te regarde dans le blanc des yeux* Cette nuit, garoto. Le mandat est signé. La PM monte sur le morro à la madrugada et on coupe la tête du réseau. Si tu es là-haut avec moi, le bairro saura à qui il doit sa paix : à toi. Chefe de Polícia honoraire. Ton oncle Zé aurait jamais eu ce cran. *te tend un gilet* On y va.",
-		"choices": ["On lance l'Operação Madrugada"],
+		"text": "*boucle son ceinturon, te regarde dans le blanc des yeux* Cette nuit, garoto. Le mandat est signé. La PM monte sur le morro à la madrugada et on coupe la tête du réseau. *te tend un gilet* Le point de ralliement est là-haut, dans la favela — mes colonnes t'attendent. Si tu es sur le morro avec moi quand le soleil se lève, le bairro saura à qui il doit sa paix : à toi. Ton oncle Zé aurait jamais eu ce cran. On se voit là-haut.",
+		"choices": ["J'y serai, Capitão"],
 		"on_choose": {
-			"0": {"set_endgame": "POLICIA", "finish_quest": {"quest": "policia_b9_madrugada", "objective": "complete_madrugada", "payout": 5000}, "rep": {1: 10}},
+			"0": {"set_flag": "madrugada_lancee"},
 		},
 	},
 	"magalhaes_consortium_pacto": {

@@ -2902,6 +2902,44 @@ variants = [{
 "choices": ["Pas aujourd'hui"]
 }]
 
+[node name="CanotsObservationSpot" parent="." instance=ExtResource("19_reactive")]
+position = Vector2(940, -70)
+npc_id = "velho_mureta"
+prompt = "Le vieux de la mureta"
+character_seed = 90209
+variants = [{
+"id": "observe",
+"objective_pending": ["act2_pecheur_secret", "observe_canots"],
+"actions": {"finish_quest": {"quest": "act2_pecheur_secret", "objective": "observe_canots", "payout": 0}},
+"speaker": "O velho da mureta",
+"text": "*assis sur le muret, une bière tiède à la main, il te tend de vieilles jumelles sans que tu demandes rien* Tu regardes le large, hein. Comme l'autre, le pêcheur de Copa. *tu attends. La nuit tombe sur la baie. Et là — trois silhouettes noires, tous feux éteints, qui filent du large vers la pointe de Leme. Pas un bruit de moteur ne porte jusqu'ici.* *le vieux récupère ses jumelles* Ça fait trois semaines. Personne d'autre ne regarde. *il boit* La baie voit tout, menino. C'est les hommes qui choisissent de pas voir.",
+"choices": ["Maintenant, je sais"]
+}, {
+"id": "default",
+"speaker": "O velho da mureta",
+"text": "*regarde la baie, sa bière posée sur le muret* La meilleure télé de Rio, menino. Et pas de pub.",
+"choices": ["…"]
+}]
+
+[node name="TraficoChauffeurSpot" parent="." instance=ExtResource("19_reactive")]
+position = Vector2(450, 60)
+npc_id = "trafico_chauffeur"
+prompt = "Le garage sous le Bondinho"
+character_seed = 90207
+variants = [{
+"id": "a3_deliver",
+"objective_pending": ["trafico_a3_chauffeur", "drive_botafogo"],
+"actions": {"finish_quest": {"quest": "trafico_a3_chauffeur", "objective": "drive_botafogo", "payout": 0}, "rep": {2: 2}},
+"speaker": "Garagiste de l'enseada",
+"text": "*le rideau de fer se lève à moitié, juste assez pour la voiture. Un type en marcel essuie ses mains, jette un œil au coffre sans l'ouvrir* T'as pris l'avenue ou le tunnel ? *tu réponds pas. Il sourit* Bonne réponse. *il glisse le coffre sur un diable, disparaît dans le fond* Dis au morro que c'est passé. Et reprends un taxi — on laisse jamais la même voiture refaire le chemin.",
+"choices": ["É nóis"]
+}, {
+"id": "default",
+"speaker": "Garagiste de l'enseada",
+"text": "*lève à peine les yeux de son moteur* Garage privé, irmão. Sauf si t'as rendez-vous — et t'as pas rendez-vous.",
+"choices": ["…"]
+}]
+
 [node name="MuretaNoturna" type="Node2D" parent="."]
 script = ExtResource("20_evening")
 

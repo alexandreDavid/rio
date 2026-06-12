@@ -400,7 +400,7 @@ const SCRIPT_COMPLETED_OBJECTIVES: Dictionary = {
 	# (mère/vovó/Juca/Pedrinho), pas dans PLACEHOLDER.
 	"prologue_pedrinho": ["ask_mae", "ask_vovo", "ask_garoto", "find_pedrinho", "bring_home"],
 	# Voie Tráfico A1–A3 : drop/pickup via TraficoContactSpot (runtime),
-	# drive_botafogo auto-coché par MainBoot à l'arrivée à Botafogo.
+	# drive_botafogo se joue au TraficoChauffeurSpot (BotafogoFlamengo.tscn).
 	"trafico_a1_livraison": ["drop_calcadao"],
 	"trafico_a2_pickup": ["pickup_palace"],
 	"trafico_a3_chauffeur": ["drive_botafogo"],
@@ -411,8 +411,8 @@ const SCRIPT_COMPLETED_OBJECTIVES: Dictionary = {
 	"trafico_a6_cagarras": ["receive_cargo"],
 	"trafico_a7_tioze": ["heed_warning"],
 	"trafico_a8_baia": ["cross_baia"],
-	# Voie Polícia B1–B8 : objectifs via ReactiveDialogueSpot. B9
-	# complete_madrugada via knot PLACEHOLDER ramos_policia_madrugada.
+	# Voie Polícia B1–B9 : objectifs via ReactiveDialogueSpot — la finale B9
+	# (complete_madrugada) se joue à l'OperacaoMadrugadaSpot du morro.
 	"policia_b1_intel": ["report_face"],
 	"policia_b2_filature": ["map_network"],
 	"policia_b3_escorte": ["escort_patrol"],
@@ -421,6 +421,10 @@ const SCRIPT_COMPLETED_OBJECTIVES: Dictionary = {
 	"policia_b6_tioze": ["hear_concierge"],
 	"policia_b7_saisie": ["seize_cargo"],
 	"policia_b8_seguranca": ["secure_crowd"],
+	"policia_b9_madrugada": ["complete_madrugada"],
+	# Acte 2 hors de Copa : observation à la mureta (Botafogo) + trio d'Ipanema.
+	"act2_pecheur_secret": ["observe_canots"],
+	"act2_contessa_gala": ["secured_trio"],
 	# Voie Consortium C1–C8 : objectifs via ReactiveDialogueSpot. C9 seal_pacto
 	# via knot PLACEHOLDER magalhaes_consortium_pacto.
 	"consortium_c1_recouvrement": ["collect_calcadao"],
@@ -538,9 +542,24 @@ func _run_voie_e2e(cfg: Dictionary) -> void:
 		inst[sp].queue_free()
 	await get_tree().process_frame
 
-	# Couronnement : knot du patron → set_endgame.
+	# Couronnement : knot du patron → set_endgame. Si la voie a un "crown_spot"
+	# (ex. Polícia : l'Operação se joue AU morro), le knot ne fait qu'envoyer —
+	# c'est l'interaction sur le spot du district qui scelle l'endgame.
 	DialogueBridge.start_dialogue(cfg.pact_npc, cfg.crown_knot)
 	DialogueBridge.choose(0)
+	if cfg.has("crown_spot"):
+		var crown_scene: Node = (load(cfg.crown_spot[0]) as PackedScene).instantiate()
+		add_child(crown_scene)
+		await get_tree().process_frame
+		await get_tree().process_frame
+		var crown_node: Node = _find_by_name_in(crown_scene, cfg.crown_spot[1])
+		_assert(crown_node != null, "%s : spot de couronnement '%s' présent" % [cfg.name, cfg.crown_spot[1]])
+		if crown_node:
+			crown_node._on_interacted(null)
+			if DialogueBridge.is_active():
+				DialogueBridge.choose(0)
+		crown_scene.queue_free()
+		await get_tree().process_frame
 	_assert(CampaignManager.chosen_endgame == cfg.endgame,
 		"%s : couronnement → endgame scellé" % cfg.name)
 	_assert(CampaignManager.current_act == 5, "%s : acte 5 atteint (règne)" % cfg.name)
