@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene load_steps=14 format=3]
 
 [ext_resource type="Script" path="res://scripts/minigames/volley/VolleyMatch.gd" id="1_match"]
 [ext_resource type="Script" path="res://scripts/minigames/volley/VolleyBall.gd" id="2_ball"]
@@ -13,6 +13,18 @@ border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0.95, 0.92, 0.85, 0.6)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="HitStyle"]
+bg_color = Color(0.9, 0.45, 0.15, 0.92)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.98, 0.92, 0.8, 0.7)
 corner_radius_top_left = 12
 corner_radius_top_right = 12
 corner_radius_bottom_right = 12
@@ -34,6 +46,9 @@ size = Vector2(8, 120)
 [sub_resource type="RectangleShape2D" id="CharShape"]
 size = Vector2(20, 48)
 
+[sub_resource type="CircleShape2D" id="PlayerSensorShape"]
+radius = 14.0
+
 [sub_resource type="CircleShape2D" id="BlobSensorShape"]
 radius = 22.0
 
@@ -43,7 +58,6 @@ target_score = 5
 ball = NodePath("Ball")
 score_label = NodePath("UI/Score")
 status_label = NodePath("UI/Status")
-serve_position = Vector2(-100, -160)
 
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(2, 2)
@@ -123,7 +137,7 @@ collision_layer = 0
 collision_mask = 1
 
 [node name="BallSensorShape" type="CollisionShape2D" parent="Player/BallSensor"]
-shape = SubResource("BlobSensorShape")
+shape = SubResource("PlayerSensorShape")
 
 [node name="AI" type="CharacterBody2D" parent="."]
 script = ExtResource("4_vai")
@@ -178,10 +192,39 @@ horizontal_alignment = 1
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 16.0
-offset_top = -40.0
-offset_right = 600.0
-offset_bottom = -8.0
-text = "Joystick : déplacement    SAUTER pour bondir    La balle rebondit toute seule"
+offset_top = -190.0
+offset_right = 700.0
+offset_bottom = -158.0
+theme_override_font_sizes/font_size = 14
+text = "◀ ▶ bouger — SAUTER pour smasher — FRAPPER au bon moment (◀ amorti, ▶ fond de court)"
+
+[node name="MoveLeftButton" type="Button" parent="UI"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = -150.0
+offset_right = 116.0
+offset_bottom = -40.0
+text = "◀"
+theme_override_styles/normal = SubResource("ServeStyle")
+theme_override_styles/hover = SubResource("ServeStyle")
+theme_override_styles/pressed = SubResource("ServeStyle")
+theme_override_font_sizes/font_size = 30
+theme_override_colors/font_color = Color(0.98, 0.98, 0.95, 1)
+
+[node name="MoveRightButton" type="Button" parent="UI"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 128.0
+offset_top = -150.0
+offset_right = 228.0
+offset_bottom = -40.0
+text = "▶"
+theme_override_styles/normal = SubResource("ServeStyle")
+theme_override_styles/hover = SubResource("ServeStyle")
+theme_override_styles/pressed = SubResource("ServeStyle")
+theme_override_font_sizes/font_size = 30
+theme_override_colors/font_color = Color(0.98, 0.98, 0.95, 1)
 
 [node name="ServeButton" type="Button" parent="UI"]
 visible = false
@@ -205,14 +248,30 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -200.0
-offset_top = -160.0
-offset_right = -40.0
+offset_left = -352.0
+offset_top = -150.0
+offset_right = -216.0
 offset_bottom = -40.0
 text = "🦘 SAUTER"
 theme_override_styles/normal = SubResource("ServeStyle")
 theme_override_styles/hover = SubResource("ServeStyle")
 theme_override_styles/pressed = SubResource("ServeStyle")
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.98, 0.98, 0.95, 1)
+
+[node name="HitButton" type="Button" parent="UI"]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -200.0
+offset_top = -160.0
+offset_right = -24.0
+offset_bottom = -40.0
+text = "🏐 FRAPPER"
+theme_override_styles/normal = SubResource("HitStyle")
+theme_override_styles/hover = SubResource("HitStyle")
+theme_override_styles/pressed = SubResource("HitStyle")
 theme_override_font_sizes/font_size = 22
 theme_override_colors/font_color = Color(0.98, 0.98, 0.95, 1)
 
