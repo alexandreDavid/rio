@@ -364,8 +364,10 @@ const KNOTS: Dictionary = {
 		"text": "Trois choix, cara. Tu en parles à Ramos — la Polícia coupera le robinet et te paiera bien. Tu en parles à Miguel — le Morro saura, et il y a peut-être quelque chose à grappiller. Ou tu te tais, et tu rentres chez toi dormir. Que Dieu te guide.",
 		"choices": ["Je vais voir Ramos (R$ 400)", "Je préviens Miguel (R$ 300)", "Je me tais"],
 		"on_choose": {
-			"0": {"finish_quest": {"quest": "act2_pecheur_secret", "objective": "decide_pecheur", "payout": 400}, "set_flag": "pecheur_to_ramos", "rep": {1: 5, 2: -2}},
-			"1": {"finish_quest": {"quest": "act2_pecheur_secret", "objective": "decide_pecheur", "payout": 300}, "set_flag": "pecheur_to_miguel", "rep": {2: 5, 0: -2}},
+			# Ramos/Miguel « touchent un mot » chez Nilton : une part de dette saute
+			# (debt_credit — sans ponction du cash). Se taire ne rapporte rien.
+			"0": {"finish_quest": {"quest": "act2_pecheur_secret", "objective": "decide_pecheur", "payout": 400}, "set_flag": "pecheur_to_ramos", "rep": {1: 5, 2: -2}, "debt_credit": 300},
+			"1": {"finish_quest": {"quest": "act2_pecheur_secret", "objective": "decide_pecheur", "payout": 300}, "set_flag": "pecheur_to_miguel", "rep": {2: 5, 0: -2}, "debt_credit": 300},
 			"2": {"finish_quest": {"quest": "act2_pecheur_secret", "objective": "decide_pecheur", "payout": 0}, "rep": {0: -1}},
 		},
 	},

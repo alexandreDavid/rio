@@ -11,6 +11,9 @@ signal picked_up()
 @export var quest_id: String = ""
 @export var objective_id: String = ""
 @export var only_if_quest_active: bool = true
+# Si non vide : ramasser déclenche une poursuite de rue (config CobradorChase).
+# Sert aux prises « chaudes » (sacoche du Palace → la PM te tombe dessus).
+@export var chase_config: Dictionary = {}
 
 func _ready() -> void:
 	if interactable == null:
@@ -35,6 +38,8 @@ func _on_quest_changed(_id: String) -> void:
 func _on_interacted(_by: Node) -> void:
 	if quest_id != "" and objective_id != "":
 		QuestManager.complete_objective(quest_id, objective_id)
+	if not chase_config.is_empty():
+		CobradorChase.spawn(chase_config)
 	picked_up.emit()
 	if interactable:
 		EventBus.interaction_lost.emit(interactable)

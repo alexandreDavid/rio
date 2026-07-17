@@ -1,7 +1,19 @@
-[gd_resource type="Resource" script_class="Quest" load_steps=4 format=3]
+[gd_resource type="Resource" script_class="Quest" load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
 [ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_briefing_pm"]
+script = ExtResource("2_obj")
+id = "briefing_pm"
+description = "Prendre le briefing au poste PM du Maracanã"
+optional = false
+
+[sub_resource type="Resource" id="obj_reperer_batedores"]
+script = ExtResource("2_obj")
+id = "reperer_batedores"
+description = "Repérer l'éclaireur des batedores dans la foule"
+optional = false
 
 [sub_resource type="Resource" id="obj_secure_crowd"]
 script = ExtResource("2_obj")
@@ -13,11 +25,11 @@ optional = false
 script = ExtResource("1_quest")
 id = "policia_b8_seguranca"
 display_name = "Sécuriser la foule"
-description = "Un rassemblement gêne le consortium. Ramos appelle ça « sécuriser la foule ». C'est le gros job — celui qui éponge presque toute ta dette."
-journal_text = "Aller au Maracanã et sécuriser la foule."
+description = "Un rassemblement gêne le consortium. Ramos appelle ça « sécuriser la foule ». C'est le gros job — celui qui éponge presque toute ta dette. Mais avant les boucliers, il faut l'œil : savoir qui opère là-dedans."
+journal_text = "Prendre le briefing au poste PM du Maracanã, repérer l'éclaireur des batedores dans la foule, puis sécuriser le stade."
 giver_npc_id = "policia_saisie"
 ink_knot = "spot_policia_saisie_b8_offer"
-objectives = Array[Resource]([SubResource("obj_secure_crowd")])
+objectives = Array[Resource]([SubResource("obj_briefing_pm"), SubResource("obj_reperer_batedores"), SubResource("obj_secure_crowd")])
 money_reward = 3000
 reputation_rewards = {}
 required_reputation = {}

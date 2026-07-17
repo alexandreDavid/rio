@@ -207,6 +207,23 @@ func _apply_placeholder_action(action: Dictionary) -> void:
 	if GameManager.player:
 		inv = GameManager.player.get_node_or_null("Inventory") as Inventory
 
+	# --- Add-ons composables (ne retournent PAS) : cumulables avec n'importe
+	# quel bloc englobant ci-dessous. Utilisés par les verbes de voie.
+	# `debt_credit` : le patron solde une part de la dette directement chez le
+	# consortium — SANS toucher le cash du joueur (≠ pay_debt qui le ponctionne).
+	# C'est le canal des versements scénarisés qui rythment les seuils d'acte.
+	if action.has("debt_credit"):
+		CampaignManager.pay_debt(int(action.debt_credit))
+	# `start_chase` : lâche une poursuite de rue sur le joueur (voie Tráfico…).
+	# Config = dict CobradorChase (chaser_id, textes, vitesses) ; le poursuivant
+	# attend poliment la fin du dialogue (gel tant que DialogueBridge est actif).
+	if action.has("start_chase"):
+		CobradorChase.spawn(action.start_chase if action.start_chase is Dictionary else {})
+	# `start_stakeout` : lance une filature (voie Polícia) — {quest, objective,
+	# duration?, seed?}. Le succès coche l'objectif via QuestManager.
+	if action.has("start_stakeout"):
+		StakeoutZone.spawn(action.start_stakeout if action.start_stakeout is Dictionary else {})
+
 	# Cas composé accept_quest + finish_quest : la quête à accepter dépend
 	# souvent de la quête à clôre (prereq), donc on délègue à la branche
 	# finish_quest qui ordonne complete → accept correctement (voies A/B/C/D).

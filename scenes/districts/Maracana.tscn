@@ -299,15 +299,56 @@ character_seed = 80108
 variants = [{
 "id": "b8_close",
 "objective_pending": ["policia_b8_seguranca", "secure_crowd"],
+"objective_done": ["policia_b8_seguranca", "reperer_batedores"],
 "set_flag_after": "policia_b8_done",
 "actions": {"finish_quest": {"quest": "policia_b8_seguranca", "objective": "secure_crowd", "payout": 1500}, "accept_quest": "policia_b9_madrugada", "pay_debt": 18000, "rep": {1: 6, 0: -6}},
 "speaker": "Narrateur",
-"text": "*Devant le Maracanã, un rassemblement pacifique — banderoles, chants, des familles. « Sécuriser », a dit Ramos. Tu donnes le signal ; les boucliers avancent, la foule reflue, quelqu'un tombe. En une heure il ne reste que des pancartes piétinées et le silence. Le consortium est content. La dette presque effacée. Tu ne te regardes pas dans les vitrines en repartant.* *Ta radio, voix de Ramos lui-même :* « T'as tout donné, sobrinho. Le mandat est signé. Cette nuit on monte sur le morro — l'Operação Madrugada. Retrouve-moi. »",
+"text": "*Le visage de l'éclaireur est dans toutes les oreillettes — c'est ton repérage qui a dessiné le plan, les colonnes savent exactement où frapper pour couper la foule de ses batedores.* *Devant le Maracanã, un rassemblement pacifique — banderoles, chants, des familles. « Sécuriser », a dit Ramos. Tu donnes le signal ; les boucliers avancent, la foule reflue, quelqu'un tombe. En une heure il ne reste que des pancartes piétinées et le silence. Le consortium est content. La dette presque effacée. Tu ne te regardes pas dans les vitrines en repartant.* *Ta radio, voix de Ramos lui-même :* « T'as tout donné, sobrinho. Le mandat est signé. Cette nuit on monte sur le morro — l'Operação Madrugada. Retrouve-moi. »",
 "choices": ["Je rejoins Ramos"]
+}, {
+"id": "b8_retencao",
+"objective_pending": ["policia_b8_seguranca", "secure_crowd"],
+"speaker": "PM du cordon",
+"text": "*il te bloque du plat de la main, le casque encore accroché au ceinturon* Doucement, novato. Tu sécurises quoi, si tu sais pas qui opère là-dedans ? *il désigne la foule du menton* Y a des batedores infiltrés — tu donnes le signal maintenant, ils allument le stade et c'est NOUS qui passons au jornal. Le sergent t'attend au poste, côté esplanade. Briefing d'abord. Toujours.",
+"choices": ["Je vais au poste"]
 }, {
 "id": "default",
 "speaker": "Torcedor",
 "text": "*maillot de la Seleção, agite un drapeau* Hoje tem jogo, irmão?! O Maraca vai tremer! *chante vers le stade*",
+"choices": ["…"]
+}]
+
+[node name="PoliciaBriefingSpot" parent="." instance=ExtResource("7_reactive")]
+position = Vector2(-296, 72)
+npc_id = "policia_briefing"
+prompt = "Le poste PM (esplanade)"
+character_seed = 80122
+required_flag = "voie_policia"
+variants = [{
+"id": "b8_briefing",
+"objective_pending": ["policia_b8_seguranca", "briefing_pm"],
+"actions": {"finish_quest": {"quest": "policia_b8_seguranca", "objective": "briefing_pm", "payout": 0}},
+"speaker": "Sergent Mattos",
+"text": "*dans le poste, une carte du Maracanã punaisée, des cercles au feutre rouge* Ramos m'a prévenu. *il tape la carte* Le rassemblement, c'est la vitrine — le problème, c'est les batedores infiltrés dedans. Eux, ils veulent l'étincelle : un bouclier qui tombe, une image, et le consortium recule six mois. *il te tend des jumelles* Leur éclaireur est déjà dans la foule. Tu veux le repérer ? Facile et pas facile : il tourne autour des files, jamais il regarde le match. Tout le monde regarde le stade, lui il regarde les gens. Trouve-le, grave son visage — après seulement, on bouge.",
+"choices": ["Je le trouve"]
+}, {
+"id": "b8_stakeout",
+"objective_done": ["policia_b8_seguranca", "briefing_pm"],
+"objective_pending": ["policia_b8_seguranca", "reperer_batedores"],
+"actions": {"start_stakeout": {"quest": "policia_b8_seguranca", "objective": "reperer_batedores", "duration": 28.0, "seed": "batedor_maracana"}},
+"speaker": "Sergent Mattos",
+"text": "*aux jumelles, depuis la fenêtre du poste* Là. Casquette délavée, il vient de refaire la file de la bilheteria pour la troisième fois — et pas un regard vers le stade. C'est lui. *il te rend les jumelles* Tu le suis dans la foule, sobrinho. C'est la pire filature de ta carrière : mille personnes, et lui il connaît le métier. Ni trop près — il flaire les fardas même en civil — ni trop loin, ou la foule te l'avale. S'il te grille ou s'il se noie dans la masse, tu reviens au poste et on recommence. Le temps qu'il faudra.",
+"choices": ["Je le prends en filature"]
+}, {
+"id": "b8_after",
+"objective_done": ["policia_b8_seguranca", "reperer_batedores"],
+"speaker": "Sergent Mattos",
+"text": "*il punaise le portrait-robot que tu as dicté, au centre de la carte* Toutes les oreillettes ont son visage. *il remet son casque* Le reste, c'est au cordon que ça se joue. Va donner le signal quand t'es prêt — si tant est qu'on soit prêt un jour pour ça.",
+"choices": ["…"]
+}, {
+"id": "default",
+"speaker": "Sergent Mattos",
+"text": "*debout devant le poste, il surveille l'esplanade sans un mot* Circulando, cidadão. Le stade est par là.",
 "choices": ["…"]
 }]
 
@@ -317,18 +358,101 @@ npc_id = "prefeito_maracana"
 prompt = "Le meeting"
 character_seed = 70405
 variants = [{
-"id": "d5_close",
-"objective_pending": ["prefeito_d5_rally", "lead_rally"],
-"set_flag_after": "prefeito_d5_done",
-"actions": {"finish_quest": {"quest": "prefeito_d5_rally", "objective": "lead_rally", "payout": 350}, "accept_quest": "prefeito_d6_mac", "rep": {0: 7}},
+"id": "d5_mutirao",
+"quest_active": "prefeito_d5_rally",
 "speaker": "Le candidat civique",
-"text": "*estrade devant le Maracanã, des milliers de personnes — tu prends le micro avant lui, tu parles du bairro, de l'orfanato, des gosses de l'Aterro. Pas de promesses creuses : des noms, des visages, le tien.* *la foule scande ton prénom ; le candidat, sidéré, te laisse finir.* …Ils ne sont pas venus pour moi. Ils sont venus pour toi. *encore essoufflé par l'ovation* Dernière vitrine avant le scrutin : une inauguration au MAC de Niterói. Culture, presse, respectabilité — l'image qui rassure les indécis. Traverse la baie, le Padre a tout arrangé.",
+"text": "*devant l'estrade à moitié montée, il tord son programme entre ses mains* Une estrade, un micro, et personne derrière moi — le consortium dira que le bairro s'en fiche. *te regarde* Le Padre dit que c'est toi qui sais parler aux gens. C'est un mutirão : Dona Marta, la baiana do acarajé — son tabuleiro vaut cent affiches. Seu Válter, le pipoqueiro — mais sa journée de vente, c'est son loyer, pense-y. Et Rogério, le puxador de torcida — lui, il flaire les politiciens à dix mètres, ne lui parle pas comme un politicien. Ramène-les, et le comício existera.",
+"choices": ["Je vais les chercher"]
+}, {
+"id": "d5_close",
+"quest_completed": "prefeito_d5_rally",
+"quest_not_active": "prefeito_d6_mac",
+"quest_not_completed": "prefeito_d6_mac",
+"set_flag_after": "prefeito_d5_done",
+"actions": {"accept_quest": "prefeito_d6_mac", "debt_credit": 800, "rep": {0: 7}},
+"speaker": "Le candidat civique",
+"text": "*le comício a lieu au coucher du soleil — le tabuleiro de Dona Marta fume, Seu Válter distribue la pipoca, et quand Rogério lance le chant de la torcida, des milliers de voix suivent. Tu prends le micro : le bairro, l'orfanato, les gosses de l'Aterro. Des noms, des visages, le tien.* *le candidat, sidéré, te laisse finir* …Ils ne sont pas venus pour moi. Ils sont venus pour toi. La paroisse a cotisé chez Nilton — ta dette a fondu, c'est le bairro qui te le devait. *encore essoufflé par l'ovation* Dernière vitrine avant le scrutin : une inauguration au MAC de Niterói. Culture, presse, respectabilité. Traverse la baie, le Padre a tout arrangé.",
 "choices": ["Direction Niterói"]
 }, {
 "id": "default",
 "speaker": "Torcedor",
 "text": "*tambour au cou, peinturluré aux couleurs du Brésil* É hoje, irmão! Vai Brasil! *frappe son tambour vers le stade*",
 "choices": ["…"]
+}]
+
+[node name="MutiraoMartaSpot" parent="." instance=ExtResource("7_reactive")]
+position = Vector2(-80, 156)
+npc_id = "mutirao_marta"
+prompt = "Dona Marta (acarajé)"
+character_seed = 70420
+variants = [{
+"id": "d5_pede",
+"objective_pending": ["prefeito_d5_rally", "convencer_marta"],
+"actions": {"finish_quest": {"quest": "prefeito_d5_rally", "objective": "convencer_marta", "payout": 0}, "rep": {0: 1}},
+"speaker": "Dona Marta",
+"text": "*derrière son tabuleiro d'acarajé, elle te reconnaît avant que tu ouvres la bouche* Le comício du Padre ? *essuie ses mains, rit de tout son corps* Menino, quand mon aîné s'est perdu, c'est l'orfanato du Padre qui l'a remis droit. Tu n'as même pas besoin de demander. *commence déjà à ranger son dendê* J'amène le tabuleiro — un comício sans acarajé, c'est une messe sans hostie.",
+"choices": ["Obrigado, Dona Marta"]
+}, {
+"id": "d5_vem",
+"objective_done": ["prefeito_d5_rally", "convencer_marta"],
+"speaker": "Dona Marta",
+"text": "*fait sauter un acarajé dans l'huile* J'y serai, menino, com o tabuleiro e tudo. Va chercher les autres !",
+"choices": ["…"]
+}, {
+"id": "default",
+"speaker": "Dona Marta",
+"text": "*parfum de dendê autour de son tabuleiro* Acarajé quentinho, meu bem ! Feito com carinho !",
+"choices": ["Plus tard"]
+}]
+
+[node name="MutiraoValterSpot" parent="." instance=ExtResource("7_reactive")]
+position = Vector2(30, 164)
+npc_id = "mutirao_valter"
+prompt = "Seu Válter (pipoca)"
+character_seed = 70421
+variants = [{
+"id": "d5_pede",
+"objective_pending": ["prefeito_d5_rally", "convencer_valter"],
+"speaker": "Seu Válter",
+"text": "*son chariot de pipoca crachote, il baisse la flamme pour t'écouter* Le comício ? J'aime bien ton Padre, moço, et j'aime pas le consortium. *montre le chariot du pouce* Mais une après-midi de comício, c'est une après-midi sans vendre — et le loyer, lui, il vote pas. *hausse les épaules, gêné* Paie ma journée, 100 reais, et je pousse le chariot jusqu'au pied de l'estrade. Pipoca gratuite pour tout le monde, ça met la foule de bonne humeur.",
+"choices": ["Je paie ta journée (100 R$)", "Je repasserai"],
+"choice_actions": {"0": {"finish_quest": {"quest": "prefeito_d5_rally", "objective": "convencer_valter", "payout": 0}, "pay_bribe": 100}}
+}, {
+"id": "d5_vem",
+"objective_done": ["prefeito_d5_rally", "convencer_valter"],
+"speaker": "Seu Válter",
+"text": "*graisse les roues de son chariot* Marché conclu, moço. Pipoca pour tout le comício — va chercher les autres.",
+"choices": ["…"]
+}, {
+"id": "default",
+"speaker": "Seu Válter",
+"text": "*fait tinter sa clochette* Pipoca ! Doce e salgada ! *le beurre chante dans la machine*",
+"choices": ["Plus tard"]
+}]
+
+[node name="MutiraoRogerioSpot" parent="." instance=ExtResource("7_reactive")]
+position = Vector2(230, 150)
+npc_id = "mutirao_rogerio"
+prompt = "Rogério (torcida)"
+character_seed = 70422
+variants = [{
+"id": "d5_pede",
+"objective_pending": ["prefeito_d5_rally", "convencer_rogerio"],
+"speaker": "Rogério",
+"text": "*drapeau roulé sur l'épaule, il te jauge de haut en bas* Le comício du candidat, hein. *crache par terre* Des types en costume, j'en vois passer avant chaque élection — promesses, selfies, place d'honneur. Après, plus personne ne remonte la rampe du Maraca. *croise les bras* Moi je chante pour le bairro, pas pour les estrades. Alors vas-y : pourquoi Rogério irait chanter là-bas ?",
+"choices": ["Te promettre une place d'honneur près du candidat", "Te parler du bairro : l'orfanato, les gosses de l'Aterro, la procession"],
+"choice_actions": {"0": {"rep": {0: -1}}, "1": {"finish_quest": {"quest": "prefeito_d5_rally", "objective": "convencer_rogerio", "payout": 0}, "rep": {0: 2}}}
+}, {
+"id": "d5_vem",
+"objective_done": ["prefeito_d5_rally", "convencer_rogerio"],
+"speaker": "Rogério",
+"text": "*déroule son drapeau pour vérifier les couleurs* La torcida sera là, irmão. Quand je lance le chant, même le béton suit.",
+"choices": ["…"]
+}, {
+"id": "default",
+"speaker": "Rogério",
+"text": "*entonne un chant de torcida, seul, parfaitement juste* O Maraca é nosso, sempre foi… *les passants reprennent malgré eux*",
+"choices": ["Plus tard"]
 }]
 
 [node name="TaxiStand" parent="." instance=ExtResource("1_taxi")]

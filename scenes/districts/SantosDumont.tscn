@@ -433,9 +433,9 @@ variants = [{
 "id": "c4_close",
 "objective_pending": ["consortium_c4_vip", "drive_vip"],
 "set_flag_after": "consortium_c4_done",
-"actions": {"finish_quest": {"quest": "consortium_c4_vip", "objective": "drive_vip", "payout": 500}, "accept_quest": "consortium_c5_mac", "rep": {4: 5}},
+"actions": {"finish_quest": {"quest": "consortium_c4_vip", "objective": "drive_vip", "payout": 500}, "accept_quest": "consortium_c5_mac", "debt_credit": 700, "rep": {4: 5}},
 "speaker": "L'investisseur",
-"text": "*costume sur mesure, valise fine, accent indéterminé* Ah, le chauffeur de Sr. Magalhães. *monte sans te regarder* La plage, le Cristo, un déjeuner avec vue — montrez-moi le Rio qui rapporte, pas l'autre. *te glisse un pourboire qui vaut ton mois, puis avant de partir te tend une mallette* Un détail, pour Magalhães. Cet argent doit devenir… vertueux. Une donation culturelle au MAC, à Niterói — l'art lave tout. Vous comprenez ces choses, j'imagine.",
+"text": "*costume sur mesure, valise fine, accent indéterminé* Ah, le chauffeur de Sr. Magalhães. *monte sans te regarder* La plage, le Cristo, un déjeuner avec vue — montrez-moi le Rio qui rapporte, pas l'autre. *te glisse un pourboire qui vaut ton mois, puis avant de partir te tend une mallette* Un détail, pour Magalhães. Cet argent doit devenir… vertueux. Une donation culturelle au MAC, à Niterói — l'art lave tout. Ah, et Magalhães m'a prié de vous le dire : la maison a déduit cette journée de votre ardoise. Elle tient ses comptes, toujours.",
 "choices": ["Direction Niterói"]
 }, {
 "id": "default",

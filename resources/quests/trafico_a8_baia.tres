@@ -1,7 +1,19 @@
-[gd_resource type="Resource" script_class="Quest" load_steps=4 format=3]
+[gd_resource type="Resource" script_class="Quest" load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
 [ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_feu_vert_mafia"]
+script = ExtResource("2_obj")
+id = "feu_vert_mafia"
+description = "Obtenir le feu vert de la Mafia da Baía"
+optional = false
+
+[sub_resource type="Resource" id="obj_reperer_crique"]
+script = ExtResource("2_obj")
+id = "reperer_crique"
+description = "Repérer le point de débarque"
+optional = false
 
 [sub_resource type="Resource" id="obj_cross_baia"]
 script = ExtResource("2_obj")
@@ -9,15 +21,23 @@ id = "cross_baia"
 description = "Convoyer la grosse livraison de l'autre côté de la baie (Niterói)"
 optional = false
 
+[sub_resource type="Resource" id="obj_semer_flagrante"]
+script = ExtResource("2_obj")
+id = "semer_flagrante"
+description = "Échapper au flagrante sur les quais"
+optional = false
+kind = 3
+chaser_id = "pm_baia"
+
 [resource]
 script = ExtResource("1_quest")
 id = "trafico_a8_baia"
 display_name = "La traversée"
-description = "Le gros coup. Une cargaison passe la baie jusqu'à Niterói, la Mafia da Baía en relais. Ça paie presque toute la dette. Pas le droit à l'erreur."
-journal_text = "Convoyer la cargaison jusqu'à Niterói et la remettre au relais."
+description = "Le gros coup. Une cargaison passe la baie jusqu'à Niterói — mais la baía a ses maîtres. Sans le mot de la Mafia da Baía, aucune barque n'accoste. Ça paie presque toute la dette. Pas le droit à l'erreur."
+journal_text = "Remonter la filière à Niterói : le feu vert de la Mafia aux barcas, la crique de débarque à Icaraí — puis convoyer la cargaison, et disparaître si la PM tombe dessus."
 giver_npc_id = "trafico_tioze"
 ink_knot = "spot_trafico_tioze_a8_offer"
-objectives = Array[Resource]([SubResource("obj_cross_baia")])
+objectives = Array[Resource]([SubResource("obj_feu_vert_mafia"), SubResource("obj_reperer_crique"), SubResource("obj_cross_baia"), SubResource("obj_semer_flagrante")])
 money_reward = 3000
 reputation_rewards = {}
 required_reputation = {}

@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="Quest" load_steps=4 format=3]
+[gd_resource type="Resource" script_class="Quest" load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
 [ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
@@ -9,6 +9,14 @@ id = "deal_ipanema"
 description = "Refourguer la marchandise à Ipanema (Zona Sul)"
 optional = false
 
+[sub_resource type="Resource" id="obj_fugir_praia"]
+script = ExtResource("2_obj")
+id = "fugir_praia"
+description = "Échapper à la PM en civil sans lâcher l'argent"
+optional = false
+kind = 3
+chaser_id = "pm_ipanema"
+
 [resource]
 script = ExtResource("1_quest")
 id = "trafico_a4_ipanema"
@@ -17,7 +25,7 @@ description = "Le contact t'envoie écouler la marchandise à Ipanema. Un touris
 journal_text = "Rejoindre la Zona Sul (Ipanema) et conclure le deal."
 giver_npc_id = "trafico_contact"
 ink_knot = "spot_trafico_contact_a4_offer"
-objectives = Array[Resource]([SubResource("obj_deal_ipanema")])
+objectives = Array[Resource]([SubResource("obj_deal_ipanema"), SubResource("obj_fugir_praia")])
 money_reward = 700
 reputation_rewards = {}
 required_reputation = {}

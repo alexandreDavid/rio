@@ -6,7 +6,7 @@
 [sub_resource type="Resource" id="obj_scout_corcovado"]
 script = ExtResource("2_obj")
 id = "scout_corcovado"
-description = "Repérer une remise depuis le mirante du Corcovado"
+description = "Filer le contremaître du consortium au mirante du Corcovado"
 optional = false
 
 [resource]
@@ -14,7 +14,7 @@ script = ExtResource("1_quest")
 id = "policia_b5_reperage"
 display_name = "Repérage avec vue"
 description = "Depuis le belvédère du Cristo, on voit tout Rio. Ramos veut que tu repères une remise du consortium d'en haut."
-journal_text = "Monter au mirante du Corcovado et repérer la remise."
+journal_text = "Monter au Corcovado et filer le contremaître du consortium — à distance, le temps de noter sa tournée."
 giver_npc_id = "policia_descente"
 ink_knot = "spot_policia_descente_b5_offer"
 objectives = Array[Resource]([SubResource("obj_scout_corcovado")])

@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="Quest" load_steps=4 format=3]
+[gd_resource type="Resource" script_class="Quest" load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
 [ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
@@ -9,6 +9,14 @@ id = "pickup_palace"
 description = "Récupérer la sacoche au Copacabana Palace (contact du calçadão)"
 optional = false
 
+[sub_resource type="Resource" id="obj_despistar_pm"]
+script = ExtResource("2_obj")
+id = "despistar_pm"
+description = "Semer la PM sans lâcher la sacoche"
+optional = false
+kind = 3
+chaser_id = "pm_copacabana"
+
 [resource]
 script = ExtResource("1_quest")
 id = "trafico_a2_pickup"
@@ -17,7 +25,7 @@ description = "Miguel, le lieutenant de Tito, veut voir si tu tiens. Une sacoche
 journal_text = "Récupérer la sacoche pour Miguel via le contact du calçadão."
 giver_npc_id = "trafico_contact"
 ink_knot = "spot_trafico_contact_a2_offer"
-objectives = Array[Resource]([SubResource("obj_pickup_palace")])
+objectives = Array[Resource]([SubResource("obj_pickup_palace"), SubResource("obj_despistar_pm")])
 money_reward = 350
 reputation_rewards = {}
 required_reputation = {}

@@ -1,23 +1,35 @@
-[gd_resource type="Resource" script_class="Quest" load_steps=4 format=3]
+[gd_resource type="Resource" script_class="Quest" load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
 [ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
 
-[sub_resource type="Resource" id="obj_lead_rally"]
+[sub_resource type="Resource" id="obj_convencer_marta"]
 script = ExtResource("2_obj")
-id = "lead_rally"
-description = "Mener le meeting public au Maracanã"
+id = "convencer_marta"
+description = "Convaincre Dona Marta, la baiana do acarajé (Maracanã)"
+optional = false
+
+[sub_resource type="Resource" id="obj_convencer_valter"]
+script = ExtResource("2_obj")
+id = "convencer_valter"
+description = "Convaincre Seu Válter, le pipoqueiro (Maracanã)"
+optional = false
+
+[sub_resource type="Resource" id="obj_convencer_rogerio"]
+script = ExtResource("2_obj")
+id = "convencer_rogerio"
+description = "Convaincre Rogério, le puxador de torcida (Maracanã)"
 optional = false
 
 [resource]
 script = ExtResource("1_quest")
 id = "prefeito_d5_rally"
 display_name = "O comício"
-description = "Le candidat civique du Padre tient un meeting au Maracanã. Le bairro a confiance en toi : c'est toi qui chauffes la foule."
-journal_text = "Aller au Maracanã et mener le meeting."
+description = "Le candidat civique du Padre tient meeting au Maracanã. Une estrade vide ne convainc personne : c'est un mutirão — va chercher le bairro. Dona Marta, Seu Válter, Rogério. Sans eux, pas de comício."
+journal_text = "Mobiliser Dona Marta, Seu Válter et Rogério (Maracanã) pour le comício."
 giver_npc_id = "prefeito_zonasul"
 ink_knot = "spot_prefeito_zonasul_d5_offer"
-objectives = Array[Resource]([SubResource("obj_lead_rally")])
+objectives = Array[Resource]([SubResource("obj_convencer_marta"), SubResource("obj_convencer_valter"), SubResource("obj_convencer_rogerio")])
 money_reward = 700
 reputation_rewards = {}
 required_reputation = {}

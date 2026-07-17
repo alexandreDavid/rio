@@ -2487,9 +2487,9 @@ variants = [{
 "id": "b3_close",
 "objective_pending": ["policia_b3_escorte", "escort_patrol"],
 "set_flag_after": "policia_b3_done",
-"actions": {"finish_quest": {"quest": "policia_b3_escorte", "objective": "escort_patrol", "payout": 250}, "accept_quest": "policia_b4_descente", "rep": {1: 4}},
+"actions": {"finish_quest": {"quest": "policia_b3_escorte", "objective": "escort_patrol", "payout": 250}, "accept_quest": "policia_b4_descente", "debt_credit": 600, "rep": {1: 4}},
 "speaker": "Sergent PM",
-"text": "*deux flics dans une voiture banalisée sous le Bondinho* T'es le gars de Ramos ? Monte pas, reste devant, fais le guet. *radio grésille* …On est en place. Bien joué, gamin. Le Capitão va aimer. *te tend une adresse* Ordre de Ramos : un dealer opère à Arpoador, Zona Sul. Arrestation. Propre si possible. Si ça part en vrille, t'auras rien vu. Maintenant dégage avant qu'on te voie avec nous.",
+"text": "*deux flics dans une voiture banalisée sous le Bondinho* T'es le gars de Ramos ? Monte pas, reste devant, fais le guet. *radio grésille* …On est en place. Bien joué, gamin. Le Capitão va aimer — il a déjà fait glisser un mot chez Nilton, ta dette a maigri. *te tend une adresse* Ordre de Ramos : un dealer opère à Arpoador, Zona Sul. Arrestation. Propre si possible. Si ça part en vrille, t'auras rien vu. Maintenant dégage avant qu'on te voie avec nous.",
 "choices": ["Direction Arpoador"]
 }, {
 "id": "default",
@@ -2510,9 +2510,9 @@ variants = [{
 "id": "d2_close",
 "objective_pending": ["prefeito_d2_basquete", "run_tournament"],
 "set_flag_after": "prefeito_d2_done",
-"actions": {"finish_quest": {"quest": "prefeito_d2_basquete", "objective": "run_tournament", "payout": 200}, "accept_quest": "prefeito_d3_mediation", "rep": {0: 5}},
+"actions": {"finish_quest": {"quest": "prefeito_d2_basquete", "objective": "run_tournament", "payout": 200}, "accept_quest": "prefeito_d3_mediation", "debt_credit": 400, "rep": {0: 5}},
 "speaker": "L'éducateur",
-"text": "*siffle la fin d'un match sur le terrain de l'Aterro, gamins en sueur et rires* T'as monté ça en deux jours. Trente gosses qui auraient traîné dans la rue, là ils jouent. *te serre la main fort* Le Padre avait raison sur toi. La presse a même pris une photo — toi au centre, le bairro autour. *essuie son front* Mais le Padre a un cas plus dur : une famille du morro en conflit ouvert avec un homme de Tito. Ça peut dégénérer. Il veut une médiation, pas du sang. Ta parole pèse, maintenant.",
+"text": "*siffle la fin d'un match sur le terrain de l'Aterro, gamins en sueur et rires* T'as monté ça en deux jours. Trente gosses qui auraient traîné dans la rue, là ils jouent. *te serre la main fort* Le Padre avait raison sur toi. La presse a même pris une photo — toi au centre, le bairro autour. Et les parents ont fait une vaquinha chez Nilton pour ton ardoise, sans que tu demandes rien. *essuie son front* Mais le Padre a un cas plus dur : une famille du morro en conflit ouvert avec un homme de Tito. Ça peut dégénérer. Il veut une médiation, pas du sang. Ta parole pèse, maintenant.",
 "choices": ["Je remonte au morro"]
 }, {
 "id": "default",

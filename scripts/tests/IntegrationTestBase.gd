@@ -402,15 +402,21 @@ const SCRIPT_COMPLETED_OBJECTIVES: Dictionary = {
 	# Voie Tráfico A1–A3 : drop/pickup via TraficoContactSpot (runtime),
 	# drive_botafogo se joue au TraficoChauffeurSpot (BotafogoFlamengo.tscn).
 	"trafico_a1_livraison": ["drop_calcadao"],
-	"trafico_a2_pickup": ["pickup_palace"],
+	# despistar_pm / fugir_praia : objectifs FUITE — complétés par CobradorChase
+	# via EventBus.chase_ended (poursuite PM), pas par dialogue.
+	"trafico_a2_pickup": ["pickup_palace", "despistar_pm"],
 	"trafico_a3_chauffeur": ["drive_botafogo"],
 	# A4–A8 : objectifs complétés via ReactiveDialogueSpot (Zona Sul / favela /
 	# Cagarras / Palace / Niterói). A9 execute_run via knot PLACEHOLDER Tito.
-	"trafico_a4_ipanema": ["deal_ipanema"],
+	"trafico_a4_ipanema": ["deal_ipanema", "fugir_praia"],
 	"trafico_a5_intim": ["silence_voisin"],
 	"trafico_a6_cagarras": ["receive_cargo"],
-	"trafico_a7_tioze": ["heed_warning"],
-	"trafico_a8_baia": ["cross_baia"],
+	# Tioze : enquête témoin 1 → lembrança témoin 2 → avertissement du concierge
+	# (spots runtime : Zilda/Firmino, garçom/Osmar, Neusa/Ataíde, Ivone/Expedito).
+	"trafico_a7_tioze": ["ask_temoin", "porter_lembranca", "heed_warning"],
+	# A8 : feu vert (relais barcas) → crique (guetteur Icaraí) → traversée
+	# (spot Niterói) → semer_flagrante FUITE via CobradorChase (pm_baia).
+	"trafico_a8_baia": ["feu_vert_mafia", "reperer_crique", "cross_baia", "semer_flagrante"],
 	# Voie Polícia B1–B9 : objectifs via ReactiveDialogueSpot — la finale B9
 	# (complete_madrugada) se joue à l'OperacaoMadrugadaSpot du morro.
 	"policia_b1_intel": ["report_face"],
@@ -418,9 +424,11 @@ const SCRIPT_COMPLETED_OBJECTIVES: Dictionary = {
 	"policia_b3_escorte": ["escort_patrol"],
 	"policia_b4_descente": ["bust_dealer"],
 	"policia_b5_reperage": ["scout_corcovado"],
-	"policia_b6_tioze": ["hear_concierge"],
+	"policia_b6_tioze": ["ask_temoin", "porter_lembranca", "hear_concierge"],
 	"policia_b7_saisie": ["seize_cargo"],
-	"policia_b8_seguranca": ["secure_crowd"],
+	# B8 : briefing (poste PM Maracanã) → reperer_batedores via StakeoutZone
+	# (planque foule) → secure_crowd au spot du cordon.
+	"policia_b8_seguranca": ["briefing_pm", "reperer_batedores", "secure_crowd"],
 	"policia_b9_madrugada": ["complete_madrugada"],
 	# Acte 2 hors de Copa : observation à la mureta (Botafogo) + trio d'Ipanema.
 	"act2_pecheur_secret": ["observe_canots"],
@@ -432,7 +440,7 @@ const SCRIPT_COMPLETED_OBJECTIVES: Dictionary = {
 	"consortium_c3_partenariat": ["force_signature"],
 	"consortium_c4_vip": ["drive_vip"],
 	"consortium_c5_mac": ["launder_mac"],
-	"consortium_c6_tioze": ["hear_concierge"],
+	"consortium_c6_tioze": ["ask_temoin", "porter_lembranca", "hear_concierge"],
 	"consortium_c7_condos": ["align_condos"],
 	"consortium_c8_menace": ["break_holdout"],
 	# Voie Prefeito D1–D8 : objectifs via ReactiveDialogueSpot. D9 win_election
@@ -441,10 +449,13 @@ const SCRIPT_COMPLETED_OBJECTIVES: Dictionary = {
 	"prefeito_d2_basquete": ["run_tournament"],
 	"prefeito_d3_mediation": ["defuse_conflict"],
 	"prefeito_d4_procession": ["escort_procession"],
-	"prefeito_d5_rally": ["lead_rally"],
+	# D5 mutirão : les 3 convaincus se jouent aux MutiraoSpots (Maracana.tscn).
+	"prefeito_d5_rally": ["convencer_marta", "convencer_valter", "convencer_rogerio"],
 	"prefeito_d6_mac": ["inaugurate_expo"],
-	"prefeito_d7_tioze": ["receive_dossier"],
-	"prefeito_d8_campagne": ["flip_calcadao"],
+	"prefeito_d7_tioze": ["ask_temoin", "porter_lembranca", "receive_dossier"],
+	# D8 : buscar_padre (parvis) → cortejo_calcadao (tribune, EscortFollower
+	# Padre) → flip_calcadao au spot de la pétition.
+	"prefeito_d8_campagne": ["buscar_padre", "cortejo_calcadao", "flip_calcadao"],
 	# Side quest favela — ReactiveDialogueSpot actions.
 	"beto_lost": ["find_beto", "tell_vizinha"],
 	"feijoada_bondinho": ["deliver_summit"],

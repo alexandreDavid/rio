@@ -1565,10 +1565,27 @@ character_seed = 80111
 variants = [{
 "id": "a4_close",
 "objective_pending": ["trafico_a4_ipanema", "deal_ipanema"],
-"set_flag_after": "trafico_a4_done",
-"actions": {"finish_quest": {"quest": "trafico_a4_ipanema", "objective": "deal_ipanema", "payout": 350}, "accept_quest": "trafico_a5_intim", "rep": {2: 4, 0: -3}},
+"actions": {"finish_quest": {"quest": "trafico_a4_ipanema", "objective": "deal_ipanema", "payout": 350}, "rep": {2: 4, 0: -3}, "start_chase": {"chaser_id": "pm_ipanema", "speed_start": 130.0, "tire_after_sec": 25.0, "give_up_sec": 45.0, "catch_pct": 0.25, "catch_min": 60, "sprite_seed": "pm_ipanema", "spotted_text": "🚨 Les deux types du kiosque — PM en civil ! Corre !", "caught_text": "🚨 Plaqué sur le sable : la PM confisque R$ %d du deal.", "broke_text": "🚨 Plaqué — mais t'as déjà tout planqué. Avertissement.", "escaped_text": "💨 Perdus dans la foule du posto 9 !", "chrono_label": "Fuis la plage !"}},
 "speaker": "Gringo",
-"text": "*lunettes de soleil, serviette de luxe, nerveux* You have it? *prend le sac, te file une liasse — puis se fige, deux types le regardent depuis le kiosque* …Who are those guys? *il panique, renverse sa bière, des gens crient* Merda. *tu ramasses l'argent et tu t'éclipses — quelqu'un t'a vu, c'est sûr. Ton téléphone vibre, la voix du contact :* « Un voisin du morro raconte déjà au bar. Remonte. Maintenant. »",
+"text": "*lunettes de soleil, serviette de luxe, nerveux* You have it? *prend le sac, te file une liasse — puis se fige, deux types le regardent depuis le kiosque* …Who are those guys? *il panique, renverse sa bière, des gens crient* Merda. *les deux types se lèvent — PM en civil. Tu ramasses l'argent. Cours.*",
+"choices": ["Cours !"]
+}, {
+"id": "a4_heat",
+"objective_done": ["trafico_a4_ipanema", "deal_ipanema"],
+"objective_pending": ["trafico_a4_ipanema", "fugir_praia"],
+"actions": {"start_chase": {"chaser_id": "pm_ipanema", "speed_start": 130.0, "tire_after_sec": 25.0, "give_up_sec": 45.0, "catch_pct": 0.25, "catch_min": 60, "sprite_seed": "pm_ipanema", "spotted_text": "🚨 La PM en civil t'a retrouvé ! Corre !", "caught_text": "🚨 Plaqué sur le sable : la PM confisque R$ %d.", "broke_text": "🚨 Plaqué — poches vides. Avertissement.", "escaped_text": "💨 Perdus dans la foule du posto 9 !", "chrono_label": "Fuis la plage !"}},
+"speaker": "Vendeur de mate",
+"text": "*baisse la voix en te servant* Rapaz… les deux du kiosque te cherchent encore, ils tournent au posto. *regarde ailleurs* Cours vers les transversales et les sème pas à moitié cette fois.",
+"choices": ["Je les sème"]
+}, {
+"id": "a4_after",
+"quest_completed": "trafico_a4_ipanema",
+"quest_not_active": "trafico_a5_intim",
+"quest_not_completed": "trafico_a5_intim",
+"set_flag_after": "trafico_a4_done",
+"actions": {"accept_quest": "trafico_a5_intim", "debt_credit": 600},
+"speaker": "Contact (téléphone)",
+"text": "*le téléphone public du posto sonne. Tu décroches — la voix du contact :* « T'as filé comme un carioca da gema, on m'a raconté. Tito a effacé un morceau de ta dette chez Nilton pour fêter ça. Mais un voisin du morro raconte déjà le deal au bar — remonte, y'a une conversation qui t'attend. »",
 "choices": ["Je remonte au morro"]
 }, {
 "id": "default",
@@ -1586,9 +1603,9 @@ variants = [{
 "id": "b4_close",
 "objective_pending": ["policia_b4_descente", "bust_dealer"],
 "set_flag_after": "policia_b4_done",
-"actions": {"finish_quest": {"quest": "policia_b4_descente", "objective": "bust_dealer", "payout": 300}, "accept_quest": "policia_b5_reperage", "rep": {1: 4, 0: -4}},
+"actions": {"finish_quest": {"quest": "policia_b4_descente", "objective": "bust_dealer", "payout": 300}, "accept_quest": "policia_b5_reperage", "debt_credit": 700, "rep": {1: 4, 0: -4}},
 "speaker": "Le dealer",
-"text": "*adossé aux rochers d'Arpoador, il te voit, comprend trop tard* Eh, doucement, on peut s'arranger— *tu le plaques, il se débat, des touristes filment, ça crie. Tu serres trop fort. Quand la PM arrive, le môme saigne du nez et le quartier te regarde autrement.* *menotté, il crache* …Tu travailles pour qui, fils de pute ? Pour eux ? *La radio crache, ordre de Ramos :* « Beau bordel, mais c'est fait. Monte au Corcovado, au mirante du Cristo — d'en haut on voit une remise du consortium. Tu repères, tu mémorises. »",
+"text": "*adossé aux rochers d'Arpoador, il te voit, comprend trop tard* Eh, doucement, on peut s'arranger— *tu le plaques, il se débat, des touristes filment, ça crie. Tu serres trop fort. Quand la PM arrive, le môme saigne du nez et le quartier te regarde autrement.* *menotté, il crache* …Tu travailles pour qui, fils de pute ? Pour eux ? *La radio crache, ordre de Ramos :* « Beau bordel, mais c'est fait — le Capitão a fait sauter une part de ta dette chez Nilton. Maintenant monte au Corcovado, au mirante du Cristo : un contremaître du consortium y fait sa ronde. Tu le files, tu notes tout. »",
 "choices": ["Je monte au Corcovado"]
 }, {
 "id": "default",
@@ -1603,12 +1620,20 @@ npc_id = "consortium_zonasul"
 prompt = "Le restaurateur (Ipanema)"
 character_seed = 80113
 variants = [{
-"id": "c3_close",
+"id": "c3_nego",
 "objective_pending": ["consortium_c3_partenariat", "force_signature"],
-"set_flag_after": "consortium_c3_done",
-"actions": {"finish_quest": {"quest": "consortium_c3_partenariat", "objective": "force_signature", "payout": 400}, "accept_quest": "consortium_c4_vip", "rep": {4: 5, 0: -4}},
 "speaker": "Le restaurateur",
-"text": "*derrière son comptoir d'Ipanema, bras croisés* J'ai dit non à Magalhães. Trois fois. *tu poses le contrat. Tu ne menaces pas. Tu listes : les fournisseurs qui se tariront, l'inspecteur qui passera, le bail qui ne se renouvellera pas. Tu souris. Le silence dure longtemps.* …*il prend le stylo, la main qui tremble de rage et de peur* Vous êtes pires qu'eux. Vous, vous faites signer. *range le contrat signé, voix éteinte* Magalhães a laissé un mot — un investisseur étranger arrive demain à Santos Dumont. Vous le réceptionnez, vous le promenez. La maison vend une image.",
+"text": "*derrière son comptoir d'Ipanema, bras croisés, le menton haut* J'ai dit non à Magalhães. Trois fois. *il balaie la salle d'un geste large* Quarante couverts, le nom de mon père sur l'auvent, ma photo avec Tom Jobim au mur. J'ai pas besoin de votre argent, et vos menaces me font pas peur — cette maison, c'est MOI. *L'avocat de Magalhães, qui t'accompagne, murmure : « À toi de le lire. Mais chaque rendez-vous raté, la maison te facture 200 R$ d'honoraires. Choisis bien. »*",
+"choices": ["Menacer : les fournisseurs, l'inspecteur, le bail", "Flatter : le nom de son père restera sur l'auvent, lui seul reste le chef", "Racheter : ouvrir la mallette, doubler l'offre"],
+"choice_actions": {"0": {"pay_bribe": 200, "rep": {4: -2}}, "1": {"finish_quest": {"quest": "consortium_c3_partenariat", "objective": "force_signature", "payout": 400}, "set_flag": "consortium_c3_done", "rep": {4: 5, 0: -4}}, "2": {"pay_bribe": 200, "rep": {4: -2}}}
+}, {
+"id": "c3_close",
+"quest_completed": "consortium_c3_partenariat",
+"quest_not_active": "consortium_c4_vip",
+"quest_not_completed": "consortium_c4_vip",
+"actions": {"accept_quest": "consortium_c4_vip", "debt_credit": 600},
+"speaker": "Le restaurateur",
+"text": "*range le contrat signé, la voix éteinte* Vous n'avez même pas menacé. Vous avez juste… compris. C'est pire. *te tourne le dos* Magalhães a laissé un mot : un investisseur étranger arrive à Santos Dumont. Vous le réceptionnez, vous le promenez. La maison vend une image. Et elle a déduit ma signature de votre ardoise — bon appétit.",
 "choices": ["Direction l'aéroport"]
 }, {
 "id": "default",
@@ -1626,9 +1651,9 @@ variants = [{
 "id": "d4_close",
 "objective_pending": ["prefeito_d4_procession", "escort_procession"],
 "set_flag_after": "prefeito_d4_done",
-"actions": {"finish_quest": {"quest": "prefeito_d4_procession", "objective": "escort_procession", "payout": 300}, "accept_quest": "prefeito_d5_rally", "rep": {0: 6, 4: -4}},
+"actions": {"finish_quest": {"quest": "prefeito_d4_procession", "objective": "escort_procession", "payout": 300}, "accept_quest": "prefeito_d5_rally", "debt_credit": 600, "rep": {0: 6, 4: -4}},
 "speaker": "Le porteur de bannière",
-"text": "*la procession avance le long d'Ipanema, cierges et chants — trois costauds « du Riserva Uno » barrent la rue. Tu te plantes devant, bras ouverts, entre eux et les fidèles. Tu ne frappes pas. Tu ne recules pas. Les gens filment. Les costauds calculent les caméras… et s'écartent.* *le vieux porteur te bénit du front, essoufflé, radieux* Tu as choisi un camp aujourd'hui, mon fils. Tout le monde l'a vu. Plus de retour en arrière. Le Padre veut frapper fort maintenant : un grand meeting au Maracanã pour le candidat civique. Le bairro a confiance en toi — c'est toi qui dois chauffer la foule.",
+"text": "*la procession avance le long d'Ipanema, cierges et chants — trois costauds « du Riserva Uno » barrent la rue. Tu te plantes devant, bras ouverts, entre eux et les fidèles. Tu ne frappes pas. Tu ne recules pas. Les gens filment. Les costauds calculent les caméras… et s'écartent.* *le vieux porteur te bénit du front, essoufflé, radieux* Tu as choisi un camp aujourd'hui, mon fils. Tout le monde l'a vu. La paroisse a cotisé chez Nilton pour ta dette — c'est notre façon de porter avec toi. Maintenant le Padre veut frapper fort : un comício au Maracanã pour le candidat civique. Mais une estrade vide ne convainc personne — c'est un mutirão : va chercher le bairro là-bas. Dona Marta, la baiana do acarajé. Seu Válter, le pipoqueiro. Rogério, le puxador de torcida. Sans eux, pas de comício.",
 "choices": ["Direction le Maracanã"]
 }, {
 "id": "default",

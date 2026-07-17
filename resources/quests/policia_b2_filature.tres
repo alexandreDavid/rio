@@ -6,7 +6,7 @@
 [sub_resource type="Resource" id="obj_map_network"]
 script = ExtResource("2_obj")
 id = "map_network"
-description = "Cartographier le réseau de Tito dans la favela"
+description = "Filer l'olheiro de Tito dans la favela (ni trop près, ni trop loin)"
 optional = false
 
 [resource]
@@ -14,7 +14,7 @@ script = ExtResource("1_quest")
 id = "policia_b2_filature"
 display_name = "Le réseau du morro"
 description = "Ramos veut le plan du réseau de Tito. Tu remontes au morro — ton morro — et tu notes tout. C'est une trahison, et tu le sais."
-journal_text = "Remonter à la favela et cartographier le réseau de Tito."
+journal_text = "Remonter à la favela et filer l'olheiro de Tito — ni trop près, ni trop loin, le temps de monter le dossier."
 giver_npc_id = "policia_contact"
 ink_knot = "spot_policia_contact_b2_offer"
 objectives = Array[Resource]([SubResource("obj_map_network")])

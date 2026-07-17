@@ -119,6 +119,17 @@ func _on_interacted(_by: Node) -> void:
 		post_actions[k] = passthrough[k]
 	if not post_actions.is_empty():
 		data["on_choose"] = {"0": post_actions}
+	# `choice_actions` : actions PAR INDEX de choix ({"0": {...}, "1": {...}}) —
+	# pour les variantes où chaque option a des conséquences distinctes
+	# (négociations à caution du Consórcio). Prioritaire sur `actions`/raccourcis
+	# pour les index qu'il définit ; le "0" des raccourcis est conservé s'il
+	# n'est pas redéfini.
+	var per_choice: Dictionary = variant.get("choice_actions", {})
+	if not per_choice.is_empty():
+		var on_choose: Dictionary = data.get("on_choose", {})
+		for idx in per_choice:
+			on_choose[str(idx)] = per_choice[idx]
+		data["on_choose"] = on_choose
 	DialogueBridge.register_runtime_dialogue(knot_id, data)
 	DialogueBridge.start_dialogue(npc_id, knot_id)
 

@@ -364,12 +364,21 @@ npc_id = "policia_reperage"
 prompt = "Repérer (longue-vue)"
 character_seed = 80106
 variants = [{
-"id": "b5_close",
+"id": "b5_filature",
 "objective_pending": ["policia_b5_reperage", "scout_corcovado"],
-"set_flag_after": "policia_b5_done",
-"actions": {"finish_quest": {"quest": "policia_b5_reperage", "objective": "scout_corcovado", "payout": 200}, "accept_quest": "policia_b6_tioze", "rep": {1: 3}},
+"actions": {"start_stakeout": {"quest": "policia_b5_reperage", "objective": "scout_corcovado", "duration": 22.0, "seed": "contramestre_b5_mirante"}},
 "speaker": "Narrateur",
-"text": "*Du pied du Cristo, Rio s'étale entière. À la jumelle tu suis le fil : les camions du consortium entrent dans un hangar de la Zona Portuária, déchargent de nuit, repartent vides. Tu notes les heures, les plaques, le toit percé. Ramos aura tout. D'ici, la ville a l'air si calme — comme si personne ne la saignait.* *La radio grésille dans le vent du sommet :* « Reçu, beau travail. Autre chose — un vieux concierge du Copacabana Palace demande à te voir. Il dit que c'est au sujet de ton oncle. Ramos s'en fout, mais… vas-y, écoute ce qu'il a à dire. »",
+"text": "*Du pied du Cristo, Rio s'étale entière — mais la remise du consortium, elle, se lit d'ici : un contremaître fait sa ronde sur l'esplanade, carnet en main, il pointe les caisses qui montent par le train du Corcovado.* *La radio grésille dans le vent du sommet :* « C'est lui qui tient le registre. Colle-toi à sa ronde, sobrinho — ni trop près, il connaît tous les visages, ni trop loin, ou tu rates ce qu'il coche. Tiens le temps qu'il faut pour monter le dossier. S'il te repère, décroche et reviens au mirante. »",
+"choices": ["Je prends sa ronde en filature"]
+}, {
+"id": "b5_close",
+"quest_completed": "policia_b5_reperage",
+"quest_not_active": "policia_b6_tioze",
+"quest_not_completed": "policia_b6_tioze",
+"set_flag_after": "policia_b5_done",
+"actions": {"accept_quest": "policia_b6_tioze", "debt_credit": 800, "rep": {1: 3}},
+"speaker": "Narrateur",
+"text": "*Les heures, les caisses, le toit percé du hangar : Ramos aura tout. D'ici, la ville a l'air si calme — comme si personne ne la saignait.* *La radio grésille dans le vent du sommet :* « Reçu, le dossier est béton — le Capitão a encore rayé une ligne de ta dette chez Nilton. Autre chose : un vieux concierge du Copacabana Palace demande à te voir. Il dit que c'est au sujet de ton oncle. Ramos s'en fout, mais… vas-y, écoute ce qu'il a à dire. »",
 "choices": ["Je redescends au Palace"]
 }, {
 "id": "default",

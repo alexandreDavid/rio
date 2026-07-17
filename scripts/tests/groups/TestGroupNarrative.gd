@@ -157,14 +157,24 @@ func _test_voie_trafico_end_to_end() -> void:
 		"name": "Tráfico", "pact_npc": "tito", "pact_knot": "tito_pacto_trafico_offer",
 		"voie_flag": "voie_trafico", "q1": "trafico_a1_livraison", "q9": "trafico_a9_corrida",
 		"crown_knot": "tito_trafico_corrida", "endgame": CampaignManager.Endgame.TRAFICO,
+		# despistar_pm / fugir_praia / semer_flagrante : objectifs FUITE joués par
+		# CobradorChase en temps réel — impossibles à dérouler dans la boucle
+		# synchrone, cochés par hook (le spot déclenche bien start_chase au passage).
 		"arrival": [
 			["trafico_a2_pickup", "pickup_palace"],
+			["trafico_a2_pickup", "despistar_pm"],
+			["trafico_a4_ipanema", "fugir_praia"],
+			["trafico_a8_baia", "semer_flagrante"],
 		],
 		"stations": [
-			[_COPA, "TraficoContactSpot"], [_COPA, "TraficoTioZeSpot"],
+			[_COPA, "TraficoContactSpot"],
+			[_FAVELA, "TraficoZildaSpot"], [_COPA, "TraficoFirminoSpot"],
+			[_COPA, "TraficoTioZeSpot"],
 			[_BOTAFOGO, "TraficoChauffeurSpot"],
 			[_ZONASUL, "TraficoZonaSulSpot"], [_FAVELA, "TraficoIntimSpot"],
-			[_ZONASUL, "TraficoCagarrasSpot"], [_NITEROI, "TraficoNiteroiSpot"],
+			[_ZONASUL, "TraficoCagarrasSpot"],
+			[_NITEROI, "TraficoBaiaRelaisSpot"], [_NITEROI, "TraficoCriqueSpot"],
+			[_NITEROI, "TraficoNiteroiSpot"],
 		],
 	})
 
@@ -175,11 +185,21 @@ func _test_voie_policia_end_to_end() -> void:
 		"voie_flag": "voie_policia", "q1": "policia_b1_intel", "q9": "policia_b9_madrugada",
 		"crown_knot": "ramos_policia_madrugada", "endgame": CampaignManager.Endgame.POLICIA,
 		"crown_spot": [_FAVELA, "OperacaoMadrugadaSpot"],
+		# Filatures (StakeoutZone temps réel, lancées par les spots) — cochées
+		# par hook, la boucle synchrone ne peut pas suivre le suspect.
+		"arrival": [
+			["policia_b2_filature", "map_network"],
+			["policia_b5_reperage", "scout_corcovado"],
+			["policia_b8_seguranca", "reperer_batedores"],
+		],
 		"stations": [
-			[_COPA, "PoliciaContactSpot"], [_COPA, "PoliciaTioZeSpot"],
+			[_COPA, "PoliciaContactSpot"],
+			[_COPA, "PoliciaGarcomSpot"], [_COPA, "PoliciaOsmarSpot"],
+			[_COPA, "PoliciaTioZeSpot"],
 			[_FAVELA, "PoliciaFilatureSpot"], [_BOTAFOGO, "PoliciaEscorteSpot"],
 			[_ZONASUL, "PoliciaDescenteSpot"], [_CORCOVADO, "PoliciaReperageSpot"],
-			[_NITEROI, "PoliciaSaisieSpot"], [_MARACANA, "PoliciaSegurancaSpot"],
+			[_NITEROI, "PoliciaSaisieSpot"],
+			[_MARACANA, "PoliciaBriefingSpot"], [_MARACANA, "PoliciaSegurancaSpot"],
 		],
 	})
 
@@ -189,8 +209,17 @@ func _test_voie_consortium_end_to_end() -> void:
 		"name": "Consortium", "pact_npc": "magalhaes", "pact_knot": "magalhaes_pacto_consortium_offer",
 		"voie_flag": "voie_consortium", "q1": "consortium_c1_recouvrement", "q9": "consortium_c9_pacto",
 		"crown_knot": "magalhaes_consortium_pacto", "endgame": CampaignManager.Endgame.CONSORTIUM,
+		# Négociations à caution (c3/c8) : la bonne approche n'est pas le choix 0
+		# (il faut lire le tell) — cochées par hook, l'enchaînement passe par la
+		# variante de clôture des spots.
+		"arrival": [
+			["consortium_c3_partenariat", "force_signature"],
+			["consortium_c8_menace", "break_holdout"],
+		],
 		"stations": [
-			[_COPA, "ConsortiumContactSpot"], [_COPA, "ConsortiumTioZeSpot"],
+			[_COPA, "ConsortiumContactSpot"],
+			[_COPA, "ConsortiumGovernantaSpot"], [_COPA, "ConsortiumPorteiroSpot"],
+			[_COPA, "ConsortiumTioZeSpot"],
 			[_BARRA, "ConsortiumBarraSpot"], [_ZONASUL, "ConsortiumZonaSulSpot"],
 			[_SANTOS, "ConsortiumAeroportoSpot"], [_NITEROI, "ConsortiumNiteroiSpot"],
 		],
@@ -202,10 +231,22 @@ func _test_voie_prefeito_end_to_end() -> void:
 		"name": "Prefeito", "pact_npc": "padre", "pact_knot": "padre_pacto_prefeito_offer",
 		"voie_flag": "voie_prefeito", "q1": "prefeito_d1_peticao", "q9": "prefeito_d9_eleicao",
 		"crown_knot": "padre_prefeito_eleicao", "endgame": CampaignManager.Endgame.PREFEITO,
+		# Mutirão d5 : Válter exige 100 R$ (pas d'inventaire en headless) et le
+		# bon choix de Rogério n'est pas le 0 — cochés par hook. Marta, elle,
+		# se convainc réellement via son spot (choix 0).
+		"arrival": [
+			["prefeito_d5_rally", "convencer_valter"],
+			["prefeito_d5_rally", "convencer_rogerio"],
+		],
 		"stations": [
-			[_COPA, "PrefeitoContactSpot"], [_COPA, "PrefeitoTioZeSpot"],
+			[_COPA, "PrefeitoContactSpot"],
+			[_COPA, "PrefeitoBeataSpot"], [_COPA, "PrefeitoSacristaoSpot"],
+			[_COPA, "PrefeitoTioZeSpot"],
+			[_COPA, "PadreCampagneSpot"], [_COPA, "ComicioTribunaSpot"],
 			[_BOTAFOGO, "PrefeitoAterroSpot"], [_FAVELA, "PrefeitoFavelaSpot"],
 			[_ZONASUL, "PrefeitoZonaSulSpot"], [_MARACANA, "PrefeitoMaracanaSpot"],
+			[_MARACANA, "MutiraoMartaSpot"], [_MARACANA, "MutiraoValterSpot"],
+			[_MARACANA, "MutiraoRogerioSpot"],
 			[_NITEROI, "PrefeitoNiteroiSpot"],
 		],
 	})

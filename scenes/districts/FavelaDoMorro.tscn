@@ -1583,6 +1583,32 @@ variants = Array[Dictionary]([{
 }])
 character_seed = 70433
 
+[node name="TraficoZildaSpot" parent="." instance=ExtResource("7_reactive")]
+position = Vector2(150, -330)
+npc_id = "trafico_zilda"
+prompt = "La doyenne du morro"
+character_seed = 815101
+required_flag = "voie_trafico"
+variants = [{
+"id": "a7_temoin",
+"objective_pending": ["trafico_a7_tioze", "ask_temoin"],
+"actions": {"finish_quest": {"quest": "trafico_a7_tioze", "objective": "ask_temoin", "payout": 0}},
+"speaker": "Dona Zilda",
+"text": "*assise sur sa marche, elle épluche des oranges d'une main sûre* Le balayeur du Palace ? *elle rit sans bruit* Mon petit, avant d'être un balai, cet homme-là était des jambes. Les meilleures du morro. Il montait la ladeira avec les paquets de Tito comme toi tu montes chercher le pain. *son couteau s'arrête* Et un jour, plus de Zé. La mer, qu'ils ont dit. *elle te regarde enfin* Moi je regarde, je ne porte pas. Descends voir Seu Firmino, à la colônia, Posto 6 — quand Zé a voulu lâcher les paquets, c'est la barque de Firmino qui l'a caché. Il garde quelque chose de lui. Dis-lui que Zilda t'envoie.",
+"choices": ["Valeu, dona Zilda"]
+}, {
+"id": "after",
+"objective_done": ["trafico_a7_tioze", "ask_temoin"],
+"speaker": "Dona Zilda",
+"text": "*sans lever les yeux de ses oranges* La colônia, Posto 6, mon petit. Firmino. Et redescends doucement — c'est en descendant que le morro casse les chevilles.",
+"choices": ["…"]
+}, {
+"id": "default",
+"speaker": "Dona Zilda",
+"text": "*elle épluche ses oranges, un quartier posé sur le muret pour toi* Prends, mon petit. Ici on ne passe pas devant chez Zilda le ventre vide.",
+"choices": ["Valeu"]
+}]
+
 [node name="GuetShadow" type="ColorRect" parent="." unique_id=2025516361]
 offset_left = 14.0
 offset_top = -476.0
@@ -1630,12 +1656,22 @@ npc_id = "policia_filature"
 prompt = "Observer le réseau (planque)"
 variants = Array[Dictionary]([{
 "actions": {
-"finish_quest": {
+"start_stakeout": {
+"quest": "policia_b2_filature",
 "objective": "map_network",
-"payout": 200,
-"quest": "policia_b2_filature"
+"duration": 20.0,
+"seed": "olheiro_b2_morro"
+}
 },
+"choices": ["Je le prends en filature"],
+"id": "b2_filature",
+"objective_pending": ["policia_b2_filature", "map_network"],
+"speaker": "Narrateur",
+"text": "*Depuis ce recoin, tu le repères : l'olheiro de Tito entame sa tournée — les caches, les guetteurs, les horaires. Tout le réseau tient dans ses allées et venues.* *La radio grésille, voix de l'agent :* « Le voilà. Tu le suis, sobrinho. Ni trop près — il t'a vu grandir, il te reconnaîtrait — ni trop loin, ou tu perds le fil. Juste le temps de monter le dossier. S'il te grille ou s'il t'échappe, tu laisses couler et tu reviens à la planque. »"
+}, {
+"actions": {
 "accept_quest": "policia_b3_escorte",
+"debt_credit": 400,
 "rep": {
 1: 5,
 2: -4
@@ -1643,10 +1679,12 @@ variants = Array[Dictionary]([{
 },
 "choices": ["En route pour Botafogo"],
 "id": "b2_close",
-"objective_pending": ["policia_b2_filature", "map_network"],
+"quest_completed": "policia_b2_filature",
+"quest_not_active": "policia_b3_escorte",
+"quest_not_completed": "policia_b3_escorte",
 "set_flag_after": "policia_b2_done",
 "speaker": "Narrateur",
-"text": "*Depuis ce recoin, tu vois tout : le guetteur sur les marches, la planque derrière le bar, qui monte les sacs et à quelle heure. Tu notes chaque visage, chaque horaire. Des gens qui t'ont vu grandir. Tu plies le carnet. C'est fait — et ça ne se défait pas. Le morro ne le sait pas encore.* *La radio grésille, voix de l'agent :* « Bien reçu, le carnet est en or. Ramos veut que tu conduises une patrouille en planque — Botafogo, sous le Bondinho. Discrète. File. »"
+"text": "*Tu plies le carnet : chaque visage, chaque horaire. Des gens qui t'ont vu grandir. C'est fait — et ça ne se défait pas. Le morro ne le sait pas encore.* *La radio grésille, voix de l'agent :* « Le carnet est en or. Le Capitão a fait glisser un mot chez Nilton — une part de ta dette vient de sauter. Maintenant il veut que tu conduises une patrouille en planque — Botafogo, sous le Bondinho. Discrète. File. »"
 }, {
 "choices": ["M'éloigner"],
 "id": "default",
@@ -1667,6 +1705,7 @@ variants = Array[Dictionary]([{
 "quest": "prefeito_d3_mediation"
 },
 "accept_quest": "prefeito_d4_procession",
+"debt_credit": 500,
 "rep": {
 0: 5,
 2: 1
@@ -1677,7 +1716,7 @@ variants = Array[Dictionary]([{
 "objective_pending": ["prefeito_d3_mediation", "defuse_conflict"],
 "set_flag_after": "prefeito_d3_done",
 "speaker": "La mère de famille",
-"text": "*sur le pas de sa porte, un homme de Tito en face, la tension palpable — tu te places entre les deux, tu parles bas, longtemps. Pas de menace, pas de promesse : juste de quoi laisser chacun reculer sans perdre la face.* …*l'homme crache, tourne les talons. La mère expire enfin, te retient par la manche* Tu as évité un mort ce soir, sobrinho. Le morro s'en souviendra. Le Padre m'a dit de te prévenir : une procession descend en Zona Sul demain, et des hommes du consortium ont reçu un « contrat » pour la disperser. Si tu la protèges, tu choisis un camp aux yeux de tous. Mais il faut bien que quelqu'un les protège."
+"text": "*sur le pas de sa porte, un homme de Tito en face, la tension palpable — tu te places entre les deux, tu parles bas, longtemps. Pas de menace, pas de promesse : juste de quoi laisser chacun reculer sans perdre la face.* …*l'homme crache, tourne les talons. La mère expire enfin, te retient par la manche* Tu as évité un mort ce soir, sobrinho. Le morro s'en souviendra. Et sache-le : la paroisse a cotisé chez Nilton pour alléger ton ardoise — le Padre ne laisse pas ses gens porter seuls. Il m'a dit de te prévenir : une procession descend en Zona Sul demain, et des hommes du consortium ont reçu un « contrat » pour la disperser. Si tu la protèges, tu choisis un camp aux yeux de tous. Mais il faut bien que quelqu'un les protège."
 }, {
 "choices": ["…"],
 "id": "default",

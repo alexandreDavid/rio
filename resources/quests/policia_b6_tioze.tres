@@ -1,7 +1,19 @@
-[gd_resource type="Resource" script_class="Quest" load_steps=4 format=3]
+[gd_resource type="Resource" script_class="Quest" load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
 [ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_ask_temoin"]
+script = ExtResource("2_obj")
+id = "ask_temoin"
+description = "Faire parler ceux qui ont connu le concierge"
+optional = false
+
+[sub_resource type="Resource" id="obj_porter_lembranca"]
+script = ExtResource("2_obj")
+id = "porter_lembranca"
+description = "Recueillir un souvenir de l'oncle Zé"
+optional = false
 
 [sub_resource type="Resource" id="obj_hear_concierge"]
 script = ExtResource("2_obj")
@@ -13,11 +25,11 @@ optional = false
 script = ExtResource("1_quest")
 id = "policia_b6_tioze"
 display_name = "Tu nettoies pour qui ?"
-description = "Un vieux concierge du Palace insiste pour te parler. Il a une question dérangeante sur Ramos. Et sur ton oncle."
-journal_text = "Aller au Copacabana Palace et écouter le concierge."
+description = "Un vieux concierge du Palace a une question dérangeante sur Ramos. Et sur ton oncle. Mais le vieux ne parlera pas à un inconnu — fais parler le quartier d'abord."
+journal_text = "Le concierge du Palace se tait devant les inconnus. Fais parler ceux qui ont connu Zé, recueille un souvenir de lui, puis retourne au Palace."
 giver_npc_id = "policia_reperage"
 ink_knot = "spot_policia_reperage_b6_offer"
-objectives = Array[Resource]([SubResource("obj_hear_concierge")])
+objectives = Array[Resource]([SubResource("obj_ask_temoin"), SubResource("obj_porter_lembranca"), SubResource("obj_hear_concierge")])
 money_reward = 0
 reputation_rewards = {}
 required_reputation = {}

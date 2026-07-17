@@ -17,28 +17,28 @@
 [ext_resource type="Script" path="res://scripts/districts/NiteroiDistrict.gd" id="15_district"]
 
 [sub_resource type="RectangleShape2D" id="WallH"]
-size = Vector2(1600, 16)
+size = Vector2(3400, 16)
 
 [sub_resource type="RectangleShape2D" id="WallV"]
 size = Vector2(16, 700)
 
 [node name="NiteroiDistrict" type="Node2D"]
 script = ExtResource("15_district")
-wrap_left = -820.0
-wrap_right = 820.0
+wrap_left = -1720.0
+wrap_right = 1720.0
 drift_speed = 8.0
 
 [node name="Sky" type="ColorRect" parent="."]
-offset_left = -800.0
+offset_left = -1700.0
 offset_top = -300.0
-offset_right = 800.0
+offset_right = 1700.0
 offset_bottom = -180.0
 color = Color(0.65, 0.78, 0.88, 1)
 
 [node name="SkyHorizon" type="ColorRect" parent="."]
-offset_left = -800.0
+offset_left = -1700.0
 offset_top = -190.0
-offset_right = 800.0
+offset_right = 1700.0
 offset_bottom = -180.0
 color = Color(0.78, 0.82, 0.78, 1)
 
@@ -191,16 +191,16 @@ offset_bottom = -180.0
 color = Color(0.42, 0.42, 0.50, 0.7)
 
 [node name="Bay" type="ColorRect" parent="."]
-offset_left = -800.0
+offset_left = -1700.0
 offset_top = -180.0
-offset_right = 800.0
+offset_right = 1700.0
 offset_bottom = -40.0
 color = Color(0.28, 0.45, 0.55, 1)
 
 [node name="BayHi" type="ColorRect" parent="."]
-offset_left = -800.0
+offset_left = -1700.0
 offset_top = -180.0
-offset_right = 800.0
+offset_right = 1700.0
 offset_bottom = -174.0
 color = Color(0.78, 0.88, 0.92, 0.55)
 
@@ -233,16 +233,16 @@ offset_bottom = -120.0
 color = Color(0.92, 0.92, 0.85, 0.9)
 
 [node name="Promenade" type="ColorRect" parent="."]
-offset_left = -800.0
+offset_left = -1700.0
 offset_top = -40.0
-offset_right = 800.0
+offset_right = 1700.0
 offset_bottom = 30.0
 color = Color(0.85, 0.85, 0.82, 1)
 
 [node name="PromenadeStripe" type="ColorRect" parent="."]
-offset_left = -800.0
+offset_left = -1700.0
 offset_top = -8.0
-offset_right = 800.0
+offset_right = 1700.0
 offset_bottom = -6.0
 color = Color(0.65, 0.62, 0.55, 0.7)
 
@@ -383,9 +383,9 @@ theme_override_colors/font_outline_color = Color(0.95, 0.95, 0.92, 0.7)
 theme_override_constants/outline_size = 2
 
 [node name="PlazaTile" type="ColorRect" parent="."]
-offset_left = -800.0
+offset_left = -1700.0
 offset_top = 30.0
-offset_right = 800.0
+offset_right = 1700.0
 offset_bottom = 200.0
 color = Color(0.78, 0.78, 0.75, 1)
 
@@ -526,6 +526,762 @@ offset_bottom = 64.0
 color = Color(1.0, 0.95, 0.62, 1)
 
 
+[node name="PonteDeck" type="ColorRect" parent="."]
+offset_left = -1700.0
+offset_top = -198.0
+offset_right = -1050.0
+offset_bottom = -194.0
+color = Color(0.55, 0.58, 0.62, 1)
+
+[node name="PontePylone0" type="ColorRect" parent="."]
+offset_left = -1560.0
+offset_top = -214.0
+offset_right = -1554.0
+offset_bottom = -194.0
+color = Color(0.5, 0.53, 0.58, 1)
+
+[node name="PontePylone1" type="ColorRect" parent="."]
+offset_left = -1340.0
+offset_top = -214.0
+offset_right = -1334.0
+offset_bottom = -194.0
+color = Color(0.5, 0.53, 0.58, 1)
+
+[node name="PontePylone2" type="ColorRect" parent="."]
+offset_left = -1130.0
+offset_top = -214.0
+offset_right = -1124.0
+offset_bottom = -194.0
+color = Color(0.5, 0.53, 0.58, 1)
+
+[node name="CentroTowerA" type="ColorRect" parent="."]
+offset_left = -1660.0
+offset_top = -224.0
+offset_right = -1630.0
+offset_bottom = -180.0
+color = Color(0.46, 0.51, 0.58, 0.9)
+
+[node name="CentroTowerB" type="ColorRect" parent="."]
+offset_left = -1600.0
+offset_top = -214.0
+offset_right = -1575.0
+offset_bottom = -180.0
+color = Color(0.5, 0.55, 0.62, 0.9)
+
+[node name="PonteLabel" type="Label" parent="."]
+offset_left = -1480.0
+offset_top = -232.0
+offset_right = -1200.0
+offset_bottom = -216.0
+text = "PONTE RIO–NITERÓI"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 8
+theme_override_colors/font_color = Color(0.8, 0.84, 0.88, 0.85)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 3
+
+[node name="FortalezaRock" type="ColorRect" parent="."]
+offset_left = 1500.0
+offset_top = -188.0
+offset_right = 1660.0
+offset_bottom = -168.0
+color = Color(0.42, 0.4, 0.42, 1)
+
+[node name="FortalezaWall" type="ColorRect" parent="."]
+offset_left = 1530.0
+offset_top = -200.0
+offset_right = 1630.0
+offset_bottom = -184.0
+color = Color(0.88, 0.84, 0.74, 1)
+
+[node name="FortalezaTower" type="ColorRect" parent="."]
+offset_left = 1570.0
+offset_top = -212.0
+offset_right = 1590.0
+offset_bottom = -200.0
+color = Color(0.82, 0.78, 0.68, 1)
+
+[node name="FortalezaLabel" type="Label" parent="."]
+offset_left = 1460.0
+offset_top = -230.0
+offset_right = 1700.0
+offset_bottom = -214.0
+text = "FORTALEZA DE SANTA CRUZ"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 8
+theme_override_colors/font_color = Color(0.85, 0.82, 0.72, 0.85)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 3
+
+[node name="BarcasQuai" type="ColorRect" parent="."]
+offset_left = -1620.0
+offset_top = -52.0
+offset_right = -1420.0
+offset_bottom = -32.0
+color = Color(0.55, 0.42, 0.3, 1)
+
+[node name="BarcasQuaiPlanche" type="ColorRect" parent="."]
+offset_left = -1620.0
+offset_top = -44.0
+offset_right = -1420.0
+offset_bottom = -42.0
+color = Color(0.45, 0.34, 0.24, 1)
+
+[node name="BarcaHull" type="ColorRect" parent="."]
+offset_left = -1590.0
+offset_top = -96.0
+offset_right = -1460.0
+offset_bottom = -52.0
+color = Color(0.95, 0.93, 0.88, 1)
+
+[node name="BarcaStripe" type="ColorRect" parent="."]
+offset_left = -1590.0
+offset_top = -68.0
+offset_right = -1460.0
+offset_bottom = -60.0
+color = Color(0.95, 0.75, 0.15, 1)
+
+[node name="BarcaChimney" type="ColorRect" parent="."]
+offset_left = -1540.0
+offset_top = -112.0
+offset_right = -1524.0
+offset_bottom = -96.0
+color = Color(0.95, 0.75, 0.15, 1)
+
+[node name="TerminalBody" type="ColorRect" parent="."]
+offset_left = -1450.0
+offset_top = -36.0
+offset_right = -1160.0
+offset_bottom = 64.0
+color = Color(0.93, 0.78, 0.62, 1)
+
+[node name="TerminalRoof" type="ColorRect" parent="."]
+offset_left = -1458.0
+offset_top = -46.0
+offset_right = -1152.0
+offset_bottom = -36.0
+color = Color(0.55, 0.35, 0.28, 1)
+
+[node name="TerminalArche0" type="ColorRect" parent="."]
+offset_left = -1420.0
+offset_top = -16.0
+offset_right = -1390.0
+offset_bottom = 50.0
+color = Color(0.45, 0.35, 0.3, 1)
+
+[node name="TerminalArche1" type="ColorRect" parent="."]
+offset_left = -1350.0
+offset_top = -16.0
+offset_right = -1320.0
+offset_bottom = 50.0
+color = Color(0.45, 0.35, 0.3, 1)
+
+[node name="TerminalArche2" type="ColorRect" parent="."]
+offset_left = -1280.0
+offset_top = -16.0
+offset_right = -1250.0
+offset_bottom = 50.0
+color = Color(0.45, 0.35, 0.3, 1)
+
+[node name="TerminalArche3" type="ColorRect" parent="."]
+offset_left = -1210.0
+offset_top = -16.0
+offset_right = -1180.0
+offset_bottom = 50.0
+color = Color(0.45, 0.35, 0.3, 1)
+
+[node name="TerminalTour" type="ColorRect" parent="."]
+offset_left = -1330.0
+offset_top = -130.0
+offset_right = -1284.0
+offset_bottom = -46.0
+color = Color(0.93, 0.78, 0.62, 1)
+
+[node name="TerminalTourToit" type="ColorRect" parent="."]
+offset_left = -1336.0
+offset_top = -142.0
+offset_right = -1278.0
+offset_bottom = -130.0
+color = Color(0.55, 0.35, 0.28, 1)
+
+[node name="TerminalHorloge" type="ColorRect" parent="."]
+offset_left = -1318.0
+offset_top = -114.0
+offset_right = -1296.0
+offset_bottom = -92.0
+color = Color(0.96, 0.95, 0.9, 1)
+
+[node name="TerminalAiguille" type="ColorRect" parent="."]
+offset_left = -1308.0
+offset_top = -108.0
+offset_right = -1306.0
+offset_bottom = -98.0
+color = Color(0.2, 0.2, 0.2, 1)
+
+[node name="BarcasLabel" type="Label" parent="."]
+offset_left = -1430.0
+offset_top = -64.0
+offset_right = -1150.0
+offset_bottom = -48.0
+text = "ESTAÇÃO DAS BARCAS · NITERÓI"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 9
+theme_override_colors/font_color = Color(0.93, 0.88, 0.75, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 3
+
+[node name="MercadoHall" type="ColorRect" parent="."]
+offset_left = -1680.0
+offset_top = 90.0
+offset_right = -1480.0
+offset_bottom = 180.0
+color = Color(0.8, 0.83, 0.86, 1)
+
+[node name="MercadoToit" type="ColorRect" parent="."]
+offset_left = -1688.0
+offset_top = 76.0
+offset_right = -1472.0
+offset_bottom = 90.0
+color = Color(0.35, 0.48, 0.58, 1)
+
+[node name="MercadoPorte" type="ColorRect" parent="."]
+offset_left = -1600.0
+offset_top = 130.0
+offset_right = -1560.0
+offset_bottom = 180.0
+color = Color(0.3, 0.38, 0.45, 1)
+
+[node name="MercadoCaisse0" type="ColorRect" parent="."]
+offset_left = -1460.0
+offset_top = 156.0
+offset_right = -1442.0
+offset_bottom = 174.0
+color = Color(0.62, 0.5, 0.34, 1)
+
+[node name="MercadoCaisse1" type="ColorRect" parent="."]
+offset_left = -1434.0
+offset_top = 156.0
+offset_right = -1416.0
+offset_bottom = 174.0
+color = Color(0.62, 0.5, 0.34, 1)
+
+[node name="MercadoCaisse2" type="ColorRect" parent="."]
+offset_left = -1408.0
+offset_top = 156.0
+offset_right = -1390.0
+offset_bottom = 174.0
+color = Color(0.62, 0.5, 0.34, 1)
+
+[node name="MercadoLabel" type="Label" parent="."]
+offset_left = -1680.0
+offset_top = 56.0
+offset_right = -1480.0
+offset_bottom = 72.0
+text = "MERCADO SÃO PEDRO"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 9
+theme_override_colors/font_color = Color(0.93, 0.88, 0.75, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 3
+
+[node name="ArariboiaSocle" type="ColorRect" parent="."]
+offset_left = -1010.0
+offset_top = 92.0
+offset_right = -950.0
+offset_bottom = 116.0
+color = Color(0.62, 0.6, 0.58, 1)
+
+[node name="ArariboiaSocle2" type="ColorRect" parent="."]
+offset_left = -1000.0
+offset_top = 72.0
+offset_right = -960.0
+offset_bottom = 92.0
+color = Color(0.68, 0.66, 0.64, 1)
+
+[node name="ArariboiaCorps" type="ColorRect" parent="."]
+offset_left = -988.0
+offset_top = 36.0
+offset_right = -972.0
+offset_bottom = 72.0
+color = Color(0.35, 0.28, 0.22, 1)
+
+[node name="ArariboiaTete" type="ColorRect" parent="."]
+offset_left = -985.0
+offset_top = 26.0
+offset_right = -975.0
+offset_bottom = 36.0
+color = Color(0.42, 0.33, 0.26, 1)
+
+[node name="ArariboiaLance" type="ColorRect" parent="."]
+offset_left = -971.0
+offset_top = 18.0
+offset_right = -969.0
+offset_bottom = 70.0
+color = Color(0.3, 0.24, 0.18, 1)
+
+[node name="ArariboiaLabel" type="Label" parent="."]
+offset_left = -1090.0
+offset_top = 120.0
+offset_right = -870.0
+offset_bottom = 136.0
+text = "PRAÇA ARARIBOIA"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 9
+theme_override_colors/font_color = Color(0.93, 0.88, 0.75, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 3
+
+[node name="PracaBanc0" type="ColorRect" parent="."]
+offset_left = -1120.0
+offset_top = 140.0
+offset_right = -1084.0
+offset_bottom = 146.0
+color = Color(0.5, 0.38, 0.26, 1)
+
+[node name="PracaBancPied0" type="ColorRect" parent="."]
+offset_left = -1116.0
+offset_top = 146.0
+offset_right = -1112.0
+offset_bottom = 154.0
+color = Color(0.4, 0.3, 0.2, 1)
+
+[node name="PracaBanc1" type="ColorRect" parent="."]
+offset_left = -880.0
+offset_top = 140.0
+offset_right = -844.0
+offset_bottom = 146.0
+color = Color(0.5, 0.38, 0.26, 1)
+
+[node name="PracaBancPied1" type="ColorRect" parent="."]
+offset_left = -876.0
+offset_top = 146.0
+offset_right = -872.0
+offset_bottom = 154.0
+color = Color(0.4, 0.3, 0.2, 1)
+
+[node name="TeatroBase" type="ColorRect" parent="."]
+offset_left = -560.0
+offset_top = -8.0
+offset_right = -430.0
+offset_bottom = 28.0
+color = Color(0.94, 0.93, 0.9, 1)
+
+[node name="TeatroCourbe1" type="ColorRect" parent="."]
+offset_left = -550.0
+offset_top = -20.0
+offset_right = -440.0
+offset_bottom = -8.0
+color = Color(0.96, 0.95, 0.92, 1)
+
+[node name="TeatroCourbe2" type="ColorRect" parent="."]
+offset_left = -535.0
+offset_top = -30.0
+offset_right = -455.0
+offset_bottom = -20.0
+color = Color(0.97, 0.96, 0.94, 1)
+
+[node name="TeatroCourbe3" type="ColorRect" parent="."]
+offset_left = -515.0
+offset_top = -38.0
+offset_right = -475.0
+offset_bottom = -30.0
+color = Color(0.98, 0.97, 0.95, 1)
+
+[node name="TeatroLabel" type="Label" parent="."]
+offset_left = -600.0
+offset_top = 32.0
+offset_right = -380.0
+offset_bottom = 48.0
+text = "TEATRO POPULAR · CAMINHO NIEMEYER"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 8
+theme_override_colors/font_color = Color(0.93, 0.88, 0.75, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 3
+
+[node name="MACRampe1" type="ColorRect" parent="."]
+offset_left = -58.0
+offset_top = -34.0
+offset_right = -20.0
+offset_bottom = -28.0
+color = Color(0.78, 0.2, 0.16, 1)
+
+[node name="MACRampe2" type="ColorRect" parent="."]
+offset_left = -66.0
+offset_top = -28.0
+offset_right = -36.0
+offset_bottom = -22.0
+color = Color(0.72, 0.18, 0.14, 1)
+
+[node name="MACRampe3" type="ColorRect" parent="."]
+offset_left = 20.0
+offset_top = -34.0
+offset_right = 58.0
+offset_bottom = -28.0
+color = Color(0.78, 0.2, 0.16, 1)
+
+[node name="MACMiroirEau" type="ColorRect" parent="."]
+offset_left = -90.0
+offset_top = -30.0
+offset_right = 90.0
+offset_bottom = -24.0
+color = Color(0.55, 0.7, 0.78, 0.6)
+
+[node name="BoaViagemRocher" type="ColorRect" parent="."]
+offset_left = -270.0
+offset_top = -84.0
+offset_right = -160.0
+offset_bottom = -44.0
+color = Color(0.4, 0.44, 0.4, 1)
+
+[node name="BoaViagemVerdure" type="ColorRect" parent="."]
+offset_left = -260.0
+offset_top = -90.0
+offset_right = -170.0
+offset_bottom = -80.0
+color = Color(0.3, 0.46, 0.32, 1)
+
+[node name="BoaViagemChapelle" type="ColorRect" parent="."]
+offset_left = -232.0
+offset_top = -106.0
+offset_right = -198.0
+offset_bottom = -84.0
+color = Color(0.96, 0.95, 0.9, 1)
+
+[node name="BoaViagemToit" type="ColorRect" parent="."]
+offset_left = -236.0
+offset_top = -114.0
+offset_right = -194.0
+offset_bottom = -106.0
+color = Color(0.62, 0.38, 0.28, 1)
+
+[node name="BoaViagemCroix" type="ColorRect" parent="."]
+offset_left = -216.0
+offset_top = -122.0
+offset_right = -214.0
+offset_bottom = -114.0
+color = Color(0.92, 0.9, 0.85, 1)
+
+[node name="BoaViagemPasserelle" type="ColorRect" parent="."]
+offset_left = -160.0
+offset_top = -48.0
+offset_right = -100.0
+offset_bottom = -44.0
+color = Color(0.55, 0.42, 0.3, 1)
+
+[node name="BoaViagemLabel" type="Label" parent="."]
+offset_left = -300.0
+offset_top = -134.0
+offset_right = -120.0
+offset_bottom = -118.0
+text = "ILHA DA BOA VIAGEM"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 8
+theme_override_colors/font_color = Color(0.85, 0.88, 0.85, 0.85)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 3
+
+[node name="IcaraiSable" type="ColorRect" parent="."]
+offset_left = 880.0
+offset_top = -40.0
+offset_right = 1700.0
+offset_bottom = 120.0
+color = Color(0.93, 0.86, 0.7, 1)
+
+[node name="IcaraiEcume" type="ColorRect" parent="."]
+offset_left = 880.0
+offset_top = -42.0
+offset_right = 1700.0
+offset_bottom = -38.0
+color = Color(0.95, 0.95, 0.95, 0.6)
+
+[node name="IcaraiCalcadao" type="ColorRect" parent="."]
+offset_left = 880.0
+offset_top = 120.0
+offset_right = 1700.0
+offset_bottom = 152.0
+color = Color(0.9, 0.89, 0.85, 1)
+
+[node name="IcaraiVague0" type="ColorRect" parent="."]
+offset_left = 900.0
+offset_top = 132.0
+offset_right = 930.0
+offset_bottom = 140.0
+color = Color(0.25, 0.25, 0.28, 1)
+
+[node name="IcaraiVague1" type="ColorRect" parent="."]
+offset_left = 962.0
+offset_top = 132.0
+offset_right = 992.0
+offset_bottom = 140.0
+color = Color(0.25, 0.25, 0.28, 1)
+
+[node name="IcaraiVague2" type="ColorRect" parent="."]
+offset_left = 1024.0
+offset_top = 132.0
+offset_right = 1054.0
+offset_bottom = 140.0
+color = Color(0.25, 0.25, 0.28, 1)
+
+[node name="IcaraiVague3" type="ColorRect" parent="."]
+offset_left = 1086.0
+offset_top = 132.0
+offset_right = 1116.0
+offset_bottom = 140.0
+color = Color(0.25, 0.25, 0.28, 1)
+
+[node name="IcaraiVague4" type="ColorRect" parent="."]
+offset_left = 1148.0
+offset_top = 132.0
+offset_right = 1178.0
+offset_bottom = 140.0
+color = Color(0.25, 0.25, 0.28, 1)
+
+[node name="IcaraiVague5" type="ColorRect" parent="."]
+offset_left = 1210.0
+offset_top = 132.0
+offset_right = 1240.0
+offset_bottom = 140.0
+color = Color(0.25, 0.25, 0.28, 1)
+
+[node name="IcaraiVague6" type="ColorRect" parent="."]
+offset_left = 1272.0
+offset_top = 132.0
+offset_right = 1302.0
+offset_bottom = 140.0
+color = Color(0.25, 0.25, 0.28, 1)
+
+[node name="IcaraiVague7" type="ColorRect" parent="."]
+offset_left = 1334.0
+offset_top = 132.0
+offset_right = 1364.0
+offset_bottom = 140.0
+color = Color(0.25, 0.25, 0.28, 1)
+
+[node name="IcaraiVague8" type="ColorRect" parent="."]
+offset_left = 1396.0
+offset_top = 132.0
+offset_right = 1426.0
+offset_bottom = 140.0
+color = Color(0.25, 0.25, 0.28, 1)
+
+[node name="IcaraiVague9" type="ColorRect" parent="."]
+offset_left = 1458.0
+offset_top = 132.0
+offset_right = 1488.0
+offset_bottom = 140.0
+color = Color(0.25, 0.25, 0.28, 1)
+
+[node name="IcaraiVague10" type="ColorRect" parent="."]
+offset_left = 1520.0
+offset_top = 132.0
+offset_right = 1550.0
+offset_bottom = 140.0
+color = Color(0.25, 0.25, 0.28, 1)
+
+[node name="IcaraiVague11" type="ColorRect" parent="."]
+offset_left = 1582.0
+offset_top = 132.0
+offset_right = 1612.0
+offset_bottom = 140.0
+color = Color(0.25, 0.25, 0.28, 1)
+
+[node name="IcaraiVague12" type="ColorRect" parent="."]
+offset_left = 1644.0
+offset_top = 132.0
+offset_right = 1674.0
+offset_bottom = 140.0
+color = Color(0.25, 0.25, 0.28, 1)
+
+[node name="IcaraiParasolPied0" type="ColorRect" parent="."]
+offset_left = 979.0
+offset_top = 30.0
+offset_right = 981.0
+offset_bottom = 56.0
+color = Color(0.45, 0.38, 0.3, 1)
+
+[node name="IcaraiParasolToile0" type="ColorRect" parent="."]
+offset_left = 964.0
+offset_top = 20.0
+offset_right = 996.0
+offset_bottom = 32.0
+color = Color(0.92, 0.35, 0.3, 1)
+
+[node name="IcaraiParasolPied1" type="ColorRect" parent="."]
+offset_left = 1179.0
+offset_top = 30.0
+offset_right = 1181.0
+offset_bottom = 56.0
+color = Color(0.45, 0.38, 0.3, 1)
+
+[node name="IcaraiParasolToile1" type="ColorRect" parent="."]
+offset_left = 1164.0
+offset_top = 20.0
+offset_right = 1196.0
+offset_bottom = 32.0
+color = Color(0.95, 0.8, 0.25, 1)
+
+[node name="IcaraiParasolPied2" type="ColorRect" parent="."]
+offset_left = 1419.0
+offset_top = 30.0
+offset_right = 1421.0
+offset_bottom = 56.0
+color = Color(0.45, 0.38, 0.3, 1)
+
+[node name="IcaraiParasolToile2" type="ColorRect" parent="."]
+offset_left = 1404.0
+offset_top = 20.0
+offset_right = 1436.0
+offset_bottom = 32.0
+color = Color(0.35, 0.6, 0.85, 1)
+
+[node name="IcaraiParasolPied3" type="ColorRect" parent="."]
+offset_left = 1599.0
+offset_top = 30.0
+offset_right = 1601.0
+offset_bottom = 56.0
+color = Color(0.45, 0.38, 0.3, 1)
+
+[node name="IcaraiParasolToile3" type="ColorRect" parent="."]
+offset_left = 1584.0
+offset_top = 20.0
+offset_right = 1616.0
+offset_bottom = 32.0
+color = Color(0.92, 0.35, 0.3, 1)
+
+[node name="IcaraiPalmTronc0" type="ColorRect" parent="."]
+offset_left = 1050.0
+offset_top = 96.0
+offset_right = 1056.0
+offset_bottom = 130.0
+color = Color(0.48, 0.36, 0.24, 1)
+
+[node name="IcaraiPalmTete0" type="ColorRect" parent="."]
+offset_left = 1038.0
+offset_top = 84.0
+offset_right = 1068.0
+offset_bottom = 100.0
+color = Color(0.3, 0.52, 0.32, 1)
+
+[node name="IcaraiPalmTronc1" type="ColorRect" parent="."]
+offset_left = 1500.0
+offset_top = 96.0
+offset_right = 1506.0
+offset_bottom = 130.0
+color = Color(0.48, 0.36, 0.24, 1)
+
+[node name="IcaraiPalmTete1" type="ColorRect" parent="."]
+offset_left = 1488.0
+offset_top = 84.0
+offset_right = 1518.0
+offset_bottom = 100.0
+color = Color(0.3, 0.52, 0.32, 1)
+
+[node name="IcaraiFutevoleiPoteauA" type="ColorRect" parent="."]
+offset_left = 1330.0
+offset_top = 24.0
+offset_right = 1333.0
+offset_bottom = 56.0
+color = Color(0.45, 0.38, 0.3, 1)
+
+[node name="IcaraiFutevoleiPoteauB" type="ColorRect" parent="."]
+offset_left = 1386.0
+offset_top = 24.0
+offset_right = 1389.0
+offset_bottom = 56.0
+color = Color(0.45, 0.38, 0.3, 1)
+
+[node name="IcaraiFutevoleiFilet" type="ColorRect" parent="."]
+offset_left = 1333.0
+offset_top = 26.0
+offset_right = 1386.0
+offset_bottom = 34.0
+color = Color(0.92, 0.92, 0.88, 0.7)
+
+[node name="CoretoBase" type="ColorRect" parent="."]
+offset_left = 1620.0
+offset_top = 160.0
+offset_right = 1690.0
+offset_bottom = 176.0
+color = Color(0.85, 0.83, 0.78, 1)
+
+[node name="CoretoToit" type="ColorRect" parent="."]
+offset_left = 1612.0
+offset_top = 138.0
+offset_right = 1698.0
+offset_bottom = 150.0
+color = Color(0.4, 0.55, 0.42, 1)
+
+[node name="CoretoPilier0" type="ColorRect" parent="."]
+offset_left = 1624.0
+offset_top = 150.0
+offset_right = 1628.0
+offset_bottom = 160.0
+color = Color(0.75, 0.73, 0.68, 1)
+
+[node name="CoretoPilier1" type="ColorRect" parent="."]
+offset_left = 1682.0
+offset_top = 150.0
+offset_right = 1686.0
+offset_bottom = 160.0
+color = Color(0.75, 0.73, 0.68, 1)
+
+[node name="IcaraiLabel" type="Label" parent="."]
+offset_left = 1120.0
+offset_top = 160.0
+offset_right = 1340.0
+offset_bottom = 176.0
+text = "PRAIA DE ICARAÍ"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.93, 0.88, 0.75, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 3
+
+[node name="CoretoLabel" type="Label" parent="."]
+offset_left = 1596.0
+offset_top = 180.0
+offset_right = 1726.0
+offset_bottom = 196.0
+text = "Campo de São Bento"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 7
+theme_override_colors/font_color = Color(0.6, 0.68, 0.6, 0.9)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 3
+
+[node name="ViewpointIcarai" parent="." instance=ExtResource("3_view")]
+position = Vector2(1240, 70)
+viewpoint_id = "icarai_cartao_postal"
+prompt_first = "Le cartão-postal d'Icaraí"
+flavor_speaker = "Sobrinho"
+flavor_text = "Depuis le sable d'Icaraí, Rio entière tient dans ton regard : le Pão de Açúcar, le Corcovado, le Cristo minuscule les bras ouverts au-dessus de la baie. Les cariocas paient des fortunes pour habiter là-bas. Les niteroienses sourient : eux, ils ont la vue."
+money_reward = 0
+
+[node name="IcaraiStrollerA" parent="." instance=ExtResource("2_wander")]
+position = Vector2(1100, 60)
+color = Color(0.95, 0.75, 0.4, 1)
+size = Vector2(10, 16)
+roam_zone = Rect2(950, 0, 500, 90)
+speed = 16.0
+pause_at_waypoints = 2.0
+
+[node name="IcaraiStrollerB" parent="." instance=ExtResource("2_wander")]
+position = Vector2(1480, 80)
+color = Color(0.4, 0.7, 0.8, 1)
+size = Vector2(10, 15)
+roam_zone = Rect2(1300, 20, 360, 80)
+speed = 12.0
+pause_at_waypoints = 3.0
+
+[node name="PracaStroller" parent="." instance=ExtResource("2_wander")]
+position = Vector2(-1050, 150)
+color = Color(0.75, 0.5, 0.65, 1)
+size = Vector2(10, 16)
+roam_zone = Rect2(-1250, 100, 400, 80)
+speed = 14.0
+pause_at_waypoints = 2.5
+
 [node name="Walls" type="Node2D" parent="."]
 
 [node name="Top" type="StaticBody2D" parent="Walls"]
@@ -541,13 +1297,13 @@ position = Vector2(0, 200)
 shape = SubResource("WallH")
 
 [node name="Left" type="StaticBody2D" parent="Walls"]
-position = Vector2(-808, -50)
+position = Vector2(-1708, -50)
 
 [node name="ShapeLeftN" type="CollisionShape2D" parent="Walls/Left"]
 shape = SubResource("WallV")
 
 [node name="Right" type="StaticBody2D" parent="Walls"]
-position = Vector2(808, -50)
+position = Vector2(1708, -50)
 
 [node name="ShapeRightN" type="CollisionShape2D" parent="Walls/Right"]
 shape = SubResource("WallV")
@@ -621,15 +1377,99 @@ character_seed = 80116
 variants = [{
 "id": "a8_close",
 "objective_pending": ["trafico_a8_baia", "cross_baia"],
-"set_flag_after": "trafico_a8_done",
-"actions": {"finish_quest": {"quest": "trafico_a8_baia", "objective": "cross_baia", "payout": 1500}, "accept_quest": "trafico_a9_corrida", "pay_debt": 18000, "rep": {2: 8, 0: -4}},
+"objective_done": ["trafico_a8_baia", "reperer_crique"],
+"actions": {"finish_quest": {"quest": "trafico_a8_baia", "objective": "cross_baia", "payout": 1500}, "pay_debt": 18000, "rep": {2: 8, 0: -4}, "start_chase": {"chaser_id": "pm_baia", "speed_start": 132.0, "tire_after_sec": 26.0, "give_up_sec": 45.0, "catch_pct": 0.25, "catch_min": 80, "sprite_seed": "pm_baia", "spotted_text": "🚨 Flagrante ! La lancha da PM accoste aux quais — corre !", "caught_text": "🚨 Plaqué sur les quais : la PM « saisit » R$ %d.", "broke_text": "🚨 Plaqué sur les quais — poches vides. Avertissement.", "escaped_text": "💨 Semé la PM dans les ruelles du centro de Niterói !", "chrono_label": "Foge do flagrante !"}},
 "speaker": "Don Vincenzo",
-"text": "*costume sombre, accent italo-carioca, t'inspecte des pieds à la tête* Donc c'est toi, le nouveau du morro de Tito. *fait signe ; ses hommes déchargent la cargaison de la barque, vite, sans un mot* Bella mercadoria. Dis à Tito que la baie est ouverte tant qu'il tient sa parole. *te tend une mallette épaisse* Presque toute ta dette d'un coup, ragazzo. *allume un cigare* Il reste une chose : Tito monte la dernière corrida du Carnaval — celle qui scelle un règne. Il t'attend, en personne, au morro. Si tu la mènes, le Morro est à toi.",
+"text": "*costume sombre, accent italo-carioca, t'inspecte des pieds à la tête* Donc c'est toi, le nouveau du morro de Tito. Nego Doca dit que t'as trouvé la crique sans te faire suivre. Bene. *fait signe ; ses hommes déchargent la cargaison de la barque derrière la pedra, vite, sans un mot* Bella mercadoria. Dis à Tito que la baie est ouverte tant qu'il tient sa parole. *te tend une mallette épaisse* Presque toute ta dette d'un coup, ragazzo. *soudain son regard passe par-dessus ton épaule, vers les quais — une lancha grise, des gyrophares éteints qui s'allument* …PM. Quelqu'un a parlé. La mallette est à toi — cours, et sois pas pris avec.",
+"choices": ["*courir*"]
+}, {
+"id": "a8_retencao",
+"objective_pending": ["trafico_a8_baia", "cross_baia"],
+"speaker": "Don Vincenzo",
+"text": "*il ne se lève même pas, deux hommes te barrent le passage* Doucement, ragazzo. Une barque pleine, ça accoste pas où ça veut — la baía se traverse pas sans le mot de la Mafia. *il rallume son cigare* Remonte la filière d'abord : nos gens aux barcas, puis la crique. Quand Nego Doca t'aura vu la tête, on parlera mercadoria.",
+"choices": ["Je remonte la filière"]
+}, {
+"id": "a8_fuga",
+"objective_done": ["trafico_a8_baia", "cross_baia"],
+"objective_pending": ["trafico_a8_baia", "semer_flagrante"],
+"actions": {"start_chase": {"chaser_id": "pm_baia", "speed_start": 132.0, "tire_after_sec": 26.0, "give_up_sec": 45.0, "catch_pct": 0.25, "catch_min": 80, "sprite_seed": "pm_baia", "spotted_text": "🚨 Flagrante ! La PM des quais t'a retrouvé — corre !", "caught_text": "🚨 Plaqué sur les quais : la PM « saisit » R$ %d.", "broke_text": "🚨 Plaqué sur les quais — poches vides. Avertissement.", "escaped_text": "💨 Semé la PM dans les ruelles du centro de Niterói !", "chrono_label": "Foge do flagrante !"}},
+"speaker": "Don Vincenzo",
+"text": "*le ponton est vide, la barque déjà au large. Seule sa voix, depuis l'ombre d'un container* T'es encore là, ragazzo ?! La PM quadrille les quais avec ta description — me ramène pas le flagrante jusqu'ici. Corre !",
+"choices": ["*courir*"]
+}, {
+"id": "a9_offer",
+"quest_completed": "trafico_a8_baia",
+"quest_not_active": "trafico_a9_corrida",
+"quest_not_completed": "trafico_a9_corrida",
+"set_flag_after": "trafico_a8_done",
+"actions": {"accept_quest": "trafico_a9_corrida"},
+"speaker": "Don Vincenzo",
+"text": "*il t'attend cette fois, seul, et te sert lui-même un café serré* Semé la PM sur mes quais, avec la mallette. *il lève sa tasse* La Mafia da Baía a fait passer le mot des deux côtés de l'eau : le nouveau de Tito est affidabile. *il allume un cigare* Il reste une chose, ragazzo. Tito monte la dernière corrida du Carnaval — celle qui scelle un règne. Il t'attend, en personne, au morro. Si tu la mènes, le Morro est à toi.",
 "choices": ["Je retourne au morro"]
 }, {
 "id": "default",
 "speaker": "Passant de Niterói",
 "text": "*regarde Rio de l'autre côté de la baie* Daqui a vista é melhor, sabia? On voit tout le Pão de Açúcar. *poursuit son chemin*",
+"choices": ["…"]
+}]
+
+[node name="TraficoBaiaRelaisSpot" parent="." instance=ExtResource("16_reactive")]
+position = Vector2(-1240, 90)
+npc_id = "trafico_baia_relais"
+prompt = "L'homme des barcas"
+character_seed = 80119
+required_flag = "voie_trafico"
+variants = [{
+"id": "a8_feu_vert",
+"objective_pending": ["trafico_a8_baia", "feu_vert_mafia"],
+"actions": {"finish_quest": {"quest": "trafico_a8_baia", "objective": "feu_vert_mafia", "payout": 0}},
+"speaker": "L'homme des barcas",
+"text": "*adossé au terminal, il compte les passagers qui débarquent comme d'autres comptent la monnaie* Le nouveau de Tito. On t'a vu monter à bord avant même que tu paies ton billet. *il te tourne autour, lentement, une fois, deux fois* Hmm. Les mains calmes, les yeux qui bougent. Ça va. *il crache dans la baie* La Mafia dit oui — UNE traversée, celle de Tito, pas une caisse de plus. Le débarque se fait pas ici, trop d'yeux : la crique derrière la pedra de Itapuca, au bout d'Icaraí. C'est Nego Doca qui y guette — montre-toi à lui d'abord, sinon la barque restera au large et toi tu resteras con.",
+"choices": ["Beleza. Itapuca."]
+}, {
+"id": "a8_wait",
+"objective_done": ["trafico_a8_baia", "feu_vert_mafia"],
+"objective_pending": ["trafico_a8_baia", "reperer_crique"],
+"speaker": "L'homme des barcas",
+"text": "*sans te regarder, il jette du pain aux mouettes* T'es encore là ? La pedra de Itapuca, bout d'Icaraí. Nego Doca t'attend pas éternellement, et la marée non plus.",
+"choices": ["J'y vais"]
+}, {
+"id": "default",
+"speaker": "L'homme des barcas",
+"text": "*il regarde à travers toi, comme si tu étais une vitre* La prochaine barca part dans dix minutes. *pause* C'est tout ce que je sais, et c'est déjà trop.",
+"choices": ["…"]
+}]
+
+[node name="TraficoCriqueSpot" parent="." instance=ExtResource("16_reactive")]
+position = Vector2(1400, 120)
+npc_id = "trafico_crique"
+prompt = "Le guetteur de la crique"
+character_seed = 80120
+required_flag = "voie_trafico"
+variants = [{
+"id": "a8_reperer",
+"objective_done": ["trafico_a8_baia", "feu_vert_mafia"],
+"objective_pending": ["trafico_a8_baia", "reperer_crique"],
+"actions": {"finish_quest": {"quest": "trafico_a8_baia", "objective": "reperer_crique", "payout": 0}},
+"speaker": "Nego Doca",
+"text": "*assis sur la pedra avec une canne à pêche sans hameçon, il te fait signe de t'accroupir à côté de lui* Les barcas ont téléphoné. *il désigne la crique du menton, sans lever le bras* Regarde bien : la barque entre par là quand le soleil tape dans les yeux du poste de la PM, en face. Toi tu attends sur le sable, tu bouges pas, tu fumes pas. *il te tend sa canne une seconde, le temps qu'une ronde passe sur le calçadão* Voilà. Maintenant t'es un pêcheur qui cause avec un pêcheur. Retourne voir le Don au ponton — dis-lui que Doca a dit que c'est bon.",
+"choices": ["Valeu, Doca"]
+}, {
+"id": "a8_after",
+"objective_done": ["trafico_a8_baia", "reperer_crique"],
+"speaker": "Nego Doca",
+"text": "*il remonte sa ligne vide, la relance* La mer est à toi cette nuit, garoto. Après, on s'est jamais parlé.",
+"choices": ["…"]
+}, {
+"id": "a8_retencao",
+"quest_active": "trafico_a8_baia",
+"speaker": "Nego Doca",
+"text": "*il ne tourne même pas la tête, sa canne sans hameçon pointée vers la baie* T'es pas censé être là, playboy. *long silence* La plage est grande. Va marcher ailleurs — et si quelqu'un aux barcas veut que je te voie, il saura me le dire lui-même.",
+"choices": ["*repartir*"]
+}, {
+"id": "default",
+"speaker": "Un pêcheur",
+"text": "*il fixe son bouchon immobile* Ça mord pas, mais c'est pas pour le poisson qu'on vient, né ? *il ne dit plus rien*",
 "choices": ["…"]
 }]
 

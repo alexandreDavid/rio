@@ -11,6 +11,20 @@ script = ExtResource("1_pick")
 interactable = NodePath("Interactable")
 quest_id = "trafico_a2_pickup"
 objective_id = "pickup_palace"
+chase_config = {
+"chaser_id": "pm_copacabana",
+"speed_start": 128.0,
+"tire_after_sec": 24.0,
+"give_up_sec": 45.0,
+"catch_pct": 0.2,
+"catch_min": 40,
+"sprite_seed": "pm_copacabana",
+"spotted_text": "🚨 Le groom t'a balancé — PM sur l'Atlântica, corre !",
+"caught_text": "🚨 La PM te serre contre le mur : « amende » de R$ %d.",
+"broke_text": "🚨 Serré les poches vides — la PM te relâche avec un avertissement.",
+"escaped_text": "💨 Semé la PM dans les transversales !",
+"chrono_label": "Despiste a PM !"
+}
 
 [node name="Halo" type="ColorRect" parent="."]
 offset_left = -22.0

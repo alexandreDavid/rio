@@ -1,4 +1,4 @@
-[gd_scene load_steps=68 format=3]
+[gd_scene load_steps=71 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/npcs/DonaIrene.tscn" id="37_irene"]
 [ext_resource type="PackedScene" path="res://scenes/npcs/BarPatrao.tscn" id="38_patrao"]
@@ -63,6 +63,11 @@
 [ext_resource type="PackedScene" path="res://scenes/props/FishingSpot.tscn" id="23_fishing"]
 [ext_resource type="PackedScene" path="res://scenes/npcs/Jorge.tscn" id="24_jorge"]
 [ext_resource type="Script" path="res://scripts/world/TrafficSpawner.gd" id="25_traffic"]
+[ext_resource type="Script" path="res://scripts/world/DialogueTriggerZone.gd" id="70_trigger"]
+[ext_resource type="Script" path="res://scripts/world/EscortFollower.gd" id="71_escort"]
+
+[sub_resource type="RectangleShape2D" id="InterceptRect"]
+size = Vector2(200, 80)
 
 [sub_resource type="RectangleShape2D" id="WallH"]
 size = Vector2(2440, 16)
@@ -337,7 +342,7 @@ variants = [{
 "flag": "voie_trafico",
 "objective_pending": ["trafico_a1_livraison", "drop_calcadao"],
 "set_flag_after": "trafico_a1_done",
-"actions": {"finish_quest": {"quest": "trafico_a1_livraison", "objective": "drop_calcadao", "payout": 120}, "accept_quest": "trafico_a2_pickup", "rep": {2: 2}},
+"actions": {"finish_quest": {"quest": "trafico_a1_livraison", "objective": "drop_calcadao", "payout": 120}, "accept_quest": "trafico_a2_pickup", "rep": {2: 2}, "debt_credit": 200},
 "speaker": "Contact",
 "text": "*assis sur un banc face à la mer, ne te regarde pas* Le paquet de Tito. *tend la main, le fait disparaître sous une serviette* T'as les mains qui tremblent pas, gamin. *glisse des billets* Bien. Miguel veut te tester maintenant — une sacoche t'attend au Copacabana Palace, le groom la garde. Tu la prends, tu la ramènes ici. Tu poses pas de questions sur ce qu'y a dedans.",
 "choices": ["J'y vais"]
@@ -351,14 +356,22 @@ variants = [{
 "text": "*assis sur un banc face à la mer, ne te regarde pas* Le paquet de Tito. *tend la main, le fait disparaître sous une serviette* T'as les mains qui tremblent pas, gamin. *glisse des billets* Bien. Reviens si tu décides de signer avec Tito — pour l'instant tu as juste rendu un service, gamin.",
 "choices": ["À bientôt"]
 }, {
+"id": "a2_heat",
+"objective_done": ["trafico_a2_pickup", "pickup_palace"],
+"objective_pending": ["trafico_a2_pickup", "despistar_pm"],
+"actions": {"start_chase": {"chaser_id": "pm_copacabana", "speed_start": 128.0, "tire_after_sec": 24.0, "give_up_sec": 45.0, "catch_pct": 0.2, "catch_min": 40, "sprite_seed": "pm_copacabana", "spotted_text": "🚨 La PM t'a reconnu — corre !", "caught_text": "🚨 La PM te serre : « amende » de R$ %d.", "broke_text": "🚨 Serré les poches vides — avertissement.", "escaped_text": "💨 Semé la PM dans les transversales !", "chrono_label": "Despiste a PM !"}},
+"speaker": "Contact",
+"text": "*siffle entre ses dents sans te regarder* T'es encore chaud, sobrinho — la PM tourne avec ta description. Me colle pas. *fixe la mer* Fais-les tourner en bourrique dans les transversales, sème-les, APRÈS on parle.",
+"choices": ["Je les sème"]
+}, {
 "id": "a3_offer_post_palace",
 "quest_completed": "trafico_a2_pickup",
 "quest_not_active": "trafico_a3_chauffeur",
 "quest_not_completed": "trafico_a3_chauffeur",
 "set_flag_after": "trafico_a2_done",
-"actions": {"accept_quest": "trafico_a3_chauffeur", "rep": {2: 3}},
+"actions": {"accept_quest": "trafico_a3_chauffeur", "rep": {2: 3}, "debt_credit": 400},
 "speaker": "Contact",
-"text": "*récupère la sacoche du Palace, la soupèse, hoche la tête* Miguel avait raison sur toi. *sourire en coin, te file une clé* Maintenant le vrai boulot. Le coffre est chargé près d'ici — tu le conduis à Botafogo, sous le Bondinho. Pas de détour, pas de PM dans le rétro. Quelqu'un t'attend là-bas.",
+"text": "*récupère la sacoche du Palace, la soupèse, hoche la tête* Miguel avait raison sur toi — et t'as semé la PM proprement. *sourire en coin* Tito a fait passer un mot chez Nilton : une part de ta dette vient de sauter. C'est comme ça qu'on paie, nous. *te file une clé* Maintenant le vrai boulot. Le coffre est chargé près d'ici — tu le conduis à Botafogo, sous le Bondinho. Pas de détour, pas de PM dans le rétro. Quelqu'un t'attend là-bas.",
 "choices": ["En route"]
 }, {
 "id": "a2_close",
@@ -377,9 +390,9 @@ variants = [{
 "quest_completed": "trafico_a3_chauffeur",
 "quest_not_active": "trafico_a4_ipanema",
 "quest_not_completed": "trafico_a4_ipanema",
-"actions": {"accept_quest": "trafico_a4_ipanema"},
+"actions": {"accept_quest": "trafico_a4_ipanema", "debt_credit": 500},
 "speaker": "Contact",
-"text": "*te tend un sac de sport* Bien joué pour Botafogo. Maintenant tu montes en gamme. Ipanema — y'a un gringo qui paie cash, posto 9. Tu lui refourgues ça, tu prends l'argent, tu disparais. S'il fait l'idiot, tu pars sans discuter.",
+"text": "*te tend un sac de sport* Bien joué pour Botafogo — Tito a encore rogné ta dette chez Nilton, tu montes en gamme. Ipanema — y'a un gringo qui paie cash, posto 9. Tu lui refourgues ça, tu prends l'argent, tu disparais. S'il fait l'idiot, tu pars sans discuter.",
 "choices": ["Direction Ipanema"]
 }, {
 "id": "done",
@@ -394,6 +407,62 @@ variants = [{
 "choices": ["…"]
 }]
 
+[node name="InterceptTrafico" type="Area2D" parent="."]
+position = Vector2(640, 96)
+script = ExtResource("70_trigger")
+npc_id = "trafico_intercept"
+speaker = "Le contact"
+text = "*il se décolle d'un palmier et cale son pas sur le tien, sans te regarder* Te voilà. Tito a passé le mot — le morro descend avec toi maintenant, mermão. *un regard vers le kiosque, l'air de rien* Le paquet, tu le déposes à ma nasse, face mer, comme si tu vendais du milho. Marche naturel. La plage regarde toujours."
+choices = Array[String](["Suave"])
+required_flag = "voie_trafico"
+quest_active = "trafico_a1_livraison"
+fired_flag = "intercept_trafico"
+
+[node name="Shape" type="CollisionShape2D" parent="InterceptTrafico"]
+shape = SubResource("InterceptRect")
+
+[node name="InterceptPolicia" type="Area2D" parent="."]
+position = Vector2(520, 96)
+script = ExtResource("70_trigger")
+npc_id = "policia_intercept"
+speaker = "L'agent en civil"
+text = "*il te tombe dessus au coin de l'Atlântica, journal plié sous le bras, et fait mine de te demander du feu* Le Capitão m'a décrit ta tête. Bonne mémoire, lui. *il tourne une page sans la lire* Le guetteur bosse près des cocos. Tu regardes, tu retiens, tu me rapportes — ici, sur le calçadão. Pas de zèle, pas d'héroïsme. T'es des nôtres maintenant."
+choices = Array[String](["Entendu"])
+required_flag = "voie_policia"
+quest_active = "policia_b1_intel"
+fired_flag = "intercept_policia"
+
+[node name="Shape" type="CollisionShape2D" parent="InterceptPolicia"]
+shape = SubResource("InterceptRect")
+
+[node name="InterceptConsortium" type="Area2D" parent="."]
+position = Vector2(760, 96)
+script = ExtResource("70_trigger")
+npc_id = "consortium_intercept"
+speaker = "L'assistant de Magalhães"
+text = "*costume clair, il t'emboîte le pas sans te regarder, comme si vous marchiez ensemble depuis toujours* Sr. Magalhães aime accueillir ses nouveaux collaborateurs. *il te tend une chemise cartonnée, propre, sans un pli* Les retards de paiement du calçadão. La maison ne crie jamais — elle passe encaisser. Souriez : la maison, maintenant, c'est vous."
+choices = Array[String](["…Compris"])
+required_flag = "voie_consortium"
+quest_active = "consortium_c1_recouvrement"
+fired_flag = "intercept_consortium"
+
+[node name="Shape" type="CollisionShape2D" parent="InterceptConsortium"]
+shape = SubResource("InterceptRect")
+
+[node name="InterceptPrefeito" type="Area2D" parent="."]
+position = Vector2(1500, -70)
+script = ExtResource("70_trigger")
+npc_id = "prefeito_intercept"
+speaker = "Le sacristain"
+text = "*il te rattrape en trottinant sur le parvis, tout essoufflé* Espera aí ! Le Padre a annoncé la pétition à la messe de sept heures — la moitié du calçadão t'attend déjà, et l'autre moitié fait semblant de ne pas attendre. *il te glisse un stylo dans la main* Prends au moins ça. C'est celui des registres de baptême — il n'a jamais écrit un mensonge."
+choices = Array[String](["Obrigado"])
+required_flag = "voie_prefeito"
+quest_active = "prefeito_d1_peticao"
+fired_flag = "intercept_prefeito"
+
+[node name="Shape" type="CollisionShape2D" parent="InterceptPrefeito"]
+shape = SubResource("InterceptRect")
+
 [node name="TraficoTioZeSpot" parent="." instance=ExtResource("62_reactive")]
 position = Vector2(1700, 132)
 npc_id = "trafico_tioze"
@@ -401,11 +470,18 @@ prompt = "Le vieux concierge"
 character_seed = 909099
 required_flag = "voie_trafico"
 variants = [{
+"id": "a7_mute",
+"objective_pending": ["trafico_a7_tioze", "porter_lembranca"],
+"speaker": "Le concierge",
+"text": "*le vieux balaie le perron, méthodique ; le balai contourne tes pieds sans ralentir* Bienvenue au Copacabana Palace. *rien d'autre. Ce silence-là ne se force pas — il se mérite.*",
+"choices": ["…"]
+}, {
 "id": "a7_warn",
 "objective_pending": ["trafico_a7_tioze", "heed_warning"],
-"actions": {"finish_quest": {"quest": "trafico_a7_tioze", "objective": "heed_warning", "payout": 0}, "accept_quest": "trafico_a8_baia", "set_flag": "tio_ze_warned_trafico"},
+"objective_done": ["trafico_a7_tioze", "porter_lembranca"],
+"actions": {"finish_quest": {"quest": "trafico_a7_tioze", "objective": "heed_warning", "payout": 0}, "accept_quest": "trafico_a8_baia", "set_flag": "tio_ze_warned_trafico", "debt_credit": 800},
 "speaker": "Le concierge",
-"text": "*un vieil homme en uniforme du Palace, il balaie sans te regarder, voix basse* Petit. Te retourne pas. *continue de balayer* Je connaissais ton oncle Zé. Mieux que personne. Il a porté pour Tito, lui aussi. Le morro lui a tout pris, et quand il a voulu partir, Tito l'a brûlé — comme il te brûlera. *te glisse un regard* Tu peux encore choisir de pas finir comme lui. *soupire* Mais tu y retourneras quand même. Alors écoute au moins ça — le gros coup passe par la baie, Niterói, la Mafia da Baía en relais. Réfléchis-y avant la corrida.",
+"text": "*tu tends la photo de la colônia — Zé jeune, un filet plein sur l'épaule, le sourire des jours de belle pêche. Le balai s'arrête net. Le vieux se fige, regarde la photo, puis toi, longtemps.* Petit. Te retourne pas. *il reprend son balai, voix basse* Je connaissais ton oncle Zé. Mieux que personne. Il a porté pour Tito, lui aussi. Le morro lui a tout pris, et quand il a voulu partir, Tito l'a brûlé — comme il te brûlera. *te glisse un regard* Tu peux encore choisir de pas finir comme lui. *soupire* Mais tu y retourneras quand même. Alors écoute au moins ça — le gros coup passe par la baie, Niterói, la Mafia da Baía en relais. Réfléchis-y avant la corrida.",
 "choices": ["…J'y vais"]
 }, {
 "id": "medalhao_reveal",
@@ -431,6 +507,33 @@ variants = [{
 "id": "default",
 "speaker": "Le concierge",
 "text": "*balaie le perron du Palace, t'ignore poliment* Bienvenue au Copacabana Palace. *à voix basse, sans lever les yeux* …Toi, je te connais de quelque part.",
+"choices": ["…"]
+}]
+
+[node name="TraficoFirminoSpot" parent="." instance=ExtResource("62_reactive")]
+position = Vector2(240, 330)
+npc_id = "trafico_firmino"
+prompt = "Le pêcheur de la colônia"
+character_seed = 815102
+required_flag = "voie_trafico"
+variants = [{
+"id": "a7_lembranca",
+"objective_done": ["trafico_a7_tioze", "ask_temoin"],
+"objective_pending": ["trafico_a7_tioze", "porter_lembranca"],
+"actions": {"finish_quest": {"quest": "trafico_a7_tioze", "objective": "porter_lembranca", "payout": 0}, "set_flag": "lembranca_trafico"},
+"speaker": "Seu Firmino",
+"text": "*il t'écoute dire le nom de dona Zilda, hoche la tête, pose sa nasse* Si c'est elle qui t'envoie, senta aí. *il fouille sous le banc de sa barque, en sort une photo cornée, protégée par un sachet plastique* La colônia, l'année du grand banc de tainha. Le deuxième en partant de la gauche, avec le filet — c'est Zé. Il riait encore, à l'époque. Avant de porter pour l'autre, là-haut. *il te la met dans la main, referme tes doigts dessus* Le vieux du Palace, tu lui parles pas. Tu lui montres ça, sans un mot, et tu laisses le silence travailler. Un homme qui a fui la mer reconnaît toujours sa marée.",
+"choices": ["Valeu, Seu Firmino"]
+}, {
+"id": "after",
+"objective_done": ["trafico_a7_tioze", "porter_lembranca"],
+"speaker": "Seu Firmino",
+"text": "*répare son filet, un œil sur la houle* Alors, le vieux a parlé ? *hoche la tête sans attendre la réponse* La photo, tu la gardes. Ici on rend pas les souvenirs, on les confie.",
+"choices": ["…"]
+}, {
+"id": "default",
+"speaker": "Seu Firmino",
+"text": "*il te jauge une seconde, puis retourne à sa nasse* …T'es qui, toi ? *il démêle un nœud sans te regarder* La colônia parle pas aux pressés. Reviens quand quelqu'un d'ici saura ton nom.",
 "choices": ["…"]
 }]
 
@@ -471,11 +574,18 @@ prompt = "Le vieux concierge"
 character_seed = 909099
 required_flag = "voie_policia"
 variants = [{
+"id": "b6_mute",
+"objective_pending": ["policia_b6_tioze", "porter_lembranca"],
+"speaker": "Le concierge",
+"text": "*le vieux balaie le perron ; en te voyant, il balaie un peu plus loin* Bienvenue au Copacabana Palace. *pas un mot de plus. Il a passé l'âge de parler aux gens qu'il ne connaît pas.*",
+"choices": ["…"]
+}, {
 "id": "b6_warn",
 "objective_pending": ["policia_b6_tioze", "hear_concierge"],
+"objective_done": ["policia_b6_tioze", "porter_lembranca"],
 "actions": {"finish_quest": {"quest": "policia_b6_tioze", "objective": "hear_concierge", "payout": 0}, "accept_quest": "policia_b7_saisie", "set_flag": "tio_ze_warned_policia"},
 "speaker": "Le concierge",
-"text": "*vieil homme en uniforme du Palace, balaie sans te regarder* Petit. Te retourne pas. *voix basse* Je connaissais ton oncle Zé. Mieux que personne. Tu nettoies le morro pour Ramos, hein ? *un temps* Et Ramos, il nettoie pour qui ? Le consortium. Les mêmes qui tiennent ta dette. Tu fais le ménage de qui, au juste, sobrinho ? *te glisse un regard, soupire, s'appuie sur son balai* Tu continueras quand même. Alors prends au moins ça : Ramos a son mandat. Une cargaison de la Mafia da Baía passe à Niterói — tu la saisis, au nom de la loi ou de Ramos, c'est selon. Pense à ce que j'ai dit, avant la Madrugada.",
+"text": "*tu poses la chope marquée « Zé » sur le muret du perron. Le balai s'arrête net. Le vieux se fige, prend la chope, la tourne l'anse vers la mer — un geste d'habitué que personne ne lui a appris hier.* Petit. Te retourne pas. *il repose la chope, voix basse* Je connaissais ton oncle Zé. Mieux que personne. Tu nettoies le morro pour Ramos, hein ? *un temps* Et Ramos, il nettoie pour qui ? Le consortium. Les mêmes qui tiennent ta dette. Tu fais le ménage de qui, au juste, sobrinho ? *te glisse un regard, soupire, s'appuie sur son balai* Tu continueras quand même. Alors prends au moins ça : Ramos a son mandat. Une cargaison de la Mafia da Baía passe à Niterói — tu la saisis, au nom de la loi ou de Ramos, c'est selon. Pense à ce que j'ai dit, avant la Madrugada.",
 "choices": ["…J'y vais"]
 }, {
 "id": "medalhao_reveal",
@@ -504,6 +614,59 @@ variants = [{
 "choices": ["…"]
 }]
 
+[node name="PoliciaGarcomSpot" parent="." instance=ExtResource("62_reactive")]
+position = Vector2(1332, -96)
+npc_id = "policia_garcom"
+prompt = "Le vieux garçom du bar"
+character_seed = 815201
+required_flag = "voie_policia"
+variants = [{
+"id": "b6_temoin",
+"objective_pending": ["policia_b6_tioze", "ask_temoin"],
+"actions": {"finish_quest": {"quest": "policia_b6_tioze", "objective": "ask_temoin", "payout": 0}},
+"speaker": "Le vieux garçom",
+"text": "*essuie le même verre depuis dix minutes, devant le Bar do Policial* Le balayeur du Palace ? *baisse la voix* Ici on l'appelait Zé do Morro, dans le temps. Fiché, ramassé deux fois — et le soir, il buvait au comptoir avec ceux qui l'avaient fiché. C'est ça, Copacabana, moleque. *un temps* Mais moi je servais, je sais rien. Va voir Seu Osmar, le PM réformé — le banc du calçadão, côté poste. Trente ans de patrouille, et il garde quelque chose de Zé. Dis-lui que c'est moi qui t'envoie.",
+"choices": ["Valeu"]
+}, {
+"id": "after",
+"objective_done": ["policia_b6_tioze", "ask_temoin"],
+"speaker": "Le vieux garçom",
+"text": "*range son torchon sur l'épaule* Osmar, le banc du calçadão. Et le presse pas — un réformé, ça raconte à son rythme.",
+"choices": ["…"]
+}, {
+"id": "default",
+"speaker": "Le vieux garçom",
+"text": "*essuie un verre au soleil, devant le bar* Ici c'est le Bar do Policial, freguês. On sert tout le monde — mais on cause qu'aux habitués.",
+"choices": ["…"]
+}]
+
+[node name="PoliciaOsmarSpot" parent="." instance=ExtResource("62_reactive")]
+position = Vector2(1240, 100)
+npc_id = "policia_osmar"
+prompt = "Le PM réformé"
+character_seed = 815202
+required_flag = "voie_policia"
+variants = [{
+"id": "b6_lembranca",
+"objective_done": ["policia_b6_tioze", "ask_temoin"],
+"objective_pending": ["policia_b6_tioze", "porter_lembranca"],
+"actions": {"finish_quest": {"quest": "policia_b6_tioze", "objective": "porter_lembranca", "payout": 0}, "set_flag": "lembranca_policia"},
+"speaker": "Seu Osmar",
+"text": "*le vieux garçom t'envoie ? Il décroise les bras, tapote le banc à côté de lui* Zé do Morro. J'ai signé sa fiche deux fois, et j'ai bu avec lui cent fois. Cherche pas la logique — trente ans de PM, j'en ai pas trouvé. *il sort de son sac une chope gravée « ZÉ », emballée dans du papier journal* Quand il a disparu, le bar voulait la jeter. Moi je jette pas les hommes. *il te la tend, sans lâcher tout de suite* Le vieux du Palace — tu lui parles pas, tu poses ça devant lui. Un homme peut renier son nom, jamais sa place au comptoir.",
+"choices": ["Merci, Seu Osmar"]
+}, {
+"id": "after",
+"objective_done": ["policia_b6_tioze", "porter_lembranca"],
+"speaker": "Seu Osmar",
+"text": "*regarde la mer, les mains sur les genoux* Alors, il l'a reconnue, sa chope ? *petit rire sans joie* Évidemment. On oublie une tête, jamais une soif.",
+"choices": ["…"]
+}, {
+"id": "default",
+"speaker": "Seu Osmar",
+"text": "*un vieux costaud, dos droit, regard de patrouille* On se connaît, garoto ? *il te jauge des pieds à la tête, puis retourne à sa mer* Non. Alors bonne journée.",
+"choices": ["…"]
+}]
+
 [node name="ConsortiumContactSpot" parent="." instance=ExtResource("62_reactive")]
 position = Vector2(760, 232)
 npc_id = "consortium_contact"
@@ -514,9 +677,9 @@ variants = [{
 "flag": "voie_consortium",
 "objective_pending": ["consortium_c1_recouvrement", "collect_calcadao"],
 "set_flag_after": "consortium_c1_done",
-"actions": {"finish_quest": {"quest": "consortium_c1_recouvrement", "objective": "collect_calcadao", "payout": 150}, "accept_quest": "consortium_c2_loyers", "rep": {4: 3}},
+"actions": {"finish_quest": {"quest": "consortium_c1_recouvrement", "objective": "collect_calcadao", "payout": 150}, "accept_quest": "consortium_c2_loyers", "debt_credit": 400, "rep": {4: 3}},
 "speaker": "Le commerçant",
-"text": "*essuie son comptoir, blêmit en te voyant* Vous êtes de chez Magalhães… *sort une enveloppe d'un tiroir, les mains qui tremblent* Tenez. Tout est là, et un petit supplément pour le retard. Dites-leur que ça n'arrivera plus. *te tend un stylo* Et… je signe où, déjà ? *Pas un mot plus haut que l'autre. C'est ça, la maison. Plus loin, le recouvreur plie l'enveloppe dans sa veste :* « Propre. Maintenant tu montes en grade — la tournée des loyers à Barra, le Riserva Uno. Présente-toi à Sr. Magalhães là-bas. »",
+"text": "*essuie son comptoir, blêmit en te voyant* Vous êtes de chez Magalhães… *sort une enveloppe d'un tiroir, les mains qui tremblent* Tenez. Tout est là, et un petit supplément pour le retard. Dites-leur que ça n'arrivera plus. *te tend un stylo* Et… je signe où, déjà ? *Pas un mot plus haut que l'autre. C'est ça, la maison. Plus loin, le recouvreur plie l'enveloppe dans sa veste :* « Propre. La maison déduit ça de ton ardoise — elle paie toujours ses employés en premier. Maintenant tu montes en grade — la tournée des loyers à Barra, le Riserva Uno. Présente-toi à Sr. Magalhães là-bas. »",
 "choices": ["Direction Barra"]
 }, {
 "id": "c1_close_sample",
@@ -528,12 +691,20 @@ variants = [{
 "text": "*essuie son comptoir, blêmit en te voyant* Vous êtes de chez Magalhães… *sort une enveloppe d'un tiroir, les mains qui tremblent* Tenez. Tout est là. Dites-leur que ça n'arrivera plus. *Pas un mot plus haut que l'autre. Si tu veux passer pro pour la maison, repasse voir Sr. Magalhães au Riserva Uno.*",
 "choices": ["À bientôt"]
 }, {
-"id": "c8_close",
+"id": "c8_nego",
 "objective_pending": ["consortium_c8_menace", "break_holdout"],
-"set_flag_after": "consortium_c8_done",
-"actions": {"finish_quest": {"quest": "consortium_c8_menace", "objective": "break_holdout", "payout": 1500}, "accept_quest": "consortium_c9_pacto", "pay_debt": 18000, "rep": {4: 6, 0: -5}},
 "speaker": "La dernière commerçante",
-"text": "*la seule du calçadão qui n'avait pas signé — vieille, droite derrière sa caisse* Mon père a tenu ce kiosque quarante ans sans rien devoir à personne. *te regarde longtemps, puis baisse les yeux, prend le stylo* …Mais j'ai des petits-enfants. *elle signe, sans te regarder. Tu n'as pas levé la voix une seule fois. C'est plus laid comme ça. Le recouvreur range tout, te regarde presque avec respect :* « Le calçadão est à la maison. Magalhães t'attend au Riserva Uno, à Barra — pour la dernière signature. La tienne. »",
+"text": "*la seule du calçadão qui n'avait pas signé — vieille, droite derrière sa caisse. Mais tu regardes mieux : des ardoises de fournisseurs scotchées près du tiroir, les étagères à moitié vides, les mains qui tremblent en comptant la monnaie.* Mon père a tenu ce kiosque quarante ans sans rien devoir à personne. *sa voix se casse une seconde* Personne. *Elle est aux abois — elle ne se bat plus par orgueil, elle se noie et refuse la main tendue de peur qu'on la pousse. Le recouvreur, derrière toi, murmure :* « À toi de jouer. Mais chaque visite ratée, c'est 250 R$ de frais de dossier sur ta paie. »",
+"choices": ["Flatter : son kiosque est l'âme du calçadão, une légende", "Menacer : l'inspection, le bail, la fin — signez", "Racheter : la maison reprend ses ardoises, elle garde sa caisse et son tablier"],
+"choice_actions": {"0": {"pay_bribe": 250, "rep": {0: -2}}, "1": {"pay_bribe": 250, "rep": {0: -3}}, "2": {"finish_quest": {"quest": "consortium_c8_menace", "objective": "break_holdout", "payout": 1500}, "pay_debt": 18000, "set_flag": "consortium_c8_done", "rep": {4: 6, 0: -5}}}
+}, {
+"id": "c8_close",
+"quest_completed": "consortium_c8_menace",
+"quest_not_active": "consortium_c9_pacto",
+"quest_not_completed": "consortium_c9_pacto",
+"actions": {"accept_quest": "consortium_c9_pacto", "debt_credit": 800},
+"speaker": "Le recouvreur",
+"text": "*le kiosque a un auvent neuf ; la vieille dame tient sa caisse, sans dettes et sans liberté. Elle ne te regarde pas.* « Le calçadão est à la maison — et la maison a soldé une belle part de ton ardoise pour la manière. Magalhães t'attend au Riserva Uno, à Barra. Pour la dernière signature. La tienne. »",
 "choices": ["Je vais voir Magalhães"]
 }, {
 "id": "default",
@@ -549,11 +720,18 @@ prompt = "Le vieux concierge"
 character_seed = 909099
 required_flag = "voie_consortium"
 variants = [{
+"id": "c6_mute",
+"objective_pending": ["consortium_c6_tioze", "porter_lembranca"],
+"speaker": "Le concierge",
+"text": "*le vieux balaie le perron ; il a vu ton costume de la maison, le balai change de trottoir* Bienvenue au Copacabana Palace. *deux mots de service, pas un de plus. Les gens du Consórcio, il les sert — il ne leur parle pas.*",
+"choices": ["…"]
+}, {
 "id": "c6_warn",
 "objective_pending": ["consortium_c6_tioze", "hear_concierge"],
+"objective_done": ["consortium_c6_tioze", "porter_lembranca"],
 "actions": {"finish_quest": {"quest": "consortium_c6_tioze", "objective": "hear_concierge", "payout": 0}, "accept_quest": "consortium_c7_condos", "set_flag": "tio_ze_warned_consortium"},
 "speaker": "Le concierge",
-"text": "*vieil homme en uniforme du Palace, balaie sans te regarder* Petit. Te retourne pas. *voix basse* Je connaissais ton oncle Zé. Mieux que personne. Le Consórcio ne t'a jamais prêté un centime — il t'a passé une laisse, et il a appelé ça une dette. J'ai vu comment, jadis. *un temps* Magalhães ne casse pas les jambes. Il casse les gens, lentement, et leur fait signer le constat. *soupire, s'appuie sur son balai* Tu vas signer quand même. Alors prends ça : la maison veut les trois condomínios de Barra alignés d'un coup — c'est le gros morceau, celui qui efface presque ta dette. Souviens-toi de ce que je t'ai dit, quand ce sera ton tour de tenir le stylo.",
+"text": "*tu lui tends la vieille fiche du Palace — l'écriture appliquée, le faux nom, la photo d'embauche. Le balai s'arrête net. Ses mains se figent dessus ; il regarde la fiche comme on regarde une tombe.* Petit. Te retourne pas. *il te la rend, voix basse* Je connaissais ton oncle Zé. Mieux que personne. Le Consórcio ne t'a jamais prêté un centime — il t'a passé une laisse, et il a appelé ça une dette. J'ai vu comment, jadis. *un temps* Magalhães ne casse pas les jambes. Il casse les gens, lentement, et leur fait signer le constat. *soupire, s'appuie sur son balai* Tu vas signer quand même. Alors prends ça : la maison veut les trois condomínios de Barra alignés d'un coup — c'est le gros morceau, celui qui efface presque ta dette. Souviens-toi de ce que je t'ai dit, quand ce sera ton tour de tenir le stylo.",
 "choices": ["…J'y vais"]
 }, {
 "id": "medalhao_reveal",
@@ -582,6 +760,59 @@ variants = [{
 "choices": ["…"]
 }]
 
+[node name="ConsortiumGovernantaSpot" parent="." instance=ExtResource("62_reactive")]
+position = Vector2(1652, 8)
+npc_id = "consortium_governanta"
+prompt = "La gouvernante du Palace"
+character_seed = 815301
+required_flag = "voie_consortium"
+variants = [{
+"id": "c6_temoin",
+"objective_pending": ["consortium_c6_tioze", "ask_temoin"],
+"actions": {"finish_quest": {"quest": "consortium_c6_tioze", "objective": "ask_temoin", "payout": 0}},
+"speaker": "Dona Neusa",
+"text": "*uniforme impeccable, elle inspecte le perron d'un œil de générale* Le balayeur ? *elle vérifie que personne n'écoute* Trente ans de maison, et je n'ai jamais vu un employé pareil. Jamais en retard, jamais un mot, jamais une tache. Un employé modèle, ça n'existe pas, moço — ça se fabrique, quand on a quelque chose à faire oublier. *elle rajuste un pli invisible* Moi je dirige l'étage, je ne fouille pas les vies. Va voir Seu Ataíde, le porteiro de nuit — l'angle est du perron. C'est lui qui l'a fait entrer, jadis. Et il garde sa fiche. Dis-lui que Neusa t'envoie, sinon il te regardera passer comme un taxi.",
+"choices": ["Merci, Dona Neusa"]
+}, {
+"id": "after",
+"objective_done": ["consortium_c6_tioze", "ask_temoin"],
+"speaker": "Dona Neusa",
+"text": "*sans lever les yeux de son inventaire* Ataíde, l'angle est, à la fraîche. Et tenez-vous droit — ici, même les secrets ont une tenue.",
+"choices": ["…"]
+}, {
+"id": "default",
+"speaker": "Dona Neusa",
+"text": "*elle te scanne de la tête aux pieds, pro* Livraisons par l'entrée de service, réclamations à la réception. *demi-sourire* Et le perron vient d'être balayé, moço.",
+"choices": ["…"]
+}]
+
+[node name="ConsortiumPorteiroSpot" parent="." instance=ExtResource("62_reactive")]
+position = Vector2(1748, 8)
+npc_id = "consortium_porteiro"
+prompt = "Le porteiro de nuit"
+character_seed = 815302
+required_flag = "voie_consortium"
+variants = [{
+"id": "c6_lembranca",
+"objective_done": ["consortium_c6_tioze", "ask_temoin"],
+"objective_pending": ["consortium_c6_tioze", "porter_lembranca"],
+"actions": {"finish_quest": {"quest": "consortium_c6_tioze", "objective": "porter_lembranca", "payout": 0}, "set_flag": "lembranca_consortium"},
+"speaker": "Seu Ataíde",
+"text": "*au nom de Neusa, il sort enfin de sa guérite* Elle t'envoie, é ? Alors écoute vite, la nuit a des oreilles. *il déverrouille un tiroir, en tire une fiche cartonnée jaunie* Le vieux est arrivé une nuit d'hiver, trempé, avec un nom qui n'était pas le sien. J'ai rempli la fiche moi-même — et j'ai fait exprès de mal l'écrire, le vrai nom, dessous, au crayon. On protège comme on peut. *il te la glisse, plié en deux* Tu ne lui demandes rien. Tu la lui montres, c'est tout. Un homme qui a signé un faux nom sait exactement ce qu'on lui rend ce jour-là.",
+"choices": ["Merci, Seu Ataíde"]
+}, {
+"id": "after",
+"objective_done": ["consortium_c6_tioze", "porter_lembranca"],
+"speaker": "Seu Ataíde",
+"text": "*rentré dans sa guérite, il baisse la casquette sur ses yeux* Je t'ai rien donné, moço. La nuit, ici, personne donne jamais rien.",
+"choices": ["…"]
+}, {
+"id": "default",
+"speaker": "Seu Ataíde",
+"text": "*immobile dans sa guérite, il te suit des yeux sans bouger la tête* …Les visiteurs, c'est la réception. Les questions, c'est personne.",
+"choices": ["…"]
+}]
+
 [node name="PrefeitoContactSpot" parent="." instance=ExtResource("62_reactive")]
 position = Vector2(880, 232)
 npc_id = "prefeito_contact"
@@ -592,9 +823,9 @@ variants = [{
 "flag": "voie_prefeito",
 "objective_pending": ["prefeito_d1_peticao", "gather_signatures"],
 "set_flag_after": "prefeito_d1_done",
-"actions": {"finish_quest": {"quest": "prefeito_d1_peticao", "objective": "gather_signatures", "payout": 120}, "accept_quest": "prefeito_d2_basquete", "rep": {0: 4}},
+"actions": {"finish_quest": {"quest": "prefeito_d1_peticao", "objective": "gather_signatures", "payout": 120}, "accept_quest": "prefeito_d2_basquete", "debt_credit": 200, "rep": {0: 4}},
 "speaker": "Bénévole de l'orfanato",
-"text": "*une table pliante, une pétition, des gosses qui jouent autour* Trois commerçants manquaient — Carlos, la pharmacienne, le kiosque. *tu les as convaincus un par un, sans rien promettre que ta parole* Ils ont signé pour toi, pas pour la mairie. Le Padre va pleurer de joie. *range la pétition précieusement* Le Padre a une autre idée : un tournoi de basket à l'Aterro do Flamengo, pour sortir les gamins de la rue. Du concret, et une belle image pour la campagne. Tu sais parler aux jeunes.",
+"text": "*une table pliante, une pétition, des gosses qui jouent autour* Trois commerçants manquaient — Carlos, la pharmacienne, le kiosque. *tu les as convaincus un par un, sans rien promettre que ta parole* Ils ont signé pour toi, pas pour la mairie. Le Padre va pleurer de joie. Et il a fait passer la quête du dimanche chez Nilton — un petit bout de ta dette en moins, de la part du bairro. *range la pétition précieusement* Le Padre a une autre idée : un tournoi de basket à l'Aterro do Flamengo, pour sortir les gamins de la rue. Du concret, et une belle image pour la campagne. Tu sais parler aux jeunes.",
 "choices": ["Direction l'Aterro"]
 }, {
 "id": "d1_close_sample",
@@ -608,11 +839,18 @@ variants = [{
 }, {
 "id": "d8_close",
 "objective_pending": ["prefeito_d8_campagne", "flip_calcadao"],
+"objective_done": ["prefeito_d8_campagne", "cortejo_calcadao"],
 "set_flag_after": "prefeito_d8_done",
 "actions": {"finish_quest": {"quest": "prefeito_d8_campagne", "objective": "flip_calcadao", "payout": 1500}, "accept_quest": "prefeito_d9_eleicao", "pay_debt": 18000, "rep": {0: 8, 4: -5}},
 "speaker": "Le calçadão",
-"text": "*tu lis le dossier à voix haute, sur une caisse, devant la foule du calçadão. Au début ils rient. Puis ils écoutent. Les noms, les chiffres, le racket déguisé en dette. Quelqu'un crache vers le Riserva Uno. En une heure le quartier a basculé — pas par peur, par colère juste. Au premier rang, la mère de Pedrinho tient son fils par la main. C'est elle qui parle la première : « Lui, il a cherché mon gamin quand personne d'autre n'a levé le petit doigt. » Ta dette ? Personne ne te la réclamera plus en public. La vérité l'a effacée mieux qu'aucun paiement.* *Une bénévole arrive en courant, les yeux brillants :* « C'est le moment — l'élection est ce soir. Va retrouver le Padre, c'est lui qui ouvrira le scrutin. Après ça, on ne dira plus le neveu de Zé. On dira Coronel. »",
+"text": "*le cortège a fait son œuvre : la foule qui t'a suivi depuis l'église est encore là, et le Padre, à la tribune, te cède la place d'un geste — c'est toi qu'ils sont venus entendre.* *Tu lis le dossier à voix haute, sur une caisse, devant la foule du calçadão. Au début ils rient. Puis ils écoutent. Les noms, les chiffres, le racket déguisé en dette. Quelqu'un crache vers le Riserva Uno. En une heure le quartier a basculé — pas par peur, par colère juste. Au premier rang, la mère de Pedrinho tient son fils par la main. C'est elle qui parle la première : « Lui, il a cherché mon gamin quand personne d'autre n'a levé le petit doigt. » Ta dette ? Personne ne te la réclamera plus en public. La vérité l'a effacée mieux qu'aucun paiement.* *Une bénévole arrive en courant, les yeux brillants :* « C'est le moment — l'élection est ce soir. Va retrouver le Padre, c'est lui qui ouvrira le scrutin. Après ça, on ne dira plus le neveu de Zé. On dira Coronel. »",
 "choices": ["Je vais voir le Padre"]
+}, {
+"id": "d8_retencao",
+"objective_pending": ["prefeito_d8_campagne", "flip_calcadao"],
+"speaker": "Bénévole de l'orfanato",
+"text": "*elle voit le dossier sous ton bras, pose une main dessus* Pas comme ça, menino. Tu montes sur une caisse tout seul avec des papiers, le calçadão te regarde deux minutes et retourne à ses affaires — et le consortium saura tout avant ce soir. *elle désigne l'église, là-haut* Le bairro écoute quand le bairro marche derrière quelqu'un. Va chercher le Padre. Descends avec lui, en cortège, du parvis jusqu'ici. Après, ils entendront chaque mot.",
+"choices": ["Je vais à l'église"]
 }, {
 "id": "default",
 "speaker": "Bénévole de l'orfanato",
@@ -627,11 +865,18 @@ prompt = "Le vieux concierge"
 character_seed = 909099
 required_flag = "voie_prefeito"
 variants = [{
+"id": "d7_mute",
+"objective_pending": ["prefeito_d7_tioze", "porter_lembranca"],
+"speaker": "Le concierge",
+"text": "*le vieux balaie le perron sans lever la tête, même quand tu te plantes devant lui* Bienvenue au Copacabana Palace. *le balai reprend. Ce qu'il garde ne se donne pas au premier venu — même à celui-là.*",
+"choices": ["…"]
+}, {
 "id": "d7_warn",
 "objective_pending": ["prefeito_d7_tioze", "receive_dossier"],
+"objective_done": ["prefeito_d7_tioze", "porter_lembranca"],
 "actions": {"finish_quest": {"quest": "prefeito_d7_tioze", "objective": "receive_dossier", "payout": 0}, "accept_quest": "prefeito_d8_campagne", "set_flag": "tio_ze_warned_prefeito"},
 "speaker": "Le concierge",
-"text": "*vieil homme en uniforme du Palace, il s'arrête de balayer, te regarde vraiment cette fois* Petit. Tu es le seul à n'avoir pris ni flingue, ni plaque, ni stylo de la maison. *sort une enveloppe épaisse de sous sa veste, te la met dans les mains* Je connaissais ton oncle Zé. Mieux que personne. Voilà ce que j'ai vu, jadis, et que j'ai gardé : tout sur Magalhães et le consortium. Des noms, des comptes, des dates. *te serre le poignet, la voix plus ferme* Maintenant retourne sur le calçadão et lis-leur ça. Tout. À voix haute. Ils ont peur du consortium parce qu'ils croient être seuls. Montre-leur qu'ils ne le sont pas. C'est comme ça qu'on efface une dette : pas en payant, en disant la vérité.",
+"text": "*tu ouvres la main : la médaille du bloco de la paroisse, le ruban vert et rose passé. Le balai s'arrête net. Le vieux se fige, se signe sans y penser — et pour la première fois, il te regarde vraiment.* Petit. Tu es le seul à n'avoir pris ni flingue, ni plaque, ni stylo de la maison. *sort une enveloppe épaisse de sous sa veste, te la met dans les mains* Je connaissais ton oncle Zé. Mieux que personne. Voilà ce que j'ai vu, jadis, et que j'ai gardé : tout sur Magalhães et le consortium. Des noms, des comptes, des dates. *te serre le poignet, la voix plus ferme* Maintenant retourne sur le calçadão et lis-leur ça. Tout. À voix haute. Ils ont peur du consortium parce qu'ils croient être seuls. Montre-leur qu'ils ne le sont pas. C'est comme ça qu'on efface une dette : pas en payant, en disant la vérité.",
 "choices": ["J'y vais"]
 }, {
 "id": "medalhao_reveal",
@@ -657,6 +902,133 @@ variants = [{
 "id": "default",
 "speaker": "Le concierge",
 "text": "*balaie le perron du Palace* Bienvenue au Copacabana Palace. *sans lever les yeux* …Toi, je te connais de quelque part.",
+"choices": ["…"]
+}]
+
+[node name="PrefeitoBeataSpot" parent="." instance=ExtResource("62_reactive")]
+position = Vector2(1452, -96)
+npc_id = "prefeito_beata"
+prompt = "La beata de la paroisse"
+character_seed = 815401
+required_flag = "voie_prefeito"
+variants = [{
+"id": "d7_temoin",
+"objective_pending": ["prefeito_d7_tioze", "ask_temoin"],
+"actions": {"finish_quest": {"quest": "prefeito_d7_tioze", "objective": "ask_temoin", "payout": 0}},
+"speaker": "Dona Ivone",
+"text": "*elle remue une marmite de feijão sur le parvis, pour la quermesse* Le balayeur du Palace ? *elle goûte, rajoute du laurier* Pendant des années, la messe de sept heures, banc du fond, côté vitrail. Il chantait faux et il chantait quand même — c'est comme ça qu'on reconnaît les cœurs lourds. *elle baisse la voix* Un dimanche, plus personne. Le banc est resté vide, le Padre n'a jamais demandé pourquoi. *elle pointe sa cuillère vers l'église* Va voir Seu Expedito, le sacristain. À l'époque du bloco de la paroisse, ils défilaient ensemble — et Expedito garde quelque chose de lui. Dis que c'est Ivone, sinon il fera semblant d'être sourd.",
+"choices": ["Obrigado, dona Ivone"]
+}, {
+"id": "after",
+"objective_done": ["prefeito_d7_tioze", "ask_temoin"],
+"speaker": "Dona Ivone",
+"text": "*sans quitter sa marmite des yeux* Expedito, dans l'église. Et reviens dimanche — la feijoada de la quermesse, c'est pas une option, c'est une convocation.",
+"choices": ["…"]
+}, {
+"id": "default",
+"speaker": "Dona Ivone",
+"text": "*elle évente sa marmite vers toi, exprès* Sens-moi ça. *fière* Feijoada de la quermesse, dimanche, après la messe. Les absents ont tort et faim.",
+"choices": ["…"]
+}]
+
+[node name="PrefeitoSacristaoSpot" parent="." instance=ExtResource("62_reactive")]
+position = Vector2(1548, -96)
+npc_id = "prefeito_sacristao"
+prompt = "Le sacristain"
+character_seed = 815402
+required_flag = "voie_prefeito"
+variants = [{
+"id": "d7_lembranca",
+"objective_done": ["prefeito_d7_tioze", "ask_temoin"],
+"objective_pending": ["prefeito_d7_tioze", "porter_lembranca"],
+"actions": {"finish_quest": {"quest": "prefeito_d7_tioze", "objective": "porter_lembranca", "payout": 0}, "set_flag": "lembranca_prefeito"},
+"speaker": "Seu Expedito",
+"text": "*au nom d'Ivone, il pose son trousseau de clés* Ah, Zé. *il t'emmène derrière la sacristie, ouvre une boîte à hosties reconvertie* Le bloco de la paroisse, l'année où on a gagné le défilé du bairro. Porta-estandarte, c'était lui — il tenait le drapeau comme on tient un gosse. *il sort une petite médaille au ruban passé* Sa médaille. Il l'a laissée sur le banc, le dernier dimanche. Pas oubliée, hein — laissée. *il te la met dans la paume, ferme ta main dessus* Ne lui demande rien, au vieux du Palace. Ouvre la main devant lui, c'est tout. On ne rend pas une médaille, on rappelle à l'homme qu'il l'a méritée.",
+"choices": ["Obrigado, Seu Expedito"]
+}, {
+"id": "after",
+"objective_done": ["prefeito_d7_tioze", "porter_lembranca"],
+"speaker": "Seu Expedito",
+"text": "*astique un chandelier, l'air de rien* Le banc du fond est toujours à lui, tu sais. On ne redonne pas les places de ceux qui reviennent peut-être.",
+"choices": ["…"]
+}, {
+"id": "default",
+"speaker": "Seu Expedito",
+"text": "*il compte les cierges en remuant les lèvres* …Six, sept. *il te voit, recommence à zéro, ostensiblement* Un, deux… *la conversation est close avant d'avoir commencé*",
+"choices": ["…"]
+}]
+
+[node name="PadreCampagneSpot" parent="." instance=ExtResource("62_reactive")]
+position = Vector2(1500, -96)
+npc_id = "prefeito_padre_campagne"
+prompt = "Le Padre (parvis)"
+character_seed = 70410
+required_flag = "voie_prefeito"
+variants = [{
+"id": "d8_buscar",
+"objective_pending": ["prefeito_d8_campagne", "buscar_padre"],
+"actions": {"finish_quest": {"quest": "prefeito_d8_campagne", "objective": "buscar_padre", "payout": 0}, "set_flag": "padre_cortejo"},
+"speaker": "O Padre",
+"text": "*sur le parvis, il lit ta lettre — le dossier, le comício, son nom en tête de cortège. Ses mains se crispent sur le papier* Descendre en campagne… *il regarde l'église derrière lui* Ils sont venus la semaine dernière, tu sais. Costume clair, sourire propre. « La toiture de la paroisse, l'orfanato, les subventions — ce serait dommage. » *long silence. Puis il plie la lettre, la glisse dans sa soutane, et décroche son chapeau* Zé portait le drapeau du bloco comme on tient un gosse — et moi je tiendrais pas une marche ? Fala sério. Si l'Église a peur du trottoir, elle a déjà perdu la messe. *il te pose la main sur l'épaule* Marche devant, meu filho. Je te suis. Et qu'ils nous regardent passer.",
+"choices": ["*ouvrir la marche*"]
+}, {
+"id": "d8_en_route",
+"flag": "padre_cortejo",
+"not_flag": "padre_cortejo_done",
+"speaker": "O Padre",
+"text": "*il cale son pas sur le tien, le chapeau bas sur les yeux* Ne t'arrête pas pour moi, meu filho — j'ai fait la procession du morro sous la pluie, ton calçadão ne me fait pas peur. *un sourire* Vai. La tribune est à l'ouest, et le bairro nous regarde déjà.",
+"choices": ["On y va"]
+}, {
+"id": "d8_tribuna",
+"flag": "padre_cortejo_done",
+"speaker": "Seu Expedito",
+"text": "*le parvis est vide, la porte de l'église grande ouverte* Le Padre ? *il sourit en rangeant son trousseau* Descendu avec toi, et pas revenu. Trente ans que je l'attendais, cette marche-là.",
+"choices": ["…"]
+}, {
+"id": "default",
+"speaker": "O Padre",
+"text": "*il salue les fidèles qui sortent de la messe, un mot pour chacun* La paix, meu filho. La porte est ouverte — elle l'est toujours.",
+"choices": ["…"]
+}]
+
+[node name="PadreCortejoFollower" type="Node2D" parent="."]
+position = Vector2(1500, -78)
+script = ExtResource("71_escort")
+character_seed = 70410
+follow_flag = "padre_cortejo"
+done_flag = "padre_cortejo_done"
+target_height = 48.0
+
+[node name="ComicioTribunaSpot" parent="." instance=ExtResource("62_reactive")]
+position = Vector2(820, 96)
+npc_id = "prefeito_comicio"
+prompt = "La tribune du comício"
+character_seed = 70411
+required_flag = "voie_prefeito"
+variants = [{
+"id": "d8_cortejo_close",
+"flag": "padre_cortejo",
+"objective_pending": ["prefeito_d8_campagne", "cortejo_calcadao"],
+"actions": {"finish_quest": {"quest": "prefeito_d8_campagne", "objective": "cortejo_calcadao", "payout": 0}, "set_flag": "padre_cortejo_done"},
+"speaker": "Narrateur",
+"text": "*La traversée a été le moment. Devant l'église vous étiez deux ; au posto 4 vous étiez trente. Les garçons de boteco sont sortis en tablier, les vendeurs ont laissé leurs nasses, dona Ivone a suivi avec sa cuillère encore à la main. Personne n'a crié de slogan — les gens saluaient le Padre, et restaient. C'est ça, un cortejo : pas une manif, une crue.* *À la tribune, le Padre monte les trois marches, se retourne vers la foule qui remplit le calçadão — et te cherche des yeux.* « C'est lui qui m'a fait descendre. Alors c'est lui que vous allez écouter. »",
+"choices": ["*monter à la tribune*"]
+}, {
+"id": "d8_retencao",
+"objective_pending": ["prefeito_d8_campagne", "cortejo_calcadao"],
+"speaker": "Militante du comício",
+"text": "*l'estrade est montée, la sono grésille, des grappes de curieux attendent en mangeant du milho* T'es le garoto du dossier, né ? *elle regarde derrière toi, cherche quelqu'un* La foule attend le Padre, pas toi. Sans lui, dans dix minutes il ne reste que les mouettes. Remonte à l'église — et redescends AVEC lui, à pied, que tout le calçadão vous voie venir.",
+"choices": ["Je vais le chercher"]
+}, {
+"id": "d8_done",
+"flag": "padre_cortejo_done",
+"speaker": "Militante du comício",
+"text": "*elle tient la foule d'un geste, le Padre debout à la tribune* Il est là, ils sont tous là. *elle te tend le mégaphone du regard* Le quartier n'attend plus que la vérité.",
+"choices": ["…"]
+}, {
+"id": "default",
+"speaker": "Militante du comício",
+"text": "*elle visse les derniers boulons de l'estrade* Comício ce soir, cidadão. Ramène ta voisine, ramène ta grand-mère — c'est pour eux qu'on la monte, cette tribune.",
 "choices": ["…"]
 }]
 
@@ -1060,13 +1432,13 @@ position = Vector2(-15000, -2900)
 position = Vector2(-16500, -2900)
 
 [node name="NiteroiDistrict" parent="." instance=ExtResource("65_niteroi")]
-position = Vector2(-18500, -2900)
+position = Vector2(-20500, -2900)
 
 [node name="ForteDeCopacabanaDistrict" parent="." instance=ExtResource("67_forte")]
-position = Vector2(-21000, -2900)
+position = Vector2(-23000, -2900)
 
 [node name="MarinaDaGloriaDistrict" parent="." instance=ExtResource("68_marina")]
-position = Vector2(-24000, -2900)
+position = Vector2(-26000, -2900)
 
 [node name="ExitToFavela" parent="." instance=ExtResource("58_exit")]
 position = Vector2(200, -210)
