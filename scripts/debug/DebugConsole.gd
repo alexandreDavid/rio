@@ -11,6 +11,7 @@ extends Node
 #   Ctrl/Cmd + F4 ou 4 : skip → Acte 4 voie POLÍCIA (+ chaîne act3_policia + endgame)
 #   Ctrl/Cmd + Shift + F4 ou 4 : Acte 4 voie TRÁFICO
 #   Ctrl/Cmd + Alt + F4 ou 4   : Acte 4 voie PREFEITO
+#   Ctrl/Cmd + F6 ou 6 : lâche un cobrador (course-poursuite) sur le joueur
 #
 # Sur Mac, les F-keys nécessitent souvent Fn (Fn+F1 par défaut). Les digits
 # (1, 2, 3, 4) marchent dans tous les cas et sont préférables.
@@ -67,6 +68,9 @@ func _input(event: InputEvent) -> void:
 				_skip_to_act4(CampaignManager.Endgame.PREFEITO)
 			else:
 				_skip_to_act4(CampaignManager.Endgame.POLICIA)
+		KEY_F6, KEY_6:
+			CreditorVisitManager.force_chase()
+			_toast_msg("Cobrador lâché — corre !")
 		_:
 			return
 	get_viewport().set_input_as_handled()

@@ -7,6 +7,53 @@ enum State { UNAVAILABLE, AVAILABLE, ACTIVE, COMPLETED, FAILED }
 var _state: Dictionary = {}          # quest_id -> State(int)
 var _objectives: Dictionary = {}     # quest_id -> { objective_id -> bool }
 var _quests: Dictionary = {}         # quest_id -> Quest resource
+# Objectifs CHRONO en cours : quest_id -> { objective_id -> secondes restantes }.
+# Tickés en _process ; expiration = échec de la quête (le client n'attend pas).
+var _chronos: Dictionary = {}
+
+func _ready() -> void:
+	EventBus.minigame_ended.connect(_on_minigame_ended)
+	EventBus.chase_ended.connect(_on_chase_ended)
+
+func _process(delta: float) -> void:
+	if _chronos.is_empty():
+		return
+	for quest_id in _chronos.keys():
+		var per_obj: Dictionary = _chronos[quest_id]
+		for objective_id in per_obj.keys():
+			per_obj[objective_id] = float(per_obj[objective_id]) - delta
+			var left: float = float(per_obj[objective_id])
+			var quest: Quest = _quests.get(quest_id)
+			var label: String = quest.display_name if quest else quest_id
+			EventBus.chrono_updated.emit("quest:%s" % quest_id, label, max(left, 0.0))
+			if left <= 0.0:
+				EventBus.notification_requested.emit("⏱ Trop tard — %s a échoué." % label,
+					Color(0.95, 0.45, 0.4, 1))
+				fail(quest_id)
+				return
+
+# --- Complétion mécanique (objectifs typés) ---
+
+func _on_minigame_ended(minigame_id: String, result: Dictionary) -> void:
+	var ok: bool = bool(result.get("qualifies", result.get("won", false)))
+	if not ok:
+		return
+	_auto_complete_matching(func(obj: QuestObjective) -> bool:
+		return obj.kind == QuestObjective.Kind.MINIJEU and obj.minigame_id == minigame_id)
+
+func _on_chase_ended(chaser_id: String, escaped: bool) -> void:
+	if not escaped:
+		return
+	_auto_complete_matching(func(obj: QuestObjective) -> bool:
+		return obj.kind == QuestObjective.Kind.FUITE \
+			and (obj.chaser_id == "" or obj.chaser_id == chaser_id))
+
+func _auto_complete_matching(predicate: Callable) -> void:
+	for quest_id in get_active_ids():
+		var quest: Quest = _quests[quest_id]
+		for obj in quest.objectives:
+			if not is_objective_done(quest_id, obj.id) and predicate.call(obj):
+				complete_objective(quest_id, obj.id)
 
 func register_quest(quest: Quest) -> void:
 	if quest.id == "":
@@ -51,6 +98,10 @@ func accept(quest_id: String) -> bool:
 	var quest: Quest = _quests[quest_id]
 	for obj in quest.objectives:
 		_objectives[quest_id][obj.id] = false
+		if obj.kind == QuestObjective.Kind.CHRONO and obj.time_limit_sec > 0.0:
+			if not _chronos.has(quest_id):
+				_chronos[quest_id] = {}
+			_chronos[quest_id][obj.id] = obj.time_limit_sec
 	EventBus.quest_accepted.emit(quest_id)
 	return true
 
@@ -119,6 +170,10 @@ func complete_objective(quest_id: String, objective_id: String, auto_pay_reward:
 		push_warning("QuestManager: unknown objective %s on %s" % [objective_id, quest_id])
 		return
 	_objectives[quest_id][objective_id] = true
+	if _chronos.has(quest_id):
+		_chronos[quest_id].erase(objective_id)
+		if _chronos[quest_id].is_empty():
+			_clear_chronos(quest_id)
 	EventBus.quest_updated.emit(quest_id, objective_id)
 	if _all_mandatory_done(quest_id):
 		_complete(quest_id, auto_pay_reward)
@@ -126,8 +181,13 @@ func complete_objective(quest_id: String, objective_id: String, auto_pay_reward:
 func fail(quest_id: String) -> void:
 	if get_state(quest_id) != State.ACTIVE:
 		return
+	_clear_chronos(quest_id)
 	_state[quest_id] = State.FAILED
 	EventBus.quest_failed.emit(quest_id)
+
+func _clear_chronos(quest_id: String) -> void:
+	if _chronos.erase(quest_id):
+		EventBus.chrono_cleared.emit("quest:%s" % quest_id)
 
 func _all_mandatory_done(quest_id: String) -> bool:
 	var quest: Quest = _quests[quest_id]
@@ -139,6 +199,7 @@ func _all_mandatory_done(quest_id: String) -> bool:
 	return true
 
 func _complete(quest_id: String, auto_pay_reward: bool = true) -> void:
+	_clear_chronos(quest_id)
 	_state[quest_id] = State.COMPLETED
 	var quest: Quest = _quests[quest_id]
 	if auto_pay_reward and quest.money_reward != 0 and GameManager.player:
@@ -150,7 +211,11 @@ func _complete(quest_id: String, auto_pay_reward: bool = true) -> void:
 	EventBus.quest_completed.emit(quest_id)
 
 func serialize() -> Dictionary:
-	return {"state": _state.duplicate(), "objectives": _objectives.duplicate(true)}
+	return {
+		"state": _state.duplicate(),
+		"objectives": _objectives.duplicate(true),
+		"chronos": _chronos.duplicate(true),
+	}
 
 func deserialize(data: Dictionary) -> void:
 	# Tolérance aux quêtes disparues : une save peut référencer un quest_id
@@ -160,6 +225,7 @@ func deserialize(data: Dictionary) -> void:
 	# est complet ici.
 	_state = _keep_known(data.get("state", {}))
 	_objectives = _keep_known(data.get("objectives", {}))
+	_chronos = _keep_known(data.get("chronos", {}))
 
 func _keep_known(saved: Dictionary) -> Dictionary:
 	var kept: Dictionary = {}

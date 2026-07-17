@@ -35,6 +35,11 @@ const POLICE_SCENARIO: Dictionary = {
 	"override_chance": 0.5,  # 50% que la visite soit Borges au lieu du consortium
 }
 
+# Au-delà de ce seuil de dette, une partie des visites devient physique : un
+# cobrador surgit et course le joueur (CobradorChase) au lieu de parler.
+const MIN_DEBT_FOR_CHASE: int = 500
+const CHASE_CHANCE: float = 0.45
+
 var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
 var _last_visit_time: float = 0.0
 var _elapsed_since_check: float = 0.0
@@ -94,6 +99,10 @@ func _try_trigger_visit() -> void:
 
 func _trigger_visit(debt_remaining: int) -> void:
 	_last_visit_time = Time.get_ticks_msec() / 1000.0
+	# Dette lourde : la moitié des visites se jouent dans la rue, pas en dialogue.
+	if debt_remaining >= MIN_DEBT_FOR_CHASE and _rng.randf() < CHASE_CHANCE \
+			and _spawn_chase():
+		return
 	# Si commissaire_alerted posé, 50% des visites sont des shakedowns police.
 	if CampaignManager.has_flag(POLICE_SCENARIO.flag) and _rng.randf() < POLICE_SCENARIO.override_chance:
 		DialogueBridge.start_dialogue(POLICE_SCENARIO.npc_id, POLICE_SCENARIO.knot)
@@ -123,10 +132,19 @@ func _pick_scenario(debt: int) -> String:
 			return id
 	return weights.keys()[0]
 
+# Spawne un cobrador (config par défaut de CobradorChase). Retourne false si
+# impossible (pas de joueur, chasse déjà en cours) — le scénario dialogue
+# reprend alors la main.
+func _spawn_chase() -> bool:
+	return CobradorChase.spawn() != null
+
 # API publique pour debug / sauvegarde
 func force_visit() -> void:
 	_last_visit_time = -COOLDOWN_SEC
 	_trigger_visit(max(CampaignManager.debt_remaining(), MIN_DEBT_FOR_VISIT))
+
+func force_chase() -> void:
+	_spawn_chase()
 
 func set_enabled(enabled: bool) -> void:
 	_enabled = enabled

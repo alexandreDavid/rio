@@ -56,6 +56,9 @@ var _follow_distance: float = FOLLOW_DEFAULT_DISTANCE
 var _follow_district_listener_connected: bool = false
 
 func _ready() -> void:
+	# Groupe global : permet aux systèmes de monde (altinha, événements de rue)
+	# de trouver les NPCs proches sans référence directe.
+	add_to_group("npc")
 	# Fallback si @export n'a pas résolu (hérédité de scène + script override).
 	if interactable == null:
 		interactable = get_node_or_null("Interactable") as Interactable

@@ -6,6 +6,14 @@ extends CharacterBody2D
 const WALK_SPEED: float = 80.0
 const RUN_SPEED: float = 140.0
 
+# Sprint sous stamina : courir draine, marcher récupère. À sec → essoufflé
+# (forcé de marcher) jusqu'à re-remplir un quart de la jauge. C'est ce qui rend
+# les courses-poursuites (cobrador) et livraisons chronométrées tendues.
+const RUN_DRAIN_PER_SEC: float = 7.0
+const STAMINA_RECOVER_PER_SEC: float = 14.0
+const WINDED_RECOVER_RATIO: float = 0.25
+var _winded: bool = false
+
 @onready var visual: Node2D = $Visual
 @onready var camera: Camera2D = $Camera2D
 @onready var inventory: Node = $Inventory
@@ -26,6 +34,7 @@ func _ready() -> void:
 	EventBus.interaction_unavailable.connect(_on_interaction_unavailable)
 	EventBus.dialogue_started.connect(_on_dialogue_started)
 	EventBus.dialogue_ended.connect(_on_dialogue_ended)
+	EventBus.altinha_requested.connect(_on_altinha_requested)
 	# Sécurité : si une save a été faite pendant un freeze (cutscene ou
 	# dialogue interrompu), au reload on s'assure que le joueur est éveillé.
 	if SaveSystem.has_signal("save_loaded"):
@@ -64,7 +73,19 @@ func _physics_process(delta: float) -> void:
 	if input.length() > 0.01:
 		input = input.normalized()
 		_facing = input
-	var speed: float = RUN_SPEED if Input.is_action_pressed("run") else WALK_SPEED
+	var stam: Stamina = stamina as Stamina
+	if _winded and stam and stam.ratio() >= WINDED_RECOVER_RATIO:
+		_winded = false
+	var running: bool = Input.is_action_pressed("run") and input.length() > 0.01 \
+		and not _winded and (stam == null or not stam.is_exhausted())
+	if stam:
+		if running:
+			stam.drain(RUN_DRAIN_PER_SEC * delta)
+			if stam.is_exhausted():
+				_winded = true
+		else:
+			stam.recover(STAMINA_RECOVER_PER_SEC * delta)
+	var speed: float = RUN_SPEED if running else WALK_SPEED
 	velocity = input * speed
 	move_and_slide()
 	_update_visual(delta)
@@ -98,6 +119,51 @@ func set_mounted(vehicle: Node) -> void:
 	set_process_unhandled_input(vehicle == null)
 	if vehicle:
 		velocity = Vector2.ZERO
+
+func is_mounted() -> bool:
+	return _mounted_vehicle != null
+
+# Altinha : le bouton ⚽ (MobileControls, visible sur le sable) lance le
+# mini-jeu en scène additive — même pattern que les launchers (VolleyLauncher),
+# mais sans prop dans le monde : la plage entière est le launcher.
+const ALTINHA_SCENE_PATH: String = "res://scenes/minigames/Altinha.tscn"
+var _altinha_game: Node = null
+var _altinha_world_cache: Node = null
+var _altinha_ui_cache: Node = null
+
+func _on_altinha_requested() -> void:
+	if _mounted_vehicle != null or _altinha_game != null:
+		return
+	var packed: PackedScene = load(ALTINHA_SCENE_PATH) as PackedScene
+	if packed == null:
+		push_error("[Player] scène altinha introuvable : " + ALTINHA_SCENE_PATH)
+		return
+	_altinha_game = packed.instantiate()
+	var root: Node = get_tree().current_scene
+	_altinha_world_cache = root.get_node_or_null("World")
+	_altinha_ui_cache = root.get_node_or_null("UI")
+	if _altinha_world_cache:
+		_altinha_world_cache.visible = false
+		_altinha_world_cache.process_mode = Node.PROCESS_MODE_DISABLED
+	if _altinha_ui_cache:
+		_altinha_ui_cache.visible = false
+	root.add_child(_altinha_game)
+	if _altinha_game.has_signal("match_ended"):
+		_altinha_game.match_ended.connect(_on_altinha_ended)
+
+func _on_altinha_ended(_qualifies: bool, _score: int) -> void:
+	if _altinha_game:
+		_altinha_game.queue_free()
+		_altinha_game = null
+	if _altinha_world_cache:
+		_altinha_world_cache.visible = true
+		_altinha_world_cache.process_mode = Node.PROCESS_MODE_INHERIT
+		_altinha_world_cache = null
+	if _altinha_ui_cache:
+		_altinha_ui_cache.visible = true
+		_altinha_ui_cache = null
+	if camera:
+		camera.make_current()
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("interact"):

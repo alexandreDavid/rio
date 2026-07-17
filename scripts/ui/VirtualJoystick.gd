@@ -6,6 +6,9 @@ extends Control
 
 @export var radius: float = 80.0
 @export var dead_zone: float = 0.25
+# Déflexion quasi complète = sprint ("run"). Sans ça, courir n'existe pas au
+# tactile (l'action n'est mappée que sur Shift).
+@export var run_threshold: float = 0.85
 
 var _touch_index: int = -1
 var _knob_offset: Vector2 = Vector2.ZERO
@@ -51,6 +54,10 @@ func _update_knob(pos: Vector2) -> void:
 func _apply_actions(axis: Vector2) -> void:
 	_set_axis("move_left", "move_right", axis.x)
 	_set_axis("move_forward", "move_back", axis.y)
+	if axis.length() >= run_threshold:
+		Input.action_press("run")
+	else:
+		Input.action_release("run")
 
 func _set_axis(neg_action: String, pos_action: String, value: float) -> void:
 	if value < -dead_zone:

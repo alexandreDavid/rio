@@ -29,6 +29,17 @@ signal corn_cart_state_changed(carrying: bool)
 signal corn_stock_changed(remaining: int)
 signal customer_served(npc_id: String)
 
+signal chase_started(chaser_id: String)
+signal chase_ended(chaser_id: String, escaped: bool)
+
+# Chronos affichés au HUD (quêtes CHRONO, livraisons dynamiques…). `source`
+# identifie l'émetteur ("quest:<id>", "mission:<cat>") pour le clear ciblé.
+signal chrono_updated(source: String, label: String, seconds_left: float)
+signal chrono_cleared(source: String)
+
+# Bouton ⚽ (sable) → PlayerController lance le mini-jeu Altinha en additif.
+signal altinha_requested()
+
 signal debt_paid(amount: int, remaining: int)
 signal act_changed(new_act: int)
 signal endgame_chosen(path: int)

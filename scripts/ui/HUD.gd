@@ -47,6 +47,11 @@ var _active_interactables: Array[Node] = []
 var _signaled_main_ids: Dictionary = {}
 var _main_toast_seeded: bool = false
 
+# Chronos actifs (quêtes CHRONO, livraisons dynamiques) : source -> {label, left}.
+# On affiche le plus urgent ; label construit en code (pas de nœud dans HUD.tscn).
+var _chronos: Dictionary = {}
+var _chrono_label: Label = null
+
 func _ready() -> void:
 	EventBus.money_changed.connect(_on_money_changed)
 	EventBus.interaction_available.connect(_on_interaction_available)
@@ -92,6 +97,9 @@ func _ready() -> void:
 		close_sheet_button.pressed.connect(_toggle_phone)
 	if photo_button:
 		photo_button.pressed.connect(_on_photo_pressed)
+	EventBus.chrono_updated.connect(_on_chrono_updated)
+	EventBus.chrono_cleared.connect(_on_chrono_cleared)
+	_setup_chrono_label()
 	_init_abilities()
 	_setup_button_feedback()
 	# Fondu doux à chaque changement de district (masque la téléportation).
@@ -229,6 +237,51 @@ func _process(_delta: float) -> void:
 	# Barre de progression de la phase de la journée.
 	if phase_bar:
 		phase_bar.value = TimeOfDay.phase_progress()
+
+func _setup_chrono_label() -> void:
+	_chrono_label = Label.new()
+	_chrono_label.name = "ChronoLabel"
+	_chrono_label.anchor_left = 0.5
+	_chrono_label.anchor_right = 0.5
+	_chrono_label.offset_left = -220.0
+	_chrono_label.offset_right = 220.0
+	_chrono_label.offset_top = 52.0
+	_chrono_label.offset_bottom = 84.0
+	_chrono_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_chrono_label.add_theme_font_size_override("font_size", 18)
+	_chrono_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.85))
+	_chrono_label.add_theme_constant_override("outline_size", 6)
+	_chrono_label.hide()
+	add_child(_chrono_label)
+
+func _on_chrono_updated(source: String, label: String, seconds_left: float) -> void:
+	_chronos[source] = {"label": label, "left": seconds_left}
+	_refresh_chrono()
+
+func _on_chrono_cleared(source: String) -> void:
+	_chronos.erase(source)
+	_refresh_chrono()
+
+func _refresh_chrono() -> void:
+	if _chrono_label == null:
+		return
+	if _chronos.is_empty():
+		_chrono_label.hide()
+		return
+	# Le plus urgent gagne l'affichage.
+	var best_left: float = INF
+	var best_label: String = ""
+	for source in _chronos:
+		var entry: Dictionary = _chronos[source]
+		if float(entry.left) < best_left:
+			best_left = float(entry.left)
+			best_label = String(entry.label)
+	var mins: int = int(best_left) / 60
+	var secs: int = int(best_left) % 60
+	_chrono_label.text = "⏱ %d:%02d — %s" % [mins, secs, best_label]
+	_chrono_label.add_theme_color_override("font_color",
+		Color(0.95, 0.4, 0.35, 1) if best_left <= 10.0 else Color(0.98, 0.9, 0.6, 1))
+	_chrono_label.show()
 
 func _on_money_changed(amount: int) -> void:
 	if money_label:
@@ -435,6 +488,11 @@ func _on_save_loaded() -> void:
 	_signaled_main_ids.clear()
 	_main_toast_seeded = false
 	call_deferred("_seed_main_signaled")
+	# Chronos : on repart de zéro — ceux encore valides (quêtes CHRONO,
+	# livraisons) se ré-émettent d'eux-mêmes dès la frame suivante ; ceux d'une
+	# chasse non sérialisée (cobrador) ne doivent pas rester affichés.
+	_chronos.clear()
+	_refresh_chrono()
 
 func _welcome_back_after_load() -> void:
 	await get_tree().create_timer(1.4).timeout

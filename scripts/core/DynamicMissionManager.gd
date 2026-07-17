@@ -8,7 +8,9 @@ extends Node
 
 enum Category { VOYOU, POLICE, MAIRE }
 
-const REWARD_TABLE: Array[int] = [50, 100, 200, 400, 800, 1200]
+# Le vrai moteur de cash entre deux jalons de trame (les tournées de milho
+# restent de l'appoint) : base relevée + le bonus Rapidinho (+25 %) par-dessus.
+const REWARD_TABLE: Array[int] = [80, 160, 280, 480, 900, 1300]
 const REP_TABLE: Array[int] = [1, 2, 3, 4, 5, 5]
 const REP_AXIS: Dictionary = {
 	Category.VOYOU:  ReputationSystem.Axis.STREET,
@@ -134,6 +136,18 @@ const TEMPLATES: Dictionary = {
 signal missions_changed
 signal mission_completed(category: int, money: int, rep: int)
 signal mission_progressed(category: int, progress: int, total: int)
+signal mission_expired(category: int)
+
+# Chrono de livraison : le client n'attend pas éternellement. Budget temps
+# calculé sur la distance réelle au moment de l'acceptation (généreux à pied,
+# confortable à vélo) ; finir vite paie un bonus, expirer fait perdre la mission.
+const TIME_PER_PX: float = 1.0 / 90.0       # ~90 px/s attendus (marche+course mêlées)
+const TIME_BASE_SEC: float = 30.0           # marge fixe par mission
+const TIME_PER_POINT_SEC: float = 15.0      # marge par point à toucher
+const TIME_MIN_SEC: float = 45.0
+const TIME_MAX_SEC: float = 420.0
+const FAST_BONUS_RATIO: float = 0.25         # finir avec >25% du budget restant = bonus
+const FAST_BONUS_MONEY: float = 0.25
 
 var _active: Dictionary = {}        # category(int) -> mission Dictionary
 var _tier: Dictionary = {}          # category(int) -> int (compteur de complétions)
@@ -164,9 +178,50 @@ func accept(cat: int) -> bool:
 		return false
 	m["accepted"] = true
 	m["progress"] = 0
+	var budget: float = _time_budget(m)
+	m["time_total"] = budget
+	m["time_left"] = budget
 	missions_changed.emit()
 	_spawn_marker(cat)
 	return true
+
+# Budget temps = distance du joueur au 1er point + segments suivants, à ~90 px/s,
+# plus des marges fixes. Clampé pour rester jouable sur les missions inter-districts.
+func _time_budget(m: Dictionary) -> float:
+	var points: Array = m.get("points", [])
+	if points.is_empty():
+		return TIME_MIN_SEC
+	var dist: float = 0.0
+	var from: Vector2 = points[0]
+	if GameManager.player and is_instance_valid(GameManager.player):
+		from = (GameManager.player as Node2D).global_position
+	for p in points:
+		dist += from.distance_to(p)
+		from = p
+	var budget: float = TIME_BASE_SEC + dist * TIME_PER_PX + TIME_PER_POINT_SEC * points.size()
+	return clampf(budget, TIME_MIN_SEC, TIME_MAX_SEC)
+
+func _process(delta: float) -> void:
+	for cat in Category.values():
+		var m: Dictionary = _active.get(cat, {})
+		if m.is_empty() or not m.get("accepted", false):
+			continue
+		if not m.has("time_left"):
+			continue
+		m["time_left"] = float(m["time_left"]) - delta
+		var left: float = float(m["time_left"])
+		EventBus.chrono_updated.emit("mission:%d" % cat, String(m.get("title", "Mission")), max(left, 0.0))
+		if left <= 0.0:
+			_expire(cat)
+
+func _expire(cat: int) -> void:
+	var m: Dictionary = _active[cat]
+	EventBus.chrono_cleared.emit("mission:%d" % cat)
+	EventBus.notification_requested.emit("⏱ Trop tard — %s : o cliente desistiu." % String(m.get("title", "")),
+		Color(0.95, 0.45, 0.4, 1))
+	mission_expired.emit(cat)
+	_despawn_marker(cat)
+	_generate_for(cat)
 
 # Appelé par DynamicMissionMarker quand le joueur entre dans la zone du point courant.
 func mark_progress(cat: int) -> void:
@@ -200,6 +255,14 @@ func _complete(cat: int) -> void:
 	var m: Dictionary = _active[cat]
 	var money: int = int(m.money)
 	var rep: int = int(m.rep)
+	# Bonus de rapidité : livrer avec de la marge paie plus (et ça se dit).
+	if m.has("time_left") and m.has("time_total") \
+			and float(m["time_left"]) > float(m["time_total"]) * FAST_BONUS_RATIO:
+		var bonus: int = int(ceil(float(money) * FAST_BONUS_MONEY))
+		money += bonus
+		EventBus.notification_requested.emit("⚡ Rapidinho! Bonus R$ %d" % bonus,
+			Color(0.98, 0.9, 0.5, 1))
+	EventBus.chrono_cleared.emit("mission:%d" % cat)
 	# Argent
 	if GameManager.player:
 		var inv: Inventory = GameManager.player.get_node_or_null("Inventory") as Inventory

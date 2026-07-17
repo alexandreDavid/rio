@@ -8,6 +8,8 @@ script = ExtResource("2_obj")
 id = "win_volley_match"
 description = "Gagner un match de volley sur le sable d'Ipanema"
 optional = false
+kind = 1
+minigame_id = "beach_volley"
 
 [resource]
 script = ExtResource("1_quest")
