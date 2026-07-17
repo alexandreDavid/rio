@@ -486,7 +486,7 @@ theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
 theme_override_constants/outline_size = 3
 
 [node name="DjBooth" parent="." instance=ExtResource("1_dj")]
-position = Vector2(-90, 160)
+position = Vector2(-90, 100)
 
 [node name="ViewpointSunset" parent="." instance=ExtResource("3_view")]
 position = Vector2(-160, 30)
