@@ -18,6 +18,19 @@ offset_right = 400.0
 offset_bottom = -40.0
 script = ExtResource("2_joy")
 
+[node name="AltinhaButton" type="Button" parent="."]
+visible = false
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -200.0
+offset_top = -290.0
+offset_right = -40.0
+offset_bottom = -220.0
+theme_override_font_sizes/font_size = 28
+text = "⚽ Altinha"
+
 [node name="InteractButton" type="Button" parent="."]
 anchor_left = 1.0
 anchor_top = 1.0

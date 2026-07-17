@@ -24,6 +24,7 @@ const SIGNATURES: Dictionary = {
 	"exercise":         {"axis": 2, "amount": 1, "npc": "ramos", "label": "treino da academia"},
 	"carnaval_samba":   {"axis": 4, "amount": 3, "npc": "", "label": "samba da Sapucaí"},
 	"racha_atlantica":  {"axis": 2, "amount": 2, "npc": "", "label": "racha da Atlântica"},
+	"altinha":          {"axis": 2, "amount": 1, "npc": "", "label": "altinha da praia"},
 }
 const MESTRE_THRESHOLD: int = 3
 
