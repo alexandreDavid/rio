@@ -152,10 +152,22 @@ patrouille salue au lieu de racketter). L'usage négatif existe désormais via
 les carrefours (axes qui descendent). Non fait, assumé : décroissance
 passive (risque design), effets d'affinité chez les commerçants d'intérieur.
 
-### F. Approfondir ou requalifier Fishing/Exercise
-Les deux mini-jeux les plus pauvres. Soit les remonter au standard
-volley/surf (le pêcheur a un arc narratif — un vrai jeu de pêche aurait un
-port d'attache), soit réduire leur poids de récompense au rang d'ambiance.
+### F. Approfondir Fishing/Exercise — LIVRÉ le 2026-07-21
+**Pesca da Colônia** : pêche en 3 temps — lancer visé (3 bandes
+perto/meio/fundo : plus loin = Robalo qui vaut plus, fenêtre de ferrage plus
+courte, puxadas plus dures), touche lisible (frémissements-leurres puis
+vraie FISGA, ferrer un leurre fait fuir le banc, réflexe < 0,18 s =
+Perfeito ×1.5), combat à la tension (tenir pour mouliner, lâcher pendant
+les puxadas annoncées, tension pleine = ligne cassée). 6 lancers / 120 s,
+qualif ≥ 45 pts. **Treino da academia** : fini le mash — appui-relâché dans
+la zone de forme (centre = Perfeito 3 pts), 3 séries de plus en plus
+rapides aux zones plus étroites (Supino/Agachamento/Remada), gás qui punit
+les Falhas et borne la séance, plafond = « la charge t'écrase ». Qualif
+≥ 24/45. Contrats préservés (match_ended, payout launcher, hook
+bruno_pesca_baia, source gym) ; un garde-fou de test vérifie la monotonie
+des courbes de difficulté. NB : la signature de réputation pêche exige
+désormais une session qualifiante (standard des autres jeux), le cash reste
+à la prise.
 
 ## Méthode
 

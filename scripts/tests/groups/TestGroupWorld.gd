@@ -24,6 +24,7 @@ func run() -> void:
 	_test_random_events_multi_district()
 	await _test_ambient_life_out_of_copa()
 	_test_reputation_affinity_effects()
+	_test_minigame_depth_contracts()
 
 
 # Garde-fou : les intérieurs hors-monde (positions y≈-3000 dans Copacabana)
@@ -837,3 +838,34 @@ func _test_reputation_affinity_effects() -> void:
 		ReputationSystem.set_value(i, 0)
 	ActivityRewards._qualify_counts.clear()
 	CampaignManager.flags.erase("mestre_beach_volley")
+
+
+# --- Profondeur des mini-jeux refondus (axe F : pêche & treino) ---
+
+# Le risque/récompense doit être monotone : à la pêche, plus loin = poisson
+# qui vaut plus, fenêtre de ferrage plus courte, puxadas plus dures ; au
+# treino, chaque série est plus rapide avec une zone de forme plus étroite.
+func _test_minigame_depth_contracts() -> void:
+	_section("Mini-jeux refondus — courbes de difficulté cohérentes")
+	var bands: Array = FishingGame.BANDS
+	_assert(bands.size() == 3, "pêche : 3 bandes d'eau")
+	for i in range(1, bands.size()):
+		_assert(int(bands[i].value) > int(bands[i - 1].value),
+			"pêche : le poisson du %s vaut plus que celui du %s" % [bands[i].name, bands[i - 1].name])
+		_assert(float(bands[i].strike_window) < float(bands[i - 1].strike_window),
+			"pêche : fenêtre de ferrage plus courte au %s" % bands[i].name)
+		_assert(float(bands[i].tension_pull) > float(bands[i - 1].tension_pull),
+			"pêche : puxada plus dure au %s" % bands[i].name)
+	_assert(FishingGame.QUALIFY_SCORE > int(bands[0].value),
+		"pêche : qualifier exige plus qu'une tainha")
+	var sets: Array = ExerciseGame.SETS
+	_assert(sets.size() == 3, "treino : 3 séries")
+	for i in range(1, sets.size()):
+		_assert(float(sets[i].rise) > float(sets[i - 1].rise),
+			"treino : %s plus rapide que %s" % [sets[i].name, sets[i - 1].name])
+		_assert(float(sets[i].zone_w) < float(sets[i - 1].zone_w),
+			"treino : zone de forme plus étroite au %s" % sets[i].name)
+	var max_score: int = ExerciseGame.REPS_PER_SET * sets.size() * 3
+	_assert(ExerciseGame.QUALIFY_SCORE > max_score / 3 and ExerciseGame.QUALIFY_SCORE < max_score,
+		"treino : seuil qualifiant exigeant mais atteignable (%d / max %d)"
+			% [ExerciseGame.QUALIFY_SCORE, max_score])

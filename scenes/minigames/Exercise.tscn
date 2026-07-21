@@ -87,7 +87,7 @@ offset_top = 80.0
 offset_right = 80.0
 offset_bottom = 118.0
 theme_override_font_sizes/font_size = 28
-text = "30.0s"
+text = "Gás : 100"
 horizontal_alignment = 1
 
 [node name="Status" type="Label" parent="UI"]
@@ -107,7 +107,7 @@ offset_left = 16.0
 offset_top = -60.0
 offset_right = 600.0
 offset_bottom = -32.0
-text = "Tape rapidement le bouton 💪 pour soulever"
+text = "💪 TIENS pour soulever, LÂCHE dans la zone verte — la forme avant la force"
 
 [node name="ActionButton" type="Button" parent="UI"]
 anchor_left = 0.5

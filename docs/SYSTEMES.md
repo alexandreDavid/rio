@@ -19,11 +19,11 @@ instancie la scène de mini-jeu, masque World+UI, écoute `match_ended`) et la
 - Tactile : `MobileControls.gd` (bouton E, bouton ⚽ altinha, joystick) ;
   `VirtualJoystick.gd` déclenche `run` à **0.85 de déflexion**.
 
-Frictions : pas de bouton sprint dédié en tactile (sprint incompatible avec une
-direction fine — pénalise cobrador/PM/ciclovia) ; stamina sans aucune
-progression sur toute la partie ; altinha lancée par un chemin spécial
-(`altinha_requested` → PlayerController) au lieu du pattern launcher ; `print()`
-de debug encore actifs.
+Corrigé le 2026-07-21 : bouton 🏃 Correr à bascule (`RunButton` +
+`external_run_hold` du joystick — sprint compatible direction fine, seuil
+0.85 en alternative) ; `print()` de debug retirés. Frictions restantes :
+stamina sans progression sur toute la partie ; altinha lancée par un chemin
+spécial (`altinha_requested` → PlayerController) au lieu du pattern launcher.
 
 ## 2. Mini-jeux (`scripts/minigames/`, 16 mécaniques réelles)
 
@@ -43,8 +43,12 @@ Atlântica (course 3 tours vs 3 IA, payout 600/200/60/0), DJ (4 lanes, combo
 Maracanã Torcida (réactif 5 commandes), Lagoa (contre-la-montre vélo + vent).
 
 **Superficiels (1-2 boutons)** : Basket (jauge oscillante), Bike (scroller
-esquive 30 s), Fishing (barre de timing, 3 rounds), Exercise (mash). Les deux
-derniers sont les plus pauvres — candidats à approfondir.
+esquive 30 s). Fishing et Exercise ont été refondus au standard le
+2026-07-21 : Pesca da Colônia (lancer visé 3 bandes, ferrage lisible
+frémissements/FISGA avec Perfeito, combat à la tension et puxadas — 6
+lancers/120 s, qualif ≥ 45) et Treino da academia (appui-relâché dans la
+zone de forme, 3 séries à difficulté croissante, gás anti-mash — qualif
+≥ 24/45).
 
 ### Récompenses (corrigées le 2026-07-21)
 - Les deux canaux sont plafonnés : launchers (`gain_capped` par source) et
@@ -73,10 +77,10 @@ derniers sont les plus pauvres — candidats à approfondir.
   distance-based (~90 px/s + 30 s + 15 s/point, clamp 45-420 s), **Rapidinho
   +25 %** si ≥ 25 % de marge. C'est le vrai moteur de cash entre jalons.
 
-Frictions : missions dynamiques inter-districts au chrono qui court pendant le
-trajet taxi (ex. VOYOU « Course pour Ipanema » à (-11700,-2770)) — risque
-d'intenable ; cobrador/visites créancières limités à copacabana/zona_sul/
-favela_morro (`CreditorVisitManager` L90-93) — pression dette absente ailleurs.
+Corrigé le 2026-07-21 : plancher 180 s sur les missions dont la cible est à
+un offset de district (> 3000 px) — le taxi est instantané et le téléphone
+pause le jeu. Friction restante : cobrador/visites créancières limités à
+copacabana/zona_sul/favela_morro — pression dette absente ailleurs.
 
 ## 4. Économie
 
@@ -87,13 +91,14 @@ quêtes, payouts fishing/bike/racha, pari volley ×2, achievements.
 Dette : `DEBT_TOTAL=50 000`, seuils 500/2 000/6 000 = jalons de rythme.
 **`debt_credit` crédite la dette sans ponctionner le cash** (versements
 scénarisés des 4 chaînes, ~2 500/voie). Cash de poche ≠ dette payée : il faut
-payer au Consórcio (Nilton) pour convertir — jamais expliqué à l'écran.
+payer au Consórcio (Nilton) pour convertir — expliqué dans l'app Saúde
+depuis le 2026-07-21.
 
 `CreditorVisitManager` : check 60 s, cooldown 480 s, chance 30 → 85 % avec les
 jours ; scénarios soft/ultimatum/raid ; shakedown police si
-`commissaire_alerted` ; cobrador si dette ≥ 500 (45 %). La détection « joueur
-en intérieur » est un proxy inerte (L85-89, « à raffiner ») — visite possible
-en lieu privé.
+`commissaire_alerted` ; cobrador si dette ≥ 500 (45 %). Depuis le
+2026-07-21, `BuildingManager.is_inside` (posé par les portes, remis à false
+par tout voyage) bloque les visites en lieu privé.
 
 Dépenses : água de coco (5 R$, recover stamina instantané), bribes, taxi,
 paris, paiement de dette.
@@ -117,10 +122,10 @@ carrefours de voie. Reste sans décroissance passive (choix assumé).
 
 ## 6. HUD & guidage
 
-`HUD.gd` (777 l.) : flash `+R$` (delta positif seulement — les ponctions ne se
-« sentent » pas), stamina, milho, jour/acte/phase, dette affichée comme
-progression vers le **prochain seuil** (pas les 50 000), toasts (max 4), chrono
-**le plus urgent seulement** (les autres deviennent invisibles),
+`HUD.gd` : flash `+R$` en vert et `−R$` en rouge (les ponctions se sentent,
+depuis le 2026-07-21), stamina, milho, jour/acte/phase, dette affichée comme
+progression vers le **prochain seuil** (pas les 50 000), toasts (max 4),
+chrono le plus urgent + suffixe « (+N ⏱) » si d'autres tournent,
 `MAIN_NEXT_HINT` (toast doré jalon — dictionnaire à maintenir à la main).
 
 `NavigationDirector` (32 KB) : source de vérité « quoi/où maintenant » —
@@ -131,8 +136,8 @@ distance, bannière 🚕 si autre district), `QuestLog` (História ✦ / Ativida
 Téléphone (`Phone.gd`, 40 KB) : apps Taxi, Saúde, Diário, Missões
 (`MissionBoardUI`), Photos, Notícias, Conquistas, Mapa, Ajustes ; badges rouges.
 
-Bouton ⚽ altinha : **sable de Copacabana uniquement** (TODO backlog : autres
-plages).
+Bouton ⚽ altinha : sable de Copa (`Cfg.shore_y`) + plages d'Ipanema et
+d'Icaraí (`BEACH_BANDS`) depuis le 2026-07-21.
 
 ## Frictions restantes (entrée pour JOUABILITE.md)
 

@@ -115,7 +115,7 @@ offset_left = 16.0
 offset_top = -60.0
 offset_right = 600.0
 offset_bottom = -32.0
-text = "Touchez le bouton 🎣 pour lancer la ligne au bon moment"
+text = "🎣 Lance dans la bonne bande, ferre à la VRAIE touche, mouline entre les puxadas (tenir/lâcher)"
 
 [node name="ActionButton" type="Button" parent="UI"]
 anchor_left = 0.5
