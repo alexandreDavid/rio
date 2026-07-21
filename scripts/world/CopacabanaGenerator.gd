@@ -67,6 +67,7 @@ func _ready() -> void:
 	_spawn_domingo_life()
 	_spawn_human_cost()
 	_spawn_reinado()
+	_spawn_arpoador_seam()
 
 func _spawn_tile_strip(container_name: String, y_top: float, y_bot: float, tile_region: Rect2, z_idx: int = -5) -> void:
 	var container: Node2D = Node2D.new()
@@ -2194,3 +2195,58 @@ func _rebuild_reinado() -> void:
 		]
 		morador_spot.set("variants", variants)
 		_reinado_container.add_child(morador_spot)
+
+# Passage de l'Arpoador — la couture du littoral continu. ZonaSul est
+# physiquement contiguë à l'ouest (offset (-1240, 20) dans Copacabana.tscn) :
+# on marche de Copa à Ipanema en contournant la pedra, comme en vrai. Ici on
+# canalise le passage (bande monde y 64..140) : promontoire au nord (pas de
+# traversée au niveau de la route — les deux trames urbaines ne se raccordent
+# pas), pedra au sud (on ne marche pas sur la mer), rochers + panneau.
+func _spawn_arpoador_seam() -> void:
+	var container: Node2D = Node2D.new()
+	container.name = "ArpoadorSeam"
+	add_child(container)
+	# Promontoire nord : bloque la couture au-dessus du calçadão.
+	var north: StaticBody2D = StaticBody2D.new()
+	north.name = "SeamNorthBlock"
+	north.position = Vector2(-290, -270)
+	var north_shape: CollisionShape2D = CollisionShape2D.new()
+	var north_rect: RectangleShape2D = RectangleShape2D.new()
+	north_rect.size = Vector2(104, 660)
+	north_shape.shape = north_rect
+	north.add_child(north_shape)
+	container.add_child(north)
+	# La pedra elle-même : bloque au sud du passage (et l'eau de la couture).
+	var pedra: StaticBody2D = StaticBody2D.new()
+	pedra.name = "SeamPedraBlock"
+	pedra.position = Vector2(-312, 290)
+	var pedra_shape: CollisionShape2D = CollisionShape2D.new()
+	var pedra_rect: RectangleShape2D = RectangleShape2D.new()
+	pedra_rect.size = Vector2(64, 300)
+	pedra_shape.shape = pedra_rect
+	pedra.add_child(pedra_shape)
+	container.add_child(pedra)
+	# Rochers visibles (nord et sud du sentier).
+	for r in [
+		{"rect": Rect2(-336, -60, 90, 120), "c": Color(0.42, 0.40, 0.38, 1)},
+		{"rect": Rect2(-322, -16, 66, 76), "c": Color(0.50, 0.47, 0.44, 1)},
+		{"rect": Rect2(-340, 142, 78, 290), "c": Color(0.44, 0.42, 0.40, 1)},
+		{"rect": Rect2(-326, 170, 52, 220), "c": Color(0.52, 0.49, 0.46, 1)},
+	]:
+		var rock: ColorRect = ColorRect.new()
+		rock.offset_left = r.rect.position.x
+		rock.offset_top = r.rect.position.y
+		rock.offset_right = r.rect.position.x + r.rect.size.x
+		rock.offset_bottom = r.rect.position.y + r.rect.size.y
+		rock.color = r.c
+		container.add_child(rock)
+	# Le sentier (sable tassé entre les rochers).
+	var path_rect: ColorRect = ColorRect.new()
+	path_rect.offset_left = -340.0
+	path_rect.offset_top = 68.0
+	path_rect.offset_right = -240.0
+	path_rect.offset_bottom = 136.0
+	path_rect.color = Color(0.88, 0.8, 0.62, 1)
+	path_rect.z_index = -4
+	container.add_child(path_rect)
+	_spawn_sign(container, Vector2(-290, -380), "PEDRA DO ARPOADOR", Color(0.85, 0.82, 0.75, 1), 12)

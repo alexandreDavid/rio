@@ -8,13 +8,21 @@ coordonnées lointaines ; on s'y téléporte.
 ## 1. Voyage (`scripts/core/DistrictManager.gd`, 15 ids)
 
 1. **Taxi / Mapa** (apps du téléphone) : `travel_to()` déduit le `fare` et
-   téléporte au `Marker2D "PlayerSpawn"`.
-2. **Sorties piétonnes** (`DistrictExit.gd`, `walk_to`, `WALK_ENTRIES`
+   téléporte au `Marker2D "PlayerSpawn"`. Depuis le 2026-07-21, les
+   traversées vers/depuis Niterói jouent l'embarquement sur la barca
+   (`TransitionOverlay.play_barca` — après le téléport, écran couvert).
+2. **Littoral continu** (2026-07-21) : **Copa ↔ Zona Sul se marche** —
+   ZonaSul est physiquement contiguë (offset (-1240, 20)), on passe par le
+   sentier de la pedra do Arpoador (bande monde y 64-140). Les `DistrictExit`
+   de la paire sont en mode `seamless` → `DistrictManager.seam_to` (bascule
+   de référentiel : pas de téléport, pas de fondu, le vélo continue).
+3. **Sorties piétonnes** (`DistrictExit.gd`, `walk_to`, `WALK_ENTRIES`
    anti ping-pong, verrou `require_quest_completed`) : Copa↔Forte,
-   Copa↔Favela, Copa↔Botafogo (×2 Túnel Novo), Copa↔ZonaSul ; ZonaSul↔Barra,
-   ZonaSul↔Botafogo ; Botafogo→SantosDumont ; PãoAçúcar→Botafogo.
-3. **Bondinho** (`BondinhoLauncher.gd`) : seule entrée du Pão de Açúcar.
-   `barca` = habillage du taxi vers Niterói (fare 22).
+   Copa↔Favela, Copa↔Botafogo (×2 Túnel Novo — traversée sensorielle du
+   tunnel depuis le 2026-07-21) ; ZonaSul↔Barra, ZonaSul↔Botafogo ;
+   Botafogo→SantosDumont ; PãoAçúcar→Botafogo.
+4. **Bondinho** (`BondinhoLauncher.gd`) : seule entrée du Pão de Açúcar.
+   `barca` = le taxi vers Niterói, désormais incarné par l'overlay.
 
 Taxi-uniquement : corcovado, maracana, sambodromo, niteroi, aterro_flamengo,
 marina_gloria. Les `Rideable` non montés reviennent à leur `home_position` à

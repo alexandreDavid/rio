@@ -38,13 +38,15 @@ const TEMPLATES: Dictionary = {
 	Category.VOYOU: [
 		{
 			"title": "Course pour Ipanema",
-			"narrative": "Un client de la Zona Sul attend un paquet discret sur la plage, côté Posto 9. Prends le taxi de l'Av. Atlântica.",
-			"points": [Vector2(-11700, -2770)],
+			"narrative": "Un client de la Zona Sul attend un paquet discret sur la plage, côté Posto 9. Taxi — ou à pied par la pedra do Arpoador.",
+			"district": "zona_sul",
+			"points": [Vector2(300, 130)],
 		},
 		{
 			"title": "Relais de Niterói",
 			"narrative": "Un contact attend près des quais de Niterói. La barca, le paquet, pas de questions.",
-			"points": [Vector2(-18700, -2780)],
+			"district": "niteroi",
+			"points": [Vector2(1800, 120)],
 		},
 		{
 			"title": "Récup' planque favela",
@@ -71,12 +73,14 @@ const TEMPLATES: Dictionary = {
 		{
 			"title": "Ronde de l'enseada",
 			"narrative": "Ramos veut une présence visible sur la plage de Botafogo. Taxi, uniforme, deux tours.",
-			"points": [Vector2(-14200, -6080)],
+			"district": "botafogo_flamengo",
+			"points": [Vector2(-400, -80)],
 		},
 		{
 			"title": "Présence au Maracanã",
 			"narrative": "Jour d'affluence sur l'esplanade du Maracanã — la PM veut un œil de plus.",
-			"points": [Vector2(-6500, -2750)],
+			"district": "maracana",
+			"points": [Vector2(0, 150)],
 		},
 		{
 			"title": "Patrouille calçadão",
@@ -102,13 +106,15 @@ const TEMPLATES: Dictionary = {
 	Category.MAIRE: [
 		{
 			"title": "Tracts pour la Zona Sul",
-			"narrative": "Porter la communication du bairro jusqu'à la plage d'Ipanema — le message voyage en taxi.",
-			"points": [Vector2(-12500, -2770)],
+			"narrative": "Porter la communication du bairro jusqu'à la plage d'Ipanema — taxi, ou la pedra à pied.",
+			"district": "zona_sul",
+			"points": [Vector2(-500, 130)],
 		},
 		{
 			"title": "Visite de courtoisie au MAC",
 			"narrative": "Saluer l'équipe du musée de Niterói au nom du bairro. La culture, ça s'entretient.",
-			"points": [Vector2(-18250, -2760)],
+			"district": "niteroi",
+			"points": [Vector2(2250, 140)],
 		},
 		{
 			"title": "Distribution de tracts",
@@ -182,12 +188,31 @@ func accept(cat: int) -> bool:
 		return false
 	m["accepted"] = true
 	m["progress"] = 0
+	_resolve_points_to_world(m)
 	var budget: float = _time_budget(m)
 	m["time_total"] = budget
 	m["time_left"] = budget
 	missions_changed.emit()
 	_spawn_marker(cat)
 	return true
+
+# Missions inter-districts : les templates portent des points en coordonnées
+# LOCALES du district cible (clé "district") — on les convertit en monde à
+# l'acceptation via l'offset du nœud instancié. Robuste aux déplacements de
+# districts (littoral continu) ; idempotent (la clé est effacée après coup).
+func _resolve_points_to_world(m: Dictionary) -> void:
+	var district_id: String = String(m.get("district", ""))
+	if district_id == "":
+		return
+	var offset: Vector2 = Vector2.ZERO
+	var dnode: Node = DistrictManager._find_district_node(district_id)
+	if dnode is Node2D:
+		offset = (dnode as Node2D).global_position
+	var resolved: Array = []
+	for p in m.get("points", []):
+		resolved.append(offset + p)
+	m["points"] = resolved
+	m.erase("district")
 
 # Budget temps = distance du joueur au 1er point + segments suivants, à ~90 px/s,
 # plus des marges fixes. Clampé pour rester jouable sur les missions inter-districts.

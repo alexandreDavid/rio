@@ -8,6 +8,7 @@ func run() -> void:
 	await _test_district_walk_to_exit()
 	await _test_walk_entries_no_pingpong()
 	await _test_valet_minigame()
+	await _test_arpoador_seam()
 
 
 func _test_district_exit_geometry() -> void:
@@ -312,3 +313,90 @@ func _test_valet_minigame() -> void:
 	game.queue_free()
 	await get_tree().process_frame
 
+
+
+# --- Littoral continu : la couture de l'Arpoador (Copa ↔ Zona Sul à pied) ---
+
+# ZonaSul est physiquement contiguë à l'ouest de Copa. On vérifie l'offset,
+# les sorties en mode couture (pas de téléport), le couloir de passage libre
+# de collisions (anti-soft-lock), les bloqueurs nord/sud (pas de traversée au
+# niveau de la route, pas de marche sur la mer) et la bascule de référentiel.
+func _test_arpoador_seam() -> void:
+	_section("Littoral continu — passage de l'Arpoador (couture)")
+	var packed: PackedScene = load("res://scenes/world/Copacabana.tscn") as PackedScene
+	if packed == null:
+		_assert(false, "Copacabana.tscn charge")
+		return
+	# Hermétique : purge les instances résiduelles des tests précédents — leurs
+	# corps physiques (ex. une Favela standalone à l'origine) fausseraient les
+	# sondes de collision du couloir.
+	for c in get_children():
+		c.free()
+	var root: Node = packed.instantiate()
+	add_child(root)
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	# 1. ZonaSul contiguë : l'Arpoador (bord est local ~940) touche le bord
+	#    ouest de Copa (MAP_LEFT = -300).
+	var zs: Node = _find_by_name_in(root, "ZonaSulDistrict")
+	_assert(zs is Node2D and (zs as Node2D).position == Vector2(-1240, 20),
+		"ZonaSulDistrict contiguë à l'ouest (offset (-1240, 20))")
+	# 2. Les deux sorties sont des coutures (pas de téléport).
+	var exit_copa: Node = _find_by_name_in(root, "ExitToZonaSul")
+	_assert(exit_copa != null and bool(exit_copa.get("seamless")),
+		"Copa/ExitToZonaSul en mode couture")
+	var exit_zs: Node = null
+	if zs:
+		exit_zs = zs.get_node_or_null("ExitToCopa")
+	_assert(exit_zs != null and bool(exit_zs.get("seamless")),
+		"ZonaSul/ExitToCopa en mode couture")
+	# 3. Couloir libre : la bande monde y≈100-130 se traverse de Copa (-160)
+	#    jusqu'au sable d'Ipanema (-520) sans corps statique.
+	var space: PhysicsDirectSpaceState2D = get_viewport().world_2d.direct_space_state
+	var probe: RectangleShape2D = RectangleShape2D.new()
+	probe.size = Vector2(24, 24)
+	for x in [-160.0, -230.0, -290.0, -330.0, -400.0, -520.0]:
+		var params: PhysicsShapeQueryParameters2D = PhysicsShapeQueryParameters2D.new()
+		params.shape = probe
+		params.transform = Transform2D(0.0, Vector2(x, 104.0))
+		params.collision_mask = 1
+		params.collide_with_areas = false
+		var hits: Array = space.intersect_shape(params, 4)
+		var solid: bool = false
+		for h in hits:
+			if h.collider is StaticBody2D:
+				solid = true
+		_assert(not solid, "couloir de l'Arpoador libre à x=%d (y=104)" % int(x))
+	# 4. Bloqueurs : pas de passage au niveau de la route (nord) ni sur la
+	#    mer (sud de la pedra).
+	for blocked in [Vector2(-290.0, -60.0), Vector2(-312.0, 260.0)]:
+		var bp: PhysicsShapeQueryParameters2D = PhysicsShapeQueryParameters2D.new()
+		bp.shape = probe
+		bp.transform = Transform2D(0.0, blocked)
+		bp.collision_mask = 1
+		bp.collide_with_areas = false
+		var bhits: Array = space.intersect_shape(bp, 4)
+		var bsolid: bool = false
+		for h in bhits:
+			if h.collider is StaticBody2D:
+				bsolid = true
+		_assert(bsolid, "couture bloquée hors du sentier à %s" % str(blocked))
+	# 5. Bascule de référentiel sans téléport ni fondu.
+	DistrictManager._current = "copacabana"
+	var moved: Array = []
+	var listener: Callable = func(d: String) -> void: moved.append(d)
+	DistrictManager.district_changed.connect(listener)
+	DistrictManager.seam_to("zona_sul")
+	DistrictManager.district_changed.disconnect(listener)
+	_assert(DistrictManager.current() == "zona_sul", "seam_to bascule le district courant")
+	_assert(moved == ["zona_sul"], "seam_to émet district_changed une fois")
+	_assert(not DistrictManager.last_travel_was_seam,
+		"last_travel_was_seam retombe après la couture")
+	# 6. Plus d'entrée piétonne téléportée entre Copa et Zona Sul.
+	_assert(not DistrictManager.WALK_ENTRIES["copacabana"].has("zona_sul"),
+		"WALK_ENTRIES : plus de téléport Copa ← Zona Sul")
+	_assert(not DistrictManager.WALK_ENTRIES["zona_sul"].has("copacabana"),
+		"WALK_ENTRIES : plus de téléport Zona Sul ← Copa")
+	DistrictManager._current = "copacabana"
+	root.queue_free()
+	await get_tree().process_frame

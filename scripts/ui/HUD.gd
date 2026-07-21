@@ -122,8 +122,12 @@ func _press_button(b: Button, down: bool) -> void:
 	tw.tween_property(b, "scale", Vector2(0.88, 0.88) if down else Vector2.ONE, 0.1)
 
 # Flash noir bref qui s'estompe : on arrive « en fondu » dans le nouveau district.
+# Les coutures (littoral continu, on marche d'un district à l'autre) ne fondent
+# pas — le monde ne bouge pas, seul le référentiel change.
 func _on_district_fade(_district_id: String) -> void:
 	if district_fade == null:
+		return
+	if DistrictManager.last_travel_was_seam:
 		return
 	district_fade.color = Color(0, 0, 0, 0.7)
 	var tw: Tween = create_tween()

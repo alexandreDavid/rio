@@ -1466,9 +1466,15 @@ position = Vector2(-948, 96)
 shape = SubResource("WallV")
 
 [node name="Right" type="StaticBody2D" parent="Walls"]
-position = Vector2(908, 96)
+position = Vector2(908, -196)
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Right"]
+shape = SubResource("WallV")
+
+[node name="RightSea" type="StaticBody2D" parent="Walls"]
+position = Vector2(908, 360)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/RightSea"]
 shape = SubResource("WallV")
 
 [node name="TopInland" type="StaticBody2D" parent="Walls"]
@@ -1780,7 +1786,8 @@ position = Vector2(-700, 50)
 [node name="ExitToCopa" parent="." instance=ExtResource("5_exit")]
 position = Vector2(905, 0)
 target_district = "copacabana"
-label_text = "→ COPACABANA"
+label_text = "→ COPACABANA (pela pedra)"
+seamless = true
 
 [node name="CollisionShape2D" parent="ExitToCopa" index="0"]
 shape = SubResource("ExitWideShape")

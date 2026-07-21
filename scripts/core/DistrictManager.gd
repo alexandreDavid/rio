@@ -99,13 +99,13 @@ const WALK_ENTRIES: Dictionary = {
 	# /!\ Ces positions doivent être HORS des Area2D ExitTo... du district cible
 	# pointant vers la source — sinon ping-pong infini (le joueur arrive,
 	# touche immédiatement le trigger retour, repart, etc.).
+	# NB : Copa ↔ Zona Sul n'a plus d'entrée piétonne téléportée — le littoral
+	# est continu (couture de l'Arpoador, DistrictExit.seamless).
 	"copacabana": {
-		"zona_sul":           Vector2(60, 110),      # depuis Arpoador — est de ExitToZonaSul (x=20)
 		"botafogo_flamengo":  Vector2(2150, -100),   # arrivée Túnel Novo (Av. Princesa Isabel) — sud de l'exit (-210)
 		"favela_morro":       Vector2(200, -100),    # arrivée pied du morro (Forte) — sud de ExitToFavela (-210)
 	},
 	"zona_sul": {
-		"copacabana": Vector2(800, 130),                # arrivée depuis l'est (Copa) — ouest de ExitToCopa (905)
 		"botafogo_flamengo": Vector2(850, -960),        # depuis Botafogo — sud de ExitToBotafogo (top y=-1032), 72 px clear
 		"barra_tijuca": Vector2(-820, 100),             # depuis Barra — est de ExitToBarra (right edge x=-888), 68 px clear
 	},
@@ -143,6 +143,21 @@ func set_current(district_id: String) -> void:
 	_current = district_id
 	district_changed.emit(district_id)
 
+# Couture sans couture : le joueur MARCHE d'un district à l'autre (littoral
+# continu Copa ↔ Arpoador/Ipanema). Pas de téléport, pas de fondu noir, pas
+# de repositionnement de véhicule — on ne fait que basculer le référentiel.
+# `last_travel_was_seam` permet aux consommateurs de district_changed (le
+# fondu du HUD) d'ignorer les coutures.
+var last_travel_was_seam: bool = false
+
+func seam_to(district_id: String) -> void:
+	if not DISTRICTS.has(district_id) or _current == district_id:
+		return
+	last_travel_was_seam = true
+	_current = district_id
+	district_changed.emit(district_id)
+	last_travel_was_seam = false
+
 func get_label(district_id: String) -> String:
 	return DISTRICTS.get(district_id, {}).get("label", district_id)
 
@@ -175,6 +190,7 @@ func travel_to(district_id: String) -> bool:
 		if inv == null or not inv.spend_money(fare):
 			return false  # pas assez d'argent
 	# Téléportation.
+	var from_id: String = _current
 	var target: Vector2 = _resolve_spawn(district_id)
 	if GameManager.player:
 		GameManager.player.global_position = target
@@ -184,6 +200,7 @@ func travel_to(district_id: String) -> bool:
 	BuildingManager.is_inside = false
 	_current = district_id
 	district_changed.emit(district_id)
+	_play_sensory_transition(from_id, district_id)
 	return true
 
 # Sortie piétonne : pas de paiement, point d'arrivée fonction du district
@@ -212,9 +229,24 @@ func walk_to(district_id: String, vehicle: Node = null) -> bool:
 	_reposition_vehicles_near_player(vehicle)
 	_pending_target_district = ""
 	BuildingManager.is_inside = false
+	var walk_from: String = from_id
 	_current = district_id
 	district_changed.emit(district_id)
+	_play_sensory_transition(walk_from, district_id)
 	return true
+
+# Transitions sensorielles (backlog « gommer les coutures du modèle hub ») :
+# le Túnel Novo se TRAVERSE (Copa ↔ Botafogo à pied), la barca s'EMBARQUE
+# (toute traversée vers/depuis Niterói). L'overlay se joue APRÈS le téléport
+# — l'écran est couvert le temps du trajet, aucun état à suspendre.
+const _TransitionOverlay: Script = preload("res://scripts/world/TransitionOverlay.gd")
+
+func _play_sensory_transition(from_id: String, to_id: String) -> void:
+	var pair: Array = [from_id, to_id]
+	if "copacabana" in pair and "botafogo_flamengo" in pair:
+		_TransitionOverlay.play_tunnel(get_tree())
+	elif "niteroi" in pair:
+		_TransitionOverlay.play_barca(get_tree())
 
 # Renvoie chaque Rideable non monté à sa position d'origine (home_position
 # cachée dans Rideable._ready). Idée : un seul véhicule de chaque type, qui

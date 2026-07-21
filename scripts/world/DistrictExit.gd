@@ -11,6 +11,10 @@ extends Area2D
 
 @export var target_district: String = "copacabana"
 @export var label_text: String = "→ Quartier"
+# Couture : les deux districts sont physiquement contigus (littoral continu
+# Copa ↔ Arpoador) — pas de téléport, on bascule juste le référentiel
+# (DistrictManager.seam_to). Le joueur et son véhicule continuent leur route.
+@export var seamless: bool = false
 @export var require_quest_completed: String = ""
 @export_multiline var block_message: String = ""
 # Si vrai : quand la sortie est verrouillée, la mère de Pedrinho rattrape le
@@ -51,6 +55,9 @@ func _on_body_entered(body: Node) -> void:
 			_MaeAborde.run("plea")
 		else:
 			_flash_block_message()
+		return
+	if seamless:
+		DistrictManager.seam_to(target_district)
 		return
 	if is_player:
 		DistrictManager.walk_to(target_district)

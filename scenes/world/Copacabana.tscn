@@ -1702,12 +1702,13 @@ theme_override_constants/outline_size = 4
 z_index = 1
 
 [node name="ZonaSulDistrict" parent="." instance=ExtResource("57_zonasul")]
-position = Vector2(-12000, -2900)
+position = Vector2(-1240, 20)
 
 [node name="ExitToZonaSul" parent="." instance=ExtResource("58_exit")]
-position = Vector2(20, 110)
+position = Vector2(-260, 100)
 target_district = "zona_sul"
-label_text = "← ARPOADOR / IPANEMA"
+label_text = "← ARPOADOR / IPANEMA (pela pedra)"
+seamless = true
 
 [node name="BotafogoFlamengoDistrict" parent="." instance=ExtResource("59_botafogo")]
 position = Vector2(-13800, -6000)
