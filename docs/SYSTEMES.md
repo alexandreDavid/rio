@@ -46,16 +46,14 @@ Maracanã Torcida (réactif 5 commandes), Lagoa (contre-la-montre vélo + vent).
 esquive 30 s), Fishing (barre de timing, 3 rounds), Exercise (mash). Les deux
 derniers sont les plus pauvres — candidats à approfondir.
 
-### Bugs/frictions récompenses
-- **Double canal non plafonné** : launcher (gain_capped par source) +
-  `ActivityRewards.modify` (**aucun cap**) → réputation grindable en rejouant
-  (valet, basket, bike…).
-- **Exercise** : affiche « +1 Charisma » (`ExerciseGame.gd:91`) mais
-  `ActivityRewards["exercise"]` donne STREET + affinité ramos — gain caché.
-- **Kite = Surf.tscn** (`scenes/props/KiteStation.tscn` pointe
-  `match_scene = Surf.tscn`) : la session émet les signaux `surf` →
-  récompenses surf (TOURIST, affinité lucas) + STREET du KiteLauncher, et un
-  objectif MINIJEU `surf` s'auto-complèterait depuis une session de kite.
+### Récompenses (corrigées le 2026-07-21)
+- Les deux canaux sont plafonnés : launchers (`gain_capped` par source) et
+  `ActivityRewards` (`gain_capped`, cap = 3× la signature — le compteur
+  mestre continue au-delà).
+- Exercise crédite CHARISMA (l'axe affiché) + affinité ramos.
+- Le kite a son identité : `SurfGame.minigame_id` (exporté, défaut `surf`),
+  surchargé `kitesurf` par `KiteLauncher` — signature ActivityRewards propre,
+  plus d'auto-complétion d'objectifs MINIJEU `surf` depuis le kite.
 
 ## 3. Systèmes de résistance
 
@@ -110,10 +108,12 @@ paris, paiement de dette.
 `dialogue_ended` ; `bump(npc)` hors dialogue ; `knot_for_tier` varie les
 salutations. Carburant du jeitinho.
 
-Frictions : la part `ActivityRewards.modify` sans cap rend les axes farmables ;
-aucune décroissance ni usage négatif (les axes ne montent que) ; l'affinité ne
-débloque que des variantes de dialogue + flags mestre — pas d'effet mécanique
-fort (prix, accès) : le jeitinho reste surtout cosmétique côté systèmes.
+Effets mécaniques (livrés le 2026-07-21) : preço de amigo chez les
+StreetVendor (tier d'affinité `vendor_<id>` → −1/−2 R$, l'achat nourrit la
+relation), `CobradorChase.adjusted_config` (STREET ≥ 50 : abandon −25 %,
+fatigue du poursuivant −20 %), `PMPatrol.waves_through` (POLICE ≥ 40 : la
+patrouille salue au lieu de racketter). L'usage négatif passe par les
+carrefours de voie. Reste sans décroissance passive (choix assumé).
 
 ## 6. HUD & guidage
 
@@ -134,13 +134,14 @@ Téléphone (`Phone.gd`, 40 KB) : apps Taxi, Saúde, Diário, Missões
 Bouton ⚽ altinha : **sable de Copacabana uniquement** (TODO backlog : autres
 plages).
 
-## Frictions prioritaires (entrée pour JOUABILITE.md)
+## Frictions restantes (entrée pour JOUABILITE.md)
 
-1. Sprint tactile au seuil 0.85 — inutilisable en dirigeant finement.
-2. Double canal de réputation non plafonné + gains cachés (Exercise).
-3. Kite = Surf.tscn : mislabel, double récompense, fuite de complétion de quête.
-4. Cash ≠ dette jamais explicité ; milho inutile passé l'acte 1.
-5. Missions chronométrées inter-districts vs temps de trajet.
-6. Guidage fragile : `MAIN_NEXT_HINT` manuel, un seul chrono affiché.
-7. Visites créancières possibles en intérieur (détection inerte).
-8. Fishing/Exercise très en retrait des standards volley/surf/altinha.
+1. Sprint tactile au seuil 0.85 — inutilisable en dirigeant finement (B4).
+2. ~~Double canal non plafonné / gains cachés / kite=surf~~ **corrigés le
+   2026-07-21** (B1-B3).
+3. ~~Cash ≠ dette jamais explicité~~ **expliqué dans l'app Saúde** ; milho
+   toujours anecdotique passé l'acte 1.
+4. Missions chronométrées inter-districts vs temps de trajet (B5).
+5. Guidage fragile : `MAIN_NEXT_HINT` manuel, un seul chrono affiché (B7).
+6. Visites créancières possibles en intérieur (détection inerte, B6).
+7. Fishing/Exercise très en retrait des standards volley/surf/altinha (axe F).

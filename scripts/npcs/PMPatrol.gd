@@ -13,6 +13,14 @@ extends CharacterBody2D
 const RECURRING_CHANCE: float = 0.3
 const RECURRING_COOLDOWN: float = 90.0
 
+# À partir de ce seuil POLICE, la patrouille te reconnaît et te laisse passer
+# — le racket du calçadão ne s'applique pas aux alliés du Capitão. La
+# réputation se sent manette en main, pas seulement dans les fiches.
+const POLICE_PASS_THRESHOLD: int = 40
+
+static func waves_through(police_value: int) -> bool:
+	return police_value >= POLICE_PASS_THRESHOLD
+
 var _cooldown_until: float = 0.0
 
 func _ready() -> void:
@@ -66,6 +74,13 @@ func _on_player_entered() -> void:
 		return
 	var now: float = Time.get_ticks_msec() / 1000.0
 	if now < _cooldown_until:
+		return
+	# Allié de la PM : la patrouille salue au lieu de racketter.
+	if waves_through(ReputationSystem.get_value(ReputationSystem.Axis.POLICE)):
+		_cooldown_until = now + RECURRING_COOLDOWN
+		EventBus.notification_requested.emit(
+			"👮 La patrouille te reconnaît — « Circula, colega. Bom milho. »",
+			Color(0.6, 0.75, 0.95, 1))
 		return
 	if randf() > RECURRING_CHANCE:
 		_cooldown_until = now + 5.0

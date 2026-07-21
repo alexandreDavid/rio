@@ -39,7 +39,25 @@ const ANIM_FPS: float = 9.0
 const WALK_CYCLE: Array[int] = [0, 1, 0, 2]
 const SPAWN_DIST: float = 380.0
 
+# La rue travaille pour qui elle respecte : à partir de ce seuil STREET, la
+# foule se referme derrière toi — le poursuivant abandonne plus tôt et
+# fatigue plus vite. S'applique à toutes les chasses (cobrador, PM…).
+const STREET_COVER_THRESHOLD: int = 50
+const STREET_GIVE_UP_FACTOR: float = 0.75
+const STREET_TIRE_FACTOR: float = 0.8
+
 var config: Dictionary = {}
+
+# Config effective selon la réputation STREET — pure, testable.
+static func adjusted_config(cfg: Dictionary, street_value: int) -> Dictionary:
+	if street_value < STREET_COVER_THRESHOLD:
+		return cfg
+	var out: Dictionary = cfg.duplicate()
+	var base_give_up: float = float(out.get("give_up_sec", DEFAULTS["give_up_sec"]))
+	var base_tire: float = float(out.get("tire_after_sec", DEFAULTS["tire_after_sec"]))
+	out["give_up_sec"] = base_give_up * STREET_GIVE_UP_FACTOR
+	out["tire_after_sec"] = base_tire * STREET_TIRE_FACTOR
+	return out
 
 var _elapsed: float = 0.0
 var _done: bool = false
@@ -57,7 +75,12 @@ static func spawn(cfg: Dictionary = {}) -> CobradorChase:
 	if not tree.get_nodes_in_group("cobrador_chase").is_empty():
 		return null
 	var chase: CobradorChase = CobradorChase.new()
-	chase.config = cfg
+	var street: int = ReputationSystem.get_value(ReputationSystem.Axis.STREET)
+	chase.config = adjusted_config(cfg, street)
+	if street >= STREET_COVER_THRESHOLD:
+		EventBus.notification_requested.emit(
+			"🤝 Le morro te couvre — la rue se referme derrière toi.",
+			Color(0.55, 0.85, 0.6, 1))
 	var rng: RandomNumberGenerator = RandomNumberGenerator.new()
 	rng.randomize()
 	var side: float = -1.0 if rng.randf() < 0.5 else 1.0

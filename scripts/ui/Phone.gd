@@ -339,6 +339,7 @@ func _refresh_stats() -> void:
 	# Argent + dette
 	_add_stat_label("💰 Argent", "R$ %d" % _get_money(), Color(0.95, 0.85, 0.4))
 	_add_stat_label("💸 Dette consortium", "R$ %d" % CampaignManager.debt_remaining(), Color(0.95, 0.55, 0.45))
+	_add_stat_label("", "Ton argent ne rembourse rien tout seul : va PAYER chez Nilton (Consórcio) — ou laisse tes patrons créditer ta dette en travaillant.", Color(0.7, 0.68, 0.62))
 	# Acte courant
 	_add_stat_label("🎬 Acte", str(CampaignManager.current_act), Color(0.85, 0.85, 0.95))
 	# Stamina

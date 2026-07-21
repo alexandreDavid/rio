@@ -21,6 +21,9 @@ func run() -> void:
 	_test_quest_objectives_reachable()
 	_test_navigation_director_targets()
 	await _test_mobile_controls_invariants()
+	_test_random_events_multi_district()
+	await _test_ambient_life_out_of_copa()
+	_test_reputation_affinity_effects()
 
 
 # Garde-fou : les intérieurs hors-monde (positions y≈-3000 dans Copacabana)
@@ -646,3 +649,173 @@ func _test_mobile_controls_invariants() -> void:
 		du.queue_free()
 		await get_tree().process_frame
 
+
+
+# --- Vie aléatoire multi-districts (RandomEventManager) ---
+
+# Intégrité du pool et du zonage : ids uniques, districts/zones valides, et
+# la logique d'éligibilité (pure) filtre bien par district, phase et flag.
+func _test_random_events_multi_district() -> void:
+	_section("Vie aléatoire — événements multi-districts")
+	# 1. Zonage : chaque district déclaré existe, chaque bbox est bien formée.
+	for did in RandomEventManager.DISTRICT_ZONES:
+		_assert(DistrictManager.DISTRICTS.has(did),
+			"DISTRICT_ZONES : district valide (%s)" % did)
+		var zones: Dictionary = RandomEventManager.DISTRICT_ZONES[did]
+		_assert(not zones.is_empty(), "DISTRICT_ZONES %s : au moins une zone" % did)
+		for z in zones:
+			var bbox: Dictionary = zones[z]
+			_assert(bbox.x[0] < bbox.x[1] and bbox.y[0] < bbox.y[1],
+				"bbox bien formée : %s/%s" % [did, z])
+	# 2. Pool : ids uniques, champs requis, restrictions districts valides et
+	#    cohérentes (chaque district listé offre au moins une zone de l'event).
+	var seen_ids: Dictionary = {}
+	for e in RandomEventManager.EVENT_POOL:
+		var eid: String = String(e.get("id", ""))
+		_assert(eid != "" and not seen_ids.has(eid), "event id unique : %s" % eid)
+		seen_ids[eid] = true
+		for field in ["label", "speaker", "text", "icon"]:
+			_assert(String(e.get(field, "")) != "", "event %s a %s" % [eid, field])
+		_assert(not (e.get("spawn_zones", []) as Array).is_empty(),
+			"event %s a des spawn_zones" % eid)
+		var districts: Array = e.get("districts", ["copacabana"])
+		for did in districts:
+			_assert(RandomEventManager.DISTRICT_ZONES.has(did),
+				"event %s : district connu (%s)" % [eid, did])
+			var dz: Dictionary = RandomEventManager.DISTRICT_ZONES.get(did, {})
+			var has_zone: bool = false
+			for z in e.get("spawn_zones", []):
+				if dz.has(z):
+					has_zone = true
+					break
+			_assert(has_zone, "event %s : une zone existe dans %s" % [eid, did])
+	# 3. Éligibilité : Copa garde son pool, les nouveaux districts ont le leur,
+	#    les events non tagués restent à Copa, phases et flags filtrent.
+	CampaignManager.flags.clear()
+	var copa_pool: Array = RandomEventManager.eligible_events("copacabana", 0)
+	_assert(copa_pool.size() >= 8, "Copa : pool matinal fourni (%d)" % copa_pool.size())
+	var zs_pool: Array = RandomEventManager.eligible_events("zona_sul", 1)
+	_assert(not zs_pool.is_empty(), "Zona Sul : pool après-midi non vide")
+	var zs_ids: Array = zs_pool.map(func(e: Dictionary) -> String: return String(e.id))
+	_assert("altinha_circle" in zs_ids, "Zona Sul : l'altinha tourne à Ipanema")
+	_assert(not "samba_parade" in zs_ids,
+		"Zona Sul : un event non tagué reste à Copa (samba_parade)")
+	var bf_evening: Array = RandomEventManager.eligible_events("botafogo_flamengo", 2)
+	var bf_ids: Array = bf_evening.map(func(e: Dictionary) -> String: return String(e.id))
+	_assert("roda_pagode" in bf_ids, "Botafogo : le pagode du soir tourne à la mureta")
+	var nit_ids: Array = RandomEventManager.eligible_events("niteroi", 1) \
+		.map(func(e: Dictionary) -> String: return String(e.id))
+	_assert("futebol_kids" in nit_ids, "Niterói : la pelada tourne à Icaraí")
+	_assert(RandomEventManager.eligible_events("corcovado", 0).is_empty(),
+		"District sans zonage : aucun event (corcovado)")
+	# 4. Flags : un payoff différé n'apparaît qu'avec son flag.
+	var no_flag_ids: Array = RandomEventManager.eligible_events("copacabana", 0) \
+		.map(func(e: Dictionary) -> String: return String(e.id))
+	_assert(not "recado_caxias" in no_flag_ids, "payoff sans flag : absent")
+	CampaignManager.set_flag("voisin_exilado")
+	var flag_ids: Array = RandomEventManager.eligible_events("copacabana", 0) \
+		.map(func(e: Dictionary) -> String: return String(e.id))
+	_assert("recado_caxias" in flag_ids, "payoff avec flag : présent")
+	CampaignManager.flags.clear()
+	# 5. Bouton altinha : bandes de plage valides.
+	var mc: Script = load("res://scripts/ui/MobileControls.gd")
+	var bands: Dictionary = mc.BEACH_BANDS
+	for did in bands:
+		_assert(DistrictManager.DISTRICTS.has(did), "BEACH_BANDS : district valide (%s)" % did)
+		var b: Dictionary = bands[did]
+		_assert(b.x[0] < b.x[1] and b.y[0] < b.y[1], "BEACH_BANDS %s : bande bien formée" % did)
+
+# --- Vie ambiante hors Copa : soirs d'Arpoador/Icaraí, Forte et Aterro meublés ---
+
+func _test_ambient_life_out_of_copa() -> void:
+	_section("Vie ambiante hors Copa — soirs, Forte, Aterro")
+	var expectations: Dictionary = {
+		"res://scenes/districts/ZonaSul.tscn":
+			["ArpoadorSunsetLife", "ArpoadorPalmasSpot"],
+		"res://scenes/districts/Niteroi.tscn":
+			["IcaraiNoiteLife", "IcaraiSerestaSpot"],
+		"res://scenes/districts/ForteDeCopacabana.tscn":
+			["FilaColomboSpot", "PescadorForteSpot", "VeteranoSpot", "ForteWanderer1"],
+		"res://scenes/districts/BotafogoFlamengo.tscn":
+			["PipaSpot", "CoalhoSpot", "AterroWanderer1"],
+	}
+	for path in expectations:
+		var inst: Node = (load(path) as PackedScene).instantiate()
+		add_child(inst)
+		await get_tree().process_frame
+		for node_name in expectations[path]:
+			_assert(_find_by_name_in(inst, node_name) != null,
+				"%s présent dans %s" % [node_name, path.get_file()])
+		# Les conteneurs EveningOnly ne sont visibles que le soir.
+		for evening_name in ["ArpoadorSunsetLife", "IcaraiNoiteLife"]:
+			var ev: Node = _find_by_name_in(inst, evening_name)
+			if ev and ev is Node2D:
+				TimeOfDay.current_phase = TimeOfDay.Phase.MORNING
+				ev._on_phase_changed(TimeOfDay.Phase.MORNING)
+				_assert(not (ev as Node2D).visible, "%s invisible le matin" % evening_name)
+				ev._on_phase_changed(TimeOfDay.Phase.EVENING)
+				_assert((ev as Node2D).visible, "%s visible le soir" % evening_name)
+				TimeOfDay.current_phase = TimeOfDay.Phase.MORNING
+		inst.queue_free()
+		await get_tree().process_frame
+
+
+# --- Réputation & affinité qui travaillent (P5) ---
+
+# La réputation d'activité est plafonnée, les signatures sont honnêtes
+# (exercise = CHARISMA affiché, kite = kitesurf), et les effets mécaniques
+# répondent : preço de amigo, le morro qui couvre, la PM qui laisse passer.
+func _test_reputation_affinity_effects() -> void:
+	_section("Réputation & affinité — effets manette en main")
+	# 1. Cap ActivityRewards : 6 volleys qualifiants ne donnent que 3× la
+	#    signature (le grind de réputation s'arrête au seuil mestre).
+	for i in ReputationSystem.Axis.size():
+		ReputationSystem.set_value(i, 0)
+	ActivityRewards._qualify_counts.clear()
+	for i in 6:
+		EventBus.minigame_ended.emit("beach_volley", {"qualifies": true, "tip": 0})
+	var street: int = ReputationSystem.get_value(ReputationSystem.Axis.STREET)
+	_assert(street == 2 * ActivityRewards.REP_CAP_MULTIPLIER,
+		"cap réputation d'activité : 6 volleys → STREET %d (attendu %d)"
+			% [street, 2 * ActivityRewards.REP_CAP_MULTIPLIER])
+	_assert(ActivityRewards.count("beach_volley") == 6,
+		"le compteur mestre continue de compter au-delà du cap")
+	# 2. Signatures honnêtes : exercise crédite CHARISMA (l'axe affiché),
+	#    kitesurf a sa propre signature (fini les récompenses surf au kite).
+	_assert(int(ActivityRewards.SIGNATURES["exercise"].axis) == ReputationSystem.Axis.CHARISMA,
+		"exercise → CHARISMA (l'axe annoncé à l'écran)")
+	_assert(ActivityRewards.SIGNATURES.has("kitesurf"), "signature kitesurf présente")
+	var sg: SurfGame = SurfGame.new()
+	_assert("minigame_id" in sg and String(sg.minigame_id) == "surf",
+		"SurfGame expose minigame_id (défaut surf, surchargé kitesurf au kite)")
+	sg.free()
+	# 3. Preço de amigo : l'affinité du marchand baisse son prix (plancher 1).
+	var sv: StreetVendor = StreetVendor.new()
+	sv.vendor_id = "test_affinity"
+	sv.price = 5
+	_assert(sv.current_price() == 5, "vendeur inconnu : plein tarif")
+	NPCAffinity.bump("vendor_test_affinity", NPCAffinity.ACQUAINTANCE_THRESHOLD)
+	_assert(sv.current_price() == 4, "freguês connu : 1 R$ de moins")
+	NPCAffinity.bump("vendor_test_affinity", NPCAffinity.FAMILIAR_THRESHOLD)
+	_assert(sv.current_price() == 3, "freguês familier : preço de amigo (2 R$ de moins)")
+	sv.price = 2
+	_assert(sv.current_price() == 1, "le preço de amigo ne descend jamais sous 1 R$")
+	sv.free()
+	# 4. Le morro couvre : STREET ≥ seuil raccourcit l'abandon et la fatigue
+	#    du poursuivant ; en dessous, config inchangée.
+	var base: Dictionary = {"give_up_sec": 40.0, "tire_after_sec": 20.0}
+	var cold: Dictionary = CobradorChase.adjusted_config(base, CobradorChase.STREET_COVER_THRESHOLD - 1)
+	_assert(float(cold.give_up_sec) == 40.0, "STREET bas : poursuite inchangée")
+	var covered: Dictionary = CobradorChase.adjusted_config(base, CobradorChase.STREET_COVER_THRESHOLD)
+	_assert(float(covered.give_up_sec) < 40.0 and float(covered.tire_after_sec) < 20.0,
+		"STREET haut : le poursuivant abandonne plus tôt et fatigue plus vite")
+	_assert(float(base.give_up_sec) == 40.0, "adjusted_config ne mute pas la config d'origine")
+	# 5. La PM laisse passer ses alliés (racket du calçadão).
+	_assert(not PMPatrol.waves_through(PMPatrol.POLICE_PASS_THRESHOLD - 1),
+		"POLICE bas : le racket s'applique")
+	_assert(PMPatrol.waves_through(PMPatrol.POLICE_PASS_THRESHOLD),
+		"POLICE haut : la patrouille salue au lieu de racketter")
+	for i in ReputationSystem.Axis.size():
+		ReputationSystem.set_value(i, 0)
+	ActivityRewards._qualify_counts.clear()
+	CampaignManager.flags.erase("mestre_beach_volley")

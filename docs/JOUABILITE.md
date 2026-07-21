@@ -52,26 +52,39 @@ le bairro pense du pouvoir). Le Sambódromo passe de coquille à lieu de climax
 (4 spots). Reste ouvert : le monde post-desfile (« continuer à explorer »)
 n'évolue plus après l'épilogue.
 
-### P4. Le monde vivant s'arrête aux limites de Copacabana
-24 random events, vie du soir, Domingo, blocos, coût humain : tous exclusifs à
-Copa. 12 districts figés, 4 coquilles (Marina 7 interactifs, Forte, Santos
-Dumont, Aterro). 4 intérieurs sans gameplay (Police, Palace Lobby, Bar,
-Mercadinho). Le cobrador et les visites créancières ne suivent pas le joueur
-hors Copa/ZonaSul/Favela.
+### P4. Le monde vivant s'arrête aux limites de Copacabana — LARGEMENT RÉSOLU
+**[Axe D livré le 2026-07-21]** RandomEventManager multi-districts (zonage
+local par district + filtre `districts`, conversion locale→monde via l'offset
+du nœud ; 11 événements génériques tournent à Ipanema, la mureta et Icaraí,
+les payoffs narratifs restent à Copa) ; vie du soir hors Copa (palmas
+d'Arpoador, seresta d'Icaraí) ; bouton ⚽ altinha sur les plages d'Ipanema et
+Icaraí ; Forte et Aterro meublés (fila du Colombo, pêcheur, vétéran, pipas,
+queijo coalho, flâneurs) ; ~330 assertions de test sur l'ambiance (pool,
+éligibilité, bandes de plage, EveningOnly). **Reste ouvert** : Marina da
+Glória et Santos Dumont toujours squelettiques, 4 intérieurs sans gameplay
+(Police, Palace Lobby, Bar, Mercadinho), domingo/blocos/coût humain encore
+Copa-only, cobrador limité à Copa/ZonaSul/Favela.
 
-### P5. Les récompenses ne tiennent pas la longueur
-Réputation farmable (`ActivityRewards.modify` sans cap, doublé par les
-launchers), jamais décroissante, affinité sans effet mécanique fort (le
-jeitinho ne débloque que 9 dialogues). Milho anecdotique passé l'acte 1.
-Cash ≠ dette jamais expliqué à l'écran.
+### P5. Les récompenses ne tiennent pas la longueur — LARGEMENT RÉSOLU
+**[Axe E + bugs B1-B3 livrés le 2026-07-21]** ActivityRewards plafonné
+(`gain_capped`, cap = 3× la signature — le grind s'arrête au seuil mestre,
+le compteur mestre continue) ; kite séparé du surf (`SurfGame.minigame_id`,
+signature `kitesurf`) ; Exercise crédite l'axe affiché (CHARISMA). Et la
+réputation/affinité se sentent manette en main : **preço de amigo** chez les
+13 marchands (tier d'affinité par `vendor_<id>` = −1/−2 R$), **le morro te
+couvre** (STREET ≥ 50 : tout poursuivant abandonne plus tôt et fatigue plus
+vite), **la PM laisse passer ses alliés** (POLICE ≥ 40 : plus de racket du
+calçadão), et l'app Saúde explique enfin cash ≠ dette. **Reste ouvert** :
+pas de décroissance de réputation, milho toujours anecdotique passé
+l'acte 1, Fishing/Exercise toujours superficiels (axe F).
 
 ## Bugs & frictions à corriger vite (petits, forts en impact)
 
 | # | Problème | Où |
 |---|---|---|
-| B1 | Kite pointe `Surf.tscn` → id/récompenses surf + auto-complétion d'objectifs MINIJEU `surf` par le kite | `scenes/props/KiteStation.tscn` |
-| B2 | Double canal de réputation, part `ActivityRewards.modify` **sans cap** | `ActivityRewards.gd` + launchers |
-| B3 | Exercise affiche « +1 Charisma », donne aussi STREET caché | `ExerciseGame.gd:91`, `ActivityRewards` |
+| B1 | ~~Kite pointe `Surf.tscn` → id/récompenses surf~~ **corrigé 2026-07-21** (`SurfGame.minigame_id`, signature `kitesurf`) | `SurfGame.gd`, `KiteLauncher.gd` |
+| B2 | ~~`ActivityRewards.modify` sans cap~~ **corrigé 2026-07-21** (`gain_capped`, cap 3× signature) | `ActivityRewards.gd` |
+| B3 | ~~Exercise donne du STREET caché~~ **corrigé 2026-07-21** (axe → CHARISMA) | `ActivityRewards.gd` |
 | B4 | Sprint tactile = déflexion 0.85, incompatible direction fine (esquives cobrador/PM) | `VirtualJoystick.gd` — bouton sprint dédié ? |
 | B5 | Missions dynamiques chronométrées inter-districts : le chrono court pendant le taxi | `DynamicMissionManager.gd` |
 | B6 | Visites créancières possibles en intérieur (détection inerte, « à raffiner ») | `CreditorVisitManager.gd` L85-89 |
@@ -121,18 +134,23 @@ au Sambódromo, monde-reflet (`_rebuild_reinado()`), guidage et toasts
 réécrits. E2e étendus : les 4 reinados joués jusqu'au desfile dans la suite.
 Suite possible : faire évoluer le monde post-desfile (après l'épilogue).
 
-### D. Exporter la vie hors de Copa
-RandomEventManager filtrant par district (les 24 events ont déjà des
-`spawn_zones` — il faut des bbox par district), evening_life pour ZonaSul et
-Botafogo (mureta déjà là), bouton ⚽ sur les plages d'Ipanema/Icaraí (TODO déjà
-noté dans `MobileControls.gd`). Meubler en priorité les 2 coquilles les plus
-visitées par la trame (Forte, Aterro) plutôt que tout.
+### D. Exporter la vie hors de Copa — LIVRÉ le 2026-07-21
+`DISTRICT_ZONES` (bbox locales par district) + `eligible_events()` pure et
+testée + filtre `districts` par événement ; palmas d'Arpoador et seresta
+d'Icaraí (EveningOnly) ; ⚽ altinha via `BEACH_BANDS` (Ipanema, Icaraí) ;
+Forte et Aterro meublés. L'audit de pool a immédiatement attrapé 2 events
+mal zonés (fake_rolex, fla_flu_debate) — la couverture paie déjà.
+Suite possible : Marina/Santos Dumont, domingo hors Copa, intérieurs vides.
 
-### E. Faire travailler réputation & affinité (pilier jeitinho)
-Caper `ActivityRewards` (B2), puis donner des effets mécaniques : tiers
-d'affinité → remises/accès/infos chez les marchands, réputation STREET/POLICE →
-comportement PMPatrol et cobrador, décroissance douce ou usage négatif. Le
-jeitinho doit se sentir manette en main, pas seulement dans les salutations.
+### E. Faire travailler réputation & affinité — LIVRÉ le 2026-07-21
+Cap posé (B2) + trois effets manette en main : preço de amigo par tier
+d'affinité chez les StreetVendor (l'achat crée la relation — le dialogue du
+comptoir passe par `vendor_<id>`, donc chaque achat nourrit l'affinité) ;
+`CobradorChase.adjusted_config` (STREET ≥ 50 → abandon −25 %, fatigue −20 %,
+toast « le morro te couvre ») ; `PMPatrol.waves_through` (POLICE ≥ 40 → la
+patrouille salue au lieu de racketter). L'usage négatif existe désormais via
+les carrefours (axes qui descendent). Non fait, assumé : décroissance
+passive (risque design), effets d'affinité chez les commerçants d'intérieur.
 
 ### F. Approfondir ou requalifier Fishing/Exercise
 Les deux mini-jeux les plus pauvres. Soit les remonter au standard

@@ -21,12 +21,17 @@ const SIGNATURES: Dictionary = {
 	"fishing":          {"axis": 0, "amount": 1, "npc": "pecheur", "label": "pesca da Colônia"},
 	"lagoa_circuit":    {"axis": 3, "amount": 1, "npc": "carlos", "label": "volta da Lagoa"},
 	"bike":             {"axis": 0, "amount": 1, "npc": "carlos", "label": "entregas de bike"},
-	"exercise":         {"axis": 2, "amount": 1, "npc": "ramos", "label": "treino da academia"},
+	"exercise":         {"axis": 4, "amount": 1, "npc": "ramos", "label": "treino da academia"},
 	"carnaval_samba":   {"axis": 4, "amount": 3, "npc": "", "label": "samba da Sapucaí"},
 	"racha_atlantica":  {"axis": 2, "amount": 2, "npc": "", "label": "racha da Atlântica"},
 	"altinha":          {"axis": 2, "amount": 1, "npc": "", "label": "altinha da praia"},
+	"kitesurf":         {"axis": 2, "amount": 1, "npc": "", "label": "kite da Barra"},
 }
 const MESTRE_THRESHOLD: int = 3
+# La réputation d'activité est plafonnée par source : au-delà de 3 réussites
+# « payantes » (le seuil mestre), rejouer reste du plaisir/affinité, plus du
+# grind de réputation.
+const REP_CAP_MULTIPLIER: int = 3
 
 # id → nombre de réussites qualifiantes (persisté).
 var _qualify_counts: Dictionary = {}
@@ -42,7 +47,8 @@ func _on_minigame_ended(minigame_id: String, result: Dictionary) -> void:
 	if not ok:
 		return
 	var sig: Dictionary = SIGNATURES[minigame_id]
-	ReputationSystem.modify(int(sig.axis), int(sig.amount))
+	ReputationSystem.gain_capped(int(sig.axis), int(sig.amount),
+		"activity_" + minigame_id, int(sig.amount) * REP_CAP_MULTIPLIER)
 	var npc: String = String(sig.npc)
 	if npc != "":
 		NPCAffinity.bump(npc)

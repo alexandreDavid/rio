@@ -2,8 +2,10 @@ class_name KiteLauncher
 extends Node2D
 
 # Lance le mini-jeu de kite-board (réutilise la scène Surf pour la physique
-# vague/équilibre, c'est très proche). Récompense rep STREET +1 (cap 3, source
-# "kite"). Pas de hook de quête — c'est une activité libre de la Barra.
+# vague/équilibre, c'est très proche) — mais sous l'identité "kitesurf" :
+# sans elle, la session émettait les signaux "surf" (récompenses mislabelées
+# et objectifs MINIJEU surf auto-complétés par le kite). Les récompenses
+# passent par ActivityRewards ("kitesurf"), pas par le launcher.
 
 @export var interactable: Interactable
 @export var match_scene: PackedScene
@@ -26,6 +28,7 @@ func _on_interact(_by: Node) -> void:
 
 func _launch() -> void:
 	_active_match = match_scene.instantiate()
+	_active_match.set("minigame_id", "kitesurf")
 	var root: Node = get_tree().current_scene
 	_world_cache = root.get_node_or_null("World")
 	_ui_cache = root.get_node_or_null("UI")
@@ -38,9 +41,7 @@ func _launch() -> void:
 	if _active_match.has_signal("match_ended"):
 		_active_match.match_ended.connect(_on_match_ended)
 
-func _on_match_ended(qualifies: bool, _time_survived: float) -> void:
-	if qualifies:
-		ReputationSystem.gain_capped(ReputationSystem.Axis.STREET, 1, "kite", 3)
+func _on_match_ended(_qualifies: bool, _time_survived: float) -> void:
 	if _active_match:
 		_active_match.queue_free()
 		_active_match = null

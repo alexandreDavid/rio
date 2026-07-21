@@ -129,8 +129,13 @@ var _stun_left: float = 0.0
 var _interact_button: Button = null
 var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
 
+# Identité EventBus de la session : "surf" par défaut, "kitesurf" quand la
+# scène est réutilisée par KiteLauncher — les récompenses (ActivityRewards)
+# et les objectifs MINIJEU des quêtes filtrent sur cet id.
+@export var minigame_id: String = "surf"
+
 func _ready() -> void:
-	EventBus.minigame_started.emit("surf")
+	EventBus.minigame_started.emit(minigame_id)
 	var cam: Camera2D = get_node_or_null("Camera2D")
 	if cam:
 		cam.make_current()
@@ -469,7 +474,7 @@ func _end_session() -> void:
 	await get_tree().create_timer(2.2).timeout
 	# Clés historiques conservées (ActivityRewards lit `qualifies`) ; `lives`
 	# est gardée pour compat, dérivée des wipeouts.
-	EventBus.minigame_ended.emit("surf", {
+	EventBus.minigame_ended.emit(minigame_id, {
 		"time_survived": _total_ride_time,
 		"lives": maxi(0, 3 - _wipeouts),
 		"qualifies": qualifies,
