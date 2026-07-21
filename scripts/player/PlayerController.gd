@@ -42,7 +42,6 @@ func _ready() -> void:
 	if camera:
 		camera.make_current()
 	apply_appearance()
-	print("[Player] spawned at ", global_position, " — camera current=", camera != null)
 
 func _on_save_loaded() -> void:
 	# Si aucun dialogue/cutscene n'est actif au reload, on force l'éveil pour
@@ -50,7 +49,6 @@ func _on_save_loaded() -> void:
 	# L'apparence restaurée par la save doit re-render le sprite.
 	apply_appearance()
 	if not DialogueBridge.is_active() and not CutsceneRunner.is_running():
-		print("[Player] save_loaded → ensure unfrozen")
 		set_physics_process(true)
 		set_process_unhandled_input(true)
 		velocity = Vector2.ZERO
@@ -167,7 +165,6 @@ func _on_altinha_ended(_qualifies: bool, _score: int) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("interact"):
-		print("[Player] E pressed — interactable=", _current_interactable)
 		if _current_interactable:
 			_current_interactable.interact(self)
 
@@ -260,12 +257,10 @@ func _refresh_current() -> void:
 	_current_interactable = _active_interactables.back() if _active_interactables.size() > 0 else null
 
 func _on_dialogue_started(_npc_id: String) -> void:
-	print("[Player] _on_dialogue_started → freeze")
 	velocity = Vector2.ZERO
 	set_physics_process(false)
 	set_process_unhandled_input(false)
 
 func _on_dialogue_ended(_npc_id: String) -> void:
-	print("[Player] _on_dialogue_ended → unfreeze")
 	set_physics_process(true)
 	set_process_unhandled_input(true)

@@ -10,6 +10,11 @@ extends Control
 # tactile (l'action n'est mappée que sur Shift).
 @export var run_threshold: float = 0.85
 
+# Tenu par le bouton 🏃 de MobileControls : tant que true, le joystick ne
+# relâche jamais "run" — sinon chaque retour sous le seuil 0.85 annulerait la
+# bascule et le sprint serait incompatible avec une direction fine.
+var external_run_hold: bool = false
+
 var _touch_index: int = -1
 var _knob_offset: Vector2 = Vector2.ZERO
 
@@ -56,7 +61,7 @@ func _apply_actions(axis: Vector2) -> void:
 	_set_axis("move_forward", "move_back", axis.y)
 	if axis.length() >= run_threshold:
 		Input.action_press("run")
-	else:
+	elif not external_run_hold:
 		Input.action_release("run")
 
 func _set_axis(neg_action: String, pos_action: String, value: float) -> void:

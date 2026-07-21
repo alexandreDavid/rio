@@ -278,7 +278,12 @@ func _refresh_chrono() -> void:
 			best_label = String(entry.label)
 	var mins: int = int(best_left) / 60
 	var secs: int = int(best_left) % 60
-	_chrono_label.text = "⏱ %d:%02d — %s" % [mins, secs, best_label]
+	var text: String = "⏱ %d:%02d — %s" % [mins, secs, best_label]
+	# Plusieurs comptes à rebours actifs : on affiche le plus urgent, mais on
+	# signale les autres pour qu'aucun n'expire en silence.
+	if _chronos.size() > 1:
+		text += "  (+%d ⏱)" % (_chronos.size() - 1)
+	_chrono_label.text = text
 	_chrono_label.add_theme_color_override("font_color",
 		Color(0.95, 0.4, 0.35, 1) if best_left <= 10.0 else Color(0.98, 0.9, 0.6, 1))
 	_chrono_label.show()
@@ -294,7 +299,7 @@ func _on_money_changed(amount: int) -> void:
 	if not _money_init_done:
 		_money_init_done = true
 		return
-	if delta > 0:
+	if delta != 0:
 		_flash_money_delta(delta)
 
 func _flash_money_delta(delta: int) -> void:
@@ -302,15 +307,18 @@ func _flash_money_delta(delta: int) -> void:
 		return
 	# Si un achievement vient de débloquer un reward, on tague le flash avec
 	# son titre pour que le joueur voie la source. Sinon flash générique.
-	var text: String = "+R$ %d" % delta
+	# Les ponctions (cobrador, bribes, cautions) flashent en rouge : le joueur
+	# doit SENTIR l'argent qui part, pas seulement celui qui rentre.
+	var text: String = ("+R$ %d" % delta) if delta > 0 else ("−R$ %d" % -delta)
 	var dur: float = 1.1
-	if _next_money_source != "":
+	if _next_money_source != "" and delta > 0:
 		text = "%s  +R$ %d" % [_next_money_source, delta]
 		_next_money_source = ""
 		dur = 2.4
 	var lbl: Label = Label.new()
 	lbl.text = text
-	lbl.add_theme_color_override("font_color", Color(0.55, 0.95, 0.55, 1))
+	lbl.add_theme_color_override("font_color",
+		Color(0.55, 0.95, 0.55, 1) if delta > 0 else Color(0.95, 0.5, 0.45, 1))
 	lbl.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.85))
 	lbl.add_theme_constant_override("outline_size", 3)
 	lbl.add_theme_font_size_override("font_size", 14)

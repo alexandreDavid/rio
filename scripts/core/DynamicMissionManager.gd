@@ -147,6 +147,10 @@ const TIME_PER_POINT_SEC: float = 15.0      # marge par point à toucher
 const TIME_MIN_SEC: float = 45.0
 const TIME_MAX_SEC: float = 420.0
 const FAST_BONUS_RATIO: float = 0.25         # finir avec >25% du budget restant = bonus
+# Au-delà de cette distance brute, la cible est dans un autre district
+# (offsets de scène) : budget plancher, la distance px n'a plus de sens.
+const INTER_DISTRICT_DIST_PX: float = 3000.0
+const INTER_DISTRICT_MIN_SEC: float = 180.0
 const FAST_BONUS_MONEY: float = 0.25
 
 var _active: Dictionary = {}        # category(int) -> mission Dictionary
@@ -199,6 +203,13 @@ func _time_budget(m: Dictionary) -> float:
 		dist += from.distance_to(p)
 		from = p
 	var budget: float = TIME_BASE_SEC + dist * TIME_PER_PX + TIME_PER_POINT_SEC * points.size()
+	# Cible manifestement dans un autre district (les scènes sont instanciées à
+	# des offsets de plusieurs milliers de px) : la distance brute ne veut rien
+	# dire pour le joueur — le taxi est instantané mais il faut le rejoindre,
+	# payer, puis marcher à l'arrivée. Plancher généreux pour rester jouable
+	# quelle que soit la géométrie des offsets.
+	if dist > INTER_DISTRICT_DIST_PX:
+		budget = maxf(budget, INTER_DISTRICT_MIN_SEC)
 	return clampf(budget, TIME_MIN_SEC, TIME_MAX_SEC)
 
 func _process(delta: float) -> void:

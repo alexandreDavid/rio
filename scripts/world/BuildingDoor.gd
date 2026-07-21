@@ -108,8 +108,10 @@ func _on_interacted(by: Node) -> void:
 		target = BuildingManager.last_exit_position
 		if target == Vector2.ZERO:
 			target = destination  # fallback si on a spawné directement dans l'intérieur
+		BuildingManager.is_inside = false
 	else:
 		BuildingManager.last_exit_position = global_position + return_offset
+		BuildingManager.is_inside = true
 		target = destination
 	var cam: Camera2D = by.get_node_or_null("Camera2D") as Camera2D
 	if cam:

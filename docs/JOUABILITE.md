@@ -85,12 +85,12 @@ l'acte 1, Fishing/Exercise toujours superficiels (axe F).
 | B1 | ~~Kite pointe `Surf.tscn` → id/récompenses surf~~ **corrigé 2026-07-21** (`SurfGame.minigame_id`, signature `kitesurf`) | `SurfGame.gd`, `KiteLauncher.gd` |
 | B2 | ~~`ActivityRewards.modify` sans cap~~ **corrigé 2026-07-21** (`gain_capped`, cap 3× signature) | `ActivityRewards.gd` |
 | B3 | ~~Exercise donne du STREET caché~~ **corrigé 2026-07-21** (axe → CHARISMA) | `ActivityRewards.gd` |
-| B4 | Sprint tactile = déflexion 0.85, incompatible direction fine (esquives cobrador/PM) | `VirtualJoystick.gd` — bouton sprint dédié ? |
-| B5 | Missions dynamiques chronométrées inter-districts : le chrono court pendant le taxi | `DynamicMissionManager.gd` |
-| B6 | Visites créancières possibles en intérieur (détection inerte, « à raffiner ») | `CreditorVisitManager.gd` L85-89 |
-| B7 | HUD : delta d'argent affiché seulement en positif ; un seul chrono visible | `HUD.gd` |
-| B8 | App Fotos affiche un chemin OS absolu (inutile sur iOS) | `Phone.gd` |
-| B9 | `print()` de debug actifs dans PlayerController | `PlayerController.gd` |
+| B4 | ~~Sprint tactile inutilisable finement~~ **corrigé 2026-07-21** : bouton 🏃 à bascule (`RunButton`, `external_run_hold` du joystick, relâché aux dialogues/mini-jeux) — le seuil 0.85 reste en alternative | `MobileControls`, `VirtualJoystick` |
+| B5 | ~~Chrono inter-districts intenable~~ **corrigé 2026-07-21** : plancher 180 s dès que la cible est à un offset de district (>3000 px) ; le téléphone pause déjà le jeu, le taxi est instantané | `DynamicMissionManager.gd` |
+| B6 | ~~Visites créancières en intérieur~~ **corrigé 2026-07-21** : vrai flag `BuildingManager.is_inside` (posé par les portes, remis à false par tout voyage) | `BuildingManager`, `BuildingDoor`, `CreditorVisitManager` |
+| B7 | ~~Delta d'argent positif seulement ; un seul chrono~~ **corrigé 2026-07-21** : les ponctions flashent « −R$ X » en rouge ; les chronos secondaires signalés « (+N ⏱) » | `HUD.gd` |
+| B8 | ~~Chemin OS absolu dans Fotos~~ **corrigé 2026-07-21** : compteur de photos (chemin gardé en petit sur desktop) | `Phone.gd` |
+| B9 | ~~`print()` de debug~~ **corrigé 2026-07-21** (PlayerController ×5, PMPatrol ×1) | `PlayerController.gd` |
 
 ## Axes d'amélioration proposés (par impact décroissant)
 

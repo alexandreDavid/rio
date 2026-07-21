@@ -181,6 +181,7 @@ func travel_to(district_id: String) -> bool:
 	_pending_target_district = district_id
 	_reposition_vehicles_near_player()
 	_pending_target_district = ""
+	BuildingManager.is_inside = false
 	_current = district_id
 	district_changed.emit(district_id)
 	return true
@@ -210,6 +211,7 @@ func walk_to(district_id: String, vehicle: Node = null) -> bool:
 	_pending_target_district = district_id
 	_reposition_vehicles_near_player(vehicle)
 	_pending_target_district = ""
+	BuildingManager.is_inside = false
 	_current = district_id
 	district_changed.emit(district_id)
 	return true

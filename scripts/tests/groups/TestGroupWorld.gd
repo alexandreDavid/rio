@@ -612,6 +612,24 @@ func _test_mobile_controls_invariants() -> void:
 			var sz: Vector2 = ib.size
 			_assert(sz.x >= 44.0 and sz.y >= 44.0,
 				"InteractButton ≥ 44×44 pt (actuel %dx%d)" % [sz.x, sz.y])
+		# Sprint tactile : bouton 🏃 à bascule (le seuil de déflexion 0.85 du
+		# joystick n'était pas utilisable en dirigeant finement — B4).
+		var rb: Button = mc.get_node_or_null("RunButton") as Button
+		_assert(rb != null, "RunButton (sprint tactile) présent")
+		if rb:
+			_assert(rb.toggle_mode, "RunButton en mode bascule")
+			var rsz: Vector2 = rb.size
+			_assert(rsz.x >= 44.0 and rsz.y >= 44.0,
+				"RunButton ≥ 44×44 pt (actuel %dx%d)" % [rsz.x, rsz.y])
+			rb.button_pressed = true
+			await get_tree().process_frame
+			_assert(Input.is_action_pressed("run"), "bascule 🏃 ON → action run tenue")
+			var joy2: VirtualJoystick = mc.get_node_or_null("Joystick") as VirtualJoystick
+			if joy2:
+				_assert(joy2.external_run_hold, "le joystick ne relâche pas run pendant la bascule")
+			rb.button_pressed = false
+			await get_tree().process_frame
+			_assert(not Input.is_action_pressed("run"), "bascule 🏃 OFF → action run relâchée")
 		mc.queue_free()
 		await get_tree().process_frame
 	# Mini-jeux : contrôles tactiles dédiés disponibles.

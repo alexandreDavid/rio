@@ -707,10 +707,14 @@ func _refresh_photos() -> void:
 	for child in photos_box.get_children():
 		child.queue_free()
 	var files: Array[String] = _list_photo_files()
-	# Path absolu OS pour donner au joueur l'emplacement réel des PNG.
+	# Pas de chemin OS absolu : inutile (et illisible) sur iOS sandboxé.
+	# On affiche un compteur ; le mode desktop garde le chemin en petit.
 	if photos_path_label:
-		var abs_path: String = ProjectSettings.globalize_path(PHOTOS_DIR + "/")
-		photos_path_label.text = abs_path
+		var count_text: String = "%d photo%s — 📷 pour en prendre d'autres" \
+				% [files.size(), "s" if files.size() != 1 else ""]
+		if OS.has_feature("pc"):
+			count_text += "\n%s" % ProjectSettings.globalize_path(PHOTOS_DIR + "/")
+		photos_path_label.text = count_text
 	if photos_empty:
 		photos_empty.visible = files.is_empty()
 	for fname in files:

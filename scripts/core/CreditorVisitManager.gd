@@ -81,12 +81,10 @@ func _try_trigger_visit() -> void:
 		return
 	if get_tree().paused:
 		return
-	# Pas dans une scène d'intérieur (porte fermée = lieu privé)
-	if BuildingManager.last_exit_position != Vector2.ZERO:
-		# Hack : si BuildingManager garde une position de retour, le joueur est
-		# probablement dans un intérieur. On évite la visite.
-		# Note : ce flag n'est pas complètement fiable mais c'est un bon proxy.
-		pass  # On laisse passer pour l'instant — à raffiner si nécessaire
+	# Pas dans un intérieur (porte fermée = lieu privé) : flag fiable posé par
+	# BuildingDoor à l'entrée/sortie, remis à false par tout voyage de district.
+	if BuildingManager.is_inside:
+		return
 	# District restriction : seulement en ville (copa, zona_sul, favela)
 	var d: String = DistrictManager.current()
 	if d != "copacabana" and d != "zona_sul" and d != "favela_morro":

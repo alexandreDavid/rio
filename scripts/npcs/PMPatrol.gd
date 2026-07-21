@@ -28,7 +28,6 @@ func _ready() -> void:
 		trigger = get_node_or_null("Trigger") as POITrigger
 	if trigger:
 		trigger.player_entered.connect(_on_player_entered)
-		print("[PMPatrol] connected, chance=%s radius checks trigger=%s" % [chance, trigger])
 	# Charge un sprite individuel si présent (assets/sprites/npcs/pm_patrol.png).
 	var sprite: Sprite2D = get_node_or_null("Sprite2D") as Sprite2D
 	if sprite:

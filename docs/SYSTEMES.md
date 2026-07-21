@@ -136,12 +136,13 @@ plages).
 
 ## Frictions restantes (entrée pour JOUABILITE.md)
 
-1. Sprint tactile au seuil 0.85 — inutilisable en dirigeant finement (B4).
-2. ~~Double canal non plafonné / gains cachés / kite=surf~~ **corrigés le
-   2026-07-21** (B1-B3).
-3. ~~Cash ≠ dette jamais explicité~~ **expliqué dans l'app Saúde** ; milho
-   toujours anecdotique passé l'acte 1.
-4. Missions chronométrées inter-districts vs temps de trajet (B5).
-5. Guidage fragile : `MAIN_NEXT_HINT` manuel, un seul chrono affiché (B7).
-6. Visites créancières possibles en intérieur (détection inerte, B6).
-7. Fishing/Exercise très en retrait des standards volley/surf/altinha (axe F).
+Les bugs B1-B9 sont tous corrigés au 2026-07-21 (voir la table de
+JOUABILITE.md — sprint 🏃 à bascule, plancher inter-districts, flag
+`is_inside`, deltas négatifs + multi-chronos au HUD, Fotos sans chemin OS,
+prints retirés). Restent :
+
+1. Milho anecdotique passé l'acte 1.
+2. `MAIN_NEXT_HINT` toujours à maintenir à la main.
+3. Fishing/Exercise très en retrait des standards volley/surf/altinha (axe F).
+4. Stamina sans progression sur toute la partie.
+5. Altinha lancée hors pattern launcher (chemin spécial PlayerController).
