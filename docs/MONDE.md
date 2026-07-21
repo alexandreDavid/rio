@@ -65,13 +65,18 @@ pêcheur/coconut/tourist disparaissent le soir, concierge disparaît si
 `tio_ze_revealed`. **Ne couvre qu'~15 NPCs** ; `on_flag_set` non branché (pas
 de signal dédié).
 
-## 4. Vie ambiante — 100 % Copacabana
+## 4. Vie ambiante — multi-districts depuis le 2026-07-21
 
-- **RandomEventManager** (329 l.) : 24 événements (`StreetEvent.tscn`), 55 %
-  par changement de phase, 1 actif à la fois, **uniquement si district =
-  copacabana**. Zones sand/calcadao/av_atlantica/nossa_senhora ; filtres
-  `phases` et `flag` (tous posables : `pecheur_to_*` par le choix pêcheur,
-  `jogo_*` par le calendrier).
+- **RandomEventManager** : événements (`StreetEvent.tscn`), 55 % par
+  changement de phase, 1 actif à la fois. **Multi-districts** :
+  `DISTRICT_ZONES` (bbox locales par district — copacabana, zona_sul,
+  botafogo_flamengo, niteroi), filtre `districts` par événement (défaut =
+  Copa ; 11 génériques tournent ailleurs, les payoffs narratifs restent chez
+  eux), `eligible_events(district, phase)` pure et testée. Filtres `phases`
+  et `flag` (payoffs pêcheur, jogo, carrefours de voie).
+- **Soirs hors Copa** : palmas du pôr do sol à la pedra do Arpoador
+  (ZonaSul), seresta au coreto d'Icaraí (Niteroi) — conteneurs `EveningOnly`
+  + spots phase-gatés.
 - `_spawn_evening_life()` : roda de samba au quiosque do Zé + futevôlei posto 3
   (visible en EVENING seulement).
 - `_spawn_domingo_life()` : baigneurs, parasols, sortie de messe.
@@ -110,7 +115,9 @@ subi par tous les districts sans contenu de soirée propre.
 ## 7. Mobile / iOS
 
 `MobileControls.tscn` : joystick (`run` à 0.85 de déflexion), bouton Action,
-bouton ⚽ altinha (**sable de Copa uniquement**). `MinigameTouchControls.tscn` +
+bouton ⚽ altinha (sable de Copa via `Cfg.shore_y`, plages d'Ipanema et
+d'Icaraí via `BEACH_BANDS` — bandes locales converties par l'offset du
+district). `MinigameTouchControls.tscn` +
 `MinigameQuitButton.tscn` pour les mini-jeux. HUD : 📱 (téléphone), 📷 (photo).
 
 Téléphone (`Phone.gd`, 1040 l., pause le jeu) : Taxi, Mapa (régions), Saúde
@@ -128,17 +135,19 @@ NPCs/13 districts/4 voies), `PlaythroughDriver.tscn` (parcours réel acte 1→2)
 `SCRIPT_COMPLETED_OBJECTIVES`, stations e2e.
 
 Couvert : complétabilité de la trame, intégrité .tres/dialogues, anti-soft-lock
-géométrique, conformité tactile (≥ 44 pt). **Non couvert** : RandomEventManager,
-TimeOfDay, NPCScheduler, vie du soir/dimanche — les systèmes « vivants » ne
-sont pas garantis ; la richesse de contenu des districts non plus (les coquilles
-Marina/Forte/SantosDumont passent les tests).
+géométrique, conformité tactile (≥ 44 pt), et depuis le 2026-07-21 la vie
+ambiante (~330 assertions : intégrité du pool d'événements, éligibilité par
+district/phase/flag, bandes de plage altinha, présence et cycle jour/soir des
+groupes EveningOnly, meublage Forte/Aterro). **Non couvert** : NPCScheduler,
+avancée TimeOfDay, domingo/blocos/coût humain.
 
-## Disparités prioritaires (entrée pour JOUABILITE.md)
+## Disparités restantes (entrée pour JOUABILITE.md)
 
-1. Toute la vie ambiante + 24 random events exclusifs à Copacabana ; 12
-   districts figés, 4 coquilles (Marina, Forte, Santos Dumont, Aterro).
+1. ~~Vie ambiante exclusive à Copa~~ **traité le 2026-07-21** (events
+   multi-districts, soirs Arpoador/Icaraí, Forte et Aterro meublés) — restent
+   Marina da Glória et Santos Dumont squelettiques, et domingo/blocos/coût
+   humain encore Copa-only.
 2. 4 intérieurs sans aucun gameplay (Police, Palace Lobby, Bar, Mercadinho).
 3. Donneurs fantômes sans corps ni « ! » — lisibilité 100 % NavigationDirector.
-4. Cycle 15 min/jour, 3 phases, variation réelle limitée au soir de Copa.
-5. UX tactile monde : un seul bouton contextuel (⚽, sable de Copa).
-6. Tests aveugles aux systèmes d'ambiance.
+4. Cycle 15 min/jour, 3 phases.
+5. Cobrador/visites créancières limités à Copa/ZonaSul/Favela.

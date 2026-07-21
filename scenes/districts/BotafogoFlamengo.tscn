@@ -3105,3 +3105,89 @@ theme_override_colors/font_color = Color(0.98, 0.88, 0.6, 0.9)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.8)
 theme_override_constants/outline_size = 3
 
+
+[node name="PipaFio1" type="ColorRect" parent="."]
+offset_left = -138.0
+offset_top = -1240.0
+offset_right = -137.0
+offset_bottom = -1160.0
+color = Color(0.9, 0.9, 0.9, 0.35)
+
+[node name="PipaLosango1" type="ColorRect" parent="."]
+offset_left = -148.0
+offset_top = -1256.0
+offset_right = -128.0
+offset_bottom = -1236.0
+color = Color(0.9, 0.3, 0.3, 0.95)
+
+[node name="PipaFio2" type="ColorRect" parent="."]
+offset_left = -80.0
+offset_top = -1218.0
+offset_right = -79.0
+offset_bottom = -1150.0
+color = Color(0.9, 0.9, 0.9, 0.35)
+
+[node name="PipaLosango2" type="ColorRect" parent="."]
+offset_left = -90.0
+offset_top = -1234.0
+offset_right = -72.0
+offset_bottom = -1216.0
+color = Color(0.3, 0.6, 0.9, 0.95)
+
+[node name="PipaGamin1" type="ColorRect" parent="."]
+offset_left = -142.0
+offset_top = -1172.0
+offset_right = -134.0
+offset_bottom = -1158.0
+color = Color(0.9, 0.7, 0.3, 1)
+
+[node name="PipaGamin2" type="ColorRect" parent="."]
+offset_left = -86.0
+offset_top = -1164.0
+offset_right = -78.0
+offset_bottom = -1150.0
+color = Color(0.5, 0.8, 0.6, 1)
+
+[node name="PipaSpot" parent="." instance=ExtResource("19_reactive")]
+position = Vector2(-112, -1150)
+npc_id = "aterro_pipas"
+prompt = "Les pipas de l'Aterro"
+character_seed = 90551
+variants = [{
+"id": "default",
+"speaker": "Gamin aux pipas",
+"text": "*deux gosses, les yeux au ciel, chacun son fil — les losanges rouge et bleu se tournent autour dans le vent de la baie* Regarde bem, moço : celle de Kaká a du cerol, mais la mienne monte plus haut. *sa pipa pique, remonte, coupe presque l'autre fil — hurlements de joie* À l'Aterro, le ciel est à nous. C'est le seul terrain que personne peut acheter.",
+"choices": ["*regarder le duel*"]
+}]
+
+[node name="CoalhoBrasa" type="ColorRect" parent="."]
+offset_left = -276.0
+offset_top = -1084.0
+offset_right = -256.0
+offset_bottom = -1072.0
+color = Color(0.35, 0.22, 0.18, 1)
+
+[node name="CoalhoFumaca" type="ColorRect" parent="."]
+offset_left = -270.0
+offset_top = -1098.0
+offset_right = -264.0
+offset_bottom = -1084.0
+color = Color(0.8, 0.8, 0.8, 0.3)
+
+[node name="CoalhoSpot" parent="." instance=ExtResource("19_reactive")]
+position = Vector2(-252, -1076)
+npc_id = "aterro_coalho"
+prompt = "Le queijo coalho"
+character_seed = 90552
+variants = [{
+"id": "default",
+"speaker": "Vendeur de coalho",
+"text": "*un petit gril au charbon, des brochettes de fromage qui dorent en grésillant* Queijo coalho na brasa, freguês ! Cinq reais, avec origan ou avec mélasse. *il tourne les brochettes d'un geste de chef d'orchestre* Trente ans que je fais l'Aterro — j'ai vu des gamins aux pipas devenir papas et revenir avec leurs gosses. Le fromage, lui, change pas. *il t'en tend une pointe à goûter, offerte*",
+"choices": ["Com orégano, chefe"]
+}]
+
+[node name="AterroWanderer1" parent="." instance=ExtResource("2_wander")]
+position = Vector2(-180, -1060)
+
+[node name="AterroWanderer2" parent="." instance=ExtResource("2_wander")]
+position = Vector2(-240, -1130)

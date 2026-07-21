@@ -22,6 +22,7 @@ const EVENT_POOL: Array = [
 		"rep_amount": 0,
 		"icon": "💰",
 		"spawn_zones": ["sand", "calcadao"],
+		"districts": ["copacabana", "zona_sul", "niteroi"],
 	},
 	{
 		"id": "street_capoeira",
@@ -33,6 +34,7 @@ const EVENT_POOL: Array = [
 		"rep_amount": 2,
 		"icon": "🥁",
 		"spawn_zones": ["calcadao"],
+		"districts": ["copacabana", "zona_sul", "botafogo_flamengo"],
 	},
 	{
 		"id": "tourist_lost",
@@ -44,6 +46,7 @@ const EVENT_POOL: Array = [
 		"rep_amount": 2,
 		"icon": "🗺️",
 		"spawn_zones": ["av_atlantica", "calcadao"],
+		"districts": ["copacabana", "zona_sul"],
 	},
 	{
 		"id": "rare_pamonha_vendor",
@@ -77,6 +80,7 @@ const EVENT_POOL: Array = [
 		"rep_amount": 1,
 		"icon": "⚽",
 		"spawn_zones": ["sand"],
+		"districts": ["copacabana", "zona_sul", "niteroi"],
 	},
 	{
 		"id": "pickpocket_kid",
@@ -99,6 +103,7 @@ const EVENT_POOL: Array = [
 		"rep_amount": 1,
 		"icon": "📸",
 		"spawn_zones": ["sand", "calcadao"],
+		"districts": ["copacabana", "zona_sul"],
 	},
 	{
 		"id": "street_fight",
@@ -131,7 +136,8 @@ const EVENT_POOL: Array = [
 		"rep_axis": -1,
 		"rep_amount": 0,
 		"icon": "⌚",
-		"spawn_zones": ["av_atlantica"],
+		"spawn_zones": ["av_atlantica", "calcadao"],
+		"districts": ["copacabana", "zona_sul"],
 	},
 	{
 		"id": "homeless_blessing",
@@ -311,6 +317,7 @@ const EVENT_POOL: Array = [
 		"rep_amount": 3,
 		"icon": "🪘",
 		"spawn_zones": ["calcadao"],
+		"districts": ["copacabana", "botafogo_flamengo"],
 		"phases": [2],  # le pagode, c'est le soir
 	},
 	{
@@ -323,6 +330,7 @@ const EVENT_POOL: Array = [
 		"rep_amount": 2,
 		"icon": "⚽",
 		"spawn_zones": ["sand"],
+		"districts": ["copacabana", "zona_sul", "niteroi"],
 		"phases": [1],  # l'altinha, c'est l'après-midi
 	},
 	{
@@ -334,7 +342,8 @@ const EVENT_POOL: Array = [
 		"rep_axis": 4,  # CHARISMA
 		"rep_amount": 2,
 		"icon": "🔥",
-		"spawn_zones": ["av_atlantica"],
+		"spawn_zones": ["av_atlantica", "calcadao"],
+		"districts": ["copacabana", "botafogo_flamengo", "niteroi"],
 		"phases": [2],  # les débats de bar, c'est le soir
 	},
 	{
@@ -347,6 +356,7 @@ const EVENT_POOL: Array = [
 		"rep_amount": 1,
 		"icon": "🌅",
 		"spawn_zones": ["sand"],
+		"districts": ["copacabana", "zona_sul"],
 		"phases": [2],
 	},
 	{
@@ -359,15 +369,36 @@ const EVENT_POOL: Array = [
 		"rep_amount": 2,
 		"icon": "🎸",
 		"spawn_zones": ["calcadao"],
+		"districts": ["copacabana", "zona_sul"],
 	},
 ]
 
-# Zones de spawn → bbox approximative dans le monde Copacabana.
-const SPAWN_BBOX: Dictionary = {
-	"sand":          {"x": [400, 2000], "y": [180, 320]},
-	"calcadao":      {"x": [400, 2000], "y": [80, 120]},
-	"av_atlantica":  {"x": [400, 2000], "y": [20, 50]},
-	"nossa_senhora": {"x": [400, 2000], "y": [-100, -70]},
+# Zones de spawn par district → bbox en coordonnées LOCALES du district
+# (Copacabana est la racine du monde : local = monde). Un district absent
+# d'ici n'a pas de vie aléatoire ; un événement ne sort dans un district que
+# si l'une de ses spawn_zones y existe.
+const DISTRICT_ZONES: Dictionary = {
+	"copacabana": {
+		"sand":          {"x": [400, 2000], "y": [180, 320]},
+		"calcadao":      {"x": [400, 2000], "y": [80, 120]},
+		"av_atlantica":  {"x": [400, 2000], "y": [20, 50]},
+		"nossa_senhora": {"x": [400, 2000], "y": [-100, -70]},
+	},
+	# Ipanema/Arpoador — plage + calçadão.
+	"zona_sul": {
+		"sand":     {"x": [-900, 900], "y": [110, 195]},
+		"calcadao": {"x": [-900, 700], "y": [72, 98]},
+	},
+	# Botafogo : le sable des filets de volley/futevôlei + la mureta da Urca.
+	"botafogo_flamengo": {
+		"sand":     {"x": [-800, -560], "y": [-150, -100]},
+		"calcadao": {"x": [720, 1080], "y": [-190, -160]},
+	},
+	# Niterói : Praia de Icaraí (sable + calçadão).
+	"niteroi": {
+		"sand":     {"x": [900, 1680], "y": [-30, 110]},
+		"calcadao": {"x": [900, 1680], "y": [122, 150]},
+	},
 }
 
 var _active_event: Node = null
@@ -377,40 +408,58 @@ func _ready() -> void:
 	_rng.randomize()
 	EventBus.time_of_day_changed.connect(_on_phase_changed)
 
-func _on_phase_changed(phase: int) -> void:
-	# Nettoie l'événement précédent.
-	_clear_active()
-	# On ne spawne que sur Copacabana ; ailleurs, le joueur ne le verra pas.
-	if DistrictManager.current() != "copacabana":
-		return
-	if _rng.randf() > SPAWN_CHANCE:
-		return
-	# Les événements à "phases" ne sortent qu'aux bons moments de la journée
-	# (le pagode le soir, l'altinha l'après-midi…).
-	var pool: Array = EVENT_POOL.filter(
+# Pool éligible pour un district et une phase donnés. Pur (sans RNG ni état
+# de spawn) pour être testable : filtre phases, flags, restriction "districts"
+# (défaut : Copacabana seulement — les payoffs narratifs restent chez eux) et
+# exige qu'au moins une spawn_zone existe dans le district.
+func eligible_events(district_id: String, phase: int) -> Array:
+	var zones: Dictionary = DISTRICT_ZONES.get(district_id, {})
+	if zones.is_empty():
+		return []
+	return EVENT_POOL.filter(
 		func(e: Dictionary) -> bool:
 			if e.has("phases") and not phase in e.phases:
 				return false
 			if e.has("flag") and not CampaignManager.has_flag(String(e.flag)):
 				return false
-			return true
+			var districts: Array = e.get("districts", ["copacabana"])
+			if not district_id in districts:
+				return false
+			for z in e.get("spawn_zones", []):
+				if zones.has(z):
+					return true
+			return false
 	)
+
+func _on_phase_changed(phase: int) -> void:
+	# Nettoie l'événement précédent.
+	_clear_active()
+	var district: String = DistrictManager.current()
+	if _rng.randf() > SPAWN_CHANCE:
+		return
+	var pool: Array = eligible_events(district, phase)
 	if pool.is_empty():
 		return
 	var entry: Dictionary = pool[_rng.randi() % pool.size()]
-	_spawn(entry)
+	_spawn(entry, district)
 
 func _clear_active() -> void:
 	if _active_event and is_instance_valid(_active_event):
 		_active_event.queue_free()
 	_active_event = null
 
-func _spawn(entry: Dictionary) -> void:
+func _spawn(entry: Dictionary, district_id: String = "copacabana") -> void:
 	var scene: PackedScene = load(EVENT_SCENE)
 	if scene == null:
 		return
 	var ev: Node = scene.instantiate()
-	var pos: Vector2 = _random_position(entry.get("spawn_zones", ["av_atlantica"]))
+	var pos: Vector2 = _random_position(entry.get("spawn_zones", ["av_atlantica"]), district_id)
+	# Coordonnées locales → monde : les districts sont instanciés avec un
+	# offset dans la scène Copacabana (Copa elle-même est à l'origine).
+	if district_id != "copacabana":
+		var dnode: Node = DistrictManager._find_district_node(district_id)
+		if dnode is Node2D:
+			pos += (dnode as Node2D).global_position
 	ev.position = pos
 	# Configure l'événement via setters typés.
 	ev.set("event_id", entry.id)
@@ -429,9 +478,14 @@ func _spawn(entry: Dictionary) -> void:
 	world.add_child(ev)
 	_active_event = ev
 
-func _random_position(zones: Array) -> Vector2:
-	var zone_id: String = zones[_rng.randi() % zones.size()]
-	var bbox: Dictionary = SPAWN_BBOX.get(zone_id, SPAWN_BBOX["av_atlantica"])
+func _random_position(zones: Array, district_id: String = "copacabana") -> Vector2:
+	var dzones: Dictionary = DISTRICT_ZONES.get(district_id, DISTRICT_ZONES["copacabana"])
+	# Ne tire que parmi les zones qui existent dans CE district.
+	var valid: Array = zones.filter(func(z: String) -> bool: return dzones.has(z))
+	if valid.is_empty():
+		valid = dzones.keys()
+	var zone_id: String = valid[_rng.randi() % valid.size()]
+	var bbox: Dictionary = dzones[zone_id]
 	var xr: Array = bbox.x
 	var yr: Array = bbox.y
 	return Vector2(_rng.randf_range(xr[0], xr[1]), _rng.randf_range(yr[0], yr[1]))

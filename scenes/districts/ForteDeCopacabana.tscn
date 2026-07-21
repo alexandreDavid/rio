@@ -7,6 +7,8 @@
 [ext_resource type="PackedScene" path="res://scenes/interiors/ForteConfeitariaInterior.tscn" id="5_confeitaria"]
 [ext_resource type="PackedScene" path="res://scenes/interiors/ForteMuseuInterior.tscn" id="6_museu"]
 [ext_resource type="Script" path="res://scripts/districts/ForteDeCopacabanaDistrict.gd" id="7_script"]
+[ext_resource type="PackedScene" path="res://scenes/props/ReactiveDialogueSpot.tscn" id="8_reactive"]
+[ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="9_wander"]
 
 [sub_resource type="RectangleShape2D" id="WallH"]
 size = Vector2(540, 12)
@@ -545,3 +547,84 @@ offset_top = -96.0
 offset_right = 214.0
 offset_bottom = -82.0
 color = Color(0.28, 0.52, 0.28, 1)
+
+[node name="FilaFig1" type="ColorRect" parent="."]
+offset_left = -104.0
+offset_top = -74.0
+offset_right = -96.0
+offset_bottom = -58.0
+color = Color(0.85, 0.5, 0.4, 1)
+
+[node name="FilaFig2" type="ColorRect" parent="."]
+offset_left = -92.0
+offset_top = -72.0
+offset_right = -84.0
+offset_bottom = -56.0
+color = Color(0.4, 0.6, 0.8, 1)
+
+[node name="FilaFig3" type="ColorRect" parent="."]
+offset_left = -80.0
+offset_top = -74.0
+offset_right = -72.0
+offset_bottom = -58.0
+color = Color(0.9, 0.85, 0.5, 1)
+
+[node name="FilaColomboSpot" parent="." instance=ExtResource("8_reactive")]
+position = Vector2(-70, -52)
+npc_id = "fila_colombo"
+prompt = "La fila du Colombo"
+character_seed = 90541
+variants = [{
+"id": "domingo",
+"speaker": "Dame de la fila",
+"text": "*la file s'étire depuis la porte du Colombo, et personne ne s'impatiente — c'est Domingo* Quarante minutes d'attente, meu bem, et ça les vaut : le pão de queijo arrive encore chaud du four, et tu le manges face à TOUTE la plage. *elle avance d'un pas, solennelle* Ma mère faisait déjà cette fila. On ne vient pas pour le café. On vient pour la suite du monde.",
+"choices": ["Bonne fila, dona"]
+}, {
+"id": "default",
+"speaker": "Garçom du Colombo",
+"text": "*il aligne les chaises de la terrasse, serviette sur l'épaule* La fila commence tôt le week-end, freguês. En semaine, tu as la baie pour toi tout seul — et le même café.",
+"choices": ["…"]
+}]
+
+[node name="PescadorFig" type="ColorRect" parent="."]
+offset_left = 146.0
+offset_top = 178.0
+offset_right = 154.0
+offset_bottom = 194.0
+color = Color(0.5, 0.45, 0.4, 1)
+
+[node name="PescadorForteSpot" parent="." instance=ExtResource("8_reactive")]
+position = Vector2(160, 186)
+npc_id = "pescador_forte"
+prompt = "Les rochers du Forte"
+character_seed = 90542
+variants = [{
+"id": "tarde",
+"phase": 2,
+"speaker": "Pêcheur du Forte",
+"text": "*trois cannes calées entre les rochers, la lumière dorée qui rase l'eau* C'est l'heure, garoto. La tainha passe au pied du Forte quand le soleil se couche — elle a jamais lu le règlement militaire. *il remonte une ligne vide, pas déçu du tout* Trente ans que je pêche ici. Le poisson, c'est le prétexte.",
+"choices": ["Boa pesca"]
+}, {
+"id": "default",
+"speaker": "Pêcheur du Forte",
+"text": "*assis sur les rochers sous les canons, il surveille trois cannes d'un œil* Le meilleur poste de pêche de Copa, garoto — protégé par l'armée depuis 1914. *il rit tout seul* Personne ose me piquer ma place.",
+"choices": ["…"]
+}]
+
+[node name="VeteranoSpot" parent="." instance=ExtResource("8_reactive")]
+position = Vector2(60, -44)
+npc_id = "veterano_forte"
+prompt = "Le vétéran des canons"
+character_seed = 90543
+variants = [{
+"id": "default",
+"speaker": "Militar da reserva",
+"text": "*képi impeccable, il fait sa ronde des canons comme si le fort attendait une escadre* Ces tourelles, garoto — du Krupp de 1914, jamais un coup tiré en guerre. *il tapote l'acier, presque tendre* Un seul, en 22, sur l'hôtel d'en face, pendant la révolte des Dix-Huit. Copacabana bombardée par Copacabana. *il rajuste son képi* Cette ville se bat toujours contre elle-même. Et elle se pardonne toujours après.",
+"choices": ["…"]
+}]
+
+[node name="ForteWanderer1" parent="." instance=ExtResource("9_wander")]
+position = Vector2(-40, 40)
+
+[node name="ForteWanderer2" parent="." instance=ExtResource("9_wander")]
+position = Vector2(80, 120)

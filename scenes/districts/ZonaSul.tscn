@@ -18,6 +18,7 @@
 [ext_resource type="PackedScene" path="res://scenes/props/ReactiveDialogueSpot.tscn" id="17_reactive"]
 [ext_resource type="Script" path="res://scripts/world/EscortFollower.gd" id="90_escort"]
 [ext_resource type="PackedScene" path="res://scenes/props/SupRental.tscn" id="91_suprental"]
+[ext_resource type="Script" path="res://scripts/world/EveningOnly.gd" id="92_evening"]
 [ext_resource type="PackedScene" path="res://scenes/props/BettingKiosk.tscn" id="15_betkiosk"]
 [ext_resource type="PackedScene" path="res://scenes/props/BikeRental.tscn" id="16_bikerental"]
 [ext_resource type="PackedScene" path="res://scenes/vehicles/Sup.tscn" id="18_sup"]
@@ -3406,6 +3407,81 @@ theme_override_constants/outline_size = 3
 
 [node name="SupRental" parent="." instance=ExtResource("91_suprental")]
 position = Vector2(640, 190)
+
+[node name="ArpoadorSunsetLife" type="Node2D" parent="."]
+script = ExtResource("92_evening")
+
+[node name="PalmasFig1" type="ColorRect" parent="ArpoadorSunsetLife"]
+offset_left = 826.0
+offset_top = 116.0
+offset_right = 834.0
+offset_bottom = 130.0
+color = Color(0.85, 0.45, 0.35, 1)
+
+[node name="PalmasFig2" type="ColorRect" parent="ArpoadorSunsetLife"]
+offset_left = 844.0
+offset_top = 112.0
+offset_right = 852.0
+offset_bottom = 126.0
+color = Color(0.35, 0.55, 0.8, 1)
+
+[node name="PalmasFig3" type="ColorRect" parent="ArpoadorSunsetLife"]
+offset_left = 862.0
+offset_top = 118.0
+offset_right = 870.0
+offset_bottom = 132.0
+color = Color(0.92, 0.85, 0.4, 1)
+
+[node name="PalmasFig4" type="ColorRect" parent="ArpoadorSunsetLife"]
+offset_left = 880.0
+offset_top = 114.0
+offset_right = 888.0
+offset_bottom = 128.0
+color = Color(0.55, 0.8, 0.55, 1)
+
+[node name="PalmasFig5" type="ColorRect" parent="ArpoadorSunsetLife"]
+offset_left = 898.0
+offset_top = 120.0
+offset_right = 906.0
+offset_bottom = 134.0
+color = Color(0.75, 0.55, 0.85, 1)
+
+[node name="PalmasSunHalo" type="ColorRect" parent="ArpoadorSunsetLife"]
+offset_left = 820.0
+offset_top = 96.0
+offset_right = 912.0
+offset_bottom = 100.0
+color = Color(1.0, 0.72, 0.35, 0.5)
+
+[node name="PalmasLabel" type="Label" parent="ArpoadorSunsetLife"]
+offset_left = 810.0
+offset_top = 78.0
+offset_right = 930.0
+offset_bottom = 94.0
+text = "👏 PÔR DO SOL"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(1.0, 0.85, 0.55, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.7)
+theme_override_constants/outline_size = 3
+
+[node name="ArpoadorPalmasSpot" parent="." instance=ExtResource("17_reactive")]
+position = Vector2(930, 158)
+npc_id = "arpoador_palmas"
+prompt = "La pedra do Arpoador"
+character_seed = 90531
+variants = [{
+"id": "palmas",
+"phase": 2,
+"speaker": "Sobrinho",
+"text": "*la pedra est couverte de monde assis face à l'ouest — cariocas, gringos, vendeurs de mate, tout le monde se tait à mesure que le soleil descend derrière le Morro Dois Irmãos. Quand il touche l'eau, la pedra entière APPLAUDIT — comme au théâtre, comme chaque soir. Tu applaudis aussi. On n'applaudit pas le soleil : on applaudit d'être là.*",
+"choices": ["👏"]
+}, {
+"id": "default",
+"speaker": "Sobrinho",
+"text": "*la pedra do Arpoador, presque vide à cette heure — quelques pêcheurs, une vague parfaite qui déroule en contrebas. Le soir, dit-on, tout Rio vient applaudir ici.*",
+"choices": ["…"]
+}]
 
 [node name="TraficoCagarrasSpot" parent="." instance=ExtResource("17_reactive")]
 position = Vector2(770, 195)

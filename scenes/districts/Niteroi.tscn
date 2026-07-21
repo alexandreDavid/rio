@@ -15,6 +15,7 @@
 [ext_resource type="PackedScene" path="res://scenes/props/BuildingDoor.tscn" id="13_door"]
 [ext_resource type="PackedScene" path="res://scenes/interiors/MACInterior.tscn" id="14_mac_int"]
 [ext_resource type="Script" path="res://scripts/districts/NiteroiDistrict.gd" id="15_district"]
+[ext_resource type="Script" path="res://scripts/world/EveningOnly.gd" id="90_evening"]
 
 [sub_resource type="RectangleShape2D" id="WallH"]
 size = Vector2(3400, 16)
@@ -1808,4 +1809,65 @@ variants = [{
 "speaker": "Tomé (fournisseur)",
 "text": "*plumes vert-jaune-bleu partout dans la boutique* Le carnaval me nourrit toute l'année. Tu veux un échantillon ?",
 "choices": ["Plus tard"]
+}]
+
+[node name="IcaraiNoiteLife" type="Node2D" parent="."]
+script = ExtResource("90_evening")
+
+[node name="SerestaHalo" type="ColorRect" parent="IcaraiNoiteLife" groups=["nightlight"]]
+offset_left = 1616.0
+offset_top = 128.0
+offset_right = 1694.0
+offset_bottom = 178.0
+color = Color(1.0, 0.9, 0.6, 0.18)
+
+[node name="SerestaCasal1" type="ColorRect" parent="IcaraiNoiteLife"]
+offset_left = 1634.0
+offset_top = 142.0
+offset_right = 1642.0
+offset_bottom = 158.0
+color = Color(0.8, 0.4, 0.45, 1)
+
+[node name="SerestaCasal2" type="ColorRect" parent="IcaraiNoiteLife"]
+offset_left = 1644.0
+offset_top = 143.0
+offset_right = 1652.0
+offset_bottom = 158.0
+color = Color(0.4, 0.5, 0.75, 1)
+
+[node name="SerestaViolao" type="ColorRect" parent="IcaraiNoiteLife"]
+offset_left = 1668.0
+offset_top = 146.0
+offset_right = 1676.0
+offset_bottom = 160.0
+color = Color(0.85, 0.75, 0.5, 1)
+
+[node name="SerestaLabel" type="Label" parent="IcaraiNoiteLife"]
+offset_left = 1600.0
+offset_top = 108.0
+offset_right = 1710.0
+offset_bottom = 124.0
+text = "♪ SERESTA"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(1.0, 0.9, 0.65, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.7)
+theme_override_constants/outline_size = 3
+
+[node name="IcaraiSerestaSpot" parent="." instance=ExtResource("16_reactive")]
+position = Vector2(1655, 190)
+npc_id = "icarai_seresta"
+prompt = "Le coreto d'Icaraí"
+character_seed = 90532
+variants = [{
+"id": "seresta",
+"phase": 2,
+"speaker": "Sobrinho",
+"text": "*au coreto d'Icaraí, un violão et deux voix qui se cherchent — une seresta comme on n'en fait plus. Un couple d'anciens danse tout doucement, front contre front, et Rio scintille de l'autre côté de la baie. Personne ne filme. C'est peut-être pour ça que c'est beau.*",
+"choices": ["*écouter un moment*"]
+}, {
+"id": "default",
+"speaker": "Sobrinho",
+"text": "*le coreto d'Icaraí, vide sous le soleil — un kiosque à musique comme au temps des serestas. Le soir, dit-on, les anciens y dansent encore.*",
+"choices": ["…"]
 }]
