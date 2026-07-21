@@ -14,6 +14,7 @@
 [ext_resource type="PackedScene" path="res://scenes/props/DistrictEntrance.tscn" id="13_entrance"]
 [ext_resource type="Script" path="res://scripts/world/AmbientDrifter.gd" id="18_drift"]
 [ext_resource type="PackedScene" path="res://scenes/props/ReactiveDialogueSpot.tscn" id="19_reactive"]
+[ext_resource type="Script" path="res://scripts/world/EscortFollower.gd" id="90_escort"]
 [ext_resource type="Script" path="res://scripts/world/EveningOnly.gd" id="20_evening"]
 
 [sub_resource type="RectangleShape2D" id="WallH_N"]
@@ -2484,17 +2485,61 @@ npc_id = "policia_escorte"
 prompt = "La patrouille en planque"
 character_seed = 80114
 variants = [{
-"id": "b3_close",
+"id": "b3_start",
 "objective_pending": ["policia_b3_escorte", "escort_patrol"],
-"set_flag_after": "policia_b3_done",
-"actions": {"finish_quest": {"quest": "policia_b3_escorte", "objective": "escort_patrol", "payout": 250}, "accept_quest": "policia_b4_descente", "debt_credit": 600, "rep": {1: 4}},
+"not_flag": "policia_b3_marcha",
+"set_flag_after": "policia_b3_marcha",
 "speaker": "Sergent PM",
-"text": "*deux flics dans une voiture banalisée sous le Bondinho* T'es le gars de Ramos ? Monte pas, reste devant, fais le guet. *radio grésille* …On est en place. Bien joué, gamin. Le Capitão va aimer — il a déjà fait glisser un mot chez Nilton, ta dette a maigri. *te tend une adresse* Ordre de Ramos : un dealer opère à Arpoador, Zona Sul. Arrestation. Propre si possible. Si ça part en vrille, t'auras rien vu. Maintenant dégage avant qu'on te voie avec nous.",
-"choices": ["Direction Arpoador"]
+"text": "*deux flics en civil, adossés à une voiture qui refuse de démarrer sous le Bondinho* T'es le gars de Ramos ? *coup d'œil dégoûté au capot fumant* La banalisée vient de rendre l'âme, et la planque doit être montée avant la tombée du jour. *il claque la portière* Nouveau plan : on y va à pied, et c'est TOI qui ouvres. Deux flics qui marchent ensemble ici, tout le quartier le sait en cinq minutes — un gars du morro avec deux « cousins » en visite, personne calcule. *il rajuste sa chemise par-dessus son arme* Marche naturel, prends par l'ouest, et arrête-toi devant le garage aux volets verts. On te suit à dix pas.",
+"choices": ["Suivez-moi — naturel"]
+}, {
+"id": "b3_march",
+"objective_pending": ["policia_b3_escorte", "escort_patrol"],
+"flag": "policia_b3_marcha",
+"speaker": "Sergent PM",
+"text": "*sans bouger les lèvres, à trois mètres derrière toi* Le garage aux volets verts, côté ouest. Traîne pas, et regarde pas en arrière — on n'existe pas.",
+"choices": ["On avance"]
 }, {
 "id": "default",
 "speaker": "Passant",
 "text": "*photographie le Pão de Açúcar depuis l'Urca* Que vista, hein ? *poursuit sa marche*",
+"choices": ["…"]
+}]
+
+[node name="PatrouillePM1" type="Node2D" parent="."]
+position = Vector2(20, 268)
+script = ExtResource("90_escort")
+character_seed = 80151
+follow_flag = "policia_b3_marcha"
+done_flag = "policia_b3_done"
+target_height = 48.0
+
+[node name="PatrouillePM2" type="Node2D" parent="."]
+position = Vector2(66, 272)
+script = ExtResource("90_escort")
+character_seed = 80152
+follow_flag = "policia_b3_marcha"
+done_flag = "policia_b3_done"
+target_height = 48.0
+
+[node name="PoliciaPlanqueSpot" parent="." instance=ExtResource("19_reactive")]
+position = Vector2(-260, 244)
+npc_id = "policia_planque"
+prompt = "Le garage aux volets verts"
+character_seed = 80153
+variants = [{
+"id": "b3_close",
+"flag": "policia_b3_marcha",
+"objective_pending": ["policia_b3_escorte", "escort_patrol"],
+"set_flag_after": "policia_b3_done",
+"actions": {"finish_quest": {"quest": "policia_b3_escorte", "objective": "escort_patrol", "payout": 250}, "accept_quest": "policia_b4_descente", "debt_credit": 600, "rep": {1: 4}},
+"speaker": "Sergent PM",
+"text": "*les deux flics se glissent dans le garage aux volets verts, un par un, sans un regard pour toi. La radio grésille :* …On est en place, personne nous a calculés. Bien joué, gamin — t'as le pas du quartier, ça s'apprend pas. Le Capitão va aimer : il a déjà fait glisser un mot chez Nilton, ta dette a maigri. *une adresse tombe par l'entrebâillement* Ordre de Ramos : un dealer opère à Arpoador, Zona Sul. Arrestation. Propre si possible. Si ça part en vrille, t'auras rien vu. Maintenant dégage avant qu'on te voie traîner ici.",
+"choices": ["Direction Arpoador"]
+}, {
+"id": "default",
+"speaker": "Narrateur",
+"text": "*Un garage aux volets verts délavés, rideau tiré. Rien ne bouge — ou alors c'est que quelqu'un s'applique.*",
 "choices": ["…"]
 }]
 

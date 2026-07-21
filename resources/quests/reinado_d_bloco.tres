@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_convencer_costureira"]
+script = ExtResource("2_obj")
+id = "convencer_costureira"
+description = "Convaincre Dona Filó, la costureira du bairro"
+optional = false
+
+[sub_resource type="Resource" id="obj_convencer_puxador"]
+script = ExtResource("2_obj")
+id = "convencer_puxador"
+description = "Trouver le bon levier avec Careca, le puxador vétéran"
+optional = false
+
+[sub_resource type="Resource" id="obj_sair_bloco"]
+script = ExtResource("2_obj")
+id = "sair_bloco"
+description = "Faire défiler le Bloco do Bairro sur le calçadão"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "reinado_d_bloco"
+display_name = "O bloco do bairro"
+description = "Le bairro a gagné — maintenant il doit défiler. Le Padre rêve d'un bloco du quartier, monté par ses gens : Dona Filó aux costumes, Careca à la voix. Un mutirão de plus, le plus joyeux : convaincs-les, et fais sortir le bloco."
+journal_text = "Monter le Bloco do Bairro : convaincre Dona Filó et Careca, puis faire défiler."
+giver_npc_id = "reinado_prefeito"
+ink_knot = "spot_reinado_prefeito_r1_offer"
+objectives = Array[Resource]([SubResource("obj_convencer_costureira"), SubResource("obj_convencer_puxador"), SubResource("obj_sair_bloco")])
+money_reward = 800
+reputation_rewards = {}
+required_reputation = {}
+required_act = 5
+quest_type = 1
+prerequisite_quest_ids = Array[String](["prefeito_d9_eleicao"])

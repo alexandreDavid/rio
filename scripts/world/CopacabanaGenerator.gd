@@ -66,6 +66,7 @@ func _ready() -> void:
 	_spawn_ze_memories()
 	_spawn_domingo_life()
 	_spawn_human_cost()
+	_spawn_reinado()
 
 func _spawn_tile_strip(container_name: String, y_top: float, y_bot: float, tile_region: Rect2, z_idx: int = -5) -> void:
 	var container: Node2D = Node2D.new()
@@ -2113,3 +2114,83 @@ func _spawn_one_streetlamp(parent: Node, x: float) -> void:
 	bulb.add_to_group("nightlight")
 	bulb.visible = false
 	parent.add_child(bulb)
+
+# Reinado (acte 5) — le règne se voit à Copa : une faixa au-dessus du calçadão
+# et un habitant dont le salut dit ce que le bairro pense du nouveau pouvoir.
+# Reconstruit à act_changed (complete_endgame pose l'acte 5 + chosen_endgame).
+var _reinado_container: Node2D = null
+
+func _spawn_reinado() -> void:
+	EventBus.act_changed.connect(func(_a: int): _rebuild_reinado())
+	_rebuild_reinado()
+
+func _rebuild_reinado() -> void:
+	if _reinado_container and is_instance_valid(_reinado_container):
+		_reinado_container.queue_free()
+		_reinado_container = null
+	if CampaignManager.current_act < 5:
+		return
+	_reinado_container = Node2D.new()
+	_reinado_container.name = "Reinado"
+	add_child(_reinado_container)
+	var faixa_text: String = ""
+	var faixa_color: Color = Color(0.9, 0.85, 0.6, 1)
+	var morador: Dictionary = {}
+	match CampaignManager.chosen_endgame:
+		CampaignManager.Endgame.TRAFICO:
+			faixa_text = "★ O MORRO DESCEU PRA AREIA ★"
+			faixa_color = Color(0.85, 0.32, 0.28, 1)
+			morador = {"speaker": "Camelô", "seed": 90521,
+				"text": "*il te voit arriver et rajuste son étal d'un geste nerveux — les prix sont déjà « corrigés » pour toi* Patrão. *il n'ose pas soutenir ton regard* Tout est en ordre, le pedágio est prêt. *un gamin court prévenir la barraca suivante que tu passes*"}
+		CampaignManager.Endgame.POLICIA:
+			faixa_text = "★ CALÇADÃO SEGURO — CAP. RAMOS AGRADECE ★"
+			faixa_color = Color(0.3, 0.45, 0.75, 1)
+			morador = {"speaker": "Joggeuse", "seed": 90522,
+				"text": "*elle s'arrête à ta hauteur, essoufflée, et te salue de la tête* Capitão. *elle montre le calçadão d'un geste* Ma mère refait sa marche du soir — la première fois depuis des années. *elle repart, puis se retourne* Le camelô de la Rua Santa Clara, lui, il dit qu'on respire un peu trop fort, ces temps-ci. Vous lui demanderez.*"}
+		CampaignManager.Endgame.CONSORTIUM:
+			faixa_text = "◆ COPACABANA RISERVA — UM NOVO PADRÃO ◆"
+			faixa_color = Color(0.85, 0.75, 0.45, 1)
+			morador = {"speaker": "Serveur", "seed": 90523,
+				"text": "*uniforme ivoire et or, badge « Riserva » au revers* Monsieur. *il incline le buste exactement comme le manuel l'exige* Tout le front de mer est aux couleurs de la maison — même les parasols saluent, maintenant. *plus bas, en regardant ailleurs* Mon ancien patron tenait ce bar depuis vingt ans. Il est caissier, désormais. Beau Carnaval, monsieur.*"}
+		CampaignManager.Endgame.PREFEITO:
+			faixa_text = "♥ O BAIRRO VENCEU — BLOCO UNIDO ♥"
+			faixa_color = Color(0.35, 0.65, 0.4, 1)
+			morador = {"speaker": "Moradora", "seed": 90524,
+				"text": "*elle accroche des fanions verts et or entre deux lampadaires, juchée sur un escabeau que deux gamins tiennent* Meu filho ! *elle te lance un fanion* Accroche ça quelque part — tout le bairro s'y met, le bloco sort bientôt. *elle rit* Le Padre dit que t'as monté tout ça. Moi je dis que c'est nous TOUS. Il dit que c'est exactement ça que t'as monté.*"}
+		_:
+			return
+	# Faixa au-dessus du calçadão.
+	var faixa_bg: ColorRect = ColorRect.new()
+	faixa_bg.offset_left = 560.0
+	faixa_bg.offset_top = 70.0
+	faixa_bg.offset_right = 1040.0
+	faixa_bg.offset_bottom = 92.0
+	faixa_bg.color = faixa_color
+	_reinado_container.add_child(faixa_bg)
+	var faixa_label: Label = Label.new()
+	faixa_label.offset_left = 560.0
+	faixa_label.offset_top = 72.0
+	faixa_label.offset_right = 1040.0
+	faixa_label.offset_bottom = 90.0
+	faixa_label.text = faixa_text
+	faixa_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	faixa_label.add_theme_font_size_override("font_size", 12)
+	faixa_label.add_theme_color_override("font_color", Color(1, 1, 1, 1))
+	faixa_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.6))
+	faixa_label.add_theme_constant_override("outline_size", 3)
+	_reinado_container.add_child(faixa_label)
+	# Un habitant qui incarne le règne (salut, crainte ou fierté selon la voie).
+	var spot_scene: PackedScene = load("res://scenes/props/ReactiveDialogueSpot.tscn")
+	if spot_scene:
+		var morador_spot: Node2D = spot_scene.instantiate()
+		morador_spot.name = "MoradorReinado"
+		morador_spot.position = Vector2(800, 110)
+		morador_spot.set("npc_id", "morador_reinado")
+		morador_spot.set("prompt", "Le bairro te regarde")
+		morador_spot.set("character_seed", int(morador.get("seed", 90520)))
+		var variants: Array[Dictionary] = [
+			{"id": "default", "speaker": String(morador.get("speaker", "Morador")),
+				"text": String(morador.get("text", "…")), "choices": ["…"]},
+		]
+		morador_spot.set("variants", variants)
+		_reinado_container.add_child(morador_spot)

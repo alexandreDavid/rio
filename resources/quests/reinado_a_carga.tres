@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_entregar_carga"]
+script = ExtResource("2_obj")
+id = "entregar_carga"
+description = "Livrer la carga du camarote avant l'ouverture des portões"
+optional = false
+kind = 2
+time_limit_sec = 240.0
+
+[resource]
+script = ExtResource("1_quest")
+id = "reinado_a_carga"
+display_name = "A carga do camarote"
+description = "Tito reçoit au camarote de la Sapucaí — tout ce que Rio compte d'amis et d'ennemis y trinquera. La carga doit franchir les portões AVANT l'ouverture au public, après c'est fouille générale. Le roi livre en personne : c'est ça, le message."
+journal_text = "Livrer la carga au camarote de Tito (Sambódromo) avant l'ouverture des portões (chrono)."
+giver_npc_id = "reinado_trafico"
+ink_knot = "spot_reinado_trafico_r2_offer"
+objectives = Array[Resource]([SubResource("obj_entregar_carga")])
+money_reward = 0
+reputation_rewards = {}
+required_reputation = {}
+required_act = 5
+quest_type = 1
+prerequisite_quest_ids = Array[String](["reinado_a_pedagio"])

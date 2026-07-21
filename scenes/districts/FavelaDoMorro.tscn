@@ -1557,24 +1557,144 @@ position = Vector2(-30, -300)
 npc_id = "trafico_intim"
 prompt = "Le voisin bavard"
 variants = Array[Dictionary]([{
-"actions": {
+"choices": ["Le briser : qu'il tremble chaque fois qu'il entendra ton nom", "Lui payer en douce le bus pour Caxias — « t'es parti tout seul, entendu ? » (150 R$)", "Le livrer à Miguel pour l'exemple — le morro doit voir"],
+"choice_actions": {
+"0": {
 "finish_quest": {
 "objective": "silence_voisin",
 "payout": 300,
 "quest": "trafico_a5_intim"
 },
-"accept_quest": "trafico_a6_cagarras",
+"set_flag": "voisin_quebrado",
+"start_chase": {
+"chaser_id": "pm_morro",
+"speed_start": 128.0,
+"tire_after_sec": 22.0,
+"give_up_sec": 42.0,
+"catch_pct": 0.2,
+"catch_min": 50,
+"sprite_seed": "pm_morro",
+"spotted_text": "🚨 Les cris ont alerté une patrouille PM qui montait l'escadaria — corre !",
+"caught_text": "🚨 Plaqué contre un muret du morro : la PM te « taxe » R$ %d.",
+"broke_text": "🚨 Plaqué — poches vides. Avertissement.",
+"escaped_text": "💨 Semé la PM dans les ruelles du morro !",
+"chrono_label": "Foge da PM !"
+},
 "rep": {
-0: -2,
-2: 5
+0: -3,
+2: 6
 }
 },
-"choices": ["Aux Cagarras, alors"],
+"1": {
+"finish_quest": {
+"objective": "silence_voisin",
+"payout": 0,
+"quest": "trafico_a5_intim"
+},
+"set_flag": "voisin_exilado",
+"pay_bribe": 150,
+"start_chase": {
+"chaser_id": "pm_morro",
+"speed_start": 128.0,
+"tire_after_sec": 22.0,
+"give_up_sec": 42.0,
+"catch_pct": 0.2,
+"catch_min": 50,
+"sprite_seed": "pm_morro",
+"spotted_text": "🚨 Une patrouille t'a vu près du point de bus avec lui — corre !",
+"caught_text": "🚨 Plaqué : la PM te « taxe » R$ %d.",
+"broke_text": "🚨 Plaqué — poches vides. Avertissement.",
+"escaped_text": "💨 Semé la PM — et le bus de Caxias est déjà loin.",
+"chrono_label": "Foge da PM !"
+},
+"rep": {
+0: 3,
+2: 1
+}
+},
+"2": {
+"finish_quest": {
+"objective": "silence_voisin",
+"payout": 500,
+"quest": "trafico_a5_intim"
+},
+"set_flag": "voisin_entregue",
+"start_chase": {
+"chaser_id": "pm_morro",
+"speed_start": 128.0,
+"tire_after_sec": 22.0,
+"give_up_sec": 42.0,
+"catch_pct": 0.2,
+"catch_min": 50,
+"sprite_seed": "pm_morro",
+"spotted_text": "🚨 Les hommes de Miguel embarquent le voisin — et une patrouille arrive. Corre !",
+"caught_text": "🚨 Plaqué : la PM te « taxe » R$ %d.",
+"broke_text": "🚨 Plaqué — poches vides. Avertissement.",
+"escaped_text": "💨 Semé la PM. Le morro a tout vu — c'était le but.",
+"chrono_label": "Foge da PM !"
+},
+"rep": {
+0: -6,
+2: 8
+}
+}
+},
 "id": "a5_close",
 "objective_pending": ["trafico_a5_intim", "silence_voisin"],
-"set_flag_after": "trafico_a5_done",
 "speaker": "Le voisin",
-"text": "*il rit fort avec deux gars, une bière à la main — il te voit, le sourire tombe* Eh, eh, du calme, je disais rien de mal… *recule contre le mur* J'ai rien vu à Ipanema, t'entends ? Rien. *baisse les yeux, voix éteinte* Personne saura. Je le jure sur ma mère. *te tend une info pour se racheter* Tito… il attend un arrivage par la mer. Cagarras, au large du Posto 6. Si tu veux te faire bien voir de lui, prends le bateau."
+"text": "*il rit fort avec deux gars, une bière à la main — il te voit, le sourire tombe* Eh, eh, du calme, je disais rien de mal… *recule contre le mur, renverse sa chaise, le fracas résonne dans la ruelle* J'AI RIEN VU À IPANEMA, T'ENTENDS ? RIEN ! *ses potes se dispersent. Il est seul, dos au mur, et il te regarde : ce que tu fais de lui maintenant, le morro s'en souviendra.*"
+}, {
+"actions": {
+"start_chase": {
+"chaser_id": "pm_morro",
+"speed_start": 128.0,
+"tire_after_sec": 22.0,
+"give_up_sec": 42.0,
+"catch_pct": 0.2,
+"catch_min": 50,
+"sprite_seed": "pm_morro",
+"spotted_text": "🚨 La patrouille du morro t'a retrouvé — corre !",
+"caught_text": "🚨 Plaqué contre un muret du morro : la PM te « taxe » R$ %d.",
+"broke_text": "🚨 Plaqué — poches vides. Avertissement.",
+"escaped_text": "💨 Semé la PM dans les ruelles du morro !",
+"chrono_label": "Foge da PM !"
+}
+},
+"choices": ["*filer par les ruelles*"],
+"id": "a5_fuite_retry",
+"objective_done": ["trafico_a5_intim", "silence_voisin"],
+"objective_pending": ["trafico_a5_intim", "fugir_morro"],
+"speaker": "Le voisin",
+"text": "*volets clos, la ruelle vide — le voisin te parle par l'entrebâillement, blême* T'es encore là ?! La PM tourne dans tout le morro depuis le boucan, ils te cherchent TOI. *il referme* File, pelo amor de Deus !"
+}, {
+"actions": {
+"accept_quest": "trafico_a6_cagarras"
+},
+"choices": ["Aux Cagarras, alors"],
+"id": "a6_offer",
+"quest_completed": "trafico_a5_intim",
+"quest_not_active": "trafico_a6_cagarras",
+"quest_not_completed": "trafico_a6_cagarras",
+"speaker": "Le voisin",
+"text": "*il t'attend dans l'ombre de sa porte, la voix basse et pressée* T'as semé la patrouille — tout le morro l'a vu. Écoute… *il regarde des deux côtés de la ruelle* Pour me racheter auprès de Tito, je te donne ça, et après on est quittes : il attend un arrivage par la mer. Cagarras, au large du Posto 6. Pas de bateau à moteur — une prancha de SUP, discret, contre le courant. Si tu veux te faire bien voir de lui, c'est maintenant."
+}, {
+"choices": ["…"],
+"flag": "voisin_exilado",
+"id": "memoria_exilado",
+"speaker": "Une voisine",
+"text": "*les volets de sa maison sont clos, une chaise vide devant la porte* Parti à Caxias, du jour au lendemain — sans dire adieu à personne. *elle te regarde une seconde de trop* Enfin. C'est ce qu'on raconte, né ?"
+}, {
+"choices": ["…"],
+"flag": "voisin_quebrado",
+"id": "memoria_quebrado",
+"speaker": "Le voisin",
+"text": "*il est là, à sa table du bar — mais seul, et son verre tremble. En te voyant il se lève d'un coup, renverse sa chaise et rentre chez lui sans un mot. Ses potes ne s'assoient plus avec lui : la peur, ça s'attrape.*"
+}, {
+"choices": ["…"],
+"flag": "voisin_entregue",
+"id": "memoria_entregue",
+"speaker": "Narrateur",
+"text": "*la porte de sa maison est condamnée par deux planches en croix. Personne ne prononce son nom dans la ruelle. Quand tu passes, les conversations s'arrêtent une seconde — puis reprennent trop fort.*"
 }, {
 "choices": ["…"],
 "id": "default",
@@ -1693,17 +1813,90 @@ variants = Array[Dictionary]([{
 }])
 character_seed = 80107
 
+[node name="FamiliaConflitoSpot" parent="." instance=ExtResource("7_reactive")]
+position = Vector2(-140, -250)
+npc_id = "familia_conflito"
+prompt = "Dona Cléo (la famille)"
+character_seed = 70441
+variants = [{
+"id": "d3_familia",
+"objective_pending": ["prefeito_d3_mediation", "ouvir_familia"],
+"actions": {"finish_quest": {"quest": "prefeito_d3_mediation", "objective": "ouvir_familia", "payout": 0}, "rep": {0: 1}},
+"speaker": "Dona Cléo",
+"text": "*devant sa porte, un balai serré comme une arme, les yeux rouges* C'est le Padre qui t'envoie ? Alors écoute bien. Neném veut MA laje pour poster son olheiro — ma laje, où sèche le linge de mes trois gosses. *sa voix casse* Le pire ? Je l'ai VU grandir, ce menino. Il jouait au futebol avec mon aîné, il mangeait à ma table quand sa mère faisait des ménages en ville. *elle attrape ta manche, baisse la voix* Écoute-moi : Neném fait ça parce qu'on lui a donné un ordre, pas parce qu'il le veut. Menace-le pas, il peut plus reculer devant une menace. Mais la laje du bar de Nino, deux ruelles plus haut — plus haute que la mienne, vide depuis que Nino est parti à Caxias. Offre-lui ça. Donne-lui une porte de sortie, il la prendra.",
+"choices": ["Je vais lui parler"]
+}, {
+"id": "d3_familia_apos",
+"objective_done": ["prefeito_d3_mediation", "ouvir_familia"],
+"objective_pending": ["prefeito_d3_mediation", "defuse_conflict"],
+"speaker": "Dona Cléo",
+"text": "*guette la ruelle depuis sa porte* Tu lui as parlé ? La laje de Nino, sobrinho — rappelle-toi. Pas de menace.",
+"choices": ["J'y travaille"]
+}, {
+"id": "default",
+"speaker": "Habitante du morro",
+"text": "*étend du linge entre deux fenêtres* Tudo em paz por aqui hoje, graças a Deus. *te salue de la tête*",
+"choices": ["…"]
+}]
+
+[node name="CapangaTitoSpot" parent="." instance=ExtResource("7_reactive")]
+position = Vector2(20, -248)
+npc_id = "capanga_nenem"
+prompt = "Neném (l'homme de Tito)"
+character_seed = 70442
+variants = [{
+"id": "d3_capanga",
+"objective_done": ["prefeito_d3_mediation", "ouvir_familia"],
+"objective_pending": ["prefeito_d3_mediation", "ouvir_capanga"],
+"speaker": "Neném",
+"text": "*adossé au mur en face de chez Dona Cléo, jeune, la mâchoire crispée, il te jauge* Le type du Padre, c'est ça ? *il crache par terre, mais sans conviction* J'ai un ordre : un olheiro sur une laje haute, côté escadaria. C'est pas une envie, c'est un ORDRE — tu sais ce que ça veut dire, ici ? *ses yeux glissent malgré lui vers la porte de Dona Cléo, puis reviennent sur toi, durs* Alors dis ce que t'as à dire, et dis-le bien.",
+"choices": ["Le Padre te demande de reculer — fais-le pour lui", "Recule, ou t'auras la PM et tout le morro sur le dos", "La laje du bar de Nino — plus haute, personne dessus. T'exécutes ton ordre sans toucher à la femme qui t'a nourri"],
+"choice_actions": {"0": {"rep": {0: -1}}, "1": {"rep": {0: -1}}, "2": {"finish_quest": {"quest": "prefeito_d3_mediation", "objective": "ouvir_capanga", "payout": 0}, "set_flag": "d3_capanga_ouvido", "rep": {0: 2}}}
+}, {
+"id": "d3_capanga_mudo",
+"objective_pending": ["prefeito_d3_mediation", "ouvir_capanga"],
+"speaker": "Neném",
+"text": "*adossé au mur, il te regarde approcher et secoue la tête* Je te connais pas, et je parle pas aux inconnus qui débarquent au milieu d'une embrouille. *il désigne la porte d'en face du menton* Si t'es venu pour cette histoire, va d'abord écouter Dona Cléo. Après on verra si tu comprends quelque chose au morro.",
+"choices": ["D'accord"]
+}, {
+"id": "memoria_poupado",
+"flag": "nenem_poupado",
+"speaker": "Neném",
+"text": "*tu le devines là-haut, sur la laje du bar de Nino, silhouette immobile face à la baie. En te voyant passer dans la ruelle, il te salue du menton — une fois, sec. Chez Dona Cléo, le linge sèche tranquille.*",
+"choices": ["…"]
+}, {
+"id": "memoria_protegido",
+"flag": "nenem_protegido",
+"speaker": "Dona Cléo",
+"text": "*elle étend son linge, apaisée* Tu sais où il est, Neném ? Au parvis — il balaie pour le Padre, il dort à la sacristie. *elle baisse la voix* Les gens de Tito sont passés deux fois demander après lui. Le Padre les a reçus à la porte, tout sourire, et ils sont repartis. Pour l'instant. *elle te serre le bras* T'as sorti un gosse du jeu, sobrinho. Prie pour que ça tienne.",
+"choices": ["…"]
+}, {
+"id": "memoria_dedurado",
+"flag": "nenem_dedurado",
+"speaker": "Dona Cléo",
+"text": "*le mur d'en face est vide. Dona Cléo étend son linge, mais quand elle te voit, elle rentre le panier et ferme à demi sa porte* …La PM est montée le lendemain de ta « médiation ». Ils ont pris Neném devant sa mère. *un temps* Ma laje est tranquille, oui. Tout le morro est très, très tranquille quand tu passes, maintenant.",
+"choices": ["…"]
+}, {
+"id": "default",
+"speaker": "Jeune du morro",
+"text": "*fait rebondir une balle contre le mur, l'œil ailleurs* Suave, parceiro. *te salue du menton*",
+"choices": ["…"]
+}]
+
 [node name="PrefeitoFavelaSpot" parent="." unique_id=1439209239 instance=ExtResource("7_reactive")]
 position = Vector2(-60, -260)
 npc_id = "prefeito_favela"
-prompt = "La famille en conflit"
+prompt = "La médiation"
 variants = Array[Dictionary]([{
-"actions": {
+"choices": ["La laje de Nino : Neném exécute son ordre sans toucher à la famille", "Plus loin : le placer sous la protection du Padre — qu'il SORTE de l'ordre de Tito", "Souffler le point de guet à la PM — plus d'olheiro, plus de problème"],
+"choice_actions": {
+"0": {
 "finish_quest": {
 "objective": "defuse_conflict",
 "payout": 250,
 "quest": "prefeito_d3_mediation"
 },
+"set_flag": "nenem_poupado",
 "accept_quest": "prefeito_d4_procession",
 "debt_credit": 500,
 "rep": {
@@ -1711,12 +1904,47 @@ variants = Array[Dictionary]([{
 2: 1
 }
 },
-"choices": ["Je protégerai la procession"],
+"1": {
+"finish_quest": {
+"objective": "defuse_conflict",
+"payout": 0,
+"quest": "prefeito_d3_mediation"
+},
+"set_flag": "nenem_protegido",
+"accept_quest": "prefeito_d4_procession",
+"debt_credit": 500,
+"rep": {
+0: 7,
+2: -3
+}
+},
+"2": {
+"finish_quest": {
+"objective": "defuse_conflict",
+"payout": 250,
+"quest": "prefeito_d3_mediation"
+},
+"set_flag": "nenem_dedurado",
+"accept_quest": "prefeito_d4_procession",
+"debt_credit": 500,
+"rep": {
+1: 4,
+0: -3,
+2: -4
+}
+}
+},
 "id": "d3_close",
+"objective_done": ["prefeito_d3_mediation", "ouvir_capanga"],
 "objective_pending": ["prefeito_d3_mediation", "defuse_conflict"],
-"set_flag_after": "prefeito_d3_done",
 "speaker": "La mère de famille",
-"text": "*sur le pas de sa porte, un homme de Tito en face, la tension palpable — tu te places entre les deux, tu parles bas, longtemps. Pas de menace, pas de promesse : juste de quoi laisser chacun reculer sans perdre la face.* …*l'homme crache, tourne les talons. La mère expire enfin, te retient par la manche* Tu as évité un mort ce soir, sobrinho. Le morro s'en souviendra. Et sache-le : la paroisse a cotisé chez Nilton pour alléger ton ardoise — le Padre ne laisse pas ses gens porter seuls. Il m'a dit de te prévenir : une procession descend en Zona Sul demain, et des hommes du consortium ont reçu un « contrat » pour la disperser. Si tu la protèges, tu choisis un camp aux yeux de tous. Mais il faut bien que quelqu'un les protège."
+"text": "*sur le pas de sa porte, Neném en face — mais cette fois tu te places entre les deux en sachant ce que chacun porte : l'ordre qui tient Neném, le linge et les gosses qui tiennent Cléo, et la laje vide du bar de Nino, deux ruelles plus haut.* *Tous les deux te regardent. C'est toi qui as écouté — c'est toi qui traces la sortie. Et le morro se souviendra de celle que tu choisis.*"
+}, {
+"choices": ["…"],
+"id": "d3_attente",
+"objective_pending": ["prefeito_d3_mediation", "defuse_conflict"],
+"speaker": "Le sacristain du morro",
+"text": "*assis sur une marche entre les deux maisons* Le Padre dit toujours : on ne recoud pas un tissu qu'on n'a pas regardé des deux côtés. *il désigne les deux portes* Écoute-les. Les deux."
 }, {
 "choices": ["…"],
 "id": "default",

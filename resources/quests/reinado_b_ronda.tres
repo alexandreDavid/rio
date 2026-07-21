@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_vigiar_bloco"]
+script = ExtResource("2_obj")
+id = "vigiar_bloco"
+description = "Repérer le batedor infiltré dans le bloco du calçadão (planque)"
+optional = false
+
+[sub_resource type="Resource" id="obj_prender_batedor"]
+script = ExtResource("2_obj")
+id = "prender_batedor"
+description = "Le faire cueillir proprement par l'équipe de Ramos"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "reinado_b_ronda"
+display_name = "A ronda do Capitão"
+description = "Le badge est à toi, et les blocos de Copa débordent de monde — le terrain rêvé pour les batedores de la Baía. Ramos veut un Carnaval sans une seule manchette sanglante. Ta ronde, tes yeux. Comme au Maracanã, mais chez toi."
+journal_text = "Repérer le batedor infiltré dans le bloco du calçadão, puis le faire cueillir sans esclandre."
+giver_npc_id = "reinado_policia"
+ink_knot = "spot_reinado_policia_r1_offer"
+objectives = Array[Resource]([SubResource("obj_vigiar_bloco"), SubResource("obj_prender_batedor")])
+money_reward = 800
+reputation_rewards = {}
+required_reputation = {}
+required_act = 5
+quest_type = 1
+prerequisite_quest_ids = Array[String](["policia_b9_madrugada"])

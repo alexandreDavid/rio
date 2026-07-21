@@ -584,8 +584,16 @@ const MAIN_NEXT_HINT: Dictionary = {
 		"hide_signals": ["trafico_a9_corrida"],
 	},
 	"trafico_a9_corrida": {
-		"text": "✓ Última corrida menée — Le Morro est à toi. Tu es le Patrão.",
-		"hide_signals": [],
+		"text": "✓ Última corrida menée — Tu es le Patrão. Miguel t'attend sur le calçadão",
+		"hide_signals": ["reinado_a_pedagio"],
+	},
+	"reinado_a_pedagio": {
+		"text": "✓ Pedágio encaissé, blitz semée — La carga du camarote t'attend (chrono !)",
+		"hide_signals": ["reinado_a_carga"],
+	},
+	"reinado_a_carga": {
+		"text": "✓ Carga livrée avant les portões — Va voir Seu João : le desfile est à toi",
+		"hide_signals": ["act4_carnaval_desfile"],
 	},
 	"policia_b1_intel": {
 		"text": "✓ Visage rapporté — Si tu veux porter le badge, scelle avec Ramos (acte 3)",
@@ -620,8 +628,16 @@ const MAIN_NEXT_HINT: Dictionary = {
 		"hide_signals": ["policia_b9_madrugada"],
 	},
 	"policia_b9_madrugada": {
-		"text": "✓ Operação Madrugada — Tu es Chefe de Polícia honoraire.",
-		"hide_signals": [],
+		"text": "✓ Operação Madrugada — Tu es Capitão. L'agent en civil t'attend au bloco du calçadão",
+		"hide_signals": ["reinado_b_ronda"],
+	},
+	"reinado_b_ronda": {
+		"text": "✓ Batedor cueilli sans une manchette — Son binôme rôde à la Sapucaí",
+		"hide_signals": ["reinado_b_camarote"],
+	},
+	"reinado_b_camarote": {
+		"text": "✓ Sapucaí limpa — Va voir Seu João : la PM ouvrira la rue pour ton desfile",
+		"hide_signals": ["act4_carnaval_desfile"],
 	},
 	"consortium_c1_recouvrement": {
 		"text": "✓ Recouvrement effectué — Pour la maison, scelle avec Magalhães (acte 3)",
@@ -656,8 +672,16 @@ const MAIN_NEXT_HINT: Dictionary = {
 		"hide_signals": ["consortium_c9_pacto"],
 	},
 	"consortium_c9_pacto": {
-		"text": "✓ Pacto da Barra signé — Tu es la maison. Sócio do Consórcio.",
-		"hide_signals": [],
+		"text": "✓ Pacto da Barra signé — Tu es la maison. Le recouvreur t'attend au calçadão",
+		"hide_signals": ["reinado_c_vitrine"],
+	},
+	"reinado_c_vitrine": {
+		"text": "✓ Front de mer Riserva au complet — Reste le camarote de la Sapucaí",
+		"hide_signals": ["reinado_c_camarote"],
+	},
+	"reinado_c_camarote": {
+		"text": "✓ Camarote obtenu, l'ala des enfants habillée — Va voir Seu João pour le desfile",
+		"hide_signals": ["act4_carnaval_desfile"],
 	},
 	"prefeito_d1_peticao": {
 		"text": "✓ Pétition signée — Pour porter la cause, scelle avec le Padre (acte 3)",
@@ -692,11 +716,23 @@ const MAIN_NEXT_HINT: Dictionary = {
 		"hide_signals": ["prefeito_d9_eleicao"],
 	},
 	"prefeito_d9_eleicao": {
-		"text": "✓ Élection gagnée — Tu es le Coronel do Bairro.",
-		"hide_signals": [],
+		"text": "✓ Élection gagnée — Tu es le Coronel do Bairro. Le Padre t'attend au calçadão",
+		"hide_signals": ["reinado_d_bloco"],
+	},
+	"reinado_d_bloco": {
+		"text": "✓ Le Bloco do Bairro a défilé — La Sapucaí vous invite à ouvrir !",
+		"hide_signals": ["reinado_d_alas"],
+	},
+	"reinado_d_alas": {
+		"text": "✓ Les gosses ouvrent le cortège — Va voir Seu João : l'avenue attend son puxador",
+		"hide_signals": ["act4_carnaval_desfile"],
 	},
 	"act1_heritage": {
 		"text": "✓ Acompte payé — Choisis ton camp : Tito (Morro), Ramos (Bar do Policial), Magalhães (Barra) ou le Padre (chapelle)",
+		"hide_signals": [],
+	},
+	"act2_pecheur_secret": {
+		"text": "✓ O que vi no mar — La baie se souviendra de ce que tu as choisi",
 		"hide_signals": [],
 	},
 	"consortium_peninsula": {

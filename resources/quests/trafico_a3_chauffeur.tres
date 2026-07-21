@@ -6,15 +6,17 @@
 [sub_resource type="Resource" id="obj_drive_botafogo"]
 script = ExtResource("2_obj")
 id = "drive_botafogo"
-description = "Conduire le coffre jusqu'à Botafogo sans te faire suivre"
+description = "Livrer le coffre à Botafogo avant que la PM boucle le tunnel"
 optional = false
+kind = 2
+time_limit_sec = 210.0
 
 [resource]
 script = ExtResource("1_quest")
 id = "trafico_a3_chauffeur"
 display_name = "Sous le Bondinho"
-description = "Le coffre est chargé. Tu prends la route vers Botafogo, sous le Bondinho, et tu livres. Pas de détour, pas de témoin."
-journal_text = "Rejoindre Botafogo avec le chargement (voyage en taxi ou à pied)."
+description = "Le coffre est chargé et la PM change d'équipe au Túnel Novo dans quelques minutes. Tu prends la route vers Botafogo, tu livres, et tu ne t'arrêtes nulle part. Pas de détour, pas de témoin."
+journal_text = "Rejoindre Botafogo avec le chargement AVANT la relève de la PM (chrono)."
 giver_npc_id = "trafico_contact"
 ink_knot = "spot_trafico_contact_a3_offer"
 objectives = Array[Resource]([SubResource("obj_drive_botafogo")])

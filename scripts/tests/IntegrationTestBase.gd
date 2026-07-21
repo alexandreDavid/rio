@@ -84,6 +84,14 @@ const QUEST_RESOURCES: Array[String] = [
 	"res://resources/quests/camila_ipanema_volley.tres",
 	"res://resources/quests/diego_botafogo_capoeira.tres",
 	"res://resources/quests/sofia_bondinho_tour.tres",
+	"res://resources/quests/reinado_a_pedagio.tres",
+	"res://resources/quests/reinado_a_carga.tres",
+	"res://resources/quests/reinado_b_ronda.tres",
+	"res://resources/quests/reinado_b_camarote.tres",
+	"res://resources/quests/reinado_c_vitrine.tres",
+	"res://resources/quests/reinado_c_camarote.tres",
+	"res://resources/quests/reinado_d_bloco.tres",
+	"res://resources/quests/reinado_d_alas.tres",
 	"res://resources/quests/act4_carnaval_desfile.tres",
 	"res://resources/quests/beto_lost.tres",
 	"res://resources/quests/feijoada_bondinho.tres",
@@ -384,6 +392,17 @@ const SCRIPT_COMPLETED_OBJECTIVES: Dictionary = {
 	"carlos_lagoa_volta": ["complete_lap"],
 	"padaria_baking": ["first_batch"],
 	"act4_carnaval_desfile": ["lead_samba"],
+	# Reinado (acte 5) — spots Copa (Reinado*Spot) + climax Sambódromo ;
+	# fugir_blitz FUITE, vigiar_bloco/varrer_sapucai via StakeoutZone,
+	# entregar_carga CHRONO clos au camarote.
+	"reinado_a_pedagio": ["collect_pedagio", "fugir_blitz"],
+	"reinado_a_carga": ["entregar_carga"],
+	"reinado_b_ronda": ["vigiar_bloco", "prender_batedor"],
+	"reinado_b_camarote": ["varrer_sapucai", "report_camarote"],
+	"reinado_c_vitrine": ["dobrar_barraqueiro"],
+	"reinado_c_camarote": ["convencer_presidente"],
+	"reinado_d_bloco": ["convencer_costureira", "convencer_puxador", "sair_bloco"],
+	"reinado_d_alas": ["alinhar_alas"],
 	"ronaldo_dj_paoacucar": ["play_set"],
 	"ronaldo_maracana_torcida": ["lead_torcida"],
 	"ronaldo_aterro_basket": ["win_basket_session"],
@@ -409,11 +428,14 @@ const SCRIPT_COMPLETED_OBJECTIVES: Dictionary = {
 	# A4–A8 : objectifs complétés via ReactiveDialogueSpot (Zona Sul / favela /
 	# Cagarras / Palace / Niterói). A9 execute_run via knot PLACEHOLDER Tito.
 	"trafico_a4_ipanema": ["deal_ipanema", "fugir_praia"],
-	"trafico_a5_intim": ["silence_voisin"],
+	# A5 : les cris alertent une patrouille — fugir_morro FUITE via CobradorChase.
+	"trafico_a5_intim": ["silence_voisin", "fugir_morro"],
+	# A6 : receive_cargo = MINIJEU cagarras_sup (traversée SUP), clôture au passeur.
 	"trafico_a6_cagarras": ["receive_cargo"],
 	# Tioze : enquête témoin 1 → lembrança témoin 2 → avertissement du concierge
 	# (spots runtime : Zilda/Firmino, garçom/Osmar, Neusa/Ataíde, Ivone/Expedito).
-	"trafico_a7_tioze": ["ask_temoin", "porter_lembranca", "heed_warning"],
+	# A7 : semer_sombra FUITE (l'ombre de la Baía suit depuis la colônia).
+	"trafico_a7_tioze": ["ask_temoin", "porter_lembranca", "semer_sombra", "heed_warning"],
 	# A8 : feu vert (relais barcas) → crique (guetteur Icaraí) → traversée
 	# (spot Niterói) → semer_flagrante FUITE via CobradorChase (pm_baia).
 	"trafico_a8_baia": ["feu_vert_mafia", "reperer_crique", "cross_baia", "semer_flagrante"],
@@ -422,9 +444,11 @@ const SCRIPT_COMPLETED_OBJECTIVES: Dictionary = {
 	"policia_b1_intel": ["report_face"],
 	"policia_b2_filature": ["map_network"],
 	"policia_b3_escorte": ["escort_patrol"],
-	"policia_b4_descente": ["bust_dealer"],
+	# B4 : filer_dealer via StakeoutZone (filature réelle), bust au spot planque.
+	"policia_b4_descente": ["filer_dealer", "bust_dealer"],
 	"policia_b5_reperage": ["scout_corcovado"],
-	"policia_b6_tioze": ["ask_temoin", "porter_lembranca", "hear_concierge"],
+	# B6 : reperer_sombra via StakeoutZone (le guetteur du Palace).
+	"policia_b6_tioze": ["ask_temoin", "porter_lembranca", "reperer_sombra", "hear_concierge"],
 	"policia_b7_saisie": ["seize_cargo"],
 	# B8 : briefing (poste PM Maracanã) → reperer_batedores via StakeoutZone
 	# (planque foule) → secure_crowd au spot du cordon.
@@ -447,7 +471,9 @@ const SCRIPT_COMPLETED_OBJECTIVES: Dictionary = {
 	# via knot PLACEHOLDER padre_prefeito_eleicao.
 	"prefeito_d1_peticao": ["gather_signatures"],
 	"prefeito_d2_basquete": ["run_tournament"],
-	"prefeito_d3_mediation": ["defuse_conflict"],
+	# D3 : médiation en 3 temps — écoute chaînée (Cléo nomme le levier de Neném)
+	# puis clôture au spot central (FamiliaConflitoSpot/CapangaTitoSpot/PrefeitoFavelaSpot).
+	"prefeito_d3_mediation": ["ouvir_familia", "ouvir_capanga", "defuse_conflict"],
 	"prefeito_d4_procession": ["escort_procession"],
 	# D5 mutirão : les 3 convaincus se jouent aux MutiraoSpots (Maracana.tscn).
 	"prefeito_d5_rally": ["convencer_marta", "convencer_valter", "convencer_rogerio"],
@@ -575,6 +601,42 @@ func _run_voie_e2e(cfg: Dictionary) -> void:
 		"%s : couronnement → endgame scellé" % cfg.name)
 	_assert(CampaignManager.current_act == 5, "%s : acte 5 atteint (règne)" % cfg.name)
 
+	# Reinado (acte 5) : la chaîne de règne (R1 → R2) se joue aux spots réels,
+	# même mécanique de « joueur qui circule » que la chaîne principale.
+	if cfg.has("reign"):
+		var rg: Dictionary = cfg.reign
+		var rinst: Dictionary = {}
+		var rspots: Array = []
+		for st in rg.stations:
+			var sp: String = st[0]
+			if not rinst.has(sp):
+				rinst[sp] = (load(sp) as PackedScene).instantiate()
+				add_child(rinst[sp])
+		await get_tree().process_frame
+		await get_tree().process_frame
+		for st in rg.stations:
+			var node: Node = _find_by_name_in(rinst[st[0]], st[1])
+			_assert(node != null, "%s : spot de règne '%s' présent (in-game)" % [cfg.name, st[1]])
+			if node:
+				rspots.append(node)
+		var rcycles: int = 16
+		while not QuestManager.is_completed(rg.q_last) and rcycles > 0:
+			for spot in rspots:
+				spot._on_interacted(null)
+				if DialogueBridge.is_active():
+					DialogueBridge.choose(0)
+			for ar in rg.get("arrival", []):
+				if QuestManager.is_active(ar[0]):
+					var ros: Dictionary = QuestManager.get_objectives_state(ar[0])
+					if not ros.get(ar[1], false):
+						QuestManager.complete_objective(ar[0], ar[1])
+			rcycles -= 1
+		_assert(QuestManager.is_completed(rg.q_last),
+			"%s : reinado joué jusqu'au bout (%s complétée)" % [cfg.name, rg.q_last])
+		for sp in rinst:
+			rinst[sp].queue_free()
+		await get_tree().process_frame
+
 	# Finale : Carnaval → Épilogue (jeu terminable).
 	_assert(QuestManager.is_available("act4_carnaval_desfile"),
 		"%s : act4_carnaval_desfile disponible" % cfg.name)
@@ -593,6 +655,7 @@ const _NITEROI: String = "res://scenes/districts/Niteroi.tscn"
 const _MARACANA: String = "res://scenes/districts/Maracana.tscn"
 const _BARRA: String = "res://scenes/districts/BarraDaTijuca.tscn"
 const _SANTOS: String = "res://scenes/districts/SantosDumont.tscn"
+const _SAMBO: String = "res://scenes/districts/Sambodromo.tscn"
 
 # Simulation complète d'une voie : pose la rep nécessaire, paie la dette
 # jusqu'au seuil, accepte les quêtes acte 3 + 4, complète chaque objectif

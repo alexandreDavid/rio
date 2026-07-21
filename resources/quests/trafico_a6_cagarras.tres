@@ -6,19 +6,21 @@
 [sub_resource type="Resource" id="obj_receive_cargo"]
 script = ExtResource("2_obj")
 id = "receive_cargo"
-description = "Réceptionner le chargement par bateau aux Ilhas Cagarras"
+description = "Réussir la traversée SUP jusqu'aux Cagarras (courant à compenser)"
 optional = false
+kind = 1
+minigame_id = "cagarras_sup"
 
 [resource]
 script = ExtResource("1_quest")
 id = "trafico_a6_cagarras"
 display_name = "Chargement par la mer"
-description = "Un arrivage important entre par la mer, loin des yeux. Tu prends le bateau jusqu'aux Cagarras, tu réceptionnes, tu ne comptes pas."
-journal_text = "Voyager jusqu'aux Cagarras (Posto 6) et réceptionner le chargement."
+description = "Un arrivage important entre par la mer, loin des yeux. Pas de bateau à moteur — trop de bruit, trop de regards. Tu pagaies jusqu'aux Cagarras en SUP, contre le courant, tu réceptionnes, tu ne comptes pas."
+journal_text = "Rallier les Cagarras en SUP (contre le courant) et réceptionner le chargement."
 giver_npc_id = "trafico_intim"
 ink_knot = "spot_trafico_intim_a6_offer"
 objectives = Array[Resource]([SubResource("obj_receive_cargo")])
-money_reward = 1200
+money_reward = 600
 reputation_rewards = {}
 required_reputation = {}
 required_act = 0

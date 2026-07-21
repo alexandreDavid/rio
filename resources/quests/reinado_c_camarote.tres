@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_convencer_presidente"]
+script = ExtResource("2_obj")
+id = "convencer_presidente"
+description = "Obtenir le camarote d'honneur auprès de la présidente de l'école"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "reinado_c_camarote"
+display_name = "O camarote da casa"
+description = "Magalhães veut LE camarote d'honneur de la Sapucaí — celui qui domine l'avenue. Problème : il appartient à l'école de samba, et sa présidente a déjà refusé trois chèques. « Le samba ne se vend pas. » À toi de trouver ce qui s'échange."
+journal_text = "Négocier le camarote d'honneur avec la présidente de l'école de samba (Sambódromo)."
+giver_npc_id = "reinado_consortium"
+ink_knot = "spot_reinado_consortium_r2_offer"
+objectives = Array[Resource]([SubResource("obj_convencer_presidente")])
+money_reward = 0
+reputation_rewards = {}
+required_reputation = {}
+required_act = 5
+quest_type = 1
+prerequisite_quest_ids = Array[String](["reinado_c_vitrine"])

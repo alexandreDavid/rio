@@ -61,13 +61,15 @@ const STEP: Dictionary = {
 	"trafico_a1_livraison/drop_calcadao": {"text": "🎯 → Copa (calçadão, face mer) : déposer le paquet au contact", "dist": "copacabana", "anchor": "calcadao", "short": "Calçadão"},
 	"trafico_a2_pickup/pickup_palace": {"text": "🎯 → Copa Palace : récupérer la sacoche chez le groom", "dist": "copacabana", "anchor": "palace", "short": "Copa Palace"},
 	"trafico_a2_pickup/despistar_pm": {"text": "🎯 Copa : sème la PM dans les transversales !", "dist": "copacabana", "anchor": "", "short": "Copa"},
-	"trafico_a3_chauffeur/drive_botafogo": {"text": "🎯 → Botafogo (Bondinho) : conduire le coffre", "dist": "botafogo_flamengo", "anchor": "", "short": "Botafogo"},
+	"trafico_a3_chauffeur/drive_botafogo": {"text": "🎯 → Botafogo (Bondinho) : livrer le coffre AVANT la relève de la PM !", "dist": "botafogo_flamengo", "anchor": "", "short": "Botafogo ⏱"},
 	"trafico_a4_ipanema/deal_ipanema": {"text": "🎯 → Zona Sul (Ipanema, posto 9) : refourguer la marchandise", "dist": "zona_sul", "anchor": "", "short": "Ipanema"},
 	"trafico_a4_ipanema/fugir_praia": {"text": "🎯 Ipanema : sème la PM en civil — quitte la plage !", "dist": "zona_sul", "anchor": "", "short": "Ipanema"},
 	"trafico_a5_intim/silence_voisin": {"text": "🎯 → Favela : faire taire le voisin qui t'a vu", "dist": "favela_morro", "anchor": "", "short": "Favela"},
-	"trafico_a6_cagarras/receive_cargo": {"text": "🎯 → Zona Sul (île au large) : réceptionner le chargement (SUP)", "dist": "zona_sul", "anchor": "", "short": "Cagarras"},
+	"trafico_a5_intim/fugir_morro": {"text": "🎯 Favela : sème la patrouille alertée par les cris !", "dist": "favela_morro", "anchor": "", "short": "Favela"},
+	"trafico_a6_cagarras/receive_cargo": {"text": "🎯 → Zona Sul (plage) : prendre une prancha de SUP et rallier les Cagarras", "dist": "zona_sul", "anchor": "", "short": "Cagarras"},
 	"trafico_a7_tioze/ask_temoin": {"text": "🎯 → Favela : fais parler Dona Zilda, la doyenne du morro", "dist": "favela_morro", "anchor": "", "short": "Favela"},
 	"trafico_a7_tioze/porter_lembranca": {"text": "🎯 → Copa (colônia, Posto 6) : le souvenir de Zé chez Seu Firmino", "dist": "copacabana", "anchor": "", "short": "Colônia Z-13"},
+	"trafico_a7_tioze/semer_sombra": {"text": "🎯 Copa : sème l'ombre qui te suit — ne la mène pas au Palace !", "dist": "copacabana", "anchor": "", "short": "Copa"},
 	"trafico_a7_tioze/heed_warning": {"text": "🎯 → Copa Palace : montrer la photo au vieux concierge", "dist": "copacabana", "anchor": "palace", "short": "Copa Palace"},
 	"trafico_a8_baia/feu_vert_mafia": {"text": "🎯 → Niterói (Estação das Barcas) : le feu vert de la Mafia da Baía", "dist": "niteroi", "anchor": "", "short": "Barcas"},
 	"trafico_a8_baia/reperer_crique": {"text": "🎯 → Niterói (Icaraí, pedra de Itapuca) : repérer la crique de débarque", "dist": "niteroi", "anchor": "", "short": "Icaraí"},
@@ -77,11 +79,13 @@ const STEP: Dictionary = {
 	# --- VOIE POLÍCIA (B1 → B9) ---
 	"policia_b1_intel/report_face": {"text": "🎯 → Copa (calçadão) : rapporter le visage à l'agent en civil", "dist": "copacabana", "anchor": "calcadao", "short": "Calçadão"},
 	"policia_b2_filature/map_network": {"text": "🎯 → Favela : filer l'olheiro de Tito (planque, haut du morro)", "dist": "favela_morro", "anchor": "", "short": "Morro"},
-	"policia_b3_escorte/escort_patrol": {"text": "🎯 → Botafogo : conduire la patrouille", "dist": "botafogo_flamengo", "anchor": "", "short": "Botafogo"},
-	"policia_b4_descente/bust_dealer": {"text": "🎯 → Zona Sul (Arpoador) : descendre sur le dealer", "dist": "zona_sul", "anchor": "", "short": "Arpoador"},
+	"policia_b3_escorte/escort_patrol": {"text": "🎯 → Botafogo : mener la patrouille au garage aux volets verts (elle te suit)", "dist": "botafogo_flamengo", "anchor": "", "short": "Botafogo"},
+	"policia_b4_descente/filer_dealer": {"text": "🎯 → Zona Sul (Arpoador) : filer le dealer jusqu'à sa planque (planque)", "dist": "zona_sul", "anchor": "", "short": "Arpoador"},
+	"policia_b4_descente/bust_dealer": {"text": "🎯 → Zona Sul (Arpoador) : coffrer le dealer à sa planque", "dist": "zona_sul", "anchor": "", "short": "Arpoador"},
 	"policia_b5_reperage/scout_corcovado": {"text": "🎯 → Corcovado : filer le contremaître au mirante", "dist": "corcovado", "anchor": "", "short": "Corcovado"},
 	"policia_b6_tioze/ask_temoin": {"text": "🎯 → Copa (Bar do Policial) : fais parler le vieux garçom", "dist": "copacabana", "anchor": "", "short": "Bar do Policial"},
 	"policia_b6_tioze/porter_lembranca": {"text": "🎯 → Copa (calçadão) : le souvenir de Zé chez Seu Osmar, PM réformé", "dist": "copacabana", "anchor": "calcadao", "short": "Calçadão"},
+	"policia_b6_tioze/reperer_sombra": {"text": "🎯 → Copa Palace : repère le guetteur qui surveille le concierge (planque)", "dist": "copacabana", "anchor": "palace", "short": "Copa Palace"},
 	"policia_b6_tioze/hear_concierge": {"text": "🎯 → Copa Palace : poser la chope devant le concierge", "dist": "copacabana", "anchor": "palace", "short": "Copa Palace"},
 	"policia_b7_saisie/seize_cargo": {"text": "🎯 → Niterói : saisir la cargaison", "dist": "niteroi", "anchor": "", "short": "Niterói"},
 	"policia_b8_seguranca/briefing_pm": {"text": "🎯 → Maracanã (poste PM, esplanade) : prendre le briefing du sergent", "dist": "maracana", "anchor": "", "short": "Maracanã"},
@@ -94,26 +98,42 @@ const STEP: Dictionary = {
 	"consortium_c1_recouvrement/collect_calcadao": {"text": "🎯 → Copa (calçadão) : recouvrer auprès des vendeurs", "dist": "copacabana", "anchor": "calcadao", "short": "Calçadão"},
 	"consortium_c2_loyers/collect_condos": {"text": "🎯 → Copa (av. Atlântica) : encaisser chez les commerçants", "dist": "copacabana", "anchor": "atlantica", "short": "Av. Atlântica"},
 	"consortium_c3_partenariat/force_signature": {"text": "🎯 → Zona Sul (Ipanema) : faire signer le restaurateur — lis-le avant de choisir", "dist": "zona_sul", "anchor": "", "short": "Ipanema"},
-	"consortium_c4_vip/drive_vip": {"text": "🎯 → Zona Sul (Leblon) : conduire le VIP", "dist": "zona_sul", "anchor": "", "short": "Leblon"},
-	"consortium_c5_mac/launder_mac": {"text": "🎯 → Santos Dumont : blanchir via le MAC", "dist": "santos_dumont", "anchor": "", "short": "Santos Dumont"},
+	"consortium_c4_vip/drive_vip": {"text": "🎯 → Santos Dumont : réceptionner le VIP — il n'attend pas !", "dist": "santos_dumont", "anchor": "", "short": "Santos Dumont ⏱"},
+	"consortium_c5_mac/launder_mac": {"text": "🎯 → Niterói (MAC) : négocier la donation — lis l'attachée avant de choisir", "dist": "niteroi", "anchor": "", "short": "MAC Niterói"},
 	"consortium_c6_tioze/ask_temoin": {"text": "🎯 → Copa Palace : fais parler Dona Neusa, la gouvernante", "dist": "copacabana", "anchor": "palace", "short": "Copa Palace"},
-	"consortium_c6_tioze/porter_lembranca": {"text": "🎯 → Copa Palace : la fiche de Zé chez Seu Ataíde, porteiro de nuit", "dist": "copacabana", "anchor": "palace", "short": "Copa Palace"},
+	"consortium_c6_tioze/porter_lembranca": {"text": "🎯 → Copa Palace : la fiche de Zé chez Seu Ataíde — ni argent ni ordre, trouve le vrai levier", "dist": "copacabana", "anchor": "palace", "short": "Copa Palace"},
 	"consortium_c6_tioze/hear_concierge": {"text": "🎯 → Copa Palace : montrer la fiche au concierge", "dist": "copacabana", "anchor": "palace", "short": "Copa Palace"},
-	"consortium_c7_condos/align_condos": {"text": "🎯 → Copa (Atlântica) : aligner les copros", "dist": "copacabana", "anchor": "atlantica", "short": "Av. Atlântica"},
+	"consortium_c7_condos/align_condos": {"text": "🎯 → Barra (Riserva Uno) : aligner les trois copros — lis le président récalcitrant", "dist": "barra_tijuca", "anchor": "", "short": "Barra"},
 	"consortium_c8_menace/break_holdout": {"text": "🎯 → Copa (calçadão) : faire signer la dernière commerçante — lis-la avant de parler", "dist": "copacabana", "anchor": "calcadao", "short": "Calçadão"},
 	"consortium_c9_pacto/seal_pacto": {"text": "🎯 → Barra : sceller le pacte avec Magalhães", "dist": "barra_tijuca", "anchor": "", "short": "Barra"},
 	# --- VOIE PREFEITO (D1 → D9) ---
 	"prefeito_d1_peticao/gather_signatures": {"text": "🎯 → Copa : faire signer la pétition au calçadão", "dist": "copacabana", "anchor": "calcadao", "short": "Calçadão"},
 	"prefeito_d2_basquete/run_tournament": {"text": "🎯 → Aterro (Botafogo) : organiser le tournoi de basket", "dist": "aterro_flamengo", "anchor": "", "short": "Aterro"},
-	"prefeito_d3_mediation/defuse_conflict": {"text": "🎯 → Aterro (Botafogo) : désamorcer le conflit", "dist": "aterro_flamengo", "anchor": "", "short": "Aterro"},
-	"prefeito_d4_procession/escort_procession": {"text": "🎯 → Favela : escorter la procession du Padre", "dist": "favela_morro", "anchor": "", "short": "Favela"},
+	"prefeito_d3_mediation/ouvir_familia": {"text": "🎯 → Favela : écouter Dona Cléo, la mère de famille", "dist": "favela_morro", "anchor": "", "short": "Favela"},
+	"prefeito_d3_mediation/ouvir_capanga": {"text": "🎯 → Favela : trouver le bon levier avec Neném — écoute avant de menacer", "dist": "favela_morro", "anchor": "", "short": "Favela"},
+	"prefeito_d3_mediation/defuse_conflict": {"text": "🎯 → Favela : mener la médiation entre Cléo et Neném", "dist": "favela_morro", "anchor": "", "short": "Favela"},
+	"prefeito_d4_procession/escort_procession": {"text": "🎯 → Zona Sul (Ipanema) : mener la procession jusqu'à la capelinha", "dist": "zona_sul", "anchor": "", "short": "Ipanema"},
 	"prefeito_d5_rally/convencer_marta": {"text": "🎯 → Maracanã : convaincre Dona Marta (acarajé)", "dist": "maracana", "anchor": "", "short": "Maracanã"},
 	"prefeito_d5_rally/convencer_valter": {"text": "🎯 → Maracanã : convaincre Seu Válter (pipoca)", "dist": "maracana", "anchor": "", "short": "Maracanã"},
 	"prefeito_d5_rally/convencer_rogerio": {"text": "🎯 → Maracanã : convaincre Rogério (torcida)", "dist": "maracana", "anchor": "", "short": "Maracanã"},
-	"prefeito_d6_mac/inaugurate_expo": {"text": "🎯 → Maracanã : inaugurer l'expo officielle", "dist": "maracana", "anchor": "", "short": "Maracanã"},
+	"prefeito_d6_mac/inaugurate_expo": {"text": "🎯 → Niterói (MAC) : inaugurer l'expo — pèse chaque mot de ton discours", "dist": "niteroi", "anchor": "", "short": "MAC Niterói"},
 	"prefeito_d7_tioze/ask_temoin": {"text": "🎯 → Copa (parvis de l'église) : fais parler Dona Ivone, la beata", "dist": "copacabana", "anchor": "", "short": "L'église"},
-	"prefeito_d7_tioze/porter_lembranca": {"text": "🎯 → Copa (église) : la médaille de bloco chez Seu Expedito, le sacristain", "dist": "copacabana", "anchor": "", "short": "L'église"},
+	"prefeito_d7_tioze/porter_lembranca": {"text": "🎯 → Copa (église) : la médaille de Zé chez Seu Expedito — viens pour écouter, pas pour demander", "dist": "copacabana", "anchor": "", "short": "L'église"},
 	"prefeito_d7_tioze/receive_dossier": {"text": "🎯 → Copa Palace : ouvrir la main devant le concierge", "dist": "copacabana", "anchor": "palace", "short": "Copa Palace"},
+	# --- REINADO (acte 5) — 2 quêtes de règne par voie, climax au Sambódromo ---
+	"reinado_a_pedagio/collect_pedagio": {"text": "🎯 → Copa (calçadão) : la tournée du pedágio chez les camelôs", "dist": "copacabana", "anchor": "calcadao", "short": "Calçadão"},
+	"reinado_a_pedagio/fugir_blitz": {"text": "🎯 Copa : sème la blitz de la PM non alignée !", "dist": "copacabana", "anchor": "", "short": "Copa"},
+	"reinado_a_carga/entregar_carga": {"text": "🎯 → Sambódromo : livrer la carga AVANT l'ouverture des portões !", "dist": "sambodromo", "anchor": "", "short": "Sapucaí ⏱"},
+	"reinado_b_ronda/vigiar_bloco": {"text": "🎯 → Copa (calçadão) : repérer le batedor dans le bloco (planque)", "dist": "copacabana", "anchor": "calcadao", "short": "Calçadão"},
+	"reinado_b_ronda/prender_batedor": {"text": "🎯 → Copa (calçadão) : le faire cueillir proprement", "dist": "copacabana", "anchor": "calcadao", "short": "Calçadão"},
+	"reinado_b_camarote/varrer_sapucai": {"text": "🎯 → Sambódromo : balayer la foule — le second batedor (planque, seul)", "dist": "sambodromo", "anchor": "", "short": "Sapucaí"},
+	"reinado_b_camarote/report_camarote": {"text": "🎯 → Sambódromo : rendre compte au poste de commandement", "dist": "sambodromo", "anchor": "", "short": "Sapucaí"},
+	"reinado_c_vitrine/dobrar_barraqueiro": {"text": "🎯 → Copa (plage) : le dernier barraqueiro libre — lis-le avant de choisir", "dist": "copacabana", "anchor": "", "short": "La plage"},
+	"reinado_c_camarote/convencer_presidente": {"text": "🎯 → Sambódromo : la présidente de l'école — trouve ce qui s'échange", "dist": "sambodromo", "anchor": "", "short": "Sapucaí"},
+	"reinado_d_bloco/convencer_costureira": {"text": "🎯 → Copa (calçadão) : convaincre Dona Filó, la costureira", "dist": "copacabana", "anchor": "calcadao", "short": "Calçadão"},
+	"reinado_d_bloco/convencer_puxador": {"text": "🎯 → Copa (calçadão) : le bon levier avec Careca — écoute Dona Filó", "dist": "copacabana", "anchor": "calcadao", "short": "Calçadão"},
+	"reinado_d_bloco/sair_bloco": {"text": "🎯 → Copa (calçadão) : faire défiler le Bloco do Bairro", "dist": "copacabana", "anchor": "calcadao", "short": "Calçadão"},
+	"reinado_d_alas/alinhar_alas": {"text": "🎯 → Sambódromo : régler l'ordre des alas avec le mestre", "dist": "sambodromo", "anchor": "", "short": "Sapucaí"},
 	"prefeito_d8_campagne/buscar_padre": {"text": "🎯 → Copa (parvis de l'église) : convaincre le Padre de descendre en campagne", "dist": "copacabana", "anchor": "", "short": "L'église"},
 	"prefeito_d8_campagne/cortejo_calcadao": {"text": "🎯 → Copa (calçadão) : traverser en cortège avec le Padre jusqu'à la tribune", "dist": "copacabana", "anchor": "calcadao", "short": "Calçadão"},
 	"prefeito_d8_campagne/flip_calcadao": {"text": "🎯 → Copa (calçadão) : retourner les commerçants", "dist": "copacabana", "anchor": "calcadao", "short": "Calçadão"},
@@ -322,8 +342,16 @@ func _compute_selection() -> Dictionary:
 			return st4
 		return _S("🎯 Os Grandes Lances — gros coup, couronnement, ou assassinat du consortium")
 
-	# --- Acte 5 : reinado ---
+	# --- Acte 5 : reinado — les quêtes de règne d'abord, le desfile en climax ---
 	if act == 5:
+		var st5: Dictionary = _active_step()
+		if not st5.is_empty():
+			return st5
+		for rid in ["reinado_a_pedagio", "reinado_a_carga", "reinado_b_ronda",
+				"reinado_b_camarote", "reinado_c_vitrine", "reinado_c_camarote",
+				"reinado_d_bloco", "reinado_d_alas"]:
+			if QuestManager.is_available(rid):
+				return _S("🎯 Ton règne t'attend — les tiens te cherchent sur le calçadão de Copa", "copacabana", "calcadao", "Copacabana")
 		return _S("🎯 Mène ton règne — défilé du Carnaval au Sambódromo", "sambodromo", "", "Sambódromo")
 
 	# Fallback : prochaine étape d'une quête active connue.

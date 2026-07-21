@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_dobrar_barraqueiro"]
+script = ExtResource("2_obj")
+id = "dobrar_barraqueiro"
+description = "Faire signer la charte « Copacabana Riserva » au dernier barraqueiro"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "reinado_c_vitrine"
+display_name = "Copacabana Riserva"
+description = "La maison rebaptise le front de mer : parasols assortis, enseignes calibrées, « Copacabana Riserva ». Tous les barraqueiros ont signé la charte — sauf un. Magalhães ne veut pas d'une verrue sur la photo du Carnaval. Tu sais lire les gens, maintenant. Lis celui-là."
+journal_text = "Faire signer la charte Riserva au dernier barraqueiro du front de mer — lis-le avant de choisir."
+giver_npc_id = "reinado_consortium"
+ink_knot = "spot_reinado_consortium_r1_offer"
+objectives = Array[Resource]([SubResource("obj_dobrar_barraqueiro")])
+money_reward = 0
+reputation_rewards = {}
+required_reputation = {}
+required_act = 5
+quest_type = 1
+prerequisite_quest_ids = Array[String](["consortium_c9_pacto"])

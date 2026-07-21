@@ -164,6 +164,11 @@ func _variant_matches(v: Dictionary) -> bool:
 	var quest_not_completed: String = v.get("quest_not_completed", "")
 	if quest_not_completed != "" and QuestManager.is_completed(quest_not_completed):
 		return false
+	# `quest_failed` : la quête doit être en échec (chrono expiré…) — sert aux
+	# variantes de reprise du donneur (« on relance depuis le spot »).
+	var quest_failed: String = v.get("quest_failed", "")
+	if quest_failed != "" and not QuestManager.is_failed(quest_failed):
+		return false
 	# `objective_done` / `objective_pending` : [quest_id, objective_id]. Pour
 	# `done`, la quête peut être active ou complétée — on regarde juste l'état
 	# de l'objectif. Pour `pending`, la quête doit être active et l'objectif false.

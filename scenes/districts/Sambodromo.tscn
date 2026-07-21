@@ -566,3 +566,103 @@ variants = [{
 "text": "*pique son aiguille dans son chignon* Le carnaval, c'est mille mains qui cousent pour une nuit. La mienne est la dernière.",
 "choices": ["…"]
 }]
+
+[node name="ReinadoCargaSpot" parent="." instance=ExtResource("7_reactive")]
+position = Vector2(420, 120)
+npc_id = "reinado_carga"
+prompt = "Le camarote de Tito"
+character_seed = 90511
+required_flag = "voie_trafico"
+variants = [{
+"id": "r2_close",
+"objective_pending": ["reinado_a_carga", "entregar_carga"],
+"actions": {"finish_quest": {"quest": "reinado_a_carga", "objective": "entregar_carga", "payout": 1200}},
+"speaker": "Tito",
+"text": "*le camarote domine l'avenue — nappes blanches, seaux à glace, et Tito en costume de lin qui t'accueille devant tout ce que Rio compte d'amis et d'ennemis* La carga, avant les portões. *il soulève un coin de bâche, hoche la tête, puis te prend par l'épaule et te tourne face à l'avenue* Regarde ça, parceiro. La Sapucaí. Y'a vingt ans je vendais de l'eau aux touristes, là, en bas. *il te met un verre dans la main* Ce soir tu livres en personne et tout le monde l'a vu : c'est ça, le message. Le desfile est à nous. Va voir Seu João — le bairro veut te voir le mener.",
+"choices": ["Ao desfile"]
+}, {
+"id": "default",
+"speaker": "Segurança",
+"text": "*bras croisés devant l'escalier du camarote* Convidados, só. *il ne bouge pas d'un centimètre*",
+"choices": ["…"]
+}]
+
+[node name="ReinadoCamaroteSpot" parent="." instance=ExtResource("7_reactive")]
+position = Vector2(-340, 120)
+npc_id = "reinado_camarote"
+prompt = "Le poste de commandement"
+character_seed = 90512
+required_flag = "voie_policia"
+variants = [{
+"id": "r2_stakeout",
+"objective_pending": ["reinado_b_camarote", "varrer_sapucai"],
+"actions": {"start_stakeout": {"quest": "reinado_b_camarote", "objective": "varrer_sapucai", "duration": 24.0, "seed": "batedor_sapucai"}},
+"speaker": "Opérateur radio",
+"text": "*un préfabriqué coincé sous les gradins, des écrans, une radio qui crache* Capitão. *il te tend des jumelles sans se lever* Le binôme est dans la foule des répétitions — même école que celui du calçadão : il travaille les files, jamais il regarde l'avenue. Mille personnes, des tambours qui couvrent tout, et le Capitão a été clair : vous êtes SEUL. *il remet son casque* « C'est son règne, qu'il le prouve. » Ses mots, pas les miens. Boa sorte.",
+"choices": ["*plonger dans la foule*"]
+}, {
+"id": "r2_close",
+"objective_done": ["reinado_b_camarote", "varrer_sapucai"],
+"objective_pending": ["reinado_b_camarote", "report_camarote"],
+"actions": {"finish_quest": {"quest": "reinado_b_camarote", "objective": "report_camarote", "payout": 1200}},
+"speaker": "Capitão Ramos",
+"text": "*il est venu en personne — appuyé au préfabriqué, il écoute ton rapport sans t'interrompre, puis regarde longuement l'avenue vide* Deux batedores en une semaine, zéro manchette, et la Sapucaí limpa pour le desfile. *il te tend la main — pas le salut réglementaire, la main* Quand je t'ai ramassé sur le calçadão, tu vendais du milho et tu me devais la moitié de ta vie. Ce soir l'avenue est à toi, Capitão. *il remet sa casquette* Va voir Seu João. Le bairro veut te voir mener le desfile — et pour une fois, la PM ne fermera pas la rue. Elle l'ouvrira.",
+"choices": ["Ao desfile"]
+}, {
+"id": "default",
+"speaker": "Opérateur radio",
+"text": "*par la porte entrouverte du préfabriqué, un grésillement de radio* …setor três, tudo limpo. *il te fait signe de circuler*",
+"choices": ["…"]
+}]
+
+[node name="ReinadoPresidenteSpot" parent="." instance=ExtResource("7_reactive")]
+position = Vector2(440, 170)
+npc_id = "reinado_presidente"
+prompt = "La présidente de l'école"
+character_seed = 90513
+required_flag = "voie_consortium"
+variants = [{
+"id": "r2_nego",
+"objective_pending": ["reinado_c_camarote", "convencer_presidente"],
+"speaker": "Dona Solange",
+"text": "*bureau de l'école sous les gradins — trophées, photos de cinquante défilés, et une femme droite comme la justice qui ne te propose pas de t'asseoir* Le quatrième émissaire de Magalhães. *elle pousse vers toi trois chèques, intacts, alignés* Vous les rapporterez à votre patron. *tu la regardes : elle n'a pas un regard pour les chèques — mais derrière elle, punaisée au mur, la liste des gamins de l'ala des enfants, et la moitié des noms sont barrés. L'école perd ses petits : les familles n'ont plus de quoi payer les costumes. Ce n'est pas de l'argent qu'il lui faut. C'est que le samba n'ait pas à en demander.* *L'avocat, dans ton dos : « Chaque audience de plus, 250 R$ de dossier. »*",
+"choices": ["Un quatrième chèque — plus gros, discret, à son nom", "Rappeler que la maison finance déjà la moitié de la liga", "Le camarote contre l'ala des enfants : la maison habille chaque gamin, chaque année, à perpétuité — et l'école défile en premier sur l'affiche"],
+"choice_actions": {"0": {"pay_bribe": 250, "rep": {4: -2}}, "1": {"pay_bribe": 250, "rep": {4: -2}}, "2": {"finish_quest": {"quest": "reinado_c_camarote", "objective": "convencer_presidente", "payout": 1500}, "set_flag": "reinado_c2_done", "rep": {4: 6, 0: 2}}}
+}, {
+"id": "r2_close",
+"quest_completed": "reinado_c_camarote",
+"speaker": "Dona Solange",
+"text": "*elle signe la convention d'une main ferme, sans cérémonie* L'ala des enfants défilera complète pour la première fois en six ans. *elle vous raccompagne à la porte du bureau* Dites à Magalhães qu'il a son balcon pour regarder passer le samba. Et vous… *elle vous jauge une dernière fois* vous, allez voir Seu João. Le bairro parle d'un desfile, et de qui doit le mener.",
+"choices": ["Ao desfile"]
+}, {
+"id": "default",
+"speaker": "Dona Solange",
+"text": "*traverse la concentração en saluant chaque couturière par son prénom* O samba não se vende, meu bem. *elle ne s'arrête pas*",
+"choices": ["…"]
+}]
+
+[node name="ReinadoAlasSpot" parent="." instance=ExtResource("7_reactive")]
+position = Vector2(-380, 170)
+npc_id = "reinado_alas"
+prompt = "Le mestre de bateria"
+character_seed = 90514
+required_flag = "voie_prefeito"
+variants = [{
+"id": "r2_nego",
+"objective_pending": ["reinado_d_alas", "alinhar_alas"],
+"speaker": "Mestre Juvenal",
+"text": "*il fait répéter cent tambours d'un seul geste, puis coupe net en te voyant — le silence est plus impressionnant que le vacarme* Le bloco du Padre, c'est toi ? *il déplie un plan de cortège annoté* J'ai mis les autorités devant : le candidat, les conseillers, deux artistes de télé. C'est comme ça qu'on fait — les caméras filment les cinq premières minutes, après elles s'en vont. *tu regardes son plan : les gosses de l'orfanato sont relégués en queue, après les chars. Et tu te souviens du carnet du Padre, du calçadão, de qui a monté ce bloco aiguille par aiguille.* *Juvenal attend, baguette levée — c'est un homme d'ordre, pas de pouvoir : donne-lui une RAISON, pas un ordre.*",
+"choices": ["C'est le bloco du Padre — c'est lui qui décide de l'ordre", "Accepter le plan : les caméras d'abord, le message passera mieux", "Les gosses devant : c'est LEUR marchinha que Careca chante — sans eux en tête, la chanson ment"],
+"choice_actions": {"0": {"rep": {0: -1}}, "1": {"rep": {0: -1}}, "2": {"finish_quest": {"quest": "reinado_d_alas", "objective": "alinhar_alas", "payout": 1200}, "set_flag": "reinado_d2_done", "rep": {0: 6}}}
+}, {
+"id": "r2_close",
+"quest_completed": "reinado_d_alas",
+"speaker": "Mestre Juvenal",
+"text": "*il a réécrit le plan de cortège de sa main : ALA DAS CRIANÇAS, en tête, souligné deux fois* Une chanson qui ment, ça s'entend au premier surdo, moço. Tu avais raison. *il te rend le plan* Les gosses ouvrent, Careca chante, et les notables suivront — ça leur apprendra le rythme. *il lève sa baguette vers la bateria* Va voir Seu João. L'avenue attend son puxador de bairro.",
+"choices": ["Ao desfile"]
+}, {
+"id": "default",
+"speaker": "Mestre Juvenal",
+"text": "*cent tambours obéissent à sa seule baguette* Na Sapucaí, moço, personne n'est en retard. Ni les tambours, ni le destin.",
+"choices": ["…"]
+}]

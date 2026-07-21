@@ -164,6 +164,9 @@ func _test_voie_trafico_end_to_end() -> void:
 			["trafico_a2_pickup", "pickup_palace"],
 			["trafico_a2_pickup", "despistar_pm"],
 			["trafico_a4_ipanema", "fugir_praia"],
+			["trafico_a5_intim", "fugir_morro"],
+			["trafico_a6_cagarras", "receive_cargo"],
+			["trafico_a7_tioze", "semer_sombra"],
 			["trafico_a8_baia", "semer_flagrante"],
 		],
 		"stations": [
@@ -176,6 +179,15 @@ func _test_voie_trafico_end_to_end() -> void:
 			[_NITEROI, "TraficoBaiaRelaisSpot"], [_NITEROI, "TraficoCriqueSpot"],
 			[_NITEROI, "TraficoNiteroiSpot"],
 		],
+		# Reinado acte 5 : pedágio + blitz (Copa) puis carga du camarote (Sapucaí).
+		"reign": {
+			"q_last": "reinado_a_carga",
+			"arrival": [["reinado_a_pedagio", "fugir_blitz"]],
+			"stations": [
+				[_COPA, "ReinadoTraficoSpot"],
+				[_SAMBO, "ReinadoCargaSpot"],
+			],
+		},
 	})
 
 
@@ -189,18 +201,33 @@ func _test_voie_policia_end_to_end() -> void:
 		# par hook, la boucle synchrone ne peut pas suivre le suspect.
 		"arrival": [
 			["policia_b2_filature", "map_network"],
+			["policia_b4_descente", "filer_dealer"],
 			["policia_b5_reperage", "scout_corcovado"],
+			["policia_b6_tioze", "reperer_sombra"],
 			["policia_b8_seguranca", "reperer_batedores"],
 		],
 		"stations": [
 			[_COPA, "PoliciaContactSpot"],
 			[_COPA, "PoliciaGarcomSpot"], [_COPA, "PoliciaOsmarSpot"],
 			[_COPA, "PoliciaTioZeSpot"],
-			[_FAVELA, "PoliciaFilatureSpot"], [_BOTAFOGO, "PoliciaEscorteSpot"],
+			[_FAVELA, "PoliciaFilatureSpot"],
+			[_BOTAFOGO, "PoliciaEscorteSpot"], [_BOTAFOGO, "PoliciaPlanqueSpot"],
 			[_ZONASUL, "PoliciaDescenteSpot"], [_CORCOVADO, "PoliciaReperageSpot"],
 			[_NITEROI, "PoliciaSaisieSpot"],
 			[_MARACANA, "PoliciaBriefingSpot"], [_MARACANA, "PoliciaSegurancaSpot"],
 		],
+		# Reinado acte 5 : ronde du bloco (Copa) puis Sapucaí limpa (planques).
+		"reign": {
+			"q_last": "reinado_b_camarote",
+			"arrival": [
+				["reinado_b_ronda", "vigiar_bloco"],
+				["reinado_b_camarote", "varrer_sapucai"],
+			],
+			"stations": [
+				[_COPA, "ReinadoPoliciaSpot"],
+				[_SAMBO, "ReinadoCamaroteSpot"],
+			],
+		},
 	})
 
 
@@ -214,6 +241,9 @@ func _test_voie_consortium_end_to_end() -> void:
 		# variante de clôture des spots.
 		"arrival": [
 			["consortium_c3_partenariat", "force_signature"],
+			["consortium_c5_mac", "launder_mac"],
+			["consortium_c6_tioze", "porter_lembranca"],
+			["consortium_c7_condos", "align_condos"],
 			["consortium_c8_menace", "break_holdout"],
 		],
 		"stations": [
@@ -223,6 +253,19 @@ func _test_voie_consortium_end_to_end() -> void:
 			[_BARRA, "ConsortiumBarraSpot"], [_ZONASUL, "ConsortiumZonaSulSpot"],
 			[_SANTOS, "ConsortiumAeroportoSpot"], [_NITEROI, "ConsortiumNiteroiSpot"],
 		],
+		# Reinado acte 5 : charte Riserva (barraqueiro) puis camarote de l'école —
+		# négociations à tell (bon choix ≠ 0) cochées par hook.
+		"reign": {
+			"q_last": "reinado_c_camarote",
+			"arrival": [
+				["reinado_c_vitrine", "dobrar_barraqueiro"],
+				["reinado_c_camarote", "convencer_presidente"],
+			],
+			"stations": [
+				[_COPA, "ReinadoConsortiumSpot"], [_COPA, "BarraqueiroRiservaSpot"],
+				[_SAMBO, "ReinadoPresidenteSpot"],
+			],
+		},
 	})
 
 
@@ -235,20 +278,40 @@ func _test_voie_prefeito_end_to_end() -> void:
 		# bon choix de Rogério n'est pas le 0 — cochés par hook. Marta, elle,
 		# se convainc réellement via son spot (choix 0).
 		"arrival": [
+			["prefeito_d3_mediation", "ouvir_capanga"],
 			["prefeito_d5_rally", "convencer_valter"],
 			["prefeito_d5_rally", "convencer_rogerio"],
+			["prefeito_d6_mac", "inaugurate_expo"],
+			["prefeito_d7_tioze", "porter_lembranca"],
 		],
 		"stations": [
 			[_COPA, "PrefeitoContactSpot"],
 			[_COPA, "PrefeitoBeataSpot"], [_COPA, "PrefeitoSacristaoSpot"],
 			[_COPA, "PrefeitoTioZeSpot"],
 			[_COPA, "PadreCampagneSpot"], [_COPA, "ComicioTribunaSpot"],
-			[_BOTAFOGO, "PrefeitoAterroSpot"], [_FAVELA, "PrefeitoFavelaSpot"],
-			[_ZONASUL, "PrefeitoZonaSulSpot"], [_MARACANA, "PrefeitoMaracanaSpot"],
+			[_BOTAFOGO, "PrefeitoAterroSpot"],
+			[_FAVELA, "FamiliaConflitoSpot"], [_FAVELA, "CapangaTitoSpot"],
+			[_FAVELA, "PrefeitoFavelaSpot"],
+			[_ZONASUL, "PrefeitoZonaSulSpot"], [_ZONASUL, "ProcissaoChegadaSpot"],
+			[_MARACANA, "PrefeitoMaracanaSpot"],
 			[_MARACANA, "MutiraoMartaSpot"], [_MARACANA, "MutiraoValterSpot"],
 			[_MARACANA, "MutiraoRogerioSpot"],
 			[_NITEROI, "PrefeitoNiteroiSpot"],
 		],
+		# Reinado acte 5 : Bloco do Bairro (Filó choix 0, Careca à levier — hook)
+		# puis l'ordre des alas à la Sapucaí (hook).
+		"reign": {
+			"q_last": "reinado_d_alas",
+			"arrival": [
+				["reinado_d_bloco", "convencer_puxador"],
+				["reinado_d_alas", "alinhar_alas"],
+			],
+			"stations": [
+				[_COPA, "ReinadoPrefeitoSpot"],
+				[_COPA, "ReinadoCostureiraSpot"], [_COPA, "ReinadoPuxadorSpot"],
+				[_SAMBO, "ReinadoAlasSpot"],
+			],
+		},
 	})
 
 

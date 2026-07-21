@@ -27,7 +27,8 @@ func _process(delta: float) -> void:
 			var label: String = quest.display_name if quest else quest_id
 			EventBus.chrono_updated.emit("quest:%s" % quest_id, label, max(left, 0.0))
 			if left <= 0.0:
-				EventBus.notification_requested.emit("⏱ Trop tard — %s a échoué." % label,
+				EventBus.notification_requested.emit(
+					"⏱ Trop tard — %s a échoué. Retourne voir qui te l'a confiée." % label,
 					Color(0.95, 0.45, 0.4, 1))
 				fail(quest_id)
 				return
@@ -72,6 +73,9 @@ func is_active(quest_id: String) -> bool:
 func is_completed(quest_id: String) -> bool:
 	return get_state(quest_id) == State.COMPLETED
 
+func is_failed(quest_id: String) -> bool:
+	return get_state(quest_id) == State.FAILED
+
 func get_quest(quest_id: String) -> Quest:
 	return _quests.get(quest_id)
 
@@ -89,7 +93,9 @@ func get_active_ids() -> Array[String]:
 	return out
 
 func accept(quest_id: String) -> bool:
-	if get_state(quest_id) != State.AVAILABLE:
+	# FAILED est ré-acceptable : une quête échouée (chrono expiré…) se relance
+	# depuis son donneur — même philosophie que les poursuites/filatures ratées.
+	if get_state(quest_id) != State.AVAILABLE and get_state(quest_id) != State.FAILED:
 		return false
 	if not meets_requirements(quest_id):
 		return false

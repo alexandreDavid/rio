@@ -1,0 +1,34 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_collect_pedagio"]
+script = ExtResource("2_obj")
+id = "collect_pedagio"
+description = "Faire la tournée du pedágio chez les camelôs du calçadão"
+optional = false
+
+[sub_resource type="Resource" id="obj_fugir_blitz"]
+script = ExtResource("2_obj")
+id = "fugir_blitz"
+description = "Semer la blitz de la PM « non alignée »"
+optional = false
+kind = 3
+chaser_id = "pm_blitz"
+
+[resource]
+script = ExtResource("1_quest")
+id = "reinado_a_pedagio"
+display_name = "O pedágio do rei"
+description = "Le morro est à toi — mais un règne, ça s'entretient. Tito veut que Copacabana sache qui protège le calçadão maintenant. Tu passes chez les camelôs, tu encaisses le pedágio. Et gare à la PM qui n'a pas encore compris qui commande."
+journal_text = "Encaisser le pedágio des camelôs du calçadão — et semer la PM pas encore « alignée »."
+giver_npc_id = "reinado_trafico"
+ink_knot = "spot_reinado_trafico_r1_offer"
+objectives = Array[Resource]([SubResource("obj_collect_pedagio"), SubResource("obj_fugir_blitz")])
+money_reward = 800
+reputation_rewards = {}
+required_reputation = {}
+required_act = 5
+quest_type = 1
+prerequisite_quest_ids = Array[String](["trafico_a9_corrida"])

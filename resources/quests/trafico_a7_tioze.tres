@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="Quest" load_steps=6 format=3]
+[gd_resource type="Resource" script_class="Quest" load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
 [ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
@@ -15,6 +15,14 @@ id = "porter_lembranca"
 description = "Recueillir un souvenir de l'oncle Zé"
 optional = false
 
+[sub_resource type="Resource" id="obj_semer_sombra"]
+script = ExtResource("2_obj")
+id = "semer_sombra"
+description = "Semer l'ombre de la Baía qui te suit — ne la mène pas au concierge"
+optional = false
+kind = 3
+chaser_id = "sombra_baia"
+
 [sub_resource type="Resource" id="obj_heed_warning"]
 script = ExtResource("2_obj")
 id = "heed_warning"
@@ -29,7 +37,7 @@ description = "Le contact dit qu'un vieux concierge du Copacabana Palace a quelq
 journal_text = "Le concierge du Palace se tait devant les inconnus. Fais parler ceux qui ont connu Zé, recueille un souvenir de lui, puis retourne au Palace."
 giver_npc_id = "trafico_cagarras"
 ink_knot = "spot_trafico_cagarras_a7_offer"
-objectives = Array[Resource]([SubResource("obj_ask_temoin"), SubResource("obj_porter_lembranca"), SubResource("obj_heed_warning")])
+objectives = Array[Resource]([SubResource("obj_ask_temoin"), SubResource("obj_porter_lembranca"), SubResource("obj_semer_sombra"), SubResource("obj_heed_warning")])
 money_reward = 0
 reputation_rewards = {}
 required_reputation = {}

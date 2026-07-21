@@ -16,6 +16,8 @@
 [ext_resource type="PackedScene" path="res://scenes/interiors/ArpoadorBar.tscn" id="13_bar"]
 [ext_resource type="PackedScene" path="res://scenes/props/DialogueSpot.tscn" id="14_dialogspot"]
 [ext_resource type="PackedScene" path="res://scenes/props/ReactiveDialogueSpot.tscn" id="17_reactive"]
+[ext_resource type="Script" path="res://scripts/world/EscortFollower.gd" id="90_escort"]
+[ext_resource type="PackedScene" path="res://scenes/props/SupRental.tscn" id="91_suprental"]
 [ext_resource type="PackedScene" path="res://scenes/props/BettingKiosk.tscn" id="15_betkiosk"]
 [ext_resource type="PackedScene" path="res://scenes/props/BikeRental.tscn" id="16_bikerental"]
 [ext_resource type="PackedScene" path="res://scenes/vehicles/Sup.tscn" id="18_sup"]
@@ -1600,13 +1602,42 @@ npc_id = "policia_descente"
 prompt = "Le dealer d'Arpoador"
 character_seed = 80112
 variants = [{
+"id": "b4_filature",
+"objective_pending": ["policia_b4_descente", "filer_dealer"],
+"actions": {"start_stakeout": {"quest": "policia_b4_descente", "objective": "filer_dealer", "duration": 20.0, "seed": "dealer_arpoador"}},
+"speaker": "Radio PM",
+"text": "*l'oreillette grésille — la voix de Ramos, sèche* « Il est là. Bermuda délavé, glacière en bandoulière — il vend pas des picolés, crois-moi. Tu le COFFRES PAS sur la plage : sans la planque, son avocat le ressort avant la nuit. Tu le files. Ni trop près — il connaît toutes les fardas du secteur, même en civil — ni trop loin, ou la foule d'Arpoador te l'avale. Il finira par rentrer au nid. Là seulement, tu bouges. »",
+"choices": ["Je le prends en filature"]
+}, {
 "id": "b4_close",
+"objective_done": ["policia_b4_descente", "filer_dealer"],
 "objective_pending": ["policia_b4_descente", "bust_dealer"],
-"set_flag_after": "policia_b4_done",
-"actions": {"finish_quest": {"quest": "policia_b4_descente", "objective": "bust_dealer", "payout": 300}, "accept_quest": "policia_b5_reperage", "debt_credit": 700, "rep": {1: 4, 0: -4}},
 "speaker": "Le dealer",
-"text": "*adossé aux rochers d'Arpoador, il te voit, comprend trop tard* Eh, doucement, on peut s'arranger— *tu le plaques, il se débat, des touristes filment, ça crie. Tu serres trop fort. Quand la PM arrive, le môme saigne du nez et le quartier te regarde autrement.* *menotté, il crache* …Tu travailles pour qui, fils de pute ? Pour eux ? *La radio crache, ordre de Ramos :* « Beau bordel, mais c'est fait — le Capitão a fait sauter une part de ta dette chez Nilton. Maintenant monte au Corcovado, au mirante du Cristo : un contremaître du consortium y fait sa ronde. Tu le files, tu notes tout. »",
-"choices": ["Je monte au Corcovado"]
+"text": "*il t'a mené jusqu'à un recoin entre les rochers d'Arpoador — la planque : sacs, balance, liasses. Il se retourne, comprend trop tard, et lève lentement les mains* Doucement… on peut s'arranger, chefe. *il est môme — dix-sept ans, peut-être. Ses yeux vont de toi à la caisse de liasses, puis au sentier, calculant tout. L'équipe de Ramos est à trois minutes. Ces trois minutes sont à toi.*",
+"choices": ["Le coffrer dans les règles — planque saisie, dossier béton", "Le retourner : sa liberté contre son carnet — un informateur à Arpoador vaut mieux qu'un môme en cellule", "La caisse d'abord : te servir dans les liasses AVANT l'arrivée de l'équipe"],
+"choice_actions": {
+"0": {"finish_quest": {"quest": "policia_b4_descente", "objective": "bust_dealer", "payout": 300}, "set_flag": "dealer_preso", "accept_quest": "policia_b5_reperage", "debt_credit": 700, "rep": {1: 5, 0: -4}},
+"1": {"finish_quest": {"quest": "policia_b4_descente", "objective": "bust_dealer", "payout": 0}, "set_flag": "dealer_informante", "accept_quest": "policia_b5_reperage", "debt_credit": 700, "rep": {1: 3, 2: 3}},
+"2": {"finish_quest": {"quest": "policia_b4_descente", "objective": "bust_dealer", "payout": 650}, "set_flag": "dealer_roubado", "accept_quest": "policia_b5_reperage", "debt_credit": 700, "rep": {1: -3, 2: 3}}
+}
+}, {
+"id": "memoria_informante",
+"flag": "dealer_informante",
+"speaker": "Le dealer",
+"text": "*il vend des lunettes de soleil, maintenant — enfin, officiellement. En te voyant il touche deux fois le bord de sa casquette : rien à signaler. Personne sur la plage ne sait qui il regarde vraiment.*",
+"choices": ["…"]
+}, {
+"id": "memoria_preso",
+"flag": "dealer_preso",
+"speaker": "Surfeur",
+"text": "*le recoin entre les rochers est vide, balayé par les embruns. Des gamins y laissent leurs planches sans surveillance.* O canto tá limpo, mano. *il te reconnaît vaguement* C'est toi le gars de la PM, non ? *il retourne à l'eau sans attendre la réponse*",
+"choices": ["…"]
+}, {
+"id": "memoria_roubado",
+"flag": "dealer_roubado",
+"speaker": "PM en patrouille",
+"text": "*il te dévisage un peu trop longtemps au passage* …La saisie d'Arpoador, c'était toi, né ? *il consulte un carnet, le referme* Le compte de la caisse correspondait pas au rapport du môme. Sûrement qu'il mentait. *il ne sourit pas* Sûrement.",
+"choices": ["…"]
 }, {
 "id": "default",
 "speaker": "Surfeur",
@@ -1631,10 +1662,19 @@ variants = [{
 "quest_completed": "consortium_c3_partenariat",
 "quest_not_active": "consortium_c4_vip",
 "quest_not_completed": "consortium_c4_vip",
+"not_flag": "consortium_c4_started",
+"set_flag_after": "consortium_c4_started",
 "actions": {"accept_quest": "consortium_c4_vip", "debt_credit": 600},
 "speaker": "Le restaurateur",
-"text": "*range le contrat signé, la voix éteinte* Vous n'avez même pas menacé. Vous avez juste… compris. C'est pire. *te tourne le dos* Magalhães a laissé un mot : un investisseur étranger arrive à Santos Dumont. Vous le réceptionnez, vous le promenez. La maison vend une image. Et elle a déduit ma signature de votre ardoise — bon appétit.",
+"text": "*range le contrat signé, la voix éteinte* Vous n'avez même pas menacé. Vous avez juste… compris. C'est pire. *te tourne le dos* Magalhães a laissé un mot : un investisseur étranger atterrit à Santos Dumont — son jet est déjà en approche, et un homme pareil ne patiente pas dans un hall. Vous le réceptionnez À L'HEURE, vous le promenez. La maison vend une image, et l'image commence à l'accueil. Elle a déduit ma signature de votre ardoise — bon appétit, et courez.",
 "choices": ["Direction l'aéroport"]
+}, {
+"id": "c4_retry",
+"quest_failed": "consortium_c4_vip",
+"actions": {"accept_quest": "consortium_c4_vip", "rep": {4: -2}},
+"speaker": "Le restaurateur",
+"text": "*essuie un verre sans te regarder, un pli mauvais au coin de la bouche* Le monsieur a poireauté dans le hall. Il a appelé Magalhães. Magalhães a appelé ici. *il pose le verre, très doucement* Vous avez de la chance : son avion repasse — affaire de minutes, encore. La maison ne pardonne pas deux fois la même image. À l'heure, cette fois.",
+"choices": ["J'y cours"]
 }, {
 "id": "default",
 "speaker": "Touriste",
@@ -1648,17 +1688,69 @@ npc_id = "prefeito_zonasul"
 prompt = "La procession"
 character_seed = 70404
 variants = [{
-"id": "d4_close",
+"id": "d4_start",
 "objective_pending": ["prefeito_d4_procession", "escort_procession"],
-"set_flag_after": "prefeito_d4_done",
-"actions": {"finish_quest": {"quest": "prefeito_d4_procession", "objective": "escort_procession", "payout": 300}, "accept_quest": "prefeito_d5_rally", "debt_credit": 600, "rep": {0: 6, 4: -4}},
+"not_flag": "procissao_marcha",
+"set_flag_after": "procissao_marcha",
 "speaker": "Le porteur de bannière",
-"text": "*la procession avance le long d'Ipanema, cierges et chants — trois costauds « du Riserva Uno » barrent la rue. Tu te plantes devant, bras ouverts, entre eux et les fidèles. Tu ne frappes pas. Tu ne recules pas. Les gens filment. Les costauds calculent les caméras… et s'écartent.* *le vieux porteur te bénit du front, essoufflé, radieux* Tu as choisi un camp aujourd'hui, mon fils. Tout le monde l'a vu. La paroisse a cotisé chez Nilton pour ta dette — c'est notre façon de porter avec toi. Maintenant le Padre veut frapper fort : un comício au Maracanã pour le candidat civique. Mais une estrade vide ne convainc personne — c'est un mutirão : va chercher le bairro là-bas. Dona Marta, la baiana do acarajé. Seu Válter, le pipoqueiro. Rogério, le puxador de torcida. Sans eux, pas de comício.",
-"choices": ["Direction le Maracanã"]
+"text": "*la procession piétine au bord d'Ipanema, cierges tremblants — le vieux porteur de bannière te reconnaît* C'est toi que le Padre envoie ? *il regarde les fidèles derrière lui, puis deux costauds qui rôdent plus loin sur le calçadão* On doit rejoindre la capelinha, là-bas, près du Garota. Mais ces hommes nous suivent depuis le début du chemin, et j'ai des vieilles dames et des enfants avec moi. *il redresse sa bannière* Marche devant, mon fils. Ouvre le chemin — on te suit. Si quelqu'un doit se mettre entre eux et nous, que ce soit quelqu'un qui sait marcher droit.",
+"choices": ["Suivez-moi — on ne s'arrête pas"]
+}, {
+"id": "d4_march",
+"objective_pending": ["prefeito_d4_procession", "escort_procession"],
+"flag": "procissao_marcha",
+"speaker": "Le porteur de bannière",
+"text": "*souffle court mais le pas régulier, la bannière haute* On est derrière toi, mon fils. La capelinha, vers l'ouest — près du Garota. Avance, on tient le rythme.",
+"choices": ["On avance"]
 }, {
 "id": "default",
 "speaker": "Surfeur",
 "text": "*regarde l'horizon, planche sous le bras* Vai encarar essa série, mano? Tá perfeita. *court vers l'eau*",
+"choices": ["…"]
+}]
+
+[node name="ProcissaoFiel1" type="Node2D" parent="."]
+position = Vector2(864, 152)
+script = ExtResource("90_escort")
+character_seed = 70431
+follow_flag = "procissao_marcha"
+done_flag = "prefeito_d4_done"
+target_height = 48.0
+
+[node name="ProcissaoFiel2" type="Node2D" parent="."]
+position = Vector2(904, 158)
+script = ExtResource("90_escort")
+character_seed = 70432
+follow_flag = "procissao_marcha"
+done_flag = "prefeito_d4_done"
+target_height = 48.0
+
+[node name="ProcissaoFiel3" type="Node2D" parent="."]
+position = Vector2(880, 172)
+script = ExtResource("90_escort")
+character_seed = 70433
+follow_flag = "procissao_marcha"
+done_flag = "prefeito_d4_done"
+target_height = 38.0
+
+[node name="ProcissaoChegadaSpot" parent="." instance=ExtResource("17_reactive")]
+position = Vector2(-240, 130)
+npc_id = "prefeito_capelinha"
+prompt = "La capelinha"
+character_seed = 70434
+variants = [{
+"id": "d4_close",
+"flag": "procissao_marcha",
+"objective_pending": ["prefeito_d4_procession", "escort_procession"],
+"set_flag_after": "prefeito_d4_done",
+"actions": {"finish_quest": {"quest": "prefeito_d4_procession", "objective": "escort_procession", "payout": 300}, "accept_quest": "prefeito_d5_rally", "debt_credit": 600, "rep": {0: 6, 4: -4}},
+"speaker": "Le porteur de bannière",
+"text": "*à vingt mètres de la capelinha, trois costauds « du Riserva Uno » barrent enfin la rue. Tu te plantes devant, bras ouverts, entre eux et les fidèles qui t'ont suivi tout le long d'Ipanema. Tu ne frappes pas. Tu ne recules pas. Les gens filment. Les costauds calculent les caméras… et s'écartent.* *la procession entre dans la capelinha ; le vieux porteur te bénit du front, essoufflé, radieux* Tu as marché devant nous et tu as choisi un camp — tout le monde l'a vu. La paroisse a cotisé chez Nilton pour ta dette : c'est notre façon de porter avec toi. Maintenant le Padre veut frapper fort : un comício au Maracanã pour le candidat civique. Mais une estrade vide ne convainc personne — c'est un mutirão : va chercher le bairro là-bas. Dona Marta, la baiana do acarajé. Seu Válter, le pipoqueiro. Rogério, le puxador de torcida. Sans eux, pas de comício.",
+"choices": ["Direction le Maracanã"]
+}, {
+"id": "default",
+"speaker": "Sacristain",
+"text": "*balaie le parvis de la petite chapelle* A capelinha tá sempre aberta, moço. *sourit* Entre à l'ombre si tu veux.",
 "choices": ["…"]
 }]
 
@@ -3312,18 +3404,29 @@ theme_override_colors/font_color = Color(0.95, 0.92, 0.78, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.7)
 theme_override_constants/outline_size = 3
 
+[node name="SupRental" parent="." instance=ExtResource("91_suprental")]
+position = Vector2(640, 190)
+
 [node name="TraficoCagarrasSpot" parent="." instance=ExtResource("17_reactive")]
-position = Vector2(700, 780)
+position = Vector2(770, 195)
 npc_id = "trafico_cagarras"
-prompt = "Le passeur (bateau)"
+prompt = "Le passeur (colônia)"
 character_seed = 80110
 variants = [{
-"id": "a6_close",
+"id": "a6_briefing",
 "objective_pending": ["trafico_a6_cagarras", "receive_cargo"],
-"set_flag_after": "trafico_a6_done",
-"actions": {"finish_quest": {"quest": "trafico_a6_cagarras", "objective": "receive_cargo", "payout": 600}, "accept_quest": "trafico_a7_tioze", "pay_debt": 4000, "rep": {2: 5}},
 "speaker": "Le passeur",
-"text": "*tire une barque sur les rochers de l'îlot, des caisses bâchées dessous* T'es l'homme de Tito ? *décharge sans te regarder* Vingt caisses. Tu signes rien, tu comptes rien, tu te souviens de rien. *crache dans l'eau, range ses cordages, hésite* Un dernier truc — un vieux concierge du Copacabana Palace m'a payé pour te passer un mot. Il veut te voir. Il dit que c'est au sujet de ton oncle. Moi je transmets, c'est tout.",
+"text": "*il calfate une barque échouée, te jauge par-dessus son épaule* L'homme de Tito ? Les caisses t'attendent aux Cagarras, mouillées derrière le deuxième îlot. *il désigne les planches de SUP du menton* Pas de moteur — le bruit porte sur l'eau, et la capitainerie écoute. Tu prends une prancha, tu pagaies. Le courant tire vers l'ouest, fort : compense ou tu finis à Niterói. *il crache dans le sable* Fais le tour des îlots, réceptionne, reviens. Moi j'ai rien vu.",
+"choices": ["Je prends la prancha"]
+}, {
+"id": "a6_close",
+"quest_completed": "trafico_a6_cagarras",
+"quest_not_active": "trafico_a7_tioze",
+"quest_not_completed": "trafico_a7_tioze",
+"set_flag_after": "trafico_a6_done",
+"actions": {"accept_quest": "trafico_a7_tioze", "pay_debt": 4000, "rep": {2: 5}},
+"speaker": "Le passeur",
+"text": "*il hisse les caisses bâchées que tu as remorquées, les bras trempés jusqu'aux coudes* Contre ce courant-là, à la rame… *sifflement bref* Vingt caisses. Tu signes rien, tu comptes rien, tu te souviens de rien — et Tito a fait dire chez Nilton que ta traversée valait de l'or. *il range ses cordages, hésite* Un dernier truc — un vieux concierge du Copacabana Palace m'a payé pour te passer un mot. Il veut te voir. Il dit que c'est au sujet de ton oncle. Moi je transmets, c'est tout.",
 "choices": ["J'irai au Palace"]
 }, {
 "id": "default",

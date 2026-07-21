@@ -1378,10 +1378,14 @@ variants = [{
 "id": "a8_close",
 "objective_pending": ["trafico_a8_baia", "cross_baia"],
 "objective_done": ["trafico_a8_baia", "reperer_crique"],
-"actions": {"finish_quest": {"quest": "trafico_a8_baia", "objective": "cross_baia", "payout": 1500}, "pay_debt": 18000, "rep": {2: 8, 0: -4}, "start_chase": {"chaser_id": "pm_baia", "speed_start": 132.0, "tire_after_sec": 26.0, "give_up_sec": 45.0, "catch_pct": 0.25, "catch_min": 80, "sprite_seed": "pm_baia", "spotted_text": "🚨 Flagrante ! La lancha da PM accoste aux quais — corre !", "caught_text": "🚨 Plaqué sur les quais : la PM « saisit » R$ %d.", "broke_text": "🚨 Plaqué sur les quais — poches vides. Avertissement.", "escaped_text": "💨 Semé la PM dans les ruelles du centro de Niterói !", "chrono_label": "Foge do flagrante !"}},
 "speaker": "Don Vincenzo",
-"text": "*costume sombre, accent italo-carioca, t'inspecte des pieds à la tête* Donc c'est toi, le nouveau du morro de Tito. Nego Doca dit que t'as trouvé la crique sans te faire suivre. Bene. *fait signe ; ses hommes déchargent la cargaison de la barque derrière la pedra, vite, sans un mot* Bella mercadoria. Dis à Tito que la baie est ouverte tant qu'il tient sa parole. *te tend une mallette épaisse* Presque toute ta dette d'un coup, ragazzo. *soudain son regard passe par-dessus ton épaule, vers les quais — une lancha grise, des gyrophares éteints qui s'allument* …PM. Quelqu'un a parlé. La mallette est à toi — cours, et sois pas pris avec.",
-"choices": ["*courir*"]
+"text": "*costume sombre, accent italo-carioca, t'inspecte des pieds à la tête* Donc c'est toi, le nouveau du morro de Tito. Nego Doca dit que t'as trouvé la crique sans te faire suivre. Bene. *fait signe ; ses hommes déchargent la cargaison de la barque derrière la pedra, vite, sans un mot* Bella mercadoria. *te tend une mallette épaisse* Presque toute ta dette d'un coup, ragazzo. *il compte les caisses du regard, puis TOI — et pendant une seconde, personne ne surveille personne. Vingt caisses, une mallette, et trois façons de finir cette nuit.* *Au loin sur les quais, une lancha grise — des gyrophares éteints qui s'allument.* …PM. Quelqu'un a parlé. Décide-toi MAINTENANT, et cours.",
+"choices": ["La carga complète pour Tito, comme convenu — parole tenue", "Écrémer deux caisses pour le morro avant que ça parte (personne ne compte, cette nuit)", "T'as déjà glissé l'heure du PROCHAIN convoi à un contact PM — ta couverture, au cas où"],
+"choice_actions": {
+"0": {"finish_quest": {"quest": "trafico_a8_baia", "objective": "cross_baia", "payout": 1500}, "set_flag": "carga_integral", "pay_debt": 18000, "rep": {2: 8, 0: -4}, "start_chase": {"chaser_id": "pm_baia", "speed_start": 132.0, "tire_after_sec": 26.0, "give_up_sec": 45.0, "catch_pct": 0.25, "catch_min": 80, "sprite_seed": "pm_baia", "spotted_text": "🚨 Flagrante ! La lancha da PM accoste aux quais — corre !", "caught_text": "🚨 Plaqué sur les quais : la PM « saisit » R$ %d.", "broke_text": "🚨 Plaqué sur les quais — poches vides. Avertissement.", "escaped_text": "💨 Semé la PM dans les ruelles du centro de Niterói !", "chrono_label": "Foge do flagrante !"}},
+"1": {"finish_quest": {"quest": "trafico_a8_baia", "objective": "cross_baia", "payout": 1900}, "set_flag": "carga_desviada", "pay_debt": 18000, "rep": {2: 5, 0: 2}, "start_chase": {"chaser_id": "pm_baia", "speed_start": 132.0, "tire_after_sec": 26.0, "give_up_sec": 45.0, "catch_pct": 0.25, "catch_min": 80, "sprite_seed": "pm_baia", "spotted_text": "🚨 Flagrante ! Et deux caisses en trop sur les bras — corre !", "caught_text": "🚨 Plaqué sur les quais : la PM « saisit » R$ %d.", "broke_text": "🚨 Plaqué — poches vides. Avertissement.", "escaped_text": "💨 Semé la PM — et deux caisses prendront le chemin du morro.", "chrono_label": "Foge do flagrante !"}},
+"2": {"finish_quest": {"quest": "trafico_a8_baia", "objective": "cross_baia", "payout": 1500}, "set_flag": "baia_dedurada", "pay_debt": 18000, "rep": {2: -3, 1: 5}, "start_chase": {"chaser_id": "pm_baia", "speed_start": 132.0, "tire_after_sec": 26.0, "give_up_sec": 45.0, "catch_pct": 0.25, "catch_min": 80, "sprite_seed": "pm_baia", "spotted_text": "🚨 Flagrante ! Ton contact n'a pas pu retenir CETTE patrouille — corre !", "caught_text": "🚨 Plaqué sur les quais : la PM « saisit » R$ %d.", "broke_text": "🚨 Plaqué — poches vides. Avertissement.", "escaped_text": "💨 Semé — et quelque part, un PM tient sa promesse de fermer les yeux sur toi.", "chrono_label": "Foge do flagrante !"}}
+}
 }, {
 "id": "a8_retencao",
 "objective_pending": ["trafico_a8_baia", "cross_baia"],
@@ -1481,11 +1485,26 @@ character_seed = 80117
 variants = [{
 "id": "b7_close",
 "objective_pending": ["policia_b7_saisie", "seize_cargo"],
-"set_flag_after": "policia_b7_done",
-"actions": {"finish_quest": {"quest": "policia_b7_saisie", "objective": "seize_cargo", "payout": 600}, "accept_quest": "policia_b8_seguranca", "pay_debt": 4000, "rep": {1: 5}},
 "speaker": "Don Vincenzo",
-"text": "*encadré par ses hommes, le mandat de Ramos à la main que tu lui colles sous le nez* …Donc Ramos envoie un gamin du morro faire son sale boulot. *crache, fait signe à ses hommes de ne pas bouger* Prends ta cargaison, ragazzo. Mais retiens ça : aujourd'hui tu saisis pour Ramos, et Ramos travaille pour les mêmes que moi. Tu sers personne. *sourire froid, ta radio crache l'ordre suivant :* « Saisie homologuée. Dernier gros morceau : un rassemblement gêne au Maracanã. Ramos veut que tu sécurises la foule. C'est ça qui éponge ta dette. »",
-"choices": ["Direction le Maracanã"]
+"text": "*encadré par ses hommes, le mandat de Ramos à la main que tu lui colles sous le nez* …Donc Ramos envoie un gamin du morro faire son sale boulot. *crache, fait signe à ses hommes de ne pas bouger* Prends ta cargaison, ragazzo. Mais retiens ça : aujourd'hui tu saisis pour Ramos, et Ramos travaille pour les mêmes que moi. Tu sers personne. *il allume son cigare, et baisse d'un ton, pour toi seul* …Sauf si tu veux servir à quelque chose. La moitié de ces caisses peut « manquer au procès-verbal » — pour ton Capitão et son petit fonds, ou pour ta poche, je m'en fiche. Ou tu joues au soldat. *sourire froid* Alors, ragazzo — le mandat dit quoi, déjà ?",
+"choices": ["Saisie intégrale, au procès-verbal — chaque caisse comptée devant témoins", "Une part « manque » pour le fonds discret de Ramos — le Capitão saura s'en souvenir", "Laisser Vincenzo racheter sa cargaison, cash, ni vu ni connu"],
+"choice_actions": {
+"0": {"finish_quest": {"quest": "policia_b7_saisie", "objective": "seize_cargo", "payout": 600}, "set_flag": "saisie_integral", "accept_quest": "policia_b8_seguranca", "pay_debt": 4000, "rep": {1: 5}},
+"1": {"finish_quest": {"quest": "policia_b7_saisie", "objective": "seize_cargo", "payout": 600}, "set_flag": "saisie_fundo", "accept_quest": "policia_b8_seguranca", "pay_debt": 4000, "rep": {1: 7, 0: -4}},
+"2": {"finish_quest": {"quest": "policia_b7_saisie", "objective": "seize_cargo", "payout": 900}, "set_flag": "saisie_vendida", "accept_quest": "policia_b8_seguranca", "pay_debt": 4000, "rep": {1: -4, 2: 2}}
+}
+}, {
+"id": "memoria_vendida",
+"flag": "saisie_vendida",
+"speaker": "Don Vincenzo",
+"text": "*attablé à la terrasse du marché, il te repère de loin et lève son verre de vin, à peine, juste pour toi. Ses hommes ne te barrent plus jamais le passage. C'est pire qu'une menace : c'est une habitude.*",
+"choices": ["…"]
+}, {
+"id": "memoria_fundo",
+"flag": "saisie_fundo",
+"speaker": "PM du port",
+"text": "*il te salue de loin, beaucoup trop cordialement, et paie ton café au kiosque avant que tu protestes* Ordre d'en haut, colega. *clin d'œil* Le « fonds » prend soin des siens.",
+"choices": ["…"]
 }, {
 "id": "default",
 "speaker": "Passant de Niterói",
@@ -1499,12 +1518,20 @@ npc_id = "consortium_niteroi"
 prompt = "Le MAC (donation)"
 character_seed = 80118
 variants = [{
-"id": "c5_close",
+"id": "c5_nego",
 "objective_pending": ["consortium_c5_mac", "launder_mac"],
-"set_flag_after": "consortium_c5_done",
-"actions": {"finish_quest": {"quest": "consortium_c5_mac", "objective": "launder_mac", "payout": 800}, "accept_quest": "consortium_c6_tioze", "pay_debt": 5000, "rep": {4: 6}},
 "speaker": "L'attachée du MAC",
-"text": "*tailleur impeccable, sous la soucoupe de Niemeyer* Sr. Magalhães, quel mécène généreux. *prend la mallette, te tend un reçu de donation officiel encadré* Une plaque à votre nom près de l'entrée, si vous voulez. *sourire parfait* L'argent entre en chiffres sales et ressort en vertu gravée dans le bronze. *baisse la voix, te raccompagne* Un message — pas de la maison, celui-là. Un vieux concierge du Copacabana Palace a demandé après vous. Au sujet de votre oncle, et de ce que le Consórcio est vraiment. Moi je transmets l'art, pas les conseils.",
+"text": "*tailleur impeccable, sous la soucoupe de Niemeyer — elle ne touche pas la mallette* Une « donation » de Sr. Magalhães. *elle laisse le mot flotter, désagréable* Le conseil se réunit dans une heure et la moitié voudra refuser. Comprenez-moi : je ne sers pas les mécènes, monsieur. Je sers cette institution — trente ans que je la défends contre les gens qui la prennent pour un tremplin ou pour une lessiveuse. *elle regarde la baie, pas vous* Donnez-moi une raison que je puisse prononcer devant le conseil sans baisser les yeux. *L'avocat de Magalhães, derrière toi, murmure : « Chaque passage devant le conseil, la maison te facture 250 R$ de dossier. Lis-la bien. »*",
+"choices": ["Épaissir l'enveloppe : un zéro de plus, discrètement", "Menacer : le consortium peut revoir le bail du musée", "Proposer une salle au nom d'un artiste du morro — l'institution d'abord, le donateur en silence"],
+"choice_actions": {"0": {"pay_bribe": 250, "rep": {4: -2}}, "1": {"pay_bribe": 250, "rep": {4: -2}}, "2": {"finish_quest": {"quest": "consortium_c5_mac", "objective": "launder_mac", "payout": 800}, "set_flag": "consortium_c5_done", "rep": {4: 6}}}
+}, {
+"id": "c5_close",
+"quest_completed": "consortium_c5_mac",
+"quest_not_active": "consortium_c6_tioze",
+"quest_not_completed": "consortium_c6_tioze",
+"actions": {"accept_quest": "consortium_c6_tioze", "pay_debt": 5000},
+"speaker": "L'attachée du MAC",
+"text": "*elle a plaidé votre salle devant le conseil sans une hésitation — la donation est passée à l'unanimité. Elle vous tend un reçu officiel encadré* « Sala Heitor do Morro ». Vous m'avez donné une raison prononçable, je l'ai prononcée. *sourire parfait, presque triste* L'argent entre en chiffres sales et ressort en vertu gravée dans le bronze — et la maison a soldé une belle part de votre ardoise pour fêter ça. *baisse la voix, vous raccompagne* Un message — pas de la maison, celui-là. Un vieux concierge du Copacabana Palace a demandé après vous. Au sujet de votre oncle, et de ce que le Consórcio est vraiment. Moi je transmets l'art, pas les conseils.",
 "choices": ["Je rentre voir le concierge"]
 }, {
 "id": "default",
@@ -1519,12 +1546,30 @@ npc_id = "prefeito_niteroi"
 prompt = "L'inauguration (MAC)"
 character_seed = 70406
 variants = [{
-"id": "d6_close",
+"id": "d6_speech",
 "objective_pending": ["prefeito_d6_mac", "inaugurate_expo"],
-"set_flag_after": "prefeito_d6_done",
-"actions": {"finish_quest": {"quest": "prefeito_d6_mac", "objective": "inaugurate_expo", "payout": 500}, "accept_quest": "prefeito_d7_tioze", "pay_debt": 4000, "rep": {0: 5}},
 "speaker": "La conservatrice",
-"text": "*sous la soucoupe de Niemeyer, rubans, photographes* Vous coupez le ruban, vous dites deux phrases, vous souriez à la presse. *tu parles des enfants de l'orfanato plutôt que de toi ; les flashes crépitent.* Parfait. Demain les journaux titreront sur le candidat civique du bairro — et sur le jeune homme à ses côtés. *baisse la voix en te raccompagnant* Un mot privé — pas de la campagne. Un vieux concierge du Copacabana Palace a demandé après vous. Il dit qu'il a quelque chose qui peut tout changer, au sujet de votre oncle et du consortium. Il n'a pas voulu m'en dire plus.",
+"text": "*sous la soucoupe de Niemeyer, rubans, photographes — elle te retient par le coude avant l'estrade* Un mot d'avertissement. La presse d'aujourd'hui n'est pas venue applaudir : le consortium a passé des coups de fil, et la journaliste au premier rang cherche UN angle — « le candidat civique récupère la culture ». *elle regarde la foule* Ces gens flairent le calcul à dix mètres, comme tout le monde dans cette ville. Alors réfléchissez à ce que vous allez dire au micro, jeune homme. Vous n'aurez qu'une prise.",
+"choices": ["Vanter le candidat : son programme, sa probité, sa vision", "Attaquer le consortium au micro — des noms, des adresses, la guerre ouverte", "Des noms, pas des slogans : les enfants de l'orfanato, un par un — et pourquoi cette expo est la leur"],
+"choice_actions": {"0": {"rep": {0: -1}}, "1": {"finish_quest": {"quest": "prefeito_d6_mac", "objective": "inaugurate_expo", "payout": 500}, "set_flag": "discurso_guerra", "rep": {0: 3, 4: -5}}, "2": {"finish_quest": {"quest": "prefeito_d6_mac", "objective": "inaugurate_expo", "payout": 500}, "set_flag": "discurso_criancas", "rep": {0: 5}}}
+}, {
+"id": "d6_close_guerra",
+"flag": "discurso_guerra",
+"quest_completed": "prefeito_d6_mac",
+"quest_not_active": "prefeito_d7_tioze",
+"quest_not_completed": "prefeito_d7_tioze",
+"actions": {"accept_quest": "prefeito_d7_tioze", "pay_debt": 4000},
+"speaker": "La conservatrice",
+"text": "*tu as nommé le consortium au micro — les sociétés-écrans, les despejos, Magalhães en toutes lettres. La salle a retenu son souffle, la journaliste du premier rang n'a pas raté un mot.* Les manchettes seront incendiaires demain — le bairro vous porte en triomphe, et vous venez de vous faire des ennemis qui ne pardonnent pas les discours. *elle vous raccompagne, la voix tendue* La paroisse a cotisé chez Nilton, votre ardoise a fondu. Et… un mot privé. Un vieux concierge du Copacabana Palace a demandé après vous — au sujet de votre oncle, et du consortium justement. Après ce soir, faites vite. Ces gens écoutent tout.",
+"choices": ["Je rentre voir le concierge"]
+}, {
+"id": "d6_close",
+"quest_completed": "prefeito_d6_mac",
+"quest_not_active": "prefeito_d7_tioze",
+"quest_not_completed": "prefeito_d7_tioze",
+"actions": {"accept_quest": "prefeito_d7_tioze", "pay_debt": 4000},
+"speaker": "La conservatrice",
+"text": "*tu as parlé des enfants de l'orfanato — des noms, des visages, pas un mot sur toi ni sur le scrutin. La journaliste du premier rang a rangé son angle et pris des notes, pour de vrai.* Demain les journaux titreront sur le candidat civique du bairro — et sur le jeune homme à ses côtés. La paroisse a cotisé chez Nilton, votre ardoise a fondu : le bairro paie ses dettes, lui. *baisse la voix en te raccompagnant* Un mot privé — pas de la campagne. Un vieux concierge du Copacabana Palace a demandé après vous. Il dit qu'il a quelque chose qui peut tout changer, au sujet de votre oncle et du consortium. Il n'a pas voulu m'en dire plus.",
 "choices": ["Je rentre voir le concierge"]
 }, {
 "id": "default",

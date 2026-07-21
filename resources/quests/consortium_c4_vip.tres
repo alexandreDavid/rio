@@ -6,15 +6,17 @@
 [sub_resource type="Resource" id="obj_drive_vip"]
 script = ExtResource("2_obj")
 id = "drive_vip"
-description = "Réceptionner et promener l'investisseur étranger (Santos Dumont)"
+description = "Réceptionner l'investisseur à Santos Dumont — il n'attend pas"
 optional = false
+kind = 2
+time_limit_sec = 240.0
 
 [resource]
 script = ExtResource("1_quest")
 id = "consortium_c4_vip"
 display_name = "Le visiteur"
-description = "Un investisseur étranger arrive à Santos Dumont. Tu le réceptionnes, tu le promènes, tu souris à tout ce qu'il dit. La maison vend une image."
-journal_text = "Aller à l'aéroport Santos Dumont et chauffeurer le VIP."
+description = "Un investisseur étranger atterrit à Santos Dumont — et un homme comme lui ne poireaute pas dans un hall. Tu le réceptionnes à l'heure, tu le promènes, tu souris à tout ce qu'il dit. La maison vend une image, et l'image commence à l'accueil."
+journal_text = "Filer à l'aéroport Santos Dumont avant que le VIP ne s'impatiente (chrono)."
 giver_npc_id = "consortium_zonasul"
 ink_knot = "spot_consortium_zonasul_c4_offer"
 objectives = Array[Resource]([SubResource("obj_drive_vip")])

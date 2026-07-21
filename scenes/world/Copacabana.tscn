@@ -368,11 +368,19 @@ variants = [{
 "quest_completed": "trafico_a2_pickup",
 "quest_not_active": "trafico_a3_chauffeur",
 "quest_not_completed": "trafico_a3_chauffeur",
+"not_flag": "trafico_a2_done",
 "set_flag_after": "trafico_a2_done",
 "actions": {"accept_quest": "trafico_a3_chauffeur", "rep": {2: 3}, "debt_credit": 400},
 "speaker": "Contact",
-"text": "*récupère la sacoche du Palace, la soupèse, hoche la tête* Miguel avait raison sur toi — et t'as semé la PM proprement. *sourire en coin* Tito a fait passer un mot chez Nilton : une part de ta dette vient de sauter. C'est comme ça qu'on paie, nous. *te file une clé* Maintenant le vrai boulot. Le coffre est chargé près d'ici — tu le conduis à Botafogo, sous le Bondinho. Pas de détour, pas de PM dans le rétro. Quelqu'un t'attend là-bas.",
+"text": "*récupère la sacoche du Palace, la soupèse, hoche la tête* Miguel avait raison sur toi — et t'as semé la PM proprement. *sourire en coin* Tito a fait passer un mot chez Nilton : une part de ta dette vient de sauter. C'est comme ça qu'on paie, nous. *te file une clé, jette un œil à sa montre* Maintenant le vrai boulot — et écoute bien : la PM change d'équipe au Túnel Novo dans quelques minutes. Le coffre est chargé près d'ici, tu le conduis à Botafogo, sous le Bondinho, AVANT la relève. Après, chaque farda du tunnel aura ta description. Pas de détour, pas d'arrêt. Quelqu'un t'attend là-bas. Vai, vai !",
 "choices": ["En route"]
+}, {
+"id": "a3_retry",
+"quest_failed": "trafico_a3_chauffeur",
+"actions": {"accept_quest": "trafico_a3_chauffeur", "rep": {2: -1}},
+"speaker": "Contact",
+"text": "*mâchoire serrée, il fixe la mer un long moment avant de parler* Le coffre est revenu par un autre chemin. T'as de la chance que Miguel t'aime bien — un autre aurait déjà payé ça autrement. *il fait tourner la clé entre ses doigts, puis te la recolle dans la main* La prochaine relève de la PM, c'est maintenant. Même course, même règle : Botafogo avant qu'ils bouclent. Cette fois tu t'arrêtes pas pour regarder la mer, hein.",
+"choices": ["Cette fois j'y suis"]
 }, {
 "id": "a2_close",
 "objective_pending": ["trafico_a2_pickup", "pickup_palace"],
@@ -476,9 +484,16 @@ variants = [{
 "text": "*le vieux balaie le perron, méthodique ; le balai contourne tes pieds sans ralentir* Bienvenue au Copacabana Palace. *rien d'autre. Ce silence-là ne se force pas — il se mérite.*",
 "choices": ["…"]
 }, {
+"id": "a7_sombra",
+"objective_pending": ["trafico_a7_tioze", "semer_sombra"],
+"objective_done": ["trafico_a7_tioze", "porter_lembranca"],
+"speaker": "Le concierge",
+"text": "*le vieux balaie le perron sans te regarder — mais son balai désigne, l'air de rien, une silhouette qui fume adossée au réverbère d'en face* Bienvenue au Copacabana Palace. *à voix presque inaudible* …Reviens quand tu seras seul, petit.",
+"choices": ["…"]
+}, {
 "id": "a7_warn",
 "objective_pending": ["trafico_a7_tioze", "heed_warning"],
-"objective_done": ["trafico_a7_tioze", "porter_lembranca"],
+"objective_done": ["trafico_a7_tioze", "semer_sombra"],
 "actions": {"finish_quest": {"quest": "trafico_a7_tioze", "objective": "heed_warning", "payout": 0}, "accept_quest": "trafico_a8_baia", "set_flag": "tio_ze_warned_trafico", "debt_credit": 800},
 "speaker": "Le concierge",
 "text": "*tu tends la photo de la colônia — Zé jeune, un filet plein sur l'épaule, le sourire des jours de belle pêche. Le balai s'arrête net. Le vieux se fige, regarde la photo, puis toi, longtemps.* Petit. Te retourne pas. *il reprend son balai, voix basse* Je connaissais ton oncle Zé. Mieux que personne. Il a porté pour Tito, lui aussi. Le morro lui a tout pris, et quand il a voulu partir, Tito l'a brûlé — comme il te brûlera. *te glisse un regard* Tu peux encore choisir de pas finir comme lui. *soupire* Mais tu y retourneras quand même. Alors écoute au moins ça — le gros coup passe par la baie, Niterói, la Mafia da Baía en relais. Réfléchis-y avant la corrida.",
@@ -520,10 +535,18 @@ variants = [{
 "id": "a7_lembranca",
 "objective_done": ["trafico_a7_tioze", "ask_temoin"],
 "objective_pending": ["trafico_a7_tioze", "porter_lembranca"],
-"actions": {"finish_quest": {"quest": "trafico_a7_tioze", "objective": "porter_lembranca", "payout": 0}, "set_flag": "lembranca_trafico"},
+"actions": {"finish_quest": {"quest": "trafico_a7_tioze", "objective": "porter_lembranca", "payout": 0}, "set_flag": "lembranca_trafico", "start_chase": {"chaser_id": "sombra_baia", "speed_start": 122.0, "tire_after_sec": 20.0, "give_up_sec": 40.0, "catch_pct": 0.15, "catch_min": 30, "sprite_seed": "sombra_baia", "spotted_text": "🕶 Une silhouette se décolle du muret de la colônia — on te suit. Ne la mène pas au Palace !", "caught_text": "🕶 L'ombre te coince : « Alors, on cherche le vieux ? » — elle te déleste de R$ %d.", "broke_text": "🕶 L'ombre te coince, te fouille — rien. « On se reverra. »", "escaped_text": "💨 L'ombre semée dans les transversales. Personne ne saura où tu vas.", "chrono_label": "Despista a sombra !"}},
 "speaker": "Seu Firmino",
-"text": "*il t'écoute dire le nom de dona Zilda, hoche la tête, pose sa nasse* Si c'est elle qui t'envoie, senta aí. *il fouille sous le banc de sa barque, en sort une photo cornée, protégée par un sachet plastique* La colônia, l'année du grand banc de tainha. Le deuxième en partant de la gauche, avec le filet — c'est Zé. Il riait encore, à l'époque. Avant de porter pour l'autre, là-haut. *il te la met dans la main, referme tes doigts dessus* Le vieux du Palace, tu lui parles pas. Tu lui montres ça, sans un mot, et tu laisses le silence travailler. Un homme qui a fui la mer reconnaît toujours sa marée.",
-"choices": ["Valeu, Seu Firmino"]
+"text": "*il t'écoute dire le nom de dona Zilda, hoche la tête, pose sa nasse* Si c'est elle qui t'envoie, senta aí. *il fouille sous le banc de sa barque, en sort une photo cornée, protégée par un sachet plastique* La colônia, l'année du grand banc de tainha. Le deuxième en partant de la gauche, avec le filet — c'est Zé. Il riait encore, à l'époque. Avant de porter pour l'autre, là-haut. *il te la met dans la main, referme tes doigts dessus* Le vieux du Palace, tu lui parles pas. Tu lui montres ça, sans un mot, et tu laisses le silence travailler. Un homme qui a fui la mer reconnaît toujours sa marée. *son regard glisse par-dessus ton épaule, se durcit* …Bouge pas la tête. Le type au muret, là-bas — il était déjà là quand t'es arrivé, et il regarde pas la mer. Quelqu'un d'autre cherche le vieux, garoto. Sème-le AVANT d'approcher du Palace — ou c'est toi qui le leur livres.",
+"choices": ["*partir en le semant*"]
+}, {
+"id": "a7_sombra_retry",
+"objective_done": ["trafico_a7_tioze", "porter_lembranca"],
+"objective_pending": ["trafico_a7_tioze", "semer_sombra"],
+"actions": {"start_chase": {"chaser_id": "sombra_baia", "speed_start": 122.0, "tire_after_sec": 20.0, "give_up_sec": 40.0, "catch_pct": 0.15, "catch_min": 30, "sprite_seed": "sombra_baia", "spotted_text": "🕶 L'ombre t'a recollé — ne la mène pas au Palace !", "caught_text": "🕶 L'ombre te coince encore : R$ %d de « péage ».", "broke_text": "🕶 Coincé, fouillé — rien. « On se reverra. »", "escaped_text": "💨 L'ombre semée pour de bon. File au Palace.", "chrono_label": "Despista a sombra !"}},
+"speaker": "Seu Firmino",
+"text": "*il démêle son filet sans lever les yeux, la voix à peine audible* Il t'attend depuis tout à l'heure, ton ami du muret. *un temps* La photo, elle protège Zé seulement si elle arrive seule. Cours, garoto.",
+"choices": ["*filer*"]
 }, {
 "id": "after",
 "objective_done": ["trafico_a7_tioze", "porter_lembranca"],
@@ -580,9 +603,17 @@ variants = [{
 "text": "*le vieux balaie le perron ; en te voyant, il balaie un peu plus loin* Bienvenue au Copacabana Palace. *pas un mot de plus. Il a passé l'âge de parler aux gens qu'il ne connaît pas.*",
 "choices": ["…"]
 }, {
+"id": "b6_sombra",
+"objective_pending": ["policia_b6_tioze", "reperer_sombra"],
+"objective_done": ["policia_b6_tioze", "porter_lembranca"],
+"actions": {"start_stakeout": {"quest": "policia_b6_tioze", "objective": "reperer_sombra", "duration": 20.0, "seed": "sombra_palace"}},
+"speaker": "Ton instinct de patrouille",
+"text": "*tu approches du perron, la chope de Zé dans le sac — et tes mois avec Ramos te crient quelque chose : le type au journal, là-bas, en face du Palace. Troisième fois qu'il replie la même page, et il ne regarde jamais les grooms — seulement le vieux balayeur.* *Quelqu'un d'autre surveille le concierge. Avant de lui parler, prends ce guetteur en filature : identifie pour qui il travaille — et ne te fais pas repérer, ou il saura que le vieux compte pour toi.*",
+"choices": ["*prendre le guetteur en filature*"]
+}, {
 "id": "b6_warn",
 "objective_pending": ["policia_b6_tioze", "hear_concierge"],
-"objective_done": ["policia_b6_tioze", "porter_lembranca"],
+"objective_done": ["policia_b6_tioze", "reperer_sombra"],
 "actions": {"finish_quest": {"quest": "policia_b6_tioze", "objective": "hear_concierge", "payout": 0}, "accept_quest": "policia_b7_saisie", "set_flag": "tio_ze_warned_policia"},
 "speaker": "Le concierge",
 "text": "*tu poses la chope marquée « Zé » sur le muret du perron. Le balai s'arrête net. Le vieux se fige, prend la chope, la tourne l'anse vers la mer — un geste d'habitué que personne ne lui a appris hier.* Petit. Te retourne pas. *il repose la chope, voix basse* Je connaissais ton oncle Zé. Mieux que personne. Tu nettoies le morro pour Ramos, hein ? *un temps* Et Ramos, il nettoie pour qui ? Le consortium. Les mêmes qui tiennent ta dette. Tu fais le ménage de qui, au juste, sobrinho ? *te glisse un regard, soupire, s'appuie sur son balai* Tu continueras quand même. Alors prends au moins ça : Ramos a son mandat. Une cargaison de la Mafia da Baía passe à Niterói — tu la saisis, au nom de la loi ou de Ramos, c'est selon. Pense à ce que j'ai dit, avant la Madrugada.",
@@ -695,8 +726,18 @@ variants = [{
 "objective_pending": ["consortium_c8_menace", "break_holdout"],
 "speaker": "La dernière commerçante",
 "text": "*la seule du calçadão qui n'avait pas signé — vieille, droite derrière sa caisse. Mais tu regardes mieux : des ardoises de fournisseurs scotchées près du tiroir, les étagères à moitié vides, les mains qui tremblent en comptant la monnaie.* Mon père a tenu ce kiosque quarante ans sans rien devoir à personne. *sa voix se casse une seconde* Personne. *Elle est aux abois — elle ne se bat plus par orgueil, elle se noie et refuse la main tendue de peur qu'on la pousse. Le recouvreur, derrière toi, murmure :* « À toi de jouer. Mais chaque visite ratée, c'est 250 R$ de frais de dossier sur ta paie. »",
-"choices": ["Flatter : son kiosque est l'âme du calçadão, une légende", "Menacer : l'inspection, le bail, la fin — signez", "Racheter : la maison reprend ses ardoises, elle garde sa caisse et son tablier"],
-"choice_actions": {"0": {"pay_bribe": 250, "rep": {0: -2}}, "1": {"pay_bribe": 250, "rep": {0: -3}}, "2": {"finish_quest": {"quest": "consortium_c8_menace", "objective": "break_holdout", "payout": 1500}, "pay_debt": 18000, "set_flag": "consortium_c8_done", "rep": {4: 6, 0: -5}}}
+"choices": ["Menacer : l'inspection, le bail, la fin — signez", "Racheter : la maison reprend ses ardoises, elle garde sa caisse et son tablier", "Tricher avec la maison : solder ses ardoises de TA poche et la déclarer « insolvable, sans intérêt » (400 R$)"],
+"choice_actions": {"0": {"pay_bribe": 250, "rep": {0: -3}}, "1": {"finish_quest": {"quest": "consortium_c8_menace", "objective": "break_holdout", "payout": 1500}, "pay_debt": 18000, "set_flag": "kiosque_absorvido", "rep": {4: 6, 0: -5}}, "2": {"finish_quest": {"quest": "consortium_c8_menace", "objective": "break_holdout", "payout": 0}, "pay_debt": 18000, "set_flag": "kiosque_livre", "pay_bribe": 400, "rep": {4: -3, 0: 6}}}
+}, {
+"id": "c8_close_livre",
+"flag": "kiosque_livre",
+"quest_completed": "consortium_c8_menace",
+"quest_not_active": "consortium_c9_pacto",
+"quest_not_completed": "consortium_c9_pacto",
+"actions": {"accept_quest": "consortium_c9_pacto", "debt_credit": 800},
+"speaker": "Le recouvreur",
+"text": "*le vieux kiosque garde son auvent délavé — le seul du calçadão sans ivoire ni or. Sur le rapport, tu as écrit « insolvable, sans intérêt commercial ». La vieille dame, elle, a trouvé un matin ses ardoises soldées et n'a rien demandé à personne.* « Dossier classé, dit la maison. Le calçadão est aligné. » *Le recouvreur range le rapport sans le relire.* « Magalhães t'attend au Riserva Uno, à Barra. Pour la dernière signature. La tienne. »",
+"choices": ["Je vais voir Magalhães"]
 }, {
 "id": "c8_close",
 "quest_completed": "consortium_c8_menace",
@@ -796,15 +837,15 @@ variants = [{
 "id": "c6_lembranca",
 "objective_done": ["consortium_c6_tioze", "ask_temoin"],
 "objective_pending": ["consortium_c6_tioze", "porter_lembranca"],
-"actions": {"finish_quest": {"quest": "consortium_c6_tioze", "objective": "porter_lembranca", "payout": 0}, "set_flag": "lembranca_consortium"},
 "speaker": "Seu Ataíde",
-"text": "*au nom de Neusa, il sort enfin de sa guérite* Elle t'envoie, é ? Alors écoute vite, la nuit a des oreilles. *il déverrouille un tiroir, en tire une fiche cartonnée jaunie* Le vieux est arrivé une nuit d'hiver, trempé, avec un nom qui n'était pas le sien. J'ai rempli la fiche moi-même — et j'ai fait exprès de mal l'écrire, le vrai nom, dessous, au crayon. On protège comme on peut. *il te la glisse, plié en deux* Tu ne lui demandes rien. Tu la lui montres, c'est tout. Un homme qui a signé un faux nom sait exactement ce qu'on lui rend ce jour-là.",
-"choices": ["Merci, Seu Ataíde"]
+"text": "*au nom de Neusa, il entrouvre la porte de sa guérite — sans sortir* Elle t'envoie, é ? *il te détaille de la tête aux pieds, s'arrête sur ta veste — celle que la maison paie* Sauf que toi, tu portes l'odeur du consortium, moço. Et le vieux dont tu parles, il y a des gens de ta maison qui paieraient cher pour savoir ce que je sais. *il croise les bras, la guérite entre vous deux comme un rempart* Trente ans que je fais la nuit ici. J'ai jamais rien donné à quelqu'un qui pouvait l'acheter. Alors vas-y : dis-moi pourquoi je te parlerais, à toi.",
+"choices": ["Glisser un billet plié sous la vitre de la guérite", "Rappeler qui règle son salaire : la maison veut cette fiche", "Dire le nom de ta mère — la sœur de Zé — et pourquoi tu le cherches, toi"],
+"choice_actions": {"0": {"rep": {4: -1}}, "1": {"rep": {4: -1}}, "2": {"finish_quest": {"quest": "consortium_c6_tioze", "objective": "porter_lembranca", "payout": 0}, "set_flag": "lembranca_consortium", "rep": {0: 2}}}
 }, {
 "id": "after",
 "objective_done": ["consortium_c6_tioze", "porter_lembranca"],
 "speaker": "Seu Ataíde",
-"text": "*rentré dans sa guérite, il baisse la casquette sur ses yeux* Je t'ai rien donné, moço. La nuit, ici, personne donne jamais rien.",
+"text": "*au nom de ta mère, il était sorti de sa guérite — et il t'avait tendu une fiche cartonnée jaunie : « Le vieux est arrivé une nuit d'hiver, trempé, avec un nom qui n'était pas le sien. J'ai rempli la fiche moi-même — et j'ai fait exprès de mal l'écrire. Le vrai nom, dessous, au crayon. On protège comme on peut. Tu ne lui demandes rien : tu la lui montres. »* *Ce soir, il baisse la casquette sur ses yeux* Je t'ai rien donné, moço. La nuit, ici, personne donne jamais rien.",
 "choices": ["…"]
 }, {
 "id": "default",
@@ -941,15 +982,15 @@ variants = [{
 "id": "d7_lembranca",
 "objective_done": ["prefeito_d7_tioze", "ask_temoin"],
 "objective_pending": ["prefeito_d7_tioze", "porter_lembranca"],
-"actions": {"finish_quest": {"quest": "prefeito_d7_tioze", "objective": "porter_lembranca", "payout": 0}, "set_flag": "lembranca_prefeito"},
 "speaker": "Seu Expedito",
-"text": "*au nom d'Ivone, il pose son trousseau de clés* Ah, Zé. *il t'emmène derrière la sacristie, ouvre une boîte à hosties reconvertie* Le bloco de la paroisse, l'année où on a gagné le défilé du bairro. Porta-estandarte, c'était lui — il tenait le drapeau comme on tient un gosse. *il sort une petite médaille au ruban passé* Sa médaille. Il l'a laissée sur le banc, le dernier dimanche. Pas oubliée, hein — laissée. *il te la met dans la paume, ferme ta main dessus* Ne lui demande rien, au vieux du Palace. Ouvre la main devant lui, c'est tout. On ne rend pas une médaille, on rappelle à l'homme qu'il l'a méritée.",
-"choices": ["Obrigado, Seu Expedito"]
+"text": "*au nom d'Ivone, il s'arrête de compter ses cierges — mais garde son trousseau de clés en main, fermé* Ah. Zé. *long silence, il te jauge* Ivone t'envoie, d'accord. Mais un souvenir, ça se confie pas comme on prête une chaise, moço. Le dernier qui est venu me parler de Zé, c'était un journaliste — il voulait « l'histoire du noyé ». Je l'ai raccompagné à la porte. *il fait tinter ses clés, une seule fois* Alors avant que j'ouvre quoi que ce soit : dis-moi ce que tu viens chercher, au juste.",
+"choices": ["Le dossier du concierge — la campagne du bairro en a besoin", "Proposer un don pour la toiture de la paroisse, en échange", "Rien. Raconte-moi le dernier défilé de Zé — et prendre le temps d'écouter"],
+"choice_actions": {"0": {"rep": {0: -1}}, "1": {"rep": {0: -1}}, "2": {"finish_quest": {"quest": "prefeito_d7_tioze", "objective": "porter_lembranca", "payout": 0}, "set_flag": "lembranca_prefeito", "rep": {0: 2}}}
 }, {
 "id": "after",
 "objective_done": ["prefeito_d7_tioze", "porter_lembranca"],
 "speaker": "Seu Expedito",
-"text": "*astique un chandelier, l'air de rien* Le banc du fond est toujours à lui, tu sais. On ne redonne pas les places de ceux qui reviennent peut-être.",
+"text": "*tu avais écouté, sans montre et sans but — le bloco de la paroisse, l'année du défilé gagné, Zé porta-estandarte qui tenait le drapeau comme on tient un gosse. Alors seulement il avait ouvert la boîte à hosties reconvertie et fermé ta main sur la médaille au ruban passé : « Il l'a laissée sur le banc, le dernier dimanche. Pas oubliée — laissée. Ne lui demande rien, au vieux du Palace. Ouvre la main devant lui, c'est tout. On ne rend pas une médaille, on rappelle à l'homme qu'il l'a méritée. »* *Aujourd'hui il astique un chandelier, l'air de rien* Le banc du fond est toujours à lui, tu sais. On ne redonne pas les places de ceux qui reviennent peut-être.",
 "choices": ["…"]
 }, {
 "id": "default",
@@ -988,6 +1029,262 @@ variants = [{
 "id": "default",
 "speaker": "O Padre",
 "text": "*il salue les fidèles qui sortent de la messe, un mot pour chacun* La paix, meu filho. La porte est ouverte — elle l'est toujours.",
+"choices": ["…"]
+}]
+
+[node name="ReinadoTraficoSpot" parent="." instance=ExtResource("62_reactive")]
+position = Vector2(640, 268)
+npc_id = "reinado_trafico"
+prompt = "Le lieutenant de Tito"
+character_seed = 90501
+required_flag = "voie_trafico"
+variants = [{
+"id": "r1_close",
+"objective_pending": ["reinado_a_pedagio", "collect_pedagio"],
+"actions": {"finish_quest": {"quest": "reinado_a_pedagio", "objective": "collect_pedagio", "payout": 0}, "start_chase": {"chaser_id": "pm_blitz", "speed_start": 130.0, "tire_after_sec": 24.0, "give_up_sec": 42.0, "catch_pct": 0.2, "catch_min": 60, "sprite_seed": "pm_blitz", "spotted_text": "🚨 Une blitz de la PM « non alignée » déboule sur le calçadão — corre, patrão !", "caught_text": "🚨 Plaqué devant tes camelôs : la blitz « confisque » R$ %d. Sale image pour un roi.", "broke_text": "🚨 Plaqué — poches vides. La blitz repart bredouille.", "escaped_text": "💨 Blitz semée dans les transversales — le calçadão a vu que le roi court plus vite que la loi.", "chrono_label": "Foge da blitz !"}},
+"speaker": "Miguel",
+"text": "*il compte les enveloppes des camelôs sans les ouvrir, à l'ombre du kiosque* Trois sur trois, et personne a discuté. *il en glisse une dans ta poche* Le calçadão sait qui le protège maintenant — c'est ça que Tito voulait, plus que l'argent. *son regard accroche quelque chose derrière toi, il se fige* …Blitz. La PM d'en ville, ceux qu'on n'a pas encore « alignés ». Ils te connaissent de visage, patrão. CORRE !",
+"choices": ["*filer dans les transversales*"]
+}, {
+"id": "r1_fuite_retry",
+"objective_done": ["reinado_a_pedagio", "collect_pedagio"],
+"objective_pending": ["reinado_a_pedagio", "fugir_blitz"],
+"actions": {"start_chase": {"chaser_id": "pm_blitz", "speed_start": 130.0, "tire_after_sec": 24.0, "give_up_sec": 42.0, "catch_pct": 0.2, "catch_min": 60, "sprite_seed": "pm_blitz", "spotted_text": "🚨 La blitz t'a retrouvé — corre, patrão !", "caught_text": "🚨 Plaqué : la blitz « confisque » R$ %d.", "broke_text": "🚨 Plaqué — poches vides. Avertissement.", "escaped_text": "💨 Blitz semée — le calçadão respire.", "chrono_label": "Foge da blitz !"}},
+"speaker": "Miguel",
+"text": "*planqué derrière le kiosque, il te fait signe de baisser la tête* Ils tournent encore, patrão. Tant qu'ils te collent, le pedágio vaut rien — un roi qui se fait serrer devant ses camelôs, c'est plus un roi. *il te pousse* Sème-les pour de bon.",
+"choices": ["*repartir*"]
+}, {
+"id": "r2_retry",
+"quest_failed": "reinado_a_carga",
+"actions": {"accept_quest": "reinado_a_carga", "rep": {2: -1}},
+"speaker": "Miguel",
+"text": "*il raccroche un téléphone, la mâchoire dure* Les portões ont ouvert sans la carga. Tito a souri devant ses invités — tu sais ce que ça coûte, un sourire pareil. *il te tend de nouvelles clés* Deuxième chance : la prochaine fournée part MAINTENANT, avant la réouverture des grilles. Rate encore, et c'est plus moi qui te parlerai.",
+"choices": ["J'y suis déjà"]
+}, {
+"id": "r2_offer",
+"quest_completed": "reinado_a_pedagio",
+"quest_not_active": "reinado_a_carga",
+"quest_not_completed": "reinado_a_carga",
+"not_flag": "reinado_a_carga_dada",
+"set_flag_after": "reinado_a_carga_dada",
+"actions": {"accept_quest": "reinado_a_carga"},
+"speaker": "Miguel",
+"text": "*il te tend un café dans un gobelet du kiosque, presque cérémonieux* La blitz semée devant tout le calçadão — Tito a ri dix minutes. *puis son visage redevient sérieux* Maintenant le vrai boulot du Carnaval : le camarote de la Sapucaí. Tout Rio y trinquera — amis, ennemis, juges, journalistes. La carga doit franchir les portões AVANT l'ouverture au public ; après, c'est fouille générale et sourires crispés. *il regarde sa montre* Les grilles ouvrent bientôt. Le roi livre en personne — c'est ça, le message. Vai !",
+"choices": ["Direction la Sapucaí"]
+}, {
+"id": "r1_offer",
+"act": 5,
+"quest_not_active": "reinado_a_pedagio",
+"quest_not_completed": "reinado_a_pedagio",
+"actions": {"accept_quest": "reinado_a_pedagio"},
+"speaker": "Miguel",
+"text": "*il t'attend adossé au kiosque, et pour la première fois c'est LUI qui incline la tête* Patrão. *un temps, il savoure le mot* Le morro est à toi, mais un règne ça s'entretient — surtout à une semaine du Carnaval. Tito veut que Copacabana sache qui protège le calçadão maintenant. Trois camelôs, trois enveloppes : le pedágio du roi. Tu passes, tu encaisses, tu souris. *il crache par terre* Et ouvre l'œil — la PM d'en ville n'a pas encore compris qui commande ici.",
+"choices": ["Je fais la tournée"]
+}, {
+"id": "default",
+"speaker": "Miguel",
+"text": "*adossé au kiosque, il surveille le calçadão sans te calculer* Circule, o movimento é grande hoje.",
+"choices": ["…"]
+}]
+
+[node name="ReinadoPoliciaSpot" parent="." instance=ExtResource("62_reactive")]
+position = Vector2(520, 268)
+npc_id = "reinado_policia"
+prompt = "L'agent en civil (bloco)"
+character_seed = 90502
+required_flag = "voie_policia"
+variants = [{
+"id": "r1_stakeout",
+"objective_pending": ["reinado_b_ronda", "vigiar_bloco"],
+"actions": {"start_stakeout": {"quest": "reinado_b_ronda", "objective": "vigiar_bloco", "duration": 20.0, "seed": "batedor_bloco"}},
+"speaker": "Agent en civil",
+"text": "*il fait mine de danser au bord du bloco, l'oreillette invisible sous la casquette* Il est dans la foule, Capitão. *il te parle sans te regarder, en marquant le rythme* Regarde les mains, pas les visages : tout le monde tape des paumes — lui, il garde une main dans la sacoche. Il fait les poches ET il repère les issues pour ses copains de la Baía. *il recule d'un pas de samba* À toi, Capitão. Ni trop près, ni trop loin — comme au Maracanã.",
+"choices": ["*le prendre en filature*"]
+}, {
+"id": "r1_close",
+"objective_done": ["reinado_b_ronda", "vigiar_bloco"],
+"objective_pending": ["reinado_b_ronda", "prender_batedor"],
+"actions": {"finish_quest": {"quest": "reinado_b_ronda", "objective": "prender_batedor", "payout": 0}},
+"speaker": "Agent en civil",
+"text": "*deux agents en civil « raccompagnent » le batedor hors du bloco, un bras amical sur chaque épaule — la foule n'a rien vu, la musique n'a pas raté une mesure* Propre. Pas une manchette, pas un cri. *il te glisse une enveloppe de la part de Ramos* Le Capitão dit que ton règne commence bien. Il dit aussi que le batedor a parlé : son binôme opère à la Sapucaí, dans la foule des répétitions. Repos ce soir — demain, la pire planque de ta carrière. Encore.",
+"choices": ["Compris"]
+}, {
+"id": "r2_offer",
+"quest_completed": "reinado_b_ronda",
+"quest_not_active": "reinado_b_camarote",
+"quest_not_completed": "reinado_b_camarote",
+"actions": {"accept_quest": "reinado_b_camarote"},
+"speaker": "Agent en civil",
+"text": "*il te tend un badge d'accès plastifié — SAPUCAÍ / SERVIÇO* Ordre de Ramos : le binôme du batedor est dans la foule des répétitions, au Sambódromo. Le Capitão t'envoie SEUL. *il hausse un sourcil* Ses mots exacts : « C'est son règne. Qu'il le prouve. » Mille personnes, des tambours, zéro renfort. La Sapucaí doit être limpa avant le desfile — ta Sapucaí.",
+"choices": ["Direction le Sambódromo"]
+}, {
+"id": "r1_offer",
+"act": 5,
+"quest_not_active": "reinado_b_ronda",
+"quest_not_completed": "reinado_b_ronda",
+"actions": {"accept_quest": "reinado_b_ronda"},
+"speaker": "Agent en civil",
+"text": "*il lit son journal près du bloco qui répète — il le plie en te voyant, et te salue d'un vrai salut, discret* Capitão. *le mot sonne encore neuf* Ramos veut un Carnaval sans une seule manchette sanglante — et les blocos de Copa débordent de monde, le terrain rêvé pour les batedores de la Baía. Il y en a déjà un dans la foule, là. *il rouvre son journal* Ta ronde, tes yeux. Comme au Maracanã — mais cette fois, c'est chez toi.",
+"choices": ["Je prends la ronde"]
+}, {
+"id": "default",
+"speaker": "Agent en civil",
+"text": "*lit son journal au bord du calçadão* Tudo tranquilo. *tourne une page* Enfin — tranquilo comme Copa sait l'être.",
+"choices": ["…"]
+}]
+
+[node name="ReinadoConsortiumSpot" parent="." instance=ExtResource("62_reactive")]
+position = Vector2(760, 268)
+npc_id = "reinado_consortium"
+prompt = "Le recouvreur (Riserva)"
+character_seed = 90503
+required_flag = "voie_consortium"
+variants = [{
+"id": "r2_offer",
+"quest_completed": "reinado_c_vitrine",
+"quest_not_active": "reinado_c_camarote",
+"quest_not_completed": "reinado_c_camarote",
+"actions": {"accept_quest": "reinado_c_camarote"},
+"speaker": "Le recouvreur",
+"text": "*il contemple le front de mer aux parasols assortis, ivoire et or, alignés au cordeau* « Copacabana Riserva ». Magalhães a encadré la photo. *il se tourne vers toi* Dernier caprice avant le Carnaval : LE camarote d'honneur de la Sapucaí — celui qui domine l'avenue. Il appartient à l'école de samba, et sa présidente a déjà renvoyé trois chèques avec la même phrase : « le samba ne se vend pas ». *il te tend un dossier* Trois refus, zéro esclandre — cette femme sait ce qu'elle fait. À toi de trouver ce qui s'échange. Sambódromo.",
+"choices": ["Direction la Sapucaí"]
+}, {
+"id": "r1_offer",
+"act": 5,
+"quest_not_active": "reinado_c_vitrine",
+"quest_not_completed": "reinado_c_vitrine",
+"actions": {"accept_quest": "reinado_c_vitrine"},
+"speaker": "Le recouvreur",
+"text": "*il déroule devant toi une perspective d'architecte : le front de mer, parasols ivoire et or, enseignes calibrées* « Copacabana Riserva ». La maison rebaptise la plage pour le Carnaval — le monde entier regardera, autant qu'il regarde NOTRE plage. *il tapote un point rouge sur le plan* Tous les barraqueiros ont signé la charte. Sauf un. Une verrue sur la photo, dit Magalhães. *il te regarde par-dessus ses lunettes* Vous savez lire les gens, maintenant. C'est pour ça que c'est vous qui y allez.",
+"choices": ["Je vais le voir"]
+}, {
+"id": "default",
+"speaker": "Le recouvreur",
+"text": "*compte des billets à l'ombre, sans te regarder* La maison n'a rien à te dire aujourd'hui. Circule.",
+"choices": ["…"]
+}]
+
+[node name="BarraqueiroRiservaSpot" parent="." instance=ExtResource("62_reactive")]
+position = Vector2(1120, 250)
+npc_id = "barraqueiro_riserva"
+prompt = "La dernière barraca libre"
+character_seed = 90504
+required_flag = "voie_consortium"
+variants = [{
+"id": "r1_nego",
+"objective_pending": ["reinado_c_vitrine", "dobrar_barraqueiro"],
+"speaker": "Seu Bira",
+"text": "*sa barraca détonne au milieu des parasols ivoire — parasol délavé aux couleurs du Brasil, glacière cabossée, une file de clients fidèles* La charte « Riserva » ? *il sert une eau de coco sans te regarder* Trente ans que je plante ce parasol au même trou dans le sable. *tu le regardes mieux : il n'a pas peur, il n'attend pas d'argent — mais il touche sans arrêt une photo scotchée à la glacière : lui, en gamin, avec son père, même parasol, même plage. Ce n'est pas la barraca qu'il défend. C'est la photo.* *L'avocat de la maison murmure : « Chaque rendez-vous raté, 250 R$ de dossier. Lis-le bien. »*",
+"choices": ["Doubler l'offre : la maison paie le double du chiffre annuel", "Prévenir : sans la charte, la fiscalisation passera chaque matin", "Garantir : la barraca de son père reste EXACTEMENT là, son nom peint sur la charte — « Barraca do Bira, desde 1994 »"],
+"choice_actions": {"0": {"pay_bribe": 250, "rep": {4: -2}}, "1": {"pay_bribe": 250, "rep": {4: -2}}, "2": {"finish_quest": {"quest": "reinado_c_vitrine", "objective": "dobrar_barraqueiro", "payout": 1000}, "set_flag": "reinado_c1_done", "rep": {4: 6, 0: -2}}}
+}, {
+"id": "after",
+"quest_completed": "reinado_c_vitrine",
+"speaker": "Seu Bira",
+"text": "*sa barraca porte une enseigne neuve, ivoire et or : « Barraca do Bira, desde 1994 » — le seul nom propre de tout le front de mer Riserva* *il te sert une eau de coco sans un mot, et ne te fait pas payer. Ce n'est pas de la gratitude. C'est pour que tu te souviennes.*",
+"choices": ["…"]
+}, {
+"id": "default",
+"speaker": "Seu Bira",
+"text": "*plante son parasol aux couleurs du Brasil face à la mer* Água de coco geladinha, freguês !",
+"choices": ["…"]
+}]
+
+[node name="ReinadoPrefeitoSpot" parent="." instance=ExtResource("62_reactive")]
+position = Vector2(880, 268)
+npc_id = "reinado_prefeito"
+prompt = "Le Padre (préparatifs)"
+character_seed = 90505
+required_flag = "voie_prefeito"
+variants = [{
+"id": "r1_close",
+"objective_done": ["reinado_d_bloco", "convencer_puxador"],
+"objective_pending": ["reinado_d_bloco", "sair_bloco"],
+"actions": {"finish_quest": {"quest": "reinado_d_bloco", "objective": "sair_bloco", "payout": 0}},
+"speaker": "O Padre",
+"text": "*le Bloco do Bairro descend le calçadão — les costumes de Dona Filó verts et or, la voix de Careca qui lance la marchinha des gosses de l'orfanato, et tout le quartier qui reprend. Le Padre marche au milieu, pas devant.* *il te trouve dans la foule, les yeux brillants* Regarde-les. Personne ne leur a vendu ce défilé, personne ne le leur a imposé — ils l'ont MONTÉ. *il te serre l'épaule* C'est ça, ton règne, meu filho : pas un trône, un mutirão qui chante. *il rit* Et ce n'est pas fini — attends de voir ce que la Sapucaí nous réserve.",
+"choices": ["*défiler avec eux*"]
+}, {
+"id": "r2_offer",
+"quest_completed": "reinado_d_bloco",
+"quest_not_active": "reinado_d_alas",
+"quest_not_completed": "reinado_d_alas",
+"actions": {"accept_quest": "reinado_d_alas"},
+"speaker": "O Padre",
+"text": "*il tient une lettre à en-tête de l'école de samba, les mains qui tremblent un peu* Ils nous invitent. Le Bloco do Bairro OUVRE à la Sapucaí — tu mesures ? Nos gosses, nos costumes, notre marchinha, sur l'avenue. *son sourire se voile* Un détail : le mestre de bateria veut réorganiser le cortège — « les notables devant, pour les caméras ». *il te confie la lettre* Va régler l'ordre des alas, meu filho. Et souviens-toi de qui ce défilé est la victoire.",
+"choices": ["Direction le Sambódromo"]
+}, {
+"id": "r1_offer",
+"act": 5,
+"quest_not_active": "reinado_d_bloco",
+"quest_not_completed": "reinado_d_bloco",
+"actions": {"accept_quest": "reinado_d_bloco"},
+"speaker": "O Padre",
+"text": "*sur le calçadão, il regarde passer les blocos des autres quartiers, un carnet à la main* Le bairro a gagné, meu filho — maintenant il doit DÉFILER. Pas regarder passer les autres : défiler. *il te montre son carnet — deux noms* Dona Filó, la costureira : trente Carnavals dans les doigts, mais elle ne coud plus depuis que sa vue baisse. Careca, le puxador : la plus belle voix du bairro, muette depuis des années. *il referme le carnet* Un dernier mutirão, le plus joyeux. Convaincs-les, et fais sortir notre bloco.",
+"choices": ["Je monte le bloco"]
+}, {
+"id": "default",
+"speaker": "O Padre",
+"text": "*salue des paroissiens sur le calçadão* La paix, meu filho. Le Carnaval approche — même l'église le sent dans ses pierres.",
+"choices": ["…"]
+}]
+
+[node name="ReinadoCostureiraSpot" parent="." instance=ExtResource("62_reactive")]
+position = Vector2(1000, 268)
+npc_id = "reinado_costureira"
+prompt = "Dona Filó (costureira)"
+character_seed = 90506
+required_flag = "voie_prefeito"
+variants = [{
+"id": "r1_filo",
+"objective_pending": ["reinado_d_bloco", "convencer_costureira"],
+"actions": {"finish_quest": {"quest": "reinado_d_bloco", "objective": "convencer_costureira", "payout": 0}, "rep": {0: 1}},
+"speaker": "Dona Filó",
+"text": "*devant sa machine à coudre posée sur une table de bar, des lunettes épaisses comme des fonds de bouteille* Un bloco du bairro ? *elle rit, puis s'arrête* Menino, mes yeux cousent de travers depuis deux Carnavals. *tu lui prends la main, tu lui dis que les gosses de l'orfanato tiendront les aiguilles si elle tient le dessin* …*long silence, elle essuie ses lunettes* Trente Carnavals dans ces doigts. D'accord. Mais alors va me chercher une voix : Careca, le puxador. Et écoute-moi bien — ne lui parle NI de gloire NI du bon vieux temps, il te claquera la porte. Demande-lui la marchinha qu'il chantait aux gosses de l'orfanato, celle qu'il a écrite pour eux. Cette chanson-là, il ne sait pas la refuser.",
+"choices": ["J'y vais, Dona Filó"]
+}, {
+"id": "after",
+"objective_done": ["reinado_d_bloco", "convencer_costureira"],
+"speaker": "Dona Filó",
+"text": "*entourée de gamins de l'orfanato qui tiennent aiguilles et tissus, elle dirige au doigt et à la voix* Plus serré, le point, menino ! *à toi, sans lever les yeux* Le vert et or sera prêt. Et Careca ?",
+"choices": ["J'y travaille"]
+}, {
+"id": "default",
+"speaker": "Dona Filó",
+"text": "*raccommode un ourlet en plissant les yeux derrière ses grosses lunettes* Le fil, c'est comme le bairro, menino — ça casse si on tire trop d'un seul côté.",
+"choices": ["…"]
+}]
+
+[node name="ReinadoPuxadorSpot" parent="." instance=ExtResource("62_reactive")]
+position = Vector2(1080, 268)
+npc_id = "reinado_puxador"
+prompt = "Careca (le puxador)"
+character_seed = 90507
+required_flag = "voie_prefeito"
+variants = [{
+"id": "r1_careca",
+"objective_done": ["reinado_d_bloco", "convencer_costureira"],
+"objective_pending": ["reinado_d_bloco", "convencer_puxador"],
+"speaker": "Careca",
+"text": "*assis seul à la table du fond du bar, devant un café froid — un colosse voûté, la voix qu'on devine même quand il se tait* Le bloco du Padre, c'est ça ? *il secoue la tête avant que tu finisses* J'ai plus chanté depuis des années, moço. La voix est partie avec le reste. *il fixe son café* Trouve un jeune. Y'en a plein qui chantent fort.",
+"choices": ["Le bairro a besoin de sa légende — le Careca des grands défilés", "Le Padre paiera le cachet qu'il faudra", "Chanter fort, oui. Mais la marchinha des gosses de l'orfanato — celle que TU as écrite — un jeune ne la connaît pas"],
+"choice_actions": {"0": {"rep": {0: -1}}, "1": {"rep": {0: -1}}, "2": {"finish_quest": {"quest": "reinado_d_bloco", "objective": "convencer_puxador", "payout": 0}, "set_flag": "reinado_d_careca", "rep": {0: 2}}}
+}, {
+"id": "after",
+"objective_done": ["reinado_d_bloco", "convencer_puxador"],
+"speaker": "Careca",
+"text": "*debout, il fredonne à mi-voix en battant la mesure sur le comptoir — le bar entier s'est tu pour écouter* …elle est toujours là, finalement. *il te regarde* Elle attendait juste les bons mots pour sortir.",
+"choices": ["…"]
+}, {
+"id": "r1_muet",
+"objective_pending": ["reinado_d_bloco", "convencer_puxador"],
+"speaker": "Careca",
+"text": "*il lève à peine les yeux de son café froid* Si c'est pour le bloco, vois d'abord Dona Filó. Sans costumes, pas de défilé — et sans défilé, pas besoin de voix.",
+"choices": ["D'accord"]
+}, {
+"id": "default",
+"speaker": "Careca",
+"text": "*un colosse silencieux devant un café froid, au fond du bar. Personne ne s'assoit à sa table — par respect, pas par peur.*",
 "choices": ["…"]
 }]
 

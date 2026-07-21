@@ -659,19 +659,48 @@ character_seed = 80115
 variants = [{
 "id": "c2_close",
 "objective_pending": ["consortium_c2_loyers", "collect_condos"],
-"set_flag_after": "consortium_c2_done",
-"actions": {"finish_quest": {"quest": "consortium_c2_loyers", "objective": "collect_condos", "payout": 300}, "accept_quest": "consortium_c3_partenariat", "pay_debt": 3000, "rep": {4: 4}},
 "speaker": "Le syndic",
-"text": "*classeur sous le bras, te fait le tour des tours du Riserva Uno* Appartement 1204, retard. 808, payé. 1601, conteste — note-le pour Magalhães, il « discutera ». *te tend la sacoche d'encaissements* La maison gère tout ici : les loyers, les retards, les opinions. *coche une nouvelle ligne sur son classeur* Et Magalhães a un cas à Ipanema — un restaurateur têtu qui refuse le « partenariat ». Tu insistes jusqu'à ce que sa main tienne le stylo. Zona Sul. Vas-y.",
-"choices": ["Direction Ipanema"]
+"text": "*classeur sous le bras, te fait le tour des tours du Riserva Uno* Appartement 1204, retard. 808, payé. 1601… conteste. *il s'arrête devant la tour — au balcon du seizième, un homme en maillot de corps arrose trois plants de tomates, une gamine accrochée à sa jambe* Professeur retraité, trente ans dans l'immeuble, il conteste « l'indexation » — il a raison, d'ailleurs, mais ça ne regarde personne. *il te tend le classeur, stylo ouvert sur la ligne 1601* La procédure : je le note, Magalhães « discutera ». *il te regarde* C'est toi qui tiens le stylo, aujourd'hui.",
+"choices": ["Le noter pour Magalhães — la procédure, il « discutera »", "Couvrir sa différence de ta poche, en douce — la ligne 1601 dit « payé » (150 R$)", "Le noter… et monter le prévenir de ce que « discuter » veut dire ici"],
+"choice_actions": {
+"0": {"finish_quest": {"quest": "consortium_c2_loyers", "objective": "collect_condos", "payout": 300}, "set_flag": "inquilino_entregue", "accept_quest": "consortium_c3_partenariat", "pay_debt": 3000, "rep": {4: 5}},
+"1": {"finish_quest": {"quest": "consortium_c2_loyers", "objective": "collect_condos", "payout": 300}, "set_flag": "inquilino_coberto", "accept_quest": "consortium_c3_partenariat", "pay_debt": 3000, "pay_bribe": 150, "rep": {4: 2, 0: 3}},
+"2": {"finish_quest": {"quest": "consortium_c2_loyers", "objective": "collect_condos", "payout": 300}, "set_flag": "inquilino_avisado", "accept_quest": "consortium_c3_partenariat", "pay_debt": 3000, "rep": {4: 3, 0: 2}}
+}
+}, {
+"id": "c7_nego",
+"objective_pending": ["consortium_c7_condos", "align_condos"],
+"speaker": "Le président de la Península",
+"text": "*salle vitrée du Riserva Uno — trois conseils syndicaux autour de la table. Riserva Uno signe. Le Parc signe. Le troisième président, celui de la Península, pose son stylo.* Non. *silence glacial* Pas comme ça. *tu le regardes mieux : il ne relit pas le contrat — il regarde les DEUX AUTRES présidents. Ses mains ne tremblent pas, sa mâchoire oui. Ce n'est pas le contrat qui le bloque : c'est d'être vu en train de céder. Il a fait campagne chez ses résidents contre « la mainmise », il lui faut une histoire à leur raconter.* *Le syndic te glisse, entre ses dents : « Magalhães le veut signé AUJOURD'HUI. Chaque réunion de plus, 250 R$ de frais sur ta paie. »*",
+"choices": ["Adoucir : la maison ajoutera un geste personnel, discret, pour monsieur le président", "Trancher : les deux autres ont signé — qu'il regarde ce qui arrive aux tours isolées", "Lui tendre l'histoire : ce sera le « Pacte de Sécurité de Barra » — son idée, son nom, son annonce aux résidents"],
+"choice_actions": {"0": {"pay_bribe": 250, "rep": {4: -2}}, "1": {"pay_bribe": 250, "rep": {4: -2}}, "2": {"finish_quest": {"quest": "consortium_c7_condos", "objective": "align_condos", "payout": 1200}, "set_flag": "consortium_c7_done", "pay_debt": 14000, "rep": {4: 8, 0: -4}}}
 }, {
 "id": "c7_close",
-"objective_pending": ["consortium_c7_condos", "align_condos"],
-"set_flag_after": "consortium_c7_done",
-"actions": {"finish_quest": {"quest": "consortium_c7_condos", "objective": "align_condos", "payout": 1200}, "accept_quest": "consortium_c8_menace", "pay_debt": 14000, "rep": {4: 8, 0: -4}},
+"quest_completed": "consortium_c7_condos",
+"quest_not_active": "consortium_c8_menace",
+"quest_not_completed": "consortium_c8_menace",
+"actions": {"accept_quest": "consortium_c8_menace"},
 "speaker": "Le syndic",
-"text": "*réunit les trois conseils syndicaux dans une salle vitrée — tu poses les contrats, tu souris, tu attends* Riserva Uno, Le Parc, Península. *les trois présidents signent l'un après l'autre, personne ne lit* …Trois fiefs, une maison. Magalhães va boire au champagne ce soir. *ferme son classeur d'un coup sec* Il reste une épine : le dernier commerce libre du calçadão de Copa. La maison le veut signé avant le Carnaval — sans esclandre, mais signé.",
+"text": "*le président de la Península a signé le premier, devant les caméras de la copropriété — « l'architecte du Pacte de Sécurité de Barra ». Personne n'a lu le contrat.* …Trois fiefs, une maison, et l'homme te doit sa légende. Magalhães va boire au champagne ce soir — et il a fait fondre ta dette chez Nilton pour la manière. *ferme son classeur d'un coup sec* Il reste une épine : le dernier commerce libre du calçadão de Copa. La maison le veut signé avant le Carnaval — sans esclandre, mais signé.",
 "choices": ["Retour à Copa"]
+}, {
+"id": "memoria_entregue",
+"flag": "inquilino_entregue",
+"speaker": "Le syndic",
+"text": "*il coche ses lignes, l'air satisfait* Le 1601 ? Réglé. Magalhães a « discuté ». *au seizième, le balcon est nu — plus de tomates, plus de gamine. Un panneau ALUGA-SE pend à la rambarde.*",
+"choices": ["…"]
+}, {
+"id": "memoria_coberto",
+"flag": "inquilino_coberto",
+"speaker": "Narrateur",
+"text": "*au balcon du 1601, le professeur arrose ses tomates. Il te repère en bas, hésite — puis lève son arrosoir dans ta direction, comme on trinque. La gamine te fait coucou. Personne d'autre ne saura jamais pourquoi.*",
+"choices": ["…"]
+}, {
+"id": "memoria_avisado",
+"flag": "inquilino_avisado",
+"speaker": "Le syndic",
+"text": "*il tapote la ligne 1601 de son classeur, contrarié* Parti du jour au lendemain, le professeur. Déménagé chez sa fille à Niterói avant même la « discussion ». *il te regarde une seconde de trop* Étrange, ce timing. Enfin — un contestataire de moins.",
+"choices": ["…"]
 }, {
 "id": "default",
 "speaker": "Résident de Barra",
