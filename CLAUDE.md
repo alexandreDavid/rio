@@ -4,6 +4,8 @@ Vertical slice d'un jeu 2D top-down situé sur la plage de Copacabana à Rio. Qu
 
 Langue de travail : **français** (code, commentaires, dialogues, UI).
 
+Docs de contexte (état réel vérifié dans le code, 2026-07-21) : `docs/SYSTEMES.md` (gameplay, mini-jeux, économie, HUD), `docs/NARRATIF.md` (actes, quêtes, dialogues, choix), `docs/MONDE.md` (districts, NPCs, vie ambiante, tests), `docs/JOUABILITE.md` (diagnostic croisé + axes d'amélioration priorisés). À lire avant un chantier jouabilité ; `docs/BACKLOG.md` reste la trace des besoins de design.
+
 ## Stack
 - Godot **4.6** Forward+ (`project.godot` line `config/features`)
 - Scripts GDScript statiquement typés — préférer `Node2D` explicite aux `Variant` non typés
