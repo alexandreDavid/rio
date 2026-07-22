@@ -1705,7 +1705,7 @@ z_index = 1
 position = Vector2(-1240, 20)
 
 [node name="ExitToZonaSul" parent="." instance=ExtResource("58_exit")]
-position = Vector2(-260, 100)
+position = Vector2(-420, 100)
 target_district = "zona_sul"
 label_text = "← ARPOADOR / IPANEMA (pela pedra)"
 seamless = true
@@ -1744,7 +1744,7 @@ target_district = "favela_morro"
 label_text = "↑ MORRO / FAVELA"
 
 [node name="ExitToForte" parent="." instance=ExtResource("58_exit")]
-position = Vector2(200, 175)
+position = Vector2(0, 195)
 target_district = "forte"
 label_text = "→ FORTE DE COPACABANA"
 

@@ -13,13 +13,13 @@ const TUNNEL_SEC: float = 1.9
 const BARCA_SEC: float = 2.6
 
 static func play_tunnel(tree: SceneTree) -> void:
-	var o: TransitionOverlay = TransitionOverlay.new()
+	var o: CanvasLayer = new()
 	o.layer = 90
 	tree.current_scene.add_child(o)
 	o._run_tunnel()
 
 static func play_barca(tree: SceneTree) -> void:
-	var o: TransitionOverlay = TransitionOverlay.new()
+	var o: CanvasLayer = new()
 	o.layer = 90
 	tree.current_scene.add_child(o)
 	o._run_barca()

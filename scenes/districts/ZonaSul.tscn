@@ -2025,13 +2025,13 @@ theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
 theme_override_constants/outline_size = 3
 
 [node name="PenthouseLeblon" parent="." instance=ExtResource("11_penth")]
-position = Vector2(2000, -3000)
+position = Vector2(2000, -6000)
 
 [node name="OfficeIpanema" parent="." instance=ExtResource("12_office")]
-position = Vector2(2700, -3000)
+position = Vector2(2700, -6000)
 
 [node name="ArpoadorBar" parent="." instance=ExtResource("13_bar")]
-position = Vector2(3400, -3000)
+position = Vector2(3400, -6000)
 
 
 

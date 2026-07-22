@@ -367,6 +367,19 @@ func _test_arpoador_seam() -> void:
 			if h.collider is StaticBody2D:
 				solid = true
 		_assert(not solid, "couloir de l'Arpoador libre à x=%d (y=104)" % int(x))
+		# Aucun téléporteur sur le chemin : une sortie non-couture intercepterait
+		# la marche vers Ipanema (cas réel : ExitToForte barrait la plage).
+		var aparams: PhysicsShapeQueryParameters2D = PhysicsShapeQueryParameters2D.new()
+		aparams.shape = probe
+		aparams.transform = Transform2D(0.0, Vector2(x, 104.0))
+		aparams.collision_mask = 0x7FFFFFFF
+		aparams.collide_with_areas = true
+		aparams.collide_with_bodies = false
+		for h in space.intersect_shape(aparams, 8):
+			if h.collider is Area2D and "target_district" in h.collider:
+				_assert(bool(h.collider.get("seamless")),
+					"pas de sortie téléportante sur le couloir à x=%d (%s)"
+						% [int(x), h.collider.name])
 	# 4. Bloqueurs : pas de passage au niveau de la route (nord) ni sur la
 	#    mer (sud de la pedra).
 	for blocked in [Vector2(-290.0, -60.0), Vector2(-312.0, 260.0)]:
@@ -397,6 +410,43 @@ func _test_arpoador_seam() -> void:
 		"WALK_ENTRIES : plus de téléport Copa ← Zona Sul")
 	_assert(not DistrictManager.WALK_ENTRIES["zona_sul"].has("copacabana"),
 		"WALK_ENTRIES : plus de téléport Zona Sul ← Copa")
+	# 7. LA preuve : marche physique Copa → Ipanema par la pedra (move_and_slide),
+	#    sans téléport — le district bascule en couture, le corps arrive au sable
+	#    d'Ipanema (cas réel : ExitToForte/rocher bloquaient la traversée).
+	DistrictManager._current = "copacabana"
+	var walker: CharacterBody2D = CharacterBody2D.new()
+	walker.add_to_group("player")
+	var wcol: CollisionShape2D = CollisionShape2D.new()
+	var wrect: RectangleShape2D = RectangleShape2D.new()
+	wrect.size = Vector2(14, 20)
+	wcol.shape = wrect
+	walker.add_child(wcol)
+	root.add_child(walker)
+	walker.global_position = Vector2(-60, 104)
+	var goal: Vector2 = Vector2(-560, 112)
+	var wframes: int = 0
+	var wlast: float = walker.global_position.distance_to(goal)
+	var wstuck: int = 0
+	while walker.global_position.distance_to(goal) > 8.0 and wframes < 600:
+		var dirv: Vector2 = (goal - walker.global_position).normalized()
+		walker.velocity = dirv * 200.0
+		walker.move_and_slide()
+		var wd: float = walker.global_position.distance_to(goal)
+		if wd < wlast - 0.5:
+			wlast = wd
+			wstuck = 0
+		else:
+			wstuck += 1
+			if wstuck >= 90:
+				break
+		wframes += 1
+		await get_tree().physics_frame
+	_assert(walker.global_position.distance_to(goal) <= 8.0,
+		"marche Copa → Ipanema aboutie par la pedra (arrêt à %s, %d frames)"
+			% [str(walker.global_position.round()), wframes])
+	_assert(DistrictManager.current() == "zona_sul",
+		"la couture a basculé le district en marchant (→ zona_sul)")
+	walker.queue_free()
 	DistrictManager._current = "copacabana"
 	root.queue_free()
 	await get_tree().process_frame

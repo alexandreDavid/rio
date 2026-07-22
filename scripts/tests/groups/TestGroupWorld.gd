@@ -45,7 +45,12 @@ func _test_interiors_no_overlap() -> void:
 	for n in _all_descendants(root):
 		if not (n is Node2D):
 			continue
-		if String(n.name).ends_with("Interior"):
+		# Un intérieur = un nœud avec un SpawnPoint (cible des BuildingDoor) —
+		# le filtre par suffixe de nom laissait passer PenthouseLeblon/
+		# OfficeIpanema/ArpoadorBar (cas réel : intérieurs de ZonaSul venus
+		# chevaucher la bande de Copa après le littoral continu).
+		if String(n.name).ends_with("Interior") \
+				or (n.get_node_or_null("SpawnPoint") != null and n.get_parent() != root):
 			interiors.append(n)
 	const MIN_DIST: float = 500.0
 	for i in interiors.size():

@@ -1430,6 +1430,18 @@ func _spawn_forte() -> void:
 	var container: Node2D = Node2D.new()
 	container.name = "ForteDeCopacabana"
 	add_child(container)
+	# Le promontoire est SOLIDE : il ferme la plage à l'ouest (l'entrée du
+	# Forte est à son pied, côté sable) et force le passage vers Ipanema par
+	# le calçadão au nord (bande y 64-140 — la couture de l'Arpoador).
+	var rock_body: StaticBody2D = StaticBody2D.new()
+	rock_body.name = "ForteRockBody"
+	rock_body.position = Vector2(-165, 305)
+	var rock_shape: CollisionShape2D = CollisionShape2D.new()
+	var rock_rect: RectangleShape2D = RectangleShape2D.new()
+	rock_rect.size = Vector2(250, 330)
+	rock_shape.shape = rock_rect
+	rock_body.add_child(rock_shape)
+	container.add_child(rock_body)
 	# Promontoire rocheux qui s'avance dans la mer (au-delà du rivage de la baie)
 	var rock: ColorRect = ColorRect.new()
 	rock.offset_left = -290.0
