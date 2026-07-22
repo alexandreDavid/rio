@@ -87,7 +87,7 @@ func _spawn_character_sprite() -> void:
 	spr.texture = CharacterSpriteFactory.build_sheet(config)
 	spr.region_enabled = true
 	spr.region_rect = Rect2(0, 0, cw, ch)
-	spr.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	spr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	var s: float = 48.0 / float(ch)
 	spr.scale = Vector2(s, s)
 	# Pieds ~ à l'origine du spot (le sprite est centré sur la cellule).

@@ -295,7 +295,7 @@ func _setup_pixel_sprite() -> void:
 	_pixel_sprite.region_rect = Rect2(0, 0, PX_CELL_W, PX_CELL_H)
 	# LINEAR : feuille haute résolution réduite en douceur (rendu lissé,
 	# cohérent avec le joueur et les NPCs).
-	_pixel_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	_pixel_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	# Scale pour atteindre une hauteur ~ size.y (même target que le rendu
 	# ColorRect). Indépendant de la résolution de cellule.
 	var target_h: float = max(size.y, 18.0)

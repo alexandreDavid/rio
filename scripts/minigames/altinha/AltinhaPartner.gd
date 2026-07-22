@@ -36,7 +36,7 @@ func _build_visual() -> void:
 	_sprite.texture = CharacterSpriteFactory.build_sheet(config)
 	_sprite.region_enabled = true
 	_sprite.region_rect = Rect2(0, 0, CharacterSpriteFactory.CELL_W, CharacterSpriteFactory.CELL_H)
-	_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	var s: float = display_height / float(CharacterSpriteFactory.CELL_H)
 	_sprite.scale = Vector2(s, s)
 	_sprite.position = Vector2(0.0, -display_height * 0.5)

@@ -276,9 +276,9 @@ func _setup_procedural_sprite() -> void:
 	# Scale pour matcher SPRITE_TARGET_HEIGHT à partir de la hauteur de cellule.
 	var s: float = SPRITE_TARGET_HEIGHT / float(PROCEDURAL_CELL_H)
 	spr.scale = Vector2(s, s)
-	# LINEAR : feuille haute résolution réduite en douceur (rendu lissé,
-	# cohérent avec le joueur — plus le pixel-art chunky d'avant).
-	spr.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	# NEAREST : le factory dessine du vrai pixel-art (style GBA, contours 1px)
+	# — le filtrage lisse le détruirait.
+	spr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 
 # Helper static : charge un sprite individuel (idle ou walk-sheet 3×3) depuis
 # assets/sprites/npcs/<id>.png ou <id>_walk.png et l'applique au Sprite2D fourni.

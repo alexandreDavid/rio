@@ -197,9 +197,8 @@ func apply_appearance() -> void:
 	sprite.region_rect = Rect2(0, 0, FACTORY_CELL_W, FACTORY_CELL_H)
 	sprite.hframes = 1
 	sprite.vframes = 1
-	# LINEAR : la feuille haute résolution est réduite en douceur → rendu
-	# illustré/lissé (proche du sprite peint d'origine), pas pixelisé.
-	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	# NEAREST : pixel-art natif (style GBA) — les texels restent nets.
+	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	# Cellule réduite à TARGET_DISPLAY_SIZE px de haut à l'écran.
 	var sf: float = TARGET_DISPLAY_SIZE / float(FACTORY_CELL_H)
 	sprite.scale = Vector2(sf, sf)

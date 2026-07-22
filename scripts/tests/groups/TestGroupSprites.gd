@@ -249,8 +249,8 @@ func _test_wanderer_stationary_atlas() -> void:
 		var s: Sprite2D = pixel as Sprite2D
 		_assert(s.texture != null, "PixelSprite a une texture (factory)")
 		_assert(s.region_enabled, "region_enabled = true")
-		_assert(s.texture_filter == CanvasItem.TEXTURE_FILTER_LINEAR,
-			"texture_filter = LINEAR (même style que les NPCs)")
+		_assert(s.texture_filter == CanvasItem.TEXTURE_FILTER_NEAREST,
+			"texture_filter = NEAREST (pixel-art GBA net)")
 	w.queue_free()
 	await get_tree().process_frame
 
@@ -399,8 +399,8 @@ func _test_player_appearance() -> void:
 			_assert(s.texture != null, "Sprite joueur a une texture factory")
 			_assert(s.region_rect.size == Vector2(cw, ch),
 				"region = cellule %dx%d" % [cw, ch])
-			_assert(s.texture_filter == CanvasItem.TEXTURE_FILTER_LINEAR,
-				"Filtrage LINEAR (rendu lissé)")
+			_assert(s.texture_filter == CanvasItem.TEXTURE_FILTER_NEAREST,
+				"Filtrage NEAREST (pixel-art net)")
 		pl.queue_free()
 		await get_tree().process_frame
 

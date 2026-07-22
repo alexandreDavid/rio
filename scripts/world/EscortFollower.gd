@@ -44,7 +44,7 @@ func _build_sprite() -> void:
 	spr.texture = _Factory.build_sheet(config)
 	spr.region_enabled = true
 	spr.region_rect = Rect2(0, 0, _Factory.CELL_W, ch)
-	spr.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	spr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	var s: float = target_height / float(ch)
 	spr.scale = Vector2(s, s)
 	spr.position = Vector2(0, -target_height * 0.5)

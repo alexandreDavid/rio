@@ -42,7 +42,7 @@ func _build_sprite() -> void:
 	spr.texture = _Factory.build_sheet(config)
 	spr.region_enabled = true
 	spr.region_rect = Rect2(0, 0, _Factory.CELL_W, ch)
-	spr.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	spr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	# Gamin : un peu plus petit que les adultes (~38 px de haut).
 	var s: float = 38.0 / float(ch)
 	spr.scale = Vector2(s, s)

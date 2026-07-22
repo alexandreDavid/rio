@@ -78,7 +78,7 @@ func _build_visual() -> void:
 	_sprite.texture = CharacterSpriteFactory.build_sheet(config)
 	_sprite.region_enabled = true
 	_sprite.region_rect = Rect2(0, 0, CharacterSpriteFactory.CELL_W, CharacterSpriteFactory.CELL_H)
-	_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	var sf: float = 48.0 / float(CharacterSpriteFactory.CELL_H)
 	_sprite.scale = Vector2(sf, sf)
 	add_child(_sprite)
