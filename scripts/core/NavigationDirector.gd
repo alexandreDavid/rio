@@ -176,6 +176,9 @@ func _ready() -> void:
 	EventBus.money_changed.connect(_on_money_changed)
 	EventBus.customer_served.connect(_on_customer_served)
 	EventBus.time_of_day_changed.connect(_on_phase_changed)
+	EventBus.day_elapsed.connect(_on_day_elapsed)
+	# La feijoada du samedi pose un flag sans émettre d'événement de quête.
+	EventBus.dialogue_ended.connect(_on_event)
 	DistrictManager.district_changed.connect(_on_district_changed)
 	_recompute()
 
@@ -347,6 +350,13 @@ func _compute_selection() -> Dictionary:
 		var st5: Dictionary = _active_step()
 		if not st5.is_empty():
 			return st5
+		# Depois do Carnaval : plus de cap narratif, juste le rythme du bairro.
+		if CampaignManager.has_flag("pos_carnaval"):
+			if CarnavalCalendar.is_cinzas():
+				return _S("🎯 Quarta de Cinzas — rentre au morro, la famille t'attend", "favela_morro", "", "La maison")
+			if CarnavalCalendar.is_sabado() and int(CampaignManager.flags.get("feijoada_day", 0)) != TimeOfDay.day_count:
+				return _S("🎯 Sábado — feijoada à la maison, avec les tiens", "favela_morro", "", "Feijoada (maison)")
+			return _S("✦ Copa est à toi — rodas, altinha, et la feijoada du samedi")
 		for rid in ["reinado_a_pedagio", "reinado_a_carga", "reinado_b_ronda",
 				"reinado_b_camarote", "reinado_c_vitrine", "reinado_c_camarote",
 				"reinado_d_bloco", "reinado_d_alas"]:
@@ -510,3 +520,6 @@ func _on_cart_state(_c: bool) -> void: _recompute()
 func _on_money_changed(_a: int) -> void: _recompute()
 func _on_customer_served(_id: String) -> void: _recompute()
 func _on_phase_changed(_p: int) -> void: _recompute()
+# Différé : CarnavalCalendar (autoload chargé après) pose les flags du jour
+# (Cendres, jogo) sur le même signal.
+func _on_day_elapsed(_d: int) -> void: call_deferred("_recompute")

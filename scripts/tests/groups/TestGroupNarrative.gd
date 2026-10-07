@@ -16,6 +16,7 @@ func run() -> void:
 	_test_reactive_variant_matching()
 	_test_epilogue_paths_present()
 	_test_epilogue_memory()
+	_test_pos_carnaval()
 	_test_story_clarity()
 
 
@@ -485,6 +486,78 @@ func _test_epilogue_memory() -> void:
 	ep.free()
 	_assert(script.codex_label(1) == "1 entrée de codex débloquée", "codex : singulier à 1")
 	_assert(script.codex_label(3) == "3 entrées de codex débloquées", "codex : pluriel à 3")
+	_reset_campaign_state()
+
+
+# Depois do Carnaval : le desfile bascule le monde (Cendres le lendemain, puis
+# le rythme de la semaine — feijoada du samedi), le guidage ne renvoie plus au
+# Sambódromo, l'épilogue ne revient pas à chaque chargement.
+func _test_pos_carnaval() -> void:
+	_section("Depois do Carnaval — Cendres, feijoada, guidage")
+	var saved_day: int = TimeOfDay.day_count
+	var saved_phase: int = TimeOfDay.current_phase
+	_reset_campaign_state()
+	CampaignManager.current_act = 5
+	CampaignManager.set_flag("act1_started")
+	TimeOfDay.day_count = 29
+	TimeOfDay.current_phase = TimeOfDay.Phase.EVENING
+	_complete_quest_all_objectives("act4_carnaval_desfile")
+	_assert(QuestManager.is_completed("act4_carnaval_desfile"), "desfile complété (fixture)")
+	_assert(CampaignManager.has_flag("pos_carnaval"), "desfile → pos_carnaval")
+	_assert(CampaignManager.has_flag("cinzas_pending"), "desfile → Cendres en attente")
+	_assert(CarnavalCalendar.hud_label() == CarnavalCalendar.weekday_name(), "HUD : plus de compte à rebours après le desfile")
+	# Fermeture de l'épilogue → ellipse jusqu'au mercredi matin.
+	EventBus.epilogue_closed.emit()
+	_assert(CarnavalCalendar.weekday() == CarnavalCalendar.QUARTA, "réveil un mercredi")
+	_assert(TimeOfDay.day_count > 29 and TimeOfDay.day_count <= 36, "ellipse d'au plus une semaine")
+	_assert(TimeOfDay.current_phase == TimeOfDay.Phase.MORNING, "réveil le matin")
+	_assert(CarnavalCalendar.is_cinzas() and not CampaignManager.has_flag("cinzas_pending"), "Quarta-feira de Cinzas active")
+	_assert(CarnavalCalendar.hud_label() == "Quarta-feira de Cinzas", "HUD : Quarta-feira de Cinzas")
+	NavigationDirector._recompute()  # le recalcul de changement de jour est différé
+	var g: String = NavigationDirector.current_text()
+	_assert(g.find("Cinzas") != -1 and g.find("Sambódromo") == -1, "guidage des Cendres (plus le Sambódromo) : %s" % g)
+	var cinzas_day: int = TimeOfDay.day_count
+	EventBus.epilogue_closed.emit()
+	_assert(TimeOfDay.day_count == cinzas_day, "2e fermeture : pas de nouvelle ellipse")
+	# Le lendemain, la vie reprend.
+	TimeOfDay.skip_to_morning(1)
+	_assert(not CarnavalCalendar.is_cinzas(), "les Cendres ne durent qu'un jour")
+	_assert(CarnavalCalendar.hud_label() == CarnavalCalendar.weekday_name(), "HUD : jour de semaine simple")
+	NavigationDirector._recompute()
+	g = NavigationDirector.current_text()
+	_assert(g != "" and g.find("Sambódromo") == -1, "guidage post-Carnaval sans Sambódromo : %s" % g)
+	# Seu João : la fierté une fois, puis le rythme de la semaine.
+	var seu: Node = load("res://scripts/npcs/SeuJoao.gd").new()
+	_assert(seu._pos_carnaval_knot() == "seu_joao_carnaval_done", "Seu João : fierté du desfile (1re fois)")
+	_assert(seu._pos_carnaval_knot() == "seu_joao_pos_carnaval", "Seu João : invitation du samedi en semaine")
+	TimeOfDay.skip_to_morning((CarnavalCalendar.SABADO - CarnavalCalendar.weekday() + 7) % 7)
+	_assert(CarnavalCalendar.is_sabado(), "fixture : samedi")
+	NavigationDirector._recompute()
+	g = NavigationDirector.current_text()
+	_assert(g.find("feijoada") != -1, "guidage du samedi → feijoada : %s" % g)
+	_assert(seu._pos_carnaval_knot() == "seu_joao_feijoada_chama", "samedi hors de la maison → « monte au morro »")
+	var house: Node = Node.new()
+	house.name = "HouseInterior"
+	house.add_child(seu)
+	_assert(seu._pos_carnaval_knot() == "seu_joao_feijoada", "samedi à la maison → feijoada (chaise vide)")
+	_assert(seu._pos_carnaval_knot() == "seu_joao_feijoada_after", "une feijoada par samedi")
+	NavigationDirector._recompute()
+	_assert(NavigationDirector.current_text().find("feijoada à la maison") == -1, "feijoada servie → le guidage n'y renvoie plus")
+	CampaignManager.set_flag("ze_rescued")
+	TimeOfDay.skip_to_morning(7)
+	_assert(seu._pos_carnaval_knot() == "seu_joao_feijoada_ze", "Zé secouru → Zé à table")
+	house.free()
+	var dialogues: Dictionary = DialogueBridge.all_dialogues()
+	for k in ["seu_joao_carnaval_done", "seu_joao_pos_carnaval", "seu_joao_feijoada", "seu_joao_feijoada_ze", "seu_joao_feijoada_after", "seu_joao_feijoada_chama"]:
+		_assert(dialogues.has(k), "knot %s présent" % k)
+	_assert(String(dialogues.get("seu_joao_carnaval_done", {}).get("text", "")).find("serait fier") == -1, "Seu João ne parle plus de Zé comme d'un mort")
+	# Saves d'avant : desfile fait sans bascule → migrée au chargement, sans Cendres.
+	CampaignManager.flags.erase("pos_carnaval")
+	CampaignManager.flags.erase("cinzas_pending")
+	CarnavalCalendar._on_save_loaded()
+	_assert(CarnavalCalendar.is_pos_carnaval() and not CampaignManager.has_flag("cinzas_pending"), "migration de save : pos_carnaval sans Cendres")
+	TimeOfDay.day_count = saved_day
+	TimeOfDay.current_phase = saved_phase
 	_reset_campaign_state()
 
 

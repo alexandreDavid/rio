@@ -208,7 +208,9 @@ func story_so_far() -> Array[String]:
 					lines.append("Reste le pivot au Palace, le gros coup, puis le couronnement — c'est lui qui solde la dette.")
 		_:
 			var title: String = CampaignManager.reign_title()
-			if title != "":
+			if CampaignManager.has_flag("pos_carnaval"):
+				lines.append("Le Carnaval est passé, la dette est soldée. Copa continue : la feijoada du samedi à la maison, le jogo du dimanche, et les rodas de toujours.")
+			elif title != "":
 				lines.append("Tu es %s. Deux missions de règne sur le calçadão, puis le desfile de la Sapucaí." % title)
 			else:
 				lines.append("Le Carnaval est là. Le Sambódromo t'attend.")

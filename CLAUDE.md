@@ -15,7 +15,7 @@ Docs de contexte (état réel vérifié dans le code, 2026-07-21) : `docs/SYSTEM
 Ordre important dans `project.godot` — ne pas changer sans raison :
 - **EventBus** (`scripts/core/EventBus.gd`) — bus global de signaux. Les systèmes ne se référencent jamais directement, ils émettent/écoutent ici.
 - **GameManager**, **ReputationSystem**, **TimeOfDay**, **QuestManager**, **DialogueBridge**, **SaveSystem**, **AudioManager**, **SelfCheck**, **BuildingManager**
-- **CarnavalCalendar** (jours PT via `TimeOfDay.day_count`, `hud_label()` J-x Carnaval, jogo du Domingo soir → flags `jogo_vitoria|jogo_derrota` le lendemain), **ActivityRewards** (mini-jeu qualifiant → réputation ciblée + `NPCAffinity.bump(npc)` + flag `mestre_<id>` au 3e succès — récompenses non fongibles)
+- **CarnavalCalendar** (jours PT via `TimeOfDay.day_count`, `hud_label()` J-x Carnaval, jogo du Domingo soir → flags `jogo_vitoria|jogo_derrota` le lendemain ; après le desfile : flag `pos_carnaval`, ellipse au mercredi des Cendres `cinzas_hoje` à la fermeture de l'épilogue, feijoada du samedi), **ActivityRewards** (mini-jeu qualifiant → réputation ciblée + `NPCAffinity.bump(npc)` + flag `mestre_<id>` au 3e succès — récompenses non fongibles)
 
 ## Layout de la map (`scripts/world/CopacabanaGenerator.gd`)
 Map horizontale orientée ouest→est. **LEME à l'est (x haut), FORTE à l'ouest (x bas).** 6 postos (comme en vrai) : Posto 6 côté forte, Posto 1 côté Leme.

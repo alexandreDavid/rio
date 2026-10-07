@@ -128,6 +128,10 @@ func _ready() -> void:
 	SaveSystem.save_loaded.connect(_on_save_loaded)
 
 func _on_save_loaded() -> void:
+	# Une fois refermé, l'épilogue ne revient plus à chaque chargement : le
+	# joueur continue sa vie à Copa.
+	if CampaignManager.has_flag("epilogue_seen"):
+		return
 	if QuestManager.is_completed(QUEST_ID) and CampaignManager.chosen_endgame != CampaignManager.Endgame.NONE:
 		_show_epilogue()
 
@@ -159,12 +163,20 @@ func _show_epilogue() -> void:
 func _on_continue() -> void:
 	visible = false
 	get_tree().paused = false
+	_close_for_good()
+
+func _close_for_good() -> void:
+	if CampaignManager.has_flag("epilogue_seen"):
+		return
+	CampaignManager.set_flag("epilogue_seen")
+	EventBus.epilogue_closed.emit()
 
 func _on_credits() -> void:
 	var credits: Node = get_tree().current_scene.get_node_or_null("CreditsScreen")
 	if credits and credits.has_method("open"):
 		visible = false  # masque l'épilogue pendant les credits
 		credits.open()
+		_close_for_good()
 
 func _on_replay() -> void:
 	# Sauvegarde méta : NG+ count + entrées journal débloquées (pour usage futur).

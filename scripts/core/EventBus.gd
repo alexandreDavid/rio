@@ -44,4 +44,6 @@ signal debt_paid(amount: int, remaining: int)
 signal act_changed(new_act: int)
 signal endgame_chosen(path: int)
 signal day_elapsed(new_day: int)
+# L'épilogue est refermé (« continuer à explorer » ou crédits) : le monde post-desfile reprend.
+signal epilogue_closed
 signal notification_requested(text: String, color: Color)

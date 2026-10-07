@@ -144,8 +144,34 @@ const KNOTS: Dictionary = {
 	},
 	"seu_joao_carnaval_done": {
 		"speaker": "Seu João",
-		"text": "*essuie une larme* Caraca, sobrinho… j'ai vu ça à la télé. Toute la Sapucaí qui chante ton nom. Ton oncle Zé serait fier. Maintenant tu peux dormir tranquille — Copacabana est à toi.",
+		"text": "*il pose ses dominos et s'essuie les yeux sans aucune honte* Caraca, sobrinho… j'ai vu ça à la télé. Toute la Sapucaí qui chantait ton nom — et moi qui criais tout seul devant le poste comme un vieux fou. *il rit* Zé a regardé aussi, j'en mettrais ma main au feu, d'où qu'il soit. Allez. Samedi, feijoada à la maison. Ta mãe a déjà acheté le feijão. Pas de patron, pas de dette : juste nous.",
 		"choices": ["Obrigado, tio"],
+	},
+	# --- Depuis le Carnaval : le rythme de la semaine (SeuJoao._pick_knot) ---
+	"seu_joao_pos_carnaval": {
+		"speaker": "Seu João",
+		"text": "*il aligne les dominos sur la table et en pousse la moitié vers toi* Samedi, feijoada. Tu viens — c'est pas une question, sobrinho. *il pose un double-six* Et dimanche, le jogo. La vie normale, quoi. Tu verras : c'est la plus dure à apprendre.",
+		"choices": ["Sábado, tio"],
+	},
+	"seu_joao_feijoada": {
+		"speaker": "Seu João",
+		"text": "*la marmite de feijoada fume au milieu de la table, sous un torchon. Mãe sert, vovó coupe les oranges, et pour la première fois depuis ton retour au morro, personne ne parle de dette.* Senta, sobrinho. *au bout de la table, une chaise reste vide. Personne ne l'enlève. Mãe y pose une assiette, comme chaque samedi.* Ça, c'est la famille. Ça ne se paie pas : ça se sert.",
+		"choices": ["Bom apetite"],
+	},
+	"seu_joao_feijoada_ze": {
+		"speaker": "Seu João",
+		"text": "*au bout de la table, dans la chaise qu'on n'enlevait jamais : Zé. Chemise repassée, les mains à plat sur la nappe, comme s'il avait peur qu'on le renvoie. Mãe pose la marmite devant lui sans un mot et lui sert la première louche — la plus grosse, celle avec le paio. Vovó lui tape sur la main quand il veut se lever pour aider.* *Seu João se penche vers toi, à voix basse :* Vingt ans que j'attends de le battre aux dominos à cette table. Mange. Après, on joue.",
+		"choices": ["Bom apetite"],
+	},
+	"seu_joao_feijoada_chama": {
+		"speaker": "Seu João",
+		"text": "*il replie son tabouret de dominos deux heures plus tôt que d'habitude* Qu'est-ce que tu fais encore sur le calçadão, sobrinho ? C'est samedi ! *il te pousse vers le morro du plat de la main* La feijoada n'attend personne. Ta mãe, encore moins.",
+		"choices": ["J'y monte, tio"],
+	},
+	"seu_joao_feijoada_after": {
+		"speaker": "Seu João",
+		"text": "*il défait sa ceinture d'un cran, rassasié* Encore une louche et je dors sur la table. Va marcher un peu, sobrinho — la feijoada, ça se digère sur le calçadão.",
+		"choices": ["Até mais, tio"],
 	},
 	# --- ACTE 3 : Le carnet do Capitão (intel intermédiaire, voie Polícia) ---
 	# --- ACTE 3 : Operação Madrugada (voie Polícia) ---

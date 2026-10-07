@@ -1336,6 +1336,14 @@ prompt = "Le vieil homme aux dominos"
 character_seed = 909099
 required_flag = "ze_rescued"
 variants = [{
+"id": "pos_desfile",
+"quest_completed": "act4_carnaval_desfile",
+"not_flag": "ze_pos_desfile_seen",
+"set_flag_after": "ze_pos_desfile_seen",
+"speaker": "Zé",
+"text": "*il pousse la moitié des dominos vers toi, comme d'habitude, puis s'arrête* Je t'ai vu passer, sur l'avenue. Tout en haut des arquibancadas, une casquette sur les yeux pour qu'on ne me reconnaisse pas. *il pose un domino* Ta mère m'a invité samedi. Je ne sais pas encore si j'ai le droit d'y aller. *il te regarde enfin* Tu crois qu'elle m'a pardonné ?",
+"choices": ["Elle a mis ton couvert, tio"]
+}, {
 "id": "eve",
 "act": 4,
 "not_flag": "ze_eve_seen",

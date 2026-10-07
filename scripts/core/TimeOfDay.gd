@@ -32,6 +32,17 @@ func _advance_phase() -> void:
 	if new_day:
 		EventBus.day_elapsed.emit(day_count)
 
+# Saute au matin d'un jour futur (ellipse narrative). Une seule émission de
+# day_elapsed : les humeurs « du lendemain » s'appliquent au jour d'arrivée.
+func skip_to_morning(days: int) -> void:
+	if days <= 0:
+		return
+	day_count += days
+	current_phase = Phase.MORNING
+	_timer = 0.0
+	EventBus.time_of_day_changed.emit(current_phase)
+	EventBus.day_elapsed.emit(day_count)
+
 func set_paused(paused: bool) -> void:
 	_paused = paused
 

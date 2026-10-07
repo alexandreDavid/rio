@@ -65,6 +65,7 @@ func _ready() -> void:
 	_spawn_bloco_rehearsal()
 	_spawn_ze_memories()
 	_spawn_domingo_life()
+	_spawn_cinzas_life()
 	_spawn_human_cost()
 	_spawn_reinado()
 	_spawn_arpoador_seam()
@@ -1753,6 +1754,81 @@ func _on_domingo_day_changed(_day: int) -> void:
 	if _domingo_container and is_instance_valid(_domingo_container):
 		_domingo_container.visible = CarnavalCalendar.is_domingo()
 
+# Quarta-feira de Cinzas — le lendemain du desfile (une journée, flag
+# cinzas_hoje). Copa a la gueule de bois : confettis et serpentinas partout,
+# les garis en orange rendent la ville propre en sambant (le dernier bloco,
+# c'est eux), une passista dort contre un lampadaire.
+var _cinzas_container: Node2D = null
+
+const CINZAS_CONFETTI: Array = [
+	Color(0.95, 0.3, 0.45, 1), Color(0.98, 0.85, 0.25, 1), Color(0.3, 0.75, 0.95, 1),
+	Color(0.45, 0.9, 0.45, 1), Color(0.9, 0.55, 0.95, 1), Color(1, 1, 1, 1),
+]
+
+func _spawn_cinzas_life() -> void:
+	_cinzas_container = Node2D.new()
+	_cinzas_container.name = "CinzasLife"
+	add_child(_cinzas_container)
+	var rng: RandomNumberGenerator = RandomNumberGenerator.new()
+	rng.seed = 4040
+	# Confettis sur le calçadão et l'Av. Atlântica (au sol, sous les entités).
+	for i in 220:
+		var c: ColorRect = ColorRect.new()
+		c.position = Vector2(rng.randf_range(300, 2100), rng.randf_range(4, 126))
+		c.size = Vector2(3, 3)
+		c.color = CINZAS_CONFETTI[rng.randi() % CINZAS_CONFETTI.size()]
+		c.z_index = -3
+		_cinzas_container.add_child(c)
+	# Serpentinas : longs rubans échoués.
+	for i in 26:
+		var r: ColorRect = ColorRect.new()
+		r.position = Vector2(rng.randf_range(320, 2080), rng.randf_range(70, 124))
+		r.size = Vector2(rng.randf_range(18, 40), 2)
+		r.rotation = rng.randf_range(-0.6, 0.6)
+		r.color = CINZAS_CONFETTI[rng.randi() % CINZAS_CONFETTI.size()]
+		r.z_index = -3
+		_cinzas_container.add_child(r)
+	# Les garis : combinaisons orange, va-et-vient le long du calçadão.
+	var scene: PackedScene = load("res://scenes/props/AmbientWanderer.tscn")
+	if scene:
+		for i in 5:
+			var gp: Vector2 = Vector2(420 + i * 360, 96 + (i % 2) * 14)
+			_add_wanderer(_cinzas_container, scene, gp, Color(1.0, 0.5, 0.1, 1), Vector2(10, 16),
+				[gp, gp + Vector2(110, 0), gp + Vector2(40, 8)], 22.0, 2.5)
+	var spot_scene: PackedScene = load("res://scenes/props/ReactiveDialogueSpot.tscn")
+	if spot_scene:
+		_add_cinzas_spot(spot_scene, "CinzasGari", "gari_cinzas", "Le gari qui samba", 40401, Vector2(1240, 100),
+			"Gari", "*combinaison orange, balai de piaçava, il pousse une vague de confettis vers le caniveau en sambant à moitié* Bom dia, patrão ! Quatre jours qu'ils dansent, et nous, une matinée pour tout rendre propre. *il fait tourner son balai comme un mestre-sala* Ça aussi, c'est le Carnaval. Le dernier bloco, c'est nous.",
+			["Bom trabalho, mermão"])
+		_add_cinzas_spot(spot_scene, "CinzasPassista", "passista_cinzas", "La passista endormie", 40402, Vector2(1630, 118),
+			"Passista", "*elle dort assise contre un lampadaire, une plume de sa fantasia coincée dans les cheveux, une sandale à la main* …hm ? *elle ouvre un œil* C'est déjà mercredi ? *elle le referme* Dis à ma bateria que j'arrive. L'an prochain.",
+			["Até o ano que vem"])
+	EventBus.day_elapsed.connect(_on_cinzas_day_changed)
+	_on_cinzas_day_changed(TimeOfDay.day_count)
+
+func _add_cinzas_spot(spot_scene: PackedScene, node_name: String, npc_id: String, prompt: String, seed: int,
+		pos: Vector2, speaker: String, text: String, choices: Array) -> void:
+	var spot: Node2D = spot_scene.instantiate()
+	spot.name = node_name
+	spot.position = pos
+	spot.set("npc_id", npc_id)
+	spot.set("prompt", prompt)
+	spot.set("character_seed", seed)
+	var variants: Array[Dictionary] = [{"id": "default", "speaker": speaker, "text": text, "choices": choices}]
+	spot.set("variants", variants)
+	_cinzas_container.add_child(spot)
+
+# Interaction coupée hors du jour des Cendres (le spot reste dans l'arbre).
+func _on_cinzas_day_changed(_day: int) -> void:
+	if _cinzas_container == null or not is_instance_valid(_cinzas_container):
+		return
+	var on: bool = CarnavalCalendar.is_cinzas()
+	_cinzas_container.visible = on
+	for child in _cinzas_container.get_children():
+		var inter: Node = child.get_node_or_null("Interactable")
+		if inter:
+			inter.set("enabled", on)
+
 # Coût humain des voies sombres — le bairro change quand on choisit le tráfico
 # ou le consórcio. Reconstruit aux changements d'acte et de jour (les flags de
 # voie sont posés entre-temps). Décor + spots de voisins qui réagissent.
@@ -2154,21 +2230,25 @@ func _rebuild_reinado() -> void:
 			faixa_text = "★ O MORRO DESCEU PRA AREIA ★"
 			faixa_color = Color(0.85, 0.32, 0.28, 1)
 			morador = {"speaker": "Camelô", "seed": 90521,
+				"pos_text": "*il range ses fantasias invendues dans un carton, sans te regarder* Le Carnaval est fini, patrão. Les gringos sont partis, les prix redescendent. *plus bas, en scotchant le carton* Pas le pedágio. Ça, ça ne redescend jamais.",
 				"text": "*il te voit arriver et rajuste son étal d'un geste nerveux — les prix sont déjà « corrigés » pour toi* Patrão. *il n'ose pas soutenir ton regard* Tout est en ordre, le pedágio est prêt. *un gamin court prévenir la barraca suivante que tu passes*"}
 		CampaignManager.Endgame.POLICIA:
 			faixa_text = "★ CALÇADÃO SEGURO — CAP. RAMOS AGRADECE ★"
 			faixa_color = Color(0.3, 0.45, 0.75, 1)
 			morador = {"speaker": "Joggeuse", "seed": 90522,
+				"pos_text": "*elle s'étire contre le muret, le ruban d'un bloco encore noué au poignet* Capitão ! Pas un portable volé de tout le Carnaval — à Copa, c'est un miracle, ma mère a allumé un cierge. *elle repart, puis se retourne* Le camelô de Santa Clara, lui, s'est fait contrôler trois fois. Il n'a pas allumé de cierge.",
 				"text": "*elle s'arrête à ta hauteur, essoufflée, et te salue de la tête* Capitão. *elle montre le calçadão d'un geste* Ma mère refait sa marche du soir — la première fois depuis des années. *elle repart, puis se retourne* Le camelô de la Rua Santa Clara, lui, il dit qu'on respire un peu trop fort, ces temps-ci. Vous lui demanderez.*"}
 		CampaignManager.Endgame.CONSORTIUM:
 			faixa_text = "◆ COPACABANA RISERVA — UM NOVO PADRÃO ◆"
 			faixa_color = Color(0.85, 0.75, 0.45, 1)
 			morador = {"speaker": "Serveur", "seed": 90523,
+				"pos_text": "*il décroche une à une les guirlandes ivoire et or de la terrasse* Fin de saison, monsieur. Record d'affaires pour la maison, m'a-t-on dit. *il plie une guirlande avec soin* Mon ancien patron est venu voir le défilé sur l'écran de la terrasse. Il a commandé un café. Il l'a payé plein tarif.",
 				"text": "*uniforme ivoire et or, badge « Riserva » au revers* Monsieur. *il incline le buste exactement comme le manuel l'exige* Tout le front de mer est aux couleurs de la maison — même les parasols saluent, maintenant. *plus bas, en regardant ailleurs* Mon ancien patron tenait ce bar depuis vingt ans. Il est caissier, désormais. Beau Carnaval, monsieur.*"}
 		CampaignManager.Endgame.PREFEITO:
 			faixa_text = "♥ O BAIRRO VENCEU — BLOCO UNIDO ♥"
 			faixa_color = Color(0.35, 0.65, 0.4, 1)
 			morador = {"speaker": "Moradora", "seed": 90524,
+				"pos_text": "*elle décroche les fanions verts et or ; deux gamins tiennent l'escabeau en se disputant les plus beaux* Meu filho ! On les garde pour juin — le bloco ressort pour la festa junina, le Padre a dit oui. *elle rit* Tu vois ? Un bairro qui a appris à défiler, ça ne s'arrête plus.",
 				"text": "*elle accroche des fanions verts et or entre deux lampadaires, juchée sur un escabeau que deux gamins tiennent* Meu filho ! *elle te lance un fanion* Accroche ça quelque part — tout le bairro s'y met, le bloco sort bientôt. *elle rit* Le Padre dit que t'as monté tout ça. Moi je dis que c'est nous TOUS. Il dit que c'est exactement ça que t'as monté.*"}
 		_:
 			return
@@ -2201,7 +2281,11 @@ func _rebuild_reinado() -> void:
 		morador_spot.set("npc_id", "morador_reinado")
 		morador_spot.set("prompt", "Le bairro te regarde")
 		morador_spot.set("character_seed", int(morador.get("seed", 90520)))
+		# Depuis le desfile, le même habitant parle du lendemain de fête.
 		var variants: Array[Dictionary] = [
+			{"id": "pos_carnaval", "quest_completed": "act4_carnaval_desfile",
+				"speaker": String(morador.get("speaker", "Morador")),
+				"text": String(morador.get("pos_text", "…")), "choices": ["…"]},
 			{"id": "default", "speaker": String(morador.get("speaker", "Morador")),
 				"text": String(morador.get("text", "…")), "choices": ["…"]},
 		]

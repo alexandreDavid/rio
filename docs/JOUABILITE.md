@@ -51,8 +51,11 @@ guidage acte 5 réécrit (règne d'abord, desfile en climax), toasts jalons
 chaînés couronnement → R1 → R2 → desfile, et Copa reflète le règne
 (`_rebuild_reinado()` : faixa par voie + un habitant dont le salut dit ce que
 le bairro pense du pouvoir). Le Sambódromo passe de coquille à lieu de climax
-(4 spots). Reste ouvert : le monde post-desfile (« continuer à explorer »)
-n'évolue plus après l'épilogue.
+(4 spots). **Monde post-desfile livré le 2026-10-07** (« Depois do Carnaval ») :
+ellipse jusqu'au mercredi des Cendres (confettis, garis, passista endormie),
+puis le rythme de la semaine — feijoada du samedi chez Seu João (Zé à table
+s'il a été secouru), famille et morador du règne qui parlent du lendemain,
+guidage et HUD qui ne renvoient plus au Sambódromo.
 
 ### P4. Le monde vivant s'arrête aux limites de Copacabana — LARGEMENT RÉSOLU
 **[Axe D livré le 2026-07-21]** RandomEventManager multi-districts (zonage
@@ -146,7 +149,7 @@ ronde du bloco / Sapucaí en planque solo ; charte Riserva / camarote de
 l'école — négos à tell ; Bloco do Bairro / ordre des alas — leviers), climax
 au Sambódromo, monde-reflet (`_rebuild_reinado()`), guidage et toasts
 réécrits. E2e étendus : les 4 reinados joués jusqu'au desfile dans la suite.
-Suite possible : faire évoluer le monde post-desfile (après l'épilogue).
+Suite livrée le 2026-10-07 : « Depois do Carnaval » (Cendres + feijoada du samedi).
 
 ### D. Exporter la vie hors de Copa — LIVRÉ le 2026-07-21
 `DISTRICT_ZONES` (bbox locales par district) + `eligible_events()` pure et

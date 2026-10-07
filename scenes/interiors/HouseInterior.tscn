@@ -270,6 +270,19 @@ variants = [{
 "text": "*elle raccommode une chemise qui n'est pas à ta taille* Tu as le regard de Zé, ces derniers temps. Celui de l'année avant la noyade — quand il portait quelque chose de trop lourd et qu'il croyait qu'on ne voyait rien. *elle coupe le fil avec les dents, comme sa mère avant elle* Les femmes de cette famille voient tout, meu filho. On attend juste que vous soyez prêts.",
 "choices": ["…Ce n'est rien, mãe"]
 }, {
+"id": "pos_carnaval_ze",
+"quest_completed": "act4_carnaval_desfile",
+"flag": "ze_rescued",
+"speaker": "Mãe",
+"text": "*elle sort une assiette de plus de l'étagère, la repose, la ressort* Samedi, on sera un de plus à table. *elle rit toute seule, puis s'arrête net* Vingt ans que je mets le couvert de mon frère pour rien, meu filho. Samedi, il mange dedans. *elle te pousse vers la porte* Va. Et rapporte du pain de chez le padeiro — Zé le prend toujours trop cuit.",
+"choices": ["Trop cuit, entendu"]
+}, {
+"id": "pos_carnaval",
+"quest_completed": "act4_carnaval_desfile",
+"speaker": "Mãe",
+"text": "*elle range dans une malle les fantasias de quand tu étais petit, et garde une plume à part* Le Carnaval est passé, meu filho. Tu es rentré entier — c'est tout ce que je demandais. *elle referme la malle* Samedi, feijoada. Je mets toujours le couvert de Zé. Je ne sais pas faire autrement.",
+"choices": ["Sábado, mãe"]
+}, {
 "id": "carnaval",
 "act": 5,
 "speaker": "Mãe",
@@ -331,6 +344,19 @@ npc_id = "vovo"
 prompt = "Parler à Vovó"
 character_seed = 70412
 variants = [{
+"id": "pos_carnaval_ze",
+"quest_completed": "act4_carnaval_desfile",
+"flag": "ze_rescued",
+"speaker": "Vovó",
+"text": "*elle tricote quelque chose de long, vert et blanc* Une écharpe pour ton oncle. Il a froid aux mains depuis tout petit. *elle ne lève pas les yeux* Il croit que j'ai pleuré sa noyade, l'idiot. Une mère sait quand son fils respire encore, meu neto. Vingt ans, et je n'ai jamais tricoté de noir.",
+"choices": ["Sim, vovó"]
+}, {
+"id": "pos_carnaval",
+"quest_completed": "act4_carnaval_desfile",
+"speaker": "Vovó",
+"text": "*le tricot sur les genoux, elle regarde par la fenêtre* Le Carnaval passe, meu neto. Les cendres du mercredi, c'est pour se rappeler qu'on est poussière. *elle reprend ses aiguilles* Moi, je me rappelle surtout ceux qui ne sont pas à table.",
+"choices": ["Sim, vovó"]
+}, {
 "id": "carnaval",
 "act": 5,
 "speaker": "Vovó",

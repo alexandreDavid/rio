@@ -41,6 +41,31 @@ func _on_interacted(_by: Node) -> void:
 	var knot: String = _pick_knot()
 	DialogueBridge.start_dialogue(data.id, knot)
 
+# Depuis le Carnaval : la fierté (une fois), puis le rythme de la semaine —
+# la feijoada du samedi, avec Zé à table s'il a été secouru.
+func _pos_carnaval_knot() -> String:
+	if not CampaignManager.has_flag("seu_joao_carnaval_done_seen"):
+		CampaignManager.set_flag("seu_joao_carnaval_done_seen")
+		return "seu_joao_carnaval_done"
+	if CarnavalCalendar.is_sabado():
+		if not _is_at_home():
+			return "seu_joao_feijoada_chama"
+		if int(CampaignManager.flags.get("feijoada_day", 0)) == TimeOfDay.day_count:
+			return "seu_joao_feijoada_after"
+		CampaignManager.set_flag("feijoada_day", TimeOfDay.day_count)
+		NPCAffinity.bump("seu_joao")
+		return "seu_joao_feijoada_ze" if CampaignManager.has_flag("ze_rescued") else "seu_joao_feijoada"
+	return "seu_joao_pos_carnaval"
+
+# La feijoada se sert à la table de la maison, pas sur le calçadão.
+func _is_at_home() -> bool:
+	var n: Node = get_parent()
+	while n != null:
+		if n.name == "HouseInterior":
+			return true
+		n = n.get_parent()
+	return false
+
 # Décide du knot Ink à jouer selon les états campagne / quête / charrette.
 # L'ordre = priorité (le 1er match gagne).
 func _pick_knot() -> String:
@@ -59,7 +84,7 @@ func _pick_knot() -> String:
 	if QuestManager.is_active(QUEST_CARNAVAL):
 		return "seu_joao_carnaval_remind"
 	if QuestManager.is_completed(QUEST_CARNAVAL):
-		return "seu_joao_carnaval_done"
+		return _pos_carnaval_knot()
 	if QuestManager.is_available(QUEST_CARNAVAL):
 		return "seu_joao_carnaval_offer"
 
