@@ -106,7 +106,8 @@ mono-objectif, toutes au même spot (Copacabana.tscn ~L1114-1160).
 
 Contenu jouable réel : **une** quête (`act4_carnaval_desfile`, offerte par Seu
 João) → mini-jeu `CarnavalSamba` (rythme, `QUALIFY_SCORE = 240`) → `Epilogue.gd`
-(4 épilogues par voie, NG+ `user://ng_plus.json`, « continuer à explorer »).
+(4 épilogues par voie + un paragraphe par carrefour tranché et l'écho du
+pêcheur — `CROSSROADS` / `PECHEUR_SECRET`, insérés après « le lendemain » ; NG+ `user://ng_plus.json`, « continuer à explorer »).
 Habillage : titre de règne au HUD, manchettes NewsFeed, spots Sambódromo.
 « Continuer à explorer » ramène dans un monde acte 4 inchangé.
 

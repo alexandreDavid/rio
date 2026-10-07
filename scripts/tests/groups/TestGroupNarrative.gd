@@ -15,6 +15,7 @@ func run() -> void:
 	_test_pmpatrol_act_dispatch()
 	_test_reactive_variant_matching()
 	_test_epilogue_paths_present()
+	_test_epilogue_memory()
 	_test_story_clarity()
 
 
@@ -424,6 +425,67 @@ func _test_epilogue_paths_present() -> void:
 		var data: Dictionary = epilogues[path]
 		_assert(String(data.get("title", "")) != "", "voie %d : title non vide" % path)
 		_assert(String(data.get("body", "")).length() > 200, "voie %d : body substantiel (>200 chars)" % path)
+
+
+# L'épilogue se souvient des carrefours : chaque issue (flag posé par le spot)
+# produit son paragraphe, un seul par carrefour, inséré dans le corps ; le
+# pêcheur (acte 2) a aussi son écho, silence compris.
+func _test_epilogue_memory() -> void:
+	_section("Épilogue — mémoire des carrefours")
+	var script: GDScript = load("res://scripts/ui/Epilogue.gd")
+	var consts: Dictionary = script.get_script_constant_map()
+	var crossroads: Dictionary = consts["CROSSROADS"]
+	var epilogues: Dictionary = consts["EPILOGUES"]
+	var pecheur: Dictionary = consts["PECHEUR_SECRET"]
+	for path in [CampaignManager.Endgame.TRAFICO, CampaignManager.Endgame.POLICIA, CampaignManager.Endgame.CONSORTIUM, CampaignManager.Endgame.PREFEITO]:
+		_assert(crossroads.has(path) and crossroads[path].size() == 2, "voie %d : 2 carrefours mémorisés" % path)
+		_assert(script.memory_paragraphs(path, {}, false).is_empty(), "voie %d : aucun flag → aucun paragraphe" % path)
+		for crossroad in crossroads.get(path, []):
+			_assert(crossroad.size() >= 2, "voie %d : carrefour à ≥ 2 issues" % path)
+			for flag in crossroad:
+				var memories: PackedStringArray = script.memory_paragraphs(path, {flag: true}, false)
+				_assert(memories.size() == 1 and memories[0] == crossroad[flag], "voie %d : %s → son paragraphe" % [path, flag])
+		# Deux issues du MÊME carrefour posées (save bricolée) → un seul paragraphe.
+		var first: Dictionary = crossroads[path][0]
+		var both: Dictionary = {}
+		for flag in first:
+			both[flag] = true
+		_assert(script.memory_paragraphs(path, both, false).size() == 1, "voie %d : un paragraphe max par carrefour" % path)
+	# Les flags d'une autre voie n'entrent pas dans l'épilogue.
+	_assert(script.memory_paragraphs(CampaignManager.Endgame.PREFEITO, {"voisin_exilado": true}, false).is_empty(), "flag Tráfico ignoré par l'épilogue Prefeito")
+	# Pêcheur : Ramos / Miguel / silence, et rien tant que la quête n'est pas close.
+	_assert(script.memory_paragraphs(CampaignManager.Endgame.POLICIA, {"pecheur_to_ramos": true}, true) == PackedStringArray([pecheur["pecheur_to_ramos"]]), "pêcheur → Ramos")
+	_assert(script.memory_paragraphs(CampaignManager.Endgame.TRAFICO, {"pecheur_to_miguel": true}, true) == PackedStringArray([pecheur["pecheur_to_miguel"]]), "pêcheur → Miguel")
+	_assert(script.memory_paragraphs(CampaignManager.Endgame.CONSORTIUM, {}, true) == PackedStringArray([pecheur[""]]), "pêcheur → silence")
+	_assert(script.memory_paragraphs(CampaignManager.Endgame.CONSORTIUM, {}, false).is_empty(), "pêcheur pas tranché → pas d'écho")
+	# Composition réelle : insertion après « le lendemain », Zé reste en dernier.
+	_reset_campaign_state()
+	CampaignManager.set_flag("nenem_protegido")
+	CampaignManager.set_flag("discurso_criancas")
+	var ep: Node = script.new()
+	var body: String = ep.compose_body(CampaignManager.Endgame.PREFEITO)
+	var parts: PackedStringArray = body.split("\n\n")
+	var base: PackedStringArray = String(epilogues[CampaignManager.Endgame.PREFEITO].body).split("\n\n")
+	_assert(parts.size() == base.size() + 2, "Prefeito : 2 paragraphes de mémoire ajoutés")
+	_assert(parts.size() > 3 and parts[2] == crossroads[CampaignManager.Endgame.PREFEITO][0]["nenem_protegido"], "mémoire insérée après « le lendemain »")
+	_assert(parts.size() > 3 and parts[3] == crossroads[CampaignManager.Endgame.PREFEITO][1]["discurso_criancas"], "carrefours dans l'ordre de la chaîne")
+	_assert(parts[parts.size() - 1] == base[base.size() - 1], "le paragraphe de Zé reste le dernier")
+	# Le sort de Zé s'applique toujours au dernier paragraphe, mémoire ou pas.
+	CampaignManager.set_flag("tio_ze_revealed")
+	parts = ep.compose_body(CampaignManager.Endgame.PREFEITO).split("\n\n")
+	_assert(parts[parts.size() - 1].find("nouveau concierge") != -1, "Zé repris par la Baía → dernier paragraphe réécrit")
+	ep.free()
+	# Polícia : Zé secouru reste au Palace — l'épilogue ne le fait plus « partir ».
+	_reset_campaign_state()
+	CampaignManager.set_flag("tio_ze_revealed")
+	CampaignManager.set_flag("ze_rescued")
+	ep = script.new()
+	var policia: String = ep.compose_body(CampaignManager.Endgame.POLICIA)
+	_assert(policia.find("est parti") == -1 and policia.find("réception du Palace") != -1, "Polícia + Zé secouru : Zé toujours au Palace")
+	ep.free()
+	_assert(script.codex_label(1) == "1 entrée de codex débloquée", "codex : singulier à 1")
+	_assert(script.codex_label(3) == "3 entrées de codex débloquées", "codex : pluriel à 3")
+	_reset_campaign_state()
 
 
 # Clarté du scénario (retour 2026-09-16 « le scénario est confus ») :

@@ -39,7 +39,9 @@ MAIN) + 8 carrefours à 3 issues greffés sur les beats existants, 2 par voie
 mémoire du monde par variantes de spots (balcon du 1601, kiosque libre, Neném
 au parvis…) et 9 événements de rue en payoff différé (modèle `mare_limpa`).
 Les skill-checks à tell (C3/C5/C7/D5) restent des checks — c'est leur rôle.
-Reste ouvert : refléter ces flags dans l'Épilogue.
+**Épilogue livré le 2026-10-07** : chaque carrefour tranché (et le secret du
+pêcheur, silence compris) a son paragraphe dans l'épilogue de la voie
+(`Epilogue.CROSSROADS` / `PECHEUR_SECRET`).
 
 ### P3. L'acte 5 est vide — RÉSOLU (Reinado)
 **[Axe C livré le 2026-07-21]** État initial : 1 quête → 1 mini-jeu → écran de
@@ -87,8 +89,8 @@ tutoriel/Saúde, messages contradictoires en acte 2, aucun résumé de situation
 Livré : canon des identités + réécriture des surfaces, `ACT_TITLES` source
 unique, **carte d'acte** à chaque bascule, **« Onde estou »** généré
 (`story_so_far`) en tête de la Crônica et du Diário, 4 voies et vrais seuils
-partout. Détail : `NARRATIF.md` §8. Reste ouvert : l'Épilogue ne reflète pas
-encore les carrefours ; Contessa orpheline après le gala.
+partout. Détail : `NARRATIF.md` §8. L'Épilogue reflète les carrefours
+(2026-10-07). Reste ouvert : Contessa orpheline après le gala.
 
 ## Bugs & frictions à corriger vite (petits, forts en impact)
 
@@ -136,7 +138,7 @@ Neném, D6 le discours), flags + mémoire de spots + 9 événements différés ;
 Piège d'implémentation documenté : une variante « mémoire » gated par flag
 doit être placée APRÈS toutes les variantes de chaîne du spot, sinon elle les
 shadow dès que le flag est posé (bug attrapé par l'e2e Consórcio sur C7).
-Suite possible : refléter les flags de carrefour dans l'Épilogue.
+Suite livrée le 2026-10-07 : l'Épilogue raconte chaque carrefour tranché.
 
 ### C. Donner un corps à l'acte 5 — LIVRÉ le 2026-07-21 (Reinado)
 2 quêtes de règne par voie dans son verbe (pedágio+blitz / carga CHRONO ;
