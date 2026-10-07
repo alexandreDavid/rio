@@ -17,6 +17,7 @@ func run() -> void:
 	_test_epilogue_paths_present()
 	_test_epilogue_memory()
 	_test_pos_carnaval()
+	_test_contessa_fundo()
 	_test_story_clarity()
 
 
@@ -558,6 +559,85 @@ func _test_pos_carnaval() -> void:
 	_assert(CarnavalCalendar.is_pos_carnaval() and not CampaignManager.has_flag("cinzas_pending"), "migration de save : pos_carnaval sans Cendres")
 	TimeOfDay.day_count = saved_day
 	TimeOfDay.current_phase = saved_phase
+	_reset_campaign_state()
+
+
+# O fundo do gala : l'arc de la Contessa après le gala. Routage par étape,
+# carrefour à 3 issues (flags exclusifs), mémoire (feijoada, épilogue,
+# couronnement Prefeito).
+func _test_contessa_fundo() -> void:
+	_section("Contessa — O fundo do gala")
+	var q: Quest = QuestManager.get_quest("contessa_fundo")
+	_assert(q != null, "quête contessa_fundo enregistrée")
+	if q == null:
+		return
+	_assert(q.required_act == 3 and q.prerequisite_quest_ids.has("act2_contessa_gala"), "gating : acte 3 + gala")
+	_assert(q.objectives.size() == 3, "3 objectifs (filature, écoute, décision)")
+	var contessa: Node = load("res://scripts/npcs/Contessa.gd").new()
+	var outcomes: Array = [
+		{"flag": "contessa_publica", "after": "contessa_fundo_after_publica"},
+		{"flag": "contessa_discreta", "after": "contessa_fundo_after_discreta"},
+		{"flag": "contessa_vendida", "after": "contessa_fundo_after_vendida"},
+	]
+	for i in outcomes.size():
+		_reset_campaign_state()
+		CampaignManager.current_act = 2
+		ReputationSystem.set_value(ReputationSystem.Axis.CHARISMA, 15)  # requis du gala
+		_complete_quest_all_objectives("act2_contessa_gala")
+		_assert(QuestManager.is_completed("act2_contessa_gala"), "[%d] fixture : gala complété" % i)
+		_assert(contessa._pick_knot() != "contessa_fundo_offer", "[%d] acte 2 : pas encore d'offre" % i)
+		CampaignManager.current_act = 3
+		_assert(contessa._pick_knot() == "contessa_fundo_offer", "[%d] acte 3 après le gala → offre" % i)
+		DialogueBridge.start_dialogue("contessa", "contessa_fundo_offer")
+		DialogueBridge.choose(0)
+		_assert(QuestManager.is_active("contessa_fundo"), "[%d] offre acceptée" % i)
+		_assert(contessa._pick_knot() == "contessa_fundo_remind_filer", "[%d] étape 1 : filature" % i)
+		QuestManager.complete_objective("contessa_fundo", "filer_ferretti")
+		_assert(contessa._pick_knot() == "contessa_fundo_remind_colombo", "[%d] étape 2 : le Colombo" % i)
+		QuestManager.complete_objective("contessa_fundo", "ecouter_colombo")
+		_assert(contessa._pick_knot() == "contessa_fundo_reveal", "[%d] étape 3 : la révélation" % i)
+		DialogueBridge.start_dialogue("contessa", "contessa_fundo_reveal")
+		DialogueBridge.choose(i)
+		_assert(QuestManager.is_completed("contessa_fundo"), "[%d] carrefour → quête close" % i)
+		var set_count: int = 0
+		for o in outcomes:
+			if CampaignManager.has_flag(String(o.flag)):
+				set_count += 1
+		_assert(set_count == 1 and CampaignManager.has_flag(String(outcomes[i].flag)), "[%d] une seule issue posée : %s" % [i, outcomes[i].flag])
+		_assert(contessa._pick_knot() == String(outcomes[i].after), "[%d] après l'arc → %s" % [i, outcomes[i].after])
+	# Issue publique : le bairro l'adopte — la feijoada du samedi après le Carnaval.
+	_reset_campaign_state()
+	CampaignManager.current_act = 3
+	ReputationSystem.set_value(ReputationSystem.Axis.CHARISMA, 15)
+	_complete_quest_all_objectives("act2_contessa_gala")
+	_complete_quest_all_objectives("contessa_fundo")
+	_assert(QuestManager.is_completed("contessa_fundo"), "fixture : arc complété")
+	CampaignManager.set_flag("contessa_publica")
+	CampaignManager.set_flag("pos_carnaval")
+	var saved_day: int = TimeOfDay.day_count
+	TimeOfDay.day_count = 1
+	while not CarnavalCalendar.is_sabado():
+		TimeOfDay.day_count += 1
+	_assert(contessa._pick_knot() == "contessa_feijoada", "publica + samedi post-Carnaval → feijoada au morro")
+	TimeOfDay.day_count = saved_day
+	contessa.free()
+	# Épilogue : son sort pour toutes les voies ; au couronnement Prefeito, à ta
+	# gauche seulement si alliée.
+	var ep_script: GDScript = load("res://scripts/ui/Epilogue.gd")
+	var fate: Dictionary = ep_script.get_script_constant_map()["CONTESSA_FATE"]
+	for flag in fate:
+		var mem: PackedStringArray = ep_script.memory_paragraphs(CampaignManager.Endgame.TRAFICO, {flag: true}, false)
+		_assert(mem.size() == 1 and mem[0] == fate[flag], "épilogue : %s → son paragraphe" % flag)
+	_reset_campaign_state()
+	var ep: Node = ep_script.new()
+	var body: String = ep.compose_body(CampaignManager.Endgame.PREFEITO)
+	_assert(body.find("Dona Cléo à ta gauche") != -1 and body.find("la Contessa à ta gauche") == -1, "Prefeito sans alliance : Dona Cléo au couronnement")
+	CampaignManager.set_flag("contessa_vendida")
+	_assert(ep.compose_body(CampaignManager.Endgame.PREFEITO).find("Dona Cléo à ta gauche") != -1, "Prefeito + reçu vendu : pas de Contessa au couronnement")
+	CampaignManager.flags.clear()
+	CampaignManager.set_flag("contessa_discreta")
+	_assert(ep.compose_body(CampaignManager.Endgame.PREFEITO).find("la Contessa à ta gauche") != -1, "Prefeito + alliée : la Contessa à ta gauche")
+	ep.free()
 	_reset_campaign_state()
 
 

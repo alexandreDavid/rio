@@ -93,7 +93,7 @@ Livré : canon des identités + réécriture des surfaces, `ACT_TITLES` source
 unique, **carte d'acte** à chaque bascule, **« Onde estou »** généré
 (`story_so_far`) en tête de la Crônica et du Diário, 4 voies et vrais seuils
 partout. Détail : `NARRATIF.md` §8. L'Épilogue reflète les carrefours
-(2026-10-07). Reste ouvert : Contessa orpheline après le gala.
+(2026-10-07). Arc Contessa livré le 2026-10-07 (`contessa_fundo`, voir BACKLOG).
 
 ## Bugs & frictions à corriger vite (petits, forts en impact)
 

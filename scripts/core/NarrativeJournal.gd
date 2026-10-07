@@ -90,6 +90,8 @@ const JOURNAL_ENTRIES: Dictionary = {
 	"tourist_vip_tour_done":    {"category": "sides", "title": "Le touriste rentre satisfait"},
 	"contessa_date_offer":      {"category": "sides", "title": "Une soirée privée avec la Contessa"},
 	"contessa_date_done_smitten":{"category": "sides","title": "Le sourire de la Contessa"},
+	"contessa_fundo_offer":     {"category": "sides", "title": "L'argent du gala n'est jamais arrivé"},
+	"contessa_fundo_reveal":    {"category": "sides", "title": "Pourquoi la Contessa a quitté Milan"},
 	# --- DISTRICTS ---
 	"ronaldo_dj_offer":         {"category": "districts", "title": "DJ au Pão de Açúcar"},
 	"ronaldo_torcida_offer":    {"category": "districts", "title": "Mener la torcida au Maracanã"},

@@ -136,7 +136,9 @@ Dimanche soir → `jogo_pending` → résultat déterministe (`seed = 1950 + day
 4. **CHRONO jamais utilisé** (0/95).
 5. **2 vrais choix** au total ; le meilleur (`act2_pecheur_secret`) est SIDE et
    jamais répliqué.
-6. **Arc Contessa orphelin** après le gala (item BACKLOG ouvert).
+6. ~~**Arc Contessa orphelin** après le gala~~ — résolu le 2026-10-07 : SIDE
+   `contessa_fundo` (filature de Ferretti → Café Colombo du Forte → carrefour
+   `contessa_publica|discreta|vendida`, mémoire jusqu'à l'épilogue).
 7. **Lances acte 4 mono-objectif**, toutes chez le Fixer.
 8. **Symétrie A/B/C/D = calque structurel** (même squelette 1→9).
 9. **Vie aléatoire cloisonnée à Copacabana** — les autres districts sont inertes

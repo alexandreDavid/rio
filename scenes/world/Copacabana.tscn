@@ -1344,6 +1344,14 @@ variants = [{
 "text": "*il pousse la moitié des dominos vers toi, comme d'habitude, puis s'arrête* Je t'ai vu passer, sur l'avenue. Tout en haut des arquibancadas, une casquette sur les yeux pour qu'on ne me reconnaisse pas. *il pose un domino* Ta mère m'a invité samedi. Je ne sais pas encore si j'ai le droit d'y aller. *il te regarde enfin* Tu crois qu'elle m'a pardonné ?",
 "choices": ["Elle a mis ton couvert, tio"]
 }, {
+"id": "contessa_protege",
+"flag": "contessa_discreta",
+"not_flag": "ze_contessa_seen",
+"set_flag_after": "ze_contessa_seen",
+"speaker": "Zé",
+"text": "*il aligne ses dominos, un journal italien plié sous le bras* La Contessa du quatrième m'a fait monter un café, ce matin. Puis elle a dit au gérant que le vieux concierge était « à son service personnel ». *il hausse les épaules* Depuis, plus personne ne me pose de questions au Palace. *il te regarde par en dessous* C'est toi qui lui as parlé de moi, hein ?",
+"choices": ["Elle doit un service, tio"]
+}, {
 "id": "eve",
 "act": 4,
 "not_flag": "ze_eve_seen",
@@ -1815,4 +1823,30 @@ variants = [{
 "speaker": "Photographe (calçadão)",
 "text": "*ajuste son objectif* À Copa, la lumière de 16h vaut son pesant d'or. *clic clac*",
 "choices": ["Bonne lumière"]
+}]
+
+[node name="PorteiroPalaceSpot" parent="." instance=ExtResource("62_reactive")]
+position = Vector2(1820, 40)
+npc_id = "porteiro_palace"
+prompt = "Le portier du Palace"
+character_seed = 41101
+variants = [{
+"id": "fundo_filature",
+"objective_pending": ["contessa_fundo", "filer_ferretti"],
+"actions": {"start_stakeout": {"quest": "contessa_fundo", "objective": "filer_ferretti", "duration": 22.0, "seed": "ferretti"}},
+"speaker": "Porteiro do Palace",
+"text": "*gants blancs, casquette galonnée, il ne bouge que les yeux* Seu Ferretti ? *menton vers le perron* Le voilà qui sort : costume de lin, serviette en cuir, il regarde derrière lui à chaque coin de rue. *il baisse la voix* Les gens comme lui ne voient jamais les gens comme nous. Profite.",
+"choices": ["Je le suis"]
+}, {
+"id": "fundo_forte",
+"objective_done": ["contessa_fundo", "filer_ferretti"],
+"objective_pending": ["contessa_fundo", "ecouter_colombo"],
+"speaker": "Porteiro do Palace",
+"text": "*sans tourner la tête* Il a pris vers le Forte, comme tous les jeudis. Le Café Colombo. *un temps* Il commande un café qu'il ne boit pas. Moi, ça m'a toujours paru louche, un homme qui ne finit pas son café.",
+"choices": ["Valeu"]
+}, {
+"id": "default",
+"speaker": "Porteiro do Palace",
+"text": "*il ouvre la porte à un couple de gringos sans les regarder, la referme sans bruit* Bom dia. *trente ans de perron : il connaît tous les visages de Copa, et n'en dit jamais rien*",
+"choices": ["Bom dia"]
 }]

@@ -142,6 +142,60 @@ const KNOTS: Dictionary = {
 		"text": "*sourit en glissant ses lunettes sur le front* Mio carioca... Milan ne te mérite pas, mais Rio si. Reviens quand tu veux — la chambre du Palace est ouverte pour toi.",
 		"choices": ["Buona sera, mia Contessa"],
 	},
+	# --- O fundo do gala (acte 3+, après le gala) : l'arc qui donne à la
+	# Contessa une raison d'être restée à Rio — et au joueur un carrefour.
+	"contessa_fundo_offer": {
+		"speaker": "Contessa Bianchi",
+		"text": "*elle ne sirote pas son Aperol, aujourd'hui ; elle le fait tourner* Carioca. L'argent du gala devait aller à l'orfanato du morro. Trois semaines, et le Padre n'a rien reçu. Ferretti — mon administrateur, trente ans au service de ma famille — parle de « délais bancaires ». *elle baisse la voix* Je ne peux pas le suivre : tout le Palace connaît mon visage. Le tien, personne ne le regarde. *un demi-sourire* Pardon. Ici, c'est un compliment.",
+		"choices": ["Je le suis pour toi", "Pas maintenant"],
+		"on_choose": {
+			"0": {"accept_quest": "contessa_fundo"},
+		},
+	},
+	"contessa_fundo_remind_filer": {
+		"speaker": "Contessa Bianchi",
+		"text": "Ferretti sort du Palace chaque jour à la même heure, costume de lin, serviette en cuir. Il regarde derrière lui — jamais vers les gens qu'il ne voit pas. Ni trop près, ragazzo.",
+		"choices": ["J'y vais"],
+	},
+	"contessa_fundo_remind_colombo": {
+		"speaker": "Contessa Bianchi",
+		"text": "*elle fronce les sourcils* Le Café Colombo du Forte ? Ferretti déteste le café brésilien. *elle repose sa coupe* Alors il n'y va pas pour le café. Va, vite.",
+		"choices": ["J'y file"],
+	},
+	"contessa_fundo_reveal": {
+		"speaker": "Contessa Bianchi",
+		"text": "*elle lit le reçu deux fois. Puis elle rit — un petit rire sec, sans joie.* Ferretti. Ce vieux fou. *elle pose le papier sur la table* Tu m'as demandé un soir pourquoi j'avais quitté Milan, ragazzo. Milan m'a quittée la première. Les Bianchi ont gardé leur nom, pas leur fortune. Ferretti gère ce qu'il en reste — et il a payé ces gens pour que personne ne le sache. Avec l'argent des enfants. Pour moi. *elle te regarde enfin* Toi qui connais cette ville. Qu'est-ce qu'on fait ?",
+		"choices": [
+			"Tout dire à la presse : le racket, le reçu — et Milan avec. Veja voulait un gala, donne-lui un scandale.",
+			"Rembourser l'orfanato sans bruit : la broche de ta mère, chez un joaillier de Santa Clara qui me doit un service. Ferretti, tu t'en occupes.",
+			"« Laisse-moi m'en charger. » (Et revendre le reçu à Magalhães — il paiera cher pour qu'il disparaisse.)",
+		],
+		"on_choose": {
+			"0": {"finish_quest": {"quest": "contessa_fundo", "objective": "decidir_fundo", "payout": 0}, "set_flag": "contessa_publica", "rep": {0: 5, 3: -2}},
+			"1": {"finish_quest": {"quest": "contessa_fundo", "objective": "decidir_fundo", "payout": 0}, "set_flag": "contessa_discreta", "rep": {4: 3, 0: 2}},
+			"2": {"finish_quest": {"quest": "contessa_fundo", "objective": "decidir_fundo", "payout": 1200}, "set_flag": "contessa_vendida", "rep": {0: -4, 2: 1}},
+		},
+	},
+	"contessa_fundo_after_publica": {
+		"speaker": "Contessa Bianchi",
+		"text": "*robe simple, sandales, plus de lunettes de star* Veja a eu son scandale, Milan a eu sa honte, et l'orfanato a eu son argent — au centime : le Consortium a rendu les quarante mille en vingt-quatre heures, comme on lâche une chose brûlante. *elle sourit* J'ai quitté la suite. Je loue une chambre sur la Rua Santa Clara ; la logeuse dit que je repasse mal. Elle a raison.",
+		"choices": ["Tu repasseras mieux, Contessa"],
+	},
+	"contessa_fundo_after_discreta": {
+		"speaker": "Contessa Bianchi",
+		"text": "*un col haut, là où il y avait la broche* L'orfanato a reçu un don anonyme. Le Padre a parlé de miracle à la messe. *elle ajuste ses lunettes* Ferretti est parti à Lugano ; il m'a écrit qu'il était désolé. Il l'était. *elle te tend sa carte* Si un jour une porte de cette ville refuse de s'ouvrir, ragazzo — sonne chez moi.",
+		"choices": ["Grazie, Contessa"],
+	},
+	"contessa_fundo_after_vendida": {
+		"speaker": "Contessa Bianchi",
+		"text": "*elle te salue d'un signe de tête, poli, exact — comme on salue le personnel* Carioca. Ferretti m'assure que tout est réglé. *un temps* À Milan, on dit qu'on reconnaît un homme à ce qu'il ne dit pas. *elle remet ses lunettes* Bonne journée.",
+		"choices": ["Bonne journée"],
+	},
+	"contessa_feijoada": {
+		"speaker": "Contessa Bianchi",
+		"text": "*une marmite vide dans les bras, un tablier emprunté par-dessus la soie* Je redescends du morro. Ta mãe m'a appris à trier le feijão : une heure par kilo, ragazzo, et elle repasse derrière moi. *elle rit, vraiment* À Milan, on m'aurait fait une statue pour moins que ça. Ici, on m'a resservie deux fois. C'est mieux.",
+		"choices": ["Bom apetite, Contessa"],
+	},
 	# --- Side quest : tour guidé pour le touriste VIP ---
 	"tourist_vip_tour_offer": {
 		"speaker": "Touriste VIP",

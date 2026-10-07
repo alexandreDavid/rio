@@ -85,6 +85,7 @@ const QUEST_RESOURCES: Array[String] = [
 	"res://resources/quests/ronaldo_dj_paoacucar.tres",
 	"res://resources/quests/carlos_lagoa_volta.tres",
 	"res://resources/quests/contessa_date.tres",
+	"res://resources/quests/contessa_fundo.tres",
 	"res://resources/quests/tourist_vip_tour.tres",
 	"res://resources/quests/ronaldo_maracana_torcida.tres",
 	"res://resources/quests/consortium_airport_pickup.tres",

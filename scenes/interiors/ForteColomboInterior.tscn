@@ -115,6 +115,26 @@ variants = [{
 "choices": ["Plus tard, obrigado"]
 }]
 
+[node name="TableDuFondSpot" parent="." instance=ExtResource("2_reactive")]
+position = Vector2(100, 30)
+npc_id = "colombo_table_fundo"
+prompt = "La table du fond"
+character_seed = 41102
+variants = [{
+"id": "fundo_ecoute",
+"objective_done": ["contessa_fundo", "filer_ferretti"],
+"objective_pending": ["contessa_fundo", "ecouter_colombo"],
+"actions": {"finish_quest": {"quest": "contessa_fundo", "objective": "ecouter_colombo", "payout": 0}},
+"speaker": "La table du fond",
+"text": "*Ferretti, dos à toi, face à un homme en polo du Riserva — l'homme de Magalhães. Tu commandes un cafezinho au comptoir et tu ne te retournes pas.* « …quarante mille, Signor Ferretti, comme convenu. La maison est discrète : personne ne saura que la Contessa Bianchi n'a plus un centime à elle. » *Ferretti signe un reçu sans relever les yeux. L'homme du Riserva se lève et laisse le reçu sous la soucoupe — l'arrogance de ceux qui ne craignent personne. Quand ils sont sortis, la soucoupe est à toi.*",
+"choices": ["Glisser le reçu dans ta poche"]
+}, {
+"id": "default",
+"speaker": "Un habitué",
+"text": "*il lit O Globo en trempant un pão de queijo dans son café, la baie dans le dos* Le meilleur café du Rio, et personne ne le boit pour le café. On vient pour la vue. Ou pour ne pas être vu.",
+"choices": ["Bom café"]
+}]
+
 [node name="Table1" type="ColorRect" parent="."]
 offset_left = -120.0
 offset_top = 10.0

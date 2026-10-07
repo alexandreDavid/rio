@@ -111,6 +111,18 @@ const PECHEUR_SECRET: Dictionary = {
 	"": "Seu Pedro pêche toujours à Leme, et les canots fantômes passent toujours la nuit. Il ne t'a jamais reproché ton silence. Certains secrets, au bord de la mer, on les laisse à la marée.",
 }
 const PECHEUR_QUEST_ID: String = "act2_pecheur_secret"
+
+# L'arc de la Contessa (O fundo do gala), toutes voies : son issue a son
+# paragraphe, avant l'écho du pêcheur. Rien si l'arc n'a pas été joué.
+const CONTESSA_FATE: Dictionary = {
+	"contessa_publica": "La Contessa Bianchi n'habite plus le Palace. Elle loue une chambre sur la Rua Santa Clara, repasse mal, et monte au morro chaque samedi trier le feijão avec ta mãe. Milan l'a rayée de ses listes. Copa l'a inscrite sur les siennes.",
+	"contessa_discreta": "Au Palace, la Contessa porte des cols hauts depuis qu'elle n'a plus la broche de sa mère. L'orfanato n'a jamais su d'où venait le don. Elle ne t'a jamais remercié en public ; en privé, sa porte ne s'est jamais refermée.",
+	"contessa_vendida": "La Contessa Bianchi te salue toujours d'un signe de tête exact, comme on salue le personnel. L'argent du gala n'est jamais arrivé au morro. Magalhães, lui, t'envoie une carte à chaque Noël.",
+}
+# Au couronnement Prefeito, elle n'est « à ta gauche » que si elle est devenue
+# une alliée ; sinon c'est Dona Cléo, la voix du morro.
+const CONTESSA_CORONATION: String = "la Contessa à ta gauche"
+const CLEO_CORONATION: String = "Dona Cléo à ta gauche"
 # Les paragraphes de mémoire s'insèrent après l'immédiat et « le lendemain ».
 const MEMORY_INSERT_AT: int = 2
 
@@ -244,14 +256,17 @@ func compose_body(path: int) -> String:
 	if not EPILOGUES.has(path):
 		return ""
 	var memories: PackedStringArray = memory_paragraphs(path, CampaignManager.flags, QuestManager.is_completed(PECHEUR_QUEST_ID))
-	var parts: PackedStringArray = String(EPILOGUES[path].body).split("\n\n")
+	var base: String = String(EPILOGUES[path].body)
+	if not (CampaignManager.has_flag("contessa_publica") or CampaignManager.has_flag("contessa_discreta")):
+		base = base.replace(CONTESSA_CORONATION, CLEO_CORONATION)
+	var parts: PackedStringArray = base.split("\n\n")
 	var at: int = mini(MEMORY_INSERT_AT, parts.size())
 	for i in memories.size():
 		parts.insert(at + i, memories[i])
 	return _with_ze_fate("\n\n".join(parts))
 
-# Pur (testable sans scène) : un paragraphe par carrefour tranché, puis l'écho
-# du pêcheur si sa quête est close.
+# Pur (testable sans scène) : un paragraphe par carrefour tranché, le sort de la
+# Contessa, puis l'écho du pêcheur si sa quête est close.
 static func memory_paragraphs(path: int, flags: Dictionary, pecheur_done: bool) -> PackedStringArray:
 	var out: PackedStringArray = []
 	for crossroad in CROSSROADS.get(path, []):
@@ -259,6 +274,10 @@ static func memory_paragraphs(path: int, flags: Dictionary, pecheur_done: bool) 
 			if flags.get(flag, false):
 				out.append(crossroad[flag])
 				break
+	for flag in CONTESSA_FATE:
+		if flags.get(flag, false):
+			out.append(CONTESSA_FATE[flag])
+			break
 	if pecheur_done:
 		var key: String = ""
 		for flag in ["pecheur_to_ramos", "pecheur_to_miguel"]:
