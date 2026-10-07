@@ -26,6 +26,7 @@ const SIGNATURES: Dictionary = {
 	"racha_atlantica":  {"axis": 2, "amount": 2, "npc": "", "label": "racha da Atlântica"},
 	"altinha":          {"axis": 2, "amount": 1, "npc": "", "label": "altinha da praia"},
 	"kitesurf":         {"axis": 2, "amount": 1, "npc": "", "label": "kite da Barra"},
+	"milho":            {"axis": 0, "amount": 1, "npc": "seu_joao", "label": "hora do rush do milho"},
 }
 const MESTRE_THRESHOLD: int = 3
 # La réputation d'activité est plafonnée par source : au-delà de 3 réussites

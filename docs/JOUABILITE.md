@@ -80,7 +80,8 @@ réputation/affinité se sentent manette en main : **preço de amigo** chez les
 couvre** (STREET ≥ 50 : tout poursuivant abandonne plus tôt et fatigue plus
 vite), **la PM laisse passer ses alliés** (POLICE ≥ 40 : plus de racket du
 calçadão), et l'app Saúde explique enfin cash ≠ dette. **Reste ouvert** :
-pas de décroissance de réputation, milho toujours anecdotique passé
+pas de décroissance de réputation, milho ~~toujours anecdotique~~ (résolu
+2026-10-07 : Hora do rush) passé
 l'acte 1, Fishing/Exercise toujours superficiels (axe F).
 
 ### P6. Le scénario est confus — RÉSOLU (clarté, 2026-09-16)

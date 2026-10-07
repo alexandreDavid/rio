@@ -84,7 +84,9 @@ copacabana/zona_sul/favela_morro — pression dette absente ailleurs.
 
 ## 4. Économie
 
-Sources : milho (`CornCart.gd`, stock 3, 5/15 R$, paiement immédiat — appoint),
+Sources : milho (`CornCart.gd` — acte 1 : tournée à pied, stock 3, 5/15 R$ ;
+dès l'acte 2 : « Hora do rush » `MilhoGame`, ~100-150 R$ par rush réussi +
+affinité des fregueses — voir ci-dessous),
 missions dynamiques (moteur principal), tips launchers, `money_reward` de
 quêtes, payouts fishing/bike/racha, pari volley ×2, achievements.
 
@@ -146,7 +148,14 @@ JOUABILITE.md — sprint 🏃 à bascule, plancher inter-districts, flag
 `is_inside`, deltas négatifs + multi-chronos au HUD, Fotos sans chemin OS,
 prints retirés). Restent :
 
-1. Milho anecdotique passé l'acte 1.
+1. ~~Milho anecdotique passé l'acte 1~~ — résolu le 2026-10-07 : la carrocinha
+   lance la « Hora do rush » (`scripts/minigames/milho/MilhoGame.gd`, signature
+   ActivityRewards `milho`). Panela de 3 épis (cru / no ponto / passado /
+   desmanchou), garnitures 🧈🧂🧀, file de 3 clients à patience. Les 6 fregueses
+   (Jorge, Ramos, le concierge, Diego, Roberto Maia, Seu Tonio) disent leur
+   commande tant qu'on ne les connaît pas (flag `milho_conhece_<id>`, 2 Perfeitos),
+   puis seulement « o de sempre » ; chaque Perfeito d'habitué = +1 affinité par
+   rush → le milho nourrit le jeitinho.
 2. `MAIN_NEXT_HINT` toujours à maintenir à la main.
 3. Fishing/Exercise très en retrait des standards volley/surf/altinha (axe F).
 4. Stamina sans progression sur toute la partie.

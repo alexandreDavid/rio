@@ -1,8 +1,10 @@
 class_name CornCart
 extends Node2D
 
-# Charrette de milho. Stock réduit (3) — la boucle est courte et rythmée.
-# Le joueur touche l'argent EN TEMPS RÉEL à chaque vente (pas de commission à la fin).
+# Charrette de milho. Acte 1 : tournée à pied (stock 3, paiement à chaque
+# vente) — le tutoriel de l'héritage. Dès l'acte 2, la carrocinha lance la
+# « Hora do rush » (MilhoGame) : service sous pression où l'on gagne en
+# connaissant ses fregueses.
 
 signal stock_changed(remaining: int)
 signal shift_ended(total_earned: int, commission: int)
@@ -21,6 +23,13 @@ var _shift_active: bool = false
 var _carrying: bool = false
 var _original_position: Vector2 = Vector2.ZERO
 const CARRY_DISTANCE: float = 24.0
+const RUSH_SCENE: String = "res://scenes/minigames/Milho.tscn"
+const RUSH_PROMPT: String = "🌽 Hora do rush (milho)"
+
+var _walk_prompt: String = ""
+var _active_rush: Node = null
+var _world_cache: Node = null
+var _ui_cache: Node = null
 
 func _ready() -> void:
 	add_to_group("corn_cart")
@@ -29,6 +38,8 @@ func _ready() -> void:
 	if interactable:
 		interactable.interacted.connect(_on_interacted)
 		interactable.enabled = _should_be_enabled()
+		_walk_prompt = interactable.prompt
+		_refresh_prompt()
 	EventBus.quest_accepted.connect(_on_quest_accepted)
 	EventBus.act_changed.connect(_on_act_changed)
 
@@ -40,6 +51,14 @@ func _should_be_enabled() -> bool:
 	if CampaignManager.has_flag("act1_started"):
 		return true
 	return false
+
+# Après l'acte 1 (et hors tutoriel milho en cours), la carrocinha sert au rush.
+func is_rush_mode() -> bool:
+	return CampaignManager.current_act >= 2 and not QuestManager.is_active(quest_id)
+
+func _refresh_prompt() -> void:
+	if interactable:
+		interactable.prompt = RUSH_PROMPT if is_rush_mode() else _walk_prompt
 
 func is_carrying() -> bool:
 	return _carrying
@@ -132,11 +151,54 @@ func _on_act_changed(_new_act: int) -> void:
 	# Au cas où le flag act1_started ait été posé sans passer par quest_accepted.
 	if interactable and not interactable.enabled:
 		interactable.enabled = _should_be_enabled()
+	_refresh_prompt()
 
 func _on_interacted(by: Node) -> void:
 	if _carrying:
 		return
+	if is_rush_mode():
+		_launch_rush()
+		return
 	pick_up(by)
+
+# Pattern launcher : le monde et le HUD se masquent le temps du rush.
+func _launch_rush() -> void:
+	if _active_rush:
+		return
+	var packed: PackedScene = load(RUSH_SCENE)
+	if packed == null:
+		return
+	_active_rush = packed.instantiate()
+	var root: Node = get_tree().current_scene
+	_world_cache = root.get_node_or_null("World")
+	_ui_cache = root.get_node_or_null("UI")
+	if _world_cache:
+		_world_cache.visible = false
+		_world_cache.process_mode = Node.PROCESS_MODE_DISABLED
+	if _ui_cache:
+		_ui_cache.visible = false
+	root.add_child(_active_rush)
+	_active_rush.match_ended.connect(_on_rush_ended)
+
+func _on_rush_ended(_qualifies: bool, cash: int) -> void:
+	# Réputation + affinité Seu João + mestre : ActivityRewards (signature "milho").
+	var inv: Inventory = _player_inventory()
+	if inv and cash > 0:
+		inv.add_money(cash)
+	if _active_rush:
+		_active_rush.queue_free()
+		_active_rush = null
+	if _world_cache:
+		_world_cache.visible = true
+		_world_cache.process_mode = Node.PROCESS_MODE_INHERIT
+		_world_cache = null
+	if _ui_cache:
+		_ui_cache.visible = true
+		_ui_cache = null
+	if GameManager.player:
+		var player_cam: Camera2D = GameManager.player.get_node_or_null("Camera2D")
+		if player_cam:
+			player_cam.make_current()
 
 func _apply_reputation(delta: Dictionary) -> void:
 	for axis_key in delta:

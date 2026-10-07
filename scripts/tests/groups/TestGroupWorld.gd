@@ -25,6 +25,7 @@ func run() -> void:
 	await _test_ambient_life_out_of_copa()
 	_test_reputation_affinity_effects()
 	_test_minigame_depth_contracts()
+	_test_milho_rush()
 
 
 # Garde-fou : les intérieurs hors-monde (positions y≈-3000 dans Copacabana)
@@ -850,6 +851,93 @@ func _test_reputation_affinity_effects() -> void:
 # Le risque/récompense doit être monotone : à la pêche, plus loin = poisson
 # qui vaut plus, fenêtre de ferrage plus courte, puxadas plus dures ; au
 # treino, chaque série est plus rapide avec une zone de forme plus étroite.
+# Hora do rush (milho après l'acte 1) : règles pures, fregueses réels, mode
+# rush de la carrocinha, et un service joué dans la vraie scène.
+func _test_milho_rush() -> void:
+	_section("Milho — Hora do rush")
+	_assert(MilhoGame.cook_state(0.0) == MilhoGame.Cook.CRU, "cuisson : cru au départ")
+	_assert(MilhoGame.cook_state(MilhoGame.COOK_PONTO) == MilhoGame.Cook.PONTO, "cuisson : no ponto à %.0f s" % MilhoGame.COOK_PONTO)
+	_assert(MilhoGame.cook_state(MilhoGame.COOK_PASSADO) == MilhoGame.Cook.PASSADO, "cuisson : passado ensuite")
+	_assert(MilhoGame.cook_state(MilhoGame.COOK_DESMANCHOU + 1.0) == MilhoGame.Cook.DESMANCHOU, "cuisson : desmanchou à la fin")
+	var order: Array = ["manteiga", "sal"]
+	_assert(MilhoGame.grade(order, ["sal", "manteiga"], MilhoGame.Cook.PONTO) == MilhoGame.Grade.PERFEITO, "note : bonne garniture (ordre libre) + no ponto = Perfeito")
+	_assert(MilhoGame.grade(order, order, MilhoGame.Cook.CRU) == MilhoGame.Grade.BOA, "note : cru = Boa")
+	_assert(MilhoGame.grade(order, order, MilhoGame.Cook.PASSADO) == MilhoGame.Grade.BOA, "note : passado = Boa")
+	_assert(MilhoGame.grade(order, ["manteiga"], MilhoGame.Cook.PONTO) == MilhoGame.Grade.MOLE, "note : garniture fausse = Mole")
+	_assert(MilhoGame.grade(order, order, MilhoGame.Cook.DESMANCHOU) == MilhoGame.Grade.MOLE, "note : desmanchou = Mole")
+	_assert(MilhoGame.shows_order(0, false), "habitué inconnu : dit sa commande")
+	_assert(not MilhoGame.shows_order(MilhoGame.KNOWN_AFTER, false), "habitué connu : « o de sempre »")
+	_assert(not MilhoGame.shows_order(0, true), "2e passage dans le rush : « o de sempre »")
+	_assert(MilhoGame.tip_for({"regular": true, "shows_order": false}, MilhoGame.Grade.PERFEITO) > MilhoGame.tip_for({"regular": true, "shows_order": true}, MilhoGame.Grade.PERFEITO), "pourboire : se souvenir paie plus")
+	_assert(MilhoGame.tip_for({"kind": "gamin"}, MilhoGame.Grade.PERFEITO) == 0, "pourboire : le gamin ne paie pas")
+	_assert(MilhoGame.tip_for({"regular": false}, MilhoGame.Grade.BOA) == 0, "pourboire : pas de tip sans Perfeito")
+	var ids: Dictionary = {}
+	for r in MilhoGame.REGULARS:
+		_assert(ResourceLoader.exists("res://resources/npcs/%s.tres" % r.id), "freguês %s : NPC réel (affinité/jeitinho)" % r.id)
+		_assert(not ids.has(r.id), "freguês %s : unique" % r.id)
+		ids[r.id] = true
+		var valid: bool = not r.order.is_empty()
+		for t in r.order:
+			valid = valid and MilhoGame.TOPPINGS.has(t)
+		_assert(valid, "freguês %s : commande valide" % r.id)
+	_assert(ActivityRewards.SIGNATURES.has("milho"), "signature d'activité « milho »")
+	# La carrocinha passe en mode rush dès l'acte 2, sauf tutoriel en cours.
+	_reset_campaign_state()
+	var cart: CornCart = CornCart.new()
+	CampaignManager.current_act = 1
+	_assert(not cart.is_rush_mode(), "acte 1 : tournée à pied (tutoriel)")
+	CampaignManager.current_act = 2
+	_assert(cart.is_rush_mode(), "acte 2 : Hora do rush")
+	QuestManager._state["quest_milho_01"] = QuestManager.State.ACTIVE
+	_assert(not cart.is_rush_mode(), "tutoriel milho actif : pas de rush")
+	cart.free()
+	# Un service joué dans la vraie scène.
+	_reset_campaign_state()
+	var game: MilhoGame = load("res://scenes/minigames/Milho.tscn").instantiate()
+	add_child(game)
+	game.set_process(false)
+	_assert(game._pot_buttons.size() == MilhoGame.POT_SLOTS and game._queue_buttons.size() == MilhoGame.QUEUE_SLOTS, "scène : panela et file construites")
+	var min_side: float = 999.0
+	for b in game._pot_buttons + game._queue_buttons:
+		min_side = minf(min_side, minf(b.size.x, b.size.y))
+	_assert(min_side >= 88.0, "cibles tactiles larges (min %.0f px)" % min_side)
+	game._on_pot_pressed(0)
+	game._pot[0].t = MilhoGame.COOK_PONTO + 1.0
+	game._on_pot_pressed(0)
+	_assert(int(game._hand.get("cook", -1)) == MilhoGame.Cook.PONTO, "épi pris no ponto")
+	game._on_topping_pressed("manteiga")
+	game._on_topping_pressed("sal")
+	var jorge: Dictionary = {}
+	for r in MilhoGame.REGULARS:
+		if r.id == "jorge":
+			jorge = r
+	game._queue[0] = {"regular": true, "id": "jorge", "name": "Jorge", "order": jorge.order, "line": jorge.line, "shows_order": true, "patience": 10.0, "seed": 1}
+	var aff_before: int = NPCAffinity.count("jorge")
+	game._on_client_pressed(0)
+	_assert(game._score == 3 and game._perfeitos == 1, "Jorge servi Perfeito : 3 pts")
+	_assert(game._cash == MilhoGame.PRICE + MilhoGame.TIP_REGULAR, "Jorge paie prix + pourboire d'habitué")
+	_assert(int(CampaignManager.flags.get(MilhoGame.known_key("jorge"), 0)) == 1, "la carrocinha retient Jorge (1/%d)" % MilhoGame.KNOWN_AFTER)
+	_assert(NPCAffinity.count("jorge") == aff_before + 1, "affinité Jorge +1 (jeitinho)")
+	# 2e Perfeito dans le même rush : connu, mais pas de 2e bump d'affinité.
+	game._pot[1] = {"t": MilhoGame.COOK_PONTO + 1.0}
+	game._on_pot_pressed(1)
+	game._on_topping_pressed("manteiga")
+	game._on_topping_pressed("sal")
+	game._queue[1] = {"regular": true, "id": "jorge", "name": "Jorge", "order": jorge.order, "line": jorge.line, "shows_order": false, "patience": 10.0, "seed": 1}
+	game._on_client_pressed(1)
+	_assert(int(CampaignManager.flags.get(MilhoGame.known_key("jorge"), 0)) == MilhoGame.KNOWN_AFTER, "Jorge devient freguês (o de sempre)")
+	_assert(NPCAffinity.count("jorge") == aff_before + 1, "une seule hausse d'affinité par rush et par habitué")
+	# Mauvaise garniture : il refuse.
+	game._pot[2] = {"t": MilhoGame.COOK_PONTO + 1.0}
+	game._on_pot_pressed(2)
+	game._queue[2] = {"regular": false, "kind": "carioca", "name": "Carioca", "order": ["queijo"], "shows_order": true, "patience": 10.0, "seed": 2}
+	var cash_before: int = game._cash
+	game._on_client_pressed(2)
+	_assert(game._cash == cash_before and game._score == 6, "garniture fausse : refus, rien payé")
+	game.free()
+	_reset_campaign_state()
+
+
 func _test_minigame_depth_contracts() -> void:
 	_section("Mini-jeux refondus — courbes de difficulté cohérentes")
 	var bands: Array = FishingGame.BANDS
