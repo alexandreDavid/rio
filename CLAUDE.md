@@ -35,6 +35,8 @@ Constantes clés (dans `scripts/world/CopacabanaConfig.gd`, préchargé `Cfg` pa
 
 Limite de la zone jouable (bâtiments NPC) : `map_start_x=160`, `map_end_x=2200`. Les strips de tiles (sable, calçadão, route, mer) couvrent toute la map décorée : `Cfg.MAP_LEFT=-300` → `Cfg.MAP_RIGHT=3200`, soit `Cfg.MAP_TOTAL_W=3500` (inclut Forte à l'ouest et Leme à l'est).
 
+Autres sprites : `assets/sprites/props_ai.png` = 12 icônes d'objets (vraie transparence), régions dans `scripts/ui/ItemIcons.gd` (`ItemIcons.texture("agua_de_coco")`) — encore inutilisées par l'UI. **`props_ai_clean.png` a un damier incrusté, ne pas l'utiliser.** `grass.png` (Kenney) sert de tuile d'herbe aux districts.
+
 ## Z-index convention
 ```
 -10  Background (ciel bleu ColorRect)
@@ -53,7 +55,7 @@ Bandes Y des tuiles opaques (scannées par alpha > 128) :
 - `y=226..361`  — calçadão (tile 0 = sable ; tiles 1-5 = vagues noir/blanc)
 - `y=381..513`  — routes (asphalte, ligne jaune, pavé, calçadão-like)
 - `y=536..655`  — trottoirs (curb blanc en haut ~y=542-570, béton en dessous)
-- `y=660..920`  — décors (palmiers, parasols, serviette, bar ambulant)
+- `y=660..920`  — décors : 2 palmiers (`PALM_TREE_REGION`, `PALM_TREE_B_REGION`), 3 parasols, 2 serviettes (`TOWEL_*_REGION`), carrocinha de plage (`BEACH_CART_REGION`) — tous inventoriés dans `CopacabanaConfig.gd`
 
 Colonnes (début de chaque tile) : `108, 266, 425, 584, 744, 903, 1062`. Largeur tile ≈ 143 px, hauteur ≈ 136 px.
 
@@ -68,6 +70,9 @@ Régions utilisées (`scripts/world/CopacabanaConfig.gd`) :
 | `FOAM_TILE_REGION` | `(1100, 88, 180, 60)` |
 | `UMBRELLA_YELLOW/RED/BLUE_REGION` | `(460/614/1031, 660, ...)` |
 | `PALM_TREE_REGION` | `(296, 660, 122, 252)` |
+| `PALM_TREE_B_REGION` | `(108, 680, 165, 229)` |
+| `TOWEL_STRIPED/LOUNGER_REGION` | `(785, 696, 211, 99)` / `(778, 825, 217, 82)` |
+| `BEACH_CART_REGION` | `(1198, 660, 224, 260)` |
 
 Helper : `_spawn_tile_strip(name, y_top, y_bot, region, z_idx=-5)` pour remplir une bande rectangulaire. `_spawn_prop_sprite(parent, region, pos, target_h)` pour un décor ponctuel (ancrage par la base).
 
@@ -132,6 +137,7 @@ Si un knot tente `accept_quest` sur une quête bloquée, `DialogueBridge._show_l
 - **Ajouter une quête** : créer un `.tres` dans `resources/quests/` → ajouter les knots d'offre/rappel/fin dans `scripts/dialogues/*Dialogues.gd` (l'`ink_knot` de la quête y pointe) → enregistrer dans `MainBoot.QUEST_RESOURCES` ; tagger `quest_type = 1` si MAIN et lister `prerequisite_quest_ids` ; vérifier avec `tools/check_quest_gating.gd`
 - **Ajouter un knot de dialogue** : éditer le fichier d'acte/domaine concerné (`Act1..4Dialogues.gd` / `Side{Plage,Services,Baia}Dialogues.gd`) — `const KNOTS` ; key = `ink_knot`, value = `{speaker, text, choices, on_choose?}`. La résolution runtime est par clé globale, le fichier choisi n'a pas d'incidence fonctionnelle (juste l'organisation)
 - **Ajouter une tuile / régler le tileset** : utiliser l'agent `tileset-atlas` (cf `.claude/agents/`)
+- **Habiller un district** (`scripts/world/DistrictDresser.gd`, appelé par la base `scripts/districts/District.gd`) : les scènes de `scenes/districts/` sont des ColorRect plats ; on tague les dalles de sol avec un groupe (`ground_sand|sea|road|calcadao|sidewalk|grass`) et une dalle `district_backdrop` (étendue à la bbox + marge, z=-10, fin du gris hors carte) → l'habilleur superpose les tuiles de l'atlas (shader répété, 1 Sprite2D par dalle) et pose l'écume sur chaque couture sable/mer. Faire pointer la racine sur `District.gd` (ou, si un enfant porte déjà un AmbientDrifter comme la Favela, un script racine minimal qui appelle `DistrictDresser.dress(self)` — deux drifters sur le même sous-arbre doubleraient la dérive), supprimer les faux décors en rects (vagues, écume). Vérifier avec `tools/screenshot_scene.gd` (scène seule, sans autoloads) ou `tools/ScreenshotWorld.tscn` (monde réel : `godot --path . tools/ScreenshotWorld.tscn -- <prefix> "x:y:zoom,..."`, coordonnées = offset du district + local). Façades : `building` / `building_favela` sur le ColorRect de façade → `BuildingDressing.paint_relief` (helper partagé avec `_spawn_building` et `_spawn_favela_house` de Copa) ajoute ombre portée, arête éclairée, fondation, bande de toit, et fenêtres + porte si aucun ColorRect dessiné après ne tombe dans la façade ; `building_favela` saute la bande de toit (déjà dessinée) et pose un décor de toit (antenne, caixa d'água, linge). Props : `prop_palm` / `prop_umbrella` / `prop_beach_cart` / `prop_towel` sur un ColorRect-empreinte (du haut de la couronne au pied) → masqué, remplacé par le sprite atlas ancré au pied via `PropSprites` (helper partagé avec Copa), couleur du rect = toile du parasol ; les lampadaires restent en rects (c'est aussi le cas à Copa). Groupes recolorés `ground_plaza` (grain du pavé) / `ground_dirt` (grain du sable) : la dalle garde SA couleur (esplanades, mirantes, terre du morro) et gagne juste de la matière. Un nouveau `class_name` n'est vu par les outils CLI qu'après `godot --headless --editor --quit --path .` (cache de classes). Les 12 districts joués sont habillés ; `AterroFlamengo.tscn` n'est référencé nulle part (scène morte, non taguée)
 - **Tester** : `./run_tests.sh` (~3100 assertions, headless via `IntegrationTest.tscn` + `PlaythroughDriver.tscn`) ou ouvrir Godot
 - **Skip d'acte (debug build)** : `Ctrl+F1..F4` (`scripts/debug/DebugConsole.gd`) → reset / skip vers acte 2/3/4 avec pivots auto-complétés ; `Ctrl+Shift+F4` voie Tráfico, `Ctrl+Alt+F4` voie Prefeito
 

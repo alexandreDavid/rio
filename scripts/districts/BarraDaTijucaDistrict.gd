@@ -1,4 +1,4 @@
-extends Node2D
+extends District
 
 # Wiring runtime des portes intérieures du district Barra da Tijuca. Mêmes
 # principes que ZonaSulDistrict — résout les global_position au _ready pour
@@ -12,6 +12,7 @@ extends Node2D
 @onready var _door_peninsula: Node = get_node_or_null("DoorPeninsula")
 
 func _ready() -> void:
+	super._ready()
 	_wire_door(_door_shopping, _shopping_spawn)
 	_wire_exit("BarraShoppingInterior/ExitDoor", _door_shopping)
 	_wire_door(_door_le_parc, _le_parc_spawn)

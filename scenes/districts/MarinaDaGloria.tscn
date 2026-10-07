@@ -3,7 +3,7 @@
 [ext_resource type="PackedScene" path="res://scenes/props/TaxiStand.tscn" id="1_taxi"]
 [ext_resource type="PackedScene" path="res://scenes/props/DistrictExit.tscn" id="2_exit"]
 [ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="3_wander"]
-[ext_resource type="Script" path="res://scripts/world/AmbientDrifter.gd" id="4_drift"]
+[ext_resource type="Script" path="res://scripts/districts/District.gd" id="4_drift"]
 [ext_resource type="PackedScene" path="res://scenes/props/ReactiveDialogueSpot.tscn" id="6_reactive"]
 
 [sub_resource type="RectangleShape2D" id="WallH"]
@@ -24,7 +24,7 @@ wrap_left = -460.0
 wrap_right = 460.0
 drift_speed = 8.0
 
-[node name="Sky" type="ColorRect" parent="."]
+[node name="Sky" type="ColorRect" parent="." groups=["district_backdrop"]]
 offset_left = -460.0
 offset_top = -260.0
 offset_right = 460.0
@@ -87,19 +87,12 @@ offset_right = 248.0
 offset_bottom = -157.0
 color = Color(0.98, 0.98, 0.95, 1)
 
-[node name="Bay" type="ColorRect" parent="."]
+[node name="Bay" type="ColorRect" parent="." groups=["ground_sea"]]
 offset_left = -460.0
 offset_top = -180.0
 offset_right = 460.0
 offset_bottom = 40.0
 color = Color(0.22, 0.42, 0.58, 1)
-
-[node name="BayHighlight" type="ColorRect" parent="."]
-offset_left = -460.0
-offset_top = -180.0
-offset_right = 460.0
-offset_bottom = -174.0
-color = Color(0.78, 0.88, 0.92, 0.55)
 
 [node name="WaveA" type="ColorRect" parent="."]
 offset_left = -360.0
@@ -206,7 +199,7 @@ offset_right = 250.0
 offset_bottom = -75.0
 color = Color(0.55, 0.42, 0.32, 1)
 
-[node name="Promenade" type="ColorRect" parent="."]
+[node name="Promenade" type="ColorRect" parent="." groups=["ground_plaza"]]
 offset_left = -460.0
 offset_top = 40.0
 offset_right = 460.0

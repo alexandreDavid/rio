@@ -128,6 +128,11 @@ const UMBRELLA_YELLOW_REGION: Rect2 = Rect2(460, 660, 143, 181)
 const UMBRELLA_RED_REGION: Rect2 = Rect2(614, 660, 142, 180)
 const UMBRELLA_BLUE_REGION: Rect2 = Rect2(1031, 660, 89, 250)
 const PALM_TREE_REGION: Rect2 = Rect2(296, 660, 122, 252)
+# Décors de la même bande, inventoriés le 2026-10-07 (segmentation alpha) :
+const PALM_TREE_B_REGION: Rect2 = Rect2(108, 680, 165, 229)    # second palmier, couronne plus large
+const TOWEL_STRIPED_REGION: Rect2 = Rect2(785, 696, 211, 99)   # canga rayée (vue de dessus)
+const TOWEL_LOUNGER_REGION: Rect2 = Rect2(778, 825, 217, 82)   # esteira à carreaux
+const BEACH_CART_REGION: Rect2 = Rect2(1198, 660, 224, 260)    # carrocinha de plage (parasol bleu/jaune)
 const CALCADAO_Y: float = 64.0          # top de la zone
 const CALCADAO_HEIGHT: float = 64.0     # 64px tall (1 row de tuiles 64x64)
 const CALCADAO_TILE_SIZE: float = 64.0

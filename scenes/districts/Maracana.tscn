@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="3_wander"]
 [ext_resource type="PackedScene" path="res://scenes/props/Viewpoint.tscn" id="4_view"]
 [ext_resource type="PackedScene" path="res://scenes/props/StreetVendor.tscn" id="5_vendor"]
-[ext_resource type="Script" path="res://scripts/world/AmbientDrifter.gd" id="6_drift"]
+[ext_resource type="Script" path="res://scripts/districts/District.gd" id="6_drift"]
 [ext_resource type="PackedScene" path="res://scenes/props/ReactiveDialogueSpot.tscn" id="7_reactive"]
 
 [sub_resource type="RectangleShape2D" id="WallH"]
@@ -57,7 +57,7 @@ offset_right = -100.0
 offset_bottom = -240.0
 color = Color(0.92, 0.92, 0.88, 0.6)
 
-[node name="SkyTwilight" type="ColorRect" parent="."]
+[node name="SkyTwilight" type="ColorRect" parent="." groups=["district_backdrop"]]
 offset_left = -360.0
 offset_top = -260.0
 offset_right = 360.0
@@ -210,7 +210,7 @@ offset_right = 316.0
 offset_bottom = -204.0
 color = Color(0.95, 0.92, 0.7, 1)
 
-[node name="EsplanadeFloor" type="ColorRect" parent="."]
+[node name="EsplanadeFloor" type="ColorRect" parent="." groups=["ground_plaza"]]
 offset_left = -340.0
 offset_top = 0.0
 offset_right = 340.0

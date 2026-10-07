@@ -1,4 +1,4 @@
-extends AmbientDrifter
+extends District
 
 # Câblage runtime des portes d'entrée des intérieurs Zona Sul + drift décoratif
 # hérité d'AmbientDrifter (mouettes, nuages, bateau à voile dans la zone plage).

@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="3_wander"]
 [ext_resource type="PackedScene" path="res://scenes/props/Viewpoint.tscn" id="4_view"]
 [ext_resource type="PackedScene" path="res://scenes/props/StreetVendor.tscn" id="5_vendor"]
-[ext_resource type="Script" path="res://scripts/world/AmbientDrifter.gd" id="6_drift"]
+[ext_resource type="Script" path="res://scripts/districts/District.gd" id="6_drift"]
 [ext_resource type="PackedScene" path="res://scenes/props/ReactiveDialogueSpot.tscn" id="7_reactive"]
 
 [sub_resource type="RectangleShape2D" id="WallH"]
@@ -62,7 +62,7 @@ offset_right = 260.0
 offset_bottom = -167.0
 color = Color(0.98, 0.98, 0.95, 1)
 
-[node name="SkyDawn" type="ColorRect" parent="."]
+[node name="SkyDawn" type="ColorRect" parent="." groups=["district_backdrop"]]
 offset_left = -360.0
 offset_top = -260.0
 offset_right = 360.0
@@ -76,7 +76,7 @@ offset_right = 360.0
 offset_bottom = -100.0
 color = Color(0.85, 0.78, 0.7, 1)
 
-[node name="BayWater" type="ColorRect" parent="."]
+[node name="BayWater" type="ColorRect" parent="." groups=["ground_sea"]]
 offset_left = -360.0
 offset_top = -100.0
 offset_right = 360.0
@@ -139,7 +139,7 @@ offset_right = -250.0
 offset_bottom = -150.0
 color = Color(0.30, 0.34, 0.42, 0.85)
 
-[node name="Terminal" type="ColorRect" parent="."]
+[node name="Terminal" type="ColorRect" parent="." groups=["building"]]
 offset_left = -260.0
 offset_top = -90.0
 offset_right = 100.0
@@ -195,7 +195,7 @@ offset_right = 340.0
 offset_bottom = -60.0
 color = Color(0.88, 0.92, 0.95, 0.55)
 
-[node name="Runway" type="ColorRect" parent="."]
+[node name="Runway" type="ColorRect" parent="." groups=["ground_road"]]
 offset_left = -340.0
 offset_top = 0.0
 offset_right = 340.0
@@ -265,7 +265,7 @@ offset_right = 150.0
 offset_bottom = 18.0
 color = Color(0.78, 0.78, 0.78, 1)
 
-[node name="Apron" type="ColorRect" parent="."]
+[node name="Apron" type="ColorRect" parent="." groups=["ground_plaza"]]
 offset_left = -340.0
 offset_top = 60.0
 offset_right = 340.0

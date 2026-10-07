@@ -269,11 +269,7 @@ func _spawn_beach_props() -> void:
 	var rng: RandomNumberGenerator = RandomNumberGenerator.new()
 	rng.seed = 20251024
 	# Parasols alternés le long de la plage (y entre 200 et 360, en évitant les postes à y=168).
-	var umbrella_variants: Array = [
-		{"region": Cfg.UMBRELLA_YELLOW_REGION, "h": 70.0},
-		{"region": Cfg.UMBRELLA_RED_REGION, "h": 70.0},
-		{"region": Cfg.UMBRELLA_BLUE_REGION, "h": 80.0},
-	]
+	var umbrella_variants: Array = PropSprites.UMBRELLA_VARIANTS
 	var x: float = 260.0
 	var idx: int = 0
 	while x < 2200.0:
@@ -299,15 +295,8 @@ func _spawn_beach_props() -> void:
 		palm_x += rng.randf_range(200.0, 260.0)
 
 func _spawn_prop_sprite(parent: Node, region: Rect2, pos: Vector2, target_height: float) -> void:
-	var s: Sprite2D = Sprite2D.new()
-	s.texture = load(Cfg.TILESET_TEXTURE)
-	s.region_enabled = true
-	s.region_rect = region
-	var scale_factor: float = target_height / region.size.y
-	s.scale = Vector2(scale_factor, scale_factor)
-	# Ancrage par la base (sprite 2D par défaut centré ; on décale pour que le pied touche pos.y)
-	s.position = Vector2(pos.x, pos.y - (region.size.y * scale_factor) * 0.5)
-	parent.add_child(s)
+	# Ancrage par la base — helper partagé avec DistrictDresser (cf. PropSprites).
+	PropSprites.spawn(parent, region, pos, target_height)
 
 func _spawn_interiors() -> void:
 	_shop_spawn = _instantiate_interior(Cfg.SHOP_INT_SCENE, Cfg.INT_SHOP_POS)
@@ -404,6 +393,7 @@ func _spawn_building(parent: Node, pos: Vector2, color: Color) -> void:
 	facade.offset_bottom = Cfg.BUILDING_SIZE.y * 0.5
 	facade.color = color
 	body.add_child(facade)
+	BuildingDressing.paint_relief(body, facade.get_index(), Rect2(-Cfg.BUILDING_SIZE * 0.5, Cfg.BUILDING_SIZE), color)
 
 	for j in 3:
 		var win: ColorRect = ColorRect.new()
@@ -1056,127 +1046,18 @@ func _spawn_favela_house(parent: Node, pos: Vector2, size: Vector2, color: Color
 	var node: Node2D = Node2D.new()
 	node.position = pos + size * 0.5
 	parent.add_child(node)
-
-	# Ombre portée (effet de relief sur la colline)
-	var shadow: ColorRect = ColorRect.new()
-	shadow.offset_left = -size.x * 0.5 + 2
-	shadow.offset_top = -size.y * 0.5 + 2
-	shadow.offset_right = size.x * 0.5 + 3
-	shadow.offset_bottom = size.y * 0.5 + 3
-	shadow.color = Color(0, 0, 0, 0.30)
-	node.add_child(shadow)
-
-	# Mur principal (brique peinte)
+	# Mur principal (brique peinte) ; le relief (ombre, arête, fondation, toit,
+	# porte, fenêtre, décor de toit) vient du helper partagé avec les districts.
+	var local: Rect2 = Rect2(-size * 0.5, size)
 	var wall: ColorRect = ColorRect.new()
-	wall.offset_left = -size.x * 0.5
-	wall.offset_top = -size.y * 0.5
-	wall.offset_right = size.x * 0.5
-	wall.offset_bottom = size.y * 0.5
+	wall.offset_left = local.position.x
+	wall.offset_top = local.position.y
+	wall.offset_right = local.end.x
+	wall.offset_bottom = local.end.y
 	wall.color = color
 	node.add_child(wall)
-
-	# Bande verticale plus claire à gauche (lumière du matin venant de l'est)
-	var highlight: ColorRect = ColorRect.new()
-	highlight.offset_left = -size.x * 0.5
-	highlight.offset_top = -size.y * 0.5 + 3
-	highlight.offset_right = -size.x * 0.5 + 2
-	highlight.offset_bottom = size.y * 0.5 - 4
-	highlight.color = Color(min(color.r + 0.12, 1.0), min(color.g + 0.12, 1.0), min(color.b + 0.12, 1.0), 0.9)
-	node.add_child(highlight)
-
-	# Fondation béton (bande basse plus sombre)
-	var foundation: ColorRect = ColorRect.new()
-	foundation.offset_left = -size.x * 0.5
-	foundation.offset_top = size.y * 0.5 - 3
-	foundation.offset_right = size.x * 0.5
-	foundation.offset_bottom = size.y * 0.5
-	foundation.color = Color(color.r * 0.45, color.g * 0.45, color.b * 0.45, 1)
-	node.add_child(foundation)
-
-	# Bande toit (briques apparentes plus foncées)
-	var roof: ColorRect = ColorRect.new()
-	roof.offset_left = -size.x * 0.5 - 1
-	roof.offset_top = -size.y * 0.5 - 3
-	roof.offset_right = size.x * 0.5 + 1
-	roof.offset_bottom = -size.y * 0.5 + 2
-	roof.color = Color(color.r * 0.40, color.g * 0.40, color.b * 0.40, 1)
-	node.add_child(roof)
-
-	# Porte (en bas, verticale, côté tirage aléatoire)
-	var door: ColorRect = ColorRect.new()
-	var dx: float = -size.x * 0.5 + 4 if door_left else size.x * 0.5 - 9
-	door.offset_left = dx
-	door.offset_top = size.y * 0.5 - 9
-	door.offset_right = dx + 5
-	door.offset_bottom = size.y * 0.5 - 1
-	door.color = Color(0.20, 0.13, 0.08, 1)
-	node.add_child(door)
-
-	# Fenêtre (côté opposé à la porte)
-	var win: ColorRect = ColorRect.new()
-	var winx: float = size.x * 0.5 - 9 if door_left else -size.x * 0.5 + 4
-	win.offset_left = winx
-	win.offset_top = -1
-	win.offset_right = winx + 5
-	win.offset_bottom = 4
-	win.color = Color(0.12, 0.18, 0.28, 1)
-	node.add_child(win)
-
-	# Décor de toit aléatoire — typique des favelas cariocas
-	match roof_kind:
-		0:
-			# Antenne TV (mât + bras horizontal)
-			var mast: ColorRect = ColorRect.new()
-			mast.offset_left = -1
-			mast.offset_top = -size.y * 0.5 - 14
-			mast.offset_right = 1
-			mast.offset_bottom = -size.y * 0.5 - 3
-			mast.color = Color(0.22, 0.20, 0.18, 1)
-			node.add_child(mast)
-			var arm: ColorRect = ColorRect.new()
-			arm.offset_left = -5
-			arm.offset_top = -size.y * 0.5 - 12
-			arm.offset_right = 5
-			arm.offset_bottom = -size.y * 0.5 - 11
-			arm.color = Color(0.22, 0.20, 0.18, 1)
-			node.add_child(arm)
-		1:
-			# Caixa d'água (cylindre bleu sur le toit, omniprésent à Rio)
-			var tank: ColorRect = ColorRect.new()
-			tank.offset_left = size.x * 0.5 - 8
-			tank.offset_top = -size.y * 0.5 - 8
-			tank.offset_right = size.x * 0.5 - 1
-			tank.offset_bottom = -size.y * 0.5 - 2
-			tank.color = Color(0.25, 0.45, 0.70, 1)
-			node.add_child(tank)
-			var lid: ColorRect = ColorRect.new()
-			lid.offset_left = size.x * 0.5 - 8
-			lid.offset_top = -size.y * 0.5 - 9
-			lid.offset_right = size.x * 0.5 - 1
-			lid.offset_bottom = -size.y * 0.5 - 7
-			lid.color = Color(0.18, 0.32, 0.50, 1)
-			node.add_child(lid)
-		2:
-			# Linge à sécher : fil + 3 vêtements
-			var line: ColorRect = ColorRect.new()
-			line.offset_left = -size.x * 0.5 + 2
-			line.offset_top = -size.y * 0.5 - 5
-			line.offset_right = size.x * 0.5 - 2
-			line.offset_bottom = -size.y * 0.5 - 4
-			line.color = Color(0.30, 0.28, 0.25, 1)
-			node.add_child(line)
-			var laundry_colors: Array = [Color(0.95, 0.85, 0.45, 1), Color(0.85, 0.35, 0.42, 1), Color(0.40, 0.65, 0.85, 1)]
-			for k in 3:
-				var cloth: ColorRect = ColorRect.new()
-				var cx: float = -size.x * 0.5 + 4 + k * (size.x - 12) / 2.0
-				cloth.offset_left = cx
-				cloth.offset_top = -size.y * 0.5 - 4
-				cloth.offset_right = cx + 3
-				cloth.offset_bottom = -size.y * 0.5
-				cloth.color = laundry_colors[k]
-				node.add_child(cloth)
-		_:
-			pass
+	BuildingDressing.paint_relief(node, wall.get_index(), local, color,
+		{"windows": true, "door": true, "door_left": door_left, "roof_kind": roof_kind})
 
 # Quiosques du calçadão — les petits kiosques à água de coco omniprésents sur
 # le front de mer. Décor pur, posés sur le bord sud du calçadão.

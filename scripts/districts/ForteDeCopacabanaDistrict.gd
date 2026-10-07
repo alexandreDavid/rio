@@ -1,4 +1,4 @@
-extends Node2D
+extends District
 
 # Forte de Copacabana — district à part entière. Trois portes d'établissement
 # (Café Colombo, Confeitaria 18, Museu Histórico do Exército) câblées au
@@ -13,6 +13,7 @@ extends Node2D
 @onready var _door_museu: Node = get_node_or_null("DoorMuseu")
 
 func _ready() -> void:
+	super._ready()
 	call_deferred("_wire_doors")
 
 func _wire_doors() -> void:

@@ -1,4 +1,4 @@
-extends AmbientDrifter
+extends District
 
 # Niterói : étend AmbientDrifter pour conserver les nuages/mouettes/bateaux
 # animés, et câble la porte d'entrée du MAC vers le SpawnPoint de l'intérieur.

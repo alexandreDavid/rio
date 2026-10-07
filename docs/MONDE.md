@@ -42,6 +42,27 @@ il ne stocke qu'un `last_exit_position`.
 | SantosDumont / AterroFlamengo / Forte | 65-80 | 9-12 | Squelettique |
 | MarinaDaGloria | 71 | 7 | Le plus pauvre |
 
+**Rendu (2026-10-07)** : les 13 scènes sont 100 % ColorRect, sans aucune
+tuile de l'atlas — c'est la cause du « Copa OK, le reste décevant ». Réponse :
+`DistrictDresser` (habillage runtime par groupes `ground_*` + `district_backdrop`,
+écume automatique sur les coutures sable/mer, groupes recolorés `ground_plaza`
+/ `ground_dirt` pour les esplanades et la terre du morro, cf. CLAUDE.md
+« Habiller un district »). Appliqué aux 12 districts joués (`AterroFlamengo.tscn`
+est une scène morte, non référencée). Les palmiers et parasols en rectangles
+sont remplacés par les sprites de l'atlas (`prop_palm`/`prop_umbrella`, helper
+`PropSprites` partagé avec Copa — 58 props sur ZonaSul, Botafogo, Niterói, Barra,
+Forte) ; les lampadaires restent en rects comme à Copa. Les façades taguées
+`building`/`building_favela` (58 sur ZonaSul, Botafogo, Niterói, Barra, Favela,
+Santos Dumont) reçoivent le relief de `BuildingDressing`, le même helper que les
+immeubles et maisons de favela générés à Copa : ombre, arête, fondation, toit,
+fenêtres et porte quand la façade est nue, décor de toit au morro. Inventaire
+des sprites dormants (étape 5) : `props_ai.png` = 12 icônes d'objets à vraie
+transparence, cataloguées dans `scripts/ui/ItemIcons.gd` pour l'UI (rien ne les
+affiche encore) ; `props_ai_clean.png` est inutilisable (damier incrusté) ; la
+bande décor du tileset cachait un second palmier (les deux alternent dans les
+districts), deux serviettes (`prop_towel`, sable d'Ipanema) et une carrocinha de
+plage (`prop_beach_cart`, kiosques de Barra).
+
 Aterro et Santos Dumont partagent la scène BotafogoFlamengo (spawn markers
 distincts) — pas de contenu propre. Les scripts district (31-46 l.) ne font que
 câbler les portes d'intérieur ; ZonaSul/Niteroi/Barra ont un `AmbientDrifter`
