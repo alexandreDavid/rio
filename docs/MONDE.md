@@ -164,7 +164,11 @@ NPCs/13 districts/4 voies), `PlaythroughDriver.tscn` (parcours réel acte 1→2)
 `SCRIPT_COMPLETED_OBJECTIVES`, stations e2e.
 
 Couvert : complétabilité de la trame, intégrité .tres/dialogues, anti-soft-lock
-géométrique, conformité tactile (≥ 44 pt), et depuis le 2026-07-21 la vie
+géométrique (dont, depuis le 2026-10-07, `tools/ReachabilityAudit.tscn` : le
+joueur peut-il physiquement atteindre chacun des 315 interactifs depuis les
+spawns ? — il a révélé 8 spots posés dans des murs ou hors enceinte, dont 5 MAIN :
+Palace heist A8, madrugada B9, trois Reinados d'acte 5 ; et deux enceintes
+ouvertes, Marina et Botafogo), conformité tactile (≥ 44 pt), et depuis le 2026-07-21 la vie
 ambiante (~330 assertions : intégrité du pool d'événements, éligibilité par
 district/phase/flag, bandes de plage altinha, présence et cycle jour/soir des
 groupes EveningOnly, meublage Forte/Aterro). **Non couvert** : NPCScheduler,

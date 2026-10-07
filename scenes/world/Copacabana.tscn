@@ -1485,7 +1485,7 @@ variants = [{
 position = Vector2(1735, 42)
 
 [node name="PalaceHeistSpot" parent="." instance=ExtResource("62_reactive")]
-position = Vector2(1700, -64)
+position = Vector2(1700, -98)
 npc_id = "palace_concierge_night"
 prompt = "Porte des concierges"
 character_seed = 90203

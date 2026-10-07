@@ -3213,7 +3213,7 @@ theme_override_colors/font_outline_color = Color(0, 0, 0, 0.7)
 theme_override_constants/outline_size = 3
 
 [node name="ArpoadorPalmasSpot" parent="." instance=ExtResource("17_reactive")]
-position = Vector2(930, 158)
+position = Vector2(870, 188)
 npc_id = "arpoador_palmas"
 prompt = "La pedra do Arpoador"
 character_seed = 90531

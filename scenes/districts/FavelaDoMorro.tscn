@@ -1347,7 +1347,7 @@ variants = Array[Dictionary]([{
 character_seed = 70411
 
 [node name="JorgeSpot" parent="." unique_id=646533189 instance=ExtResource("7_reactive")]
-position = Vector2(-150, -340)
+position = Vector2(-90, -345)
 npc_id = "vizinho_jorge"
 prompt = "Parler à Seu Jorge"
 variants = Array[Dictionary]([{
@@ -1761,7 +1761,7 @@ offset_bottom = -498.0
 color = Color(0.4, 0.55, 0.85, 1)
 
 [node name="OperacaoMadrugadaSpot" parent="." instance=ExtResource("7_reactive")]
-position = Vector2(130, -440)
+position = Vector2(40, -420)
 npc_id = "operacao_madrugada"
 prompt = "Le point de ralliement de la PM"
 character_seed = 90208

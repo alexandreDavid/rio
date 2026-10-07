@@ -452,7 +452,7 @@ offset_bottom = -208.0
 color = Color(0.85, 0.4, 0.55, 0.7)
 
 [node name="ViewpointAvenue" parent="." instance=ExtResource("4_view")]
-position = Vector2(-100, -50)
+position = Vector2(-100, 30)
 viewpoint_id = "sambodromo_avenida"
 prompt_first = "Regarder l'avenue"
 flavor_speaker = "Sobrinho"
@@ -460,7 +460,7 @@ flavor_text = "Marquês de Sapucaí, mille mètres de béton, cinquante mille go
 money_reward = 100
 
 [node name="CaipirinhaVendor" parent="." instance=ExtResource("5_vendor")]
-position = Vector2(220, 110)
+position = Vector2(60, 40)
 vendor_id = "sambodromo_caipirinha"
 item_label = "Caipirinha"
 price = 15
@@ -568,7 +568,7 @@ variants = [{
 }]
 
 [node name="ReinadoCargaSpot" parent="." instance=ExtResource("7_reactive")]
-position = Vector2(420, 120)
+position = Vector2(315, 165)
 npc_id = "reinado_carga"
 prompt = "Le camarote de Tito"
 character_seed = 90511
@@ -588,7 +588,7 @@ variants = [{
 }]
 
 [node name="ReinadoCamaroteSpot" parent="." instance=ExtResource("7_reactive")]
-position = Vector2(-340, 120)
+position = Vector2(-300, 60)
 npc_id = "reinado_camarote"
 prompt = "Le poste de commandement"
 character_seed = 90512
@@ -616,7 +616,7 @@ variants = [{
 }]
 
 [node name="ReinadoPresidenteSpot" parent="." instance=ExtResource("7_reactive")]
-position = Vector2(440, 170)
+position = Vector2(225, 110)
 npc_id = "reinado_presidente"
 prompt = "La présidente de l'école"
 character_seed = 90513
@@ -642,7 +642,7 @@ variants = [{
 }]
 
 [node name="ReinadoAlasSpot" parent="." instance=ExtResource("7_reactive")]
-position = Vector2(-380, 170)
+position = Vector2(-325, 172)
 npc_id = "reinado_alas"
 prompt = "Le mestre de bateria"
 character_seed = 90514

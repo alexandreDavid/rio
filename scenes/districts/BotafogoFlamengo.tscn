@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3]
+[gd_scene load_steps=25 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/props/TaxiStand.tscn" id="1_taxi"]
 [ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="2_wander"]
@@ -22,6 +22,9 @@ size = Vector2(3900, 12)
 
 [sub_resource type="RectangleShape2D" id="WallH_S"]
 size = Vector2(1400, 12)
+
+[sub_resource type="RectangleShape2D" id="WallH_SUrca"]
+size = Vector2(806, 12)
 
 [sub_resource type="RectangleShape2D" id="WallV"]
 size = Vector2(12, 3100)
@@ -2326,6 +2329,12 @@ position = Vector2(800, 386)
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/SouthEast"]
 shape = SubResource("WallH_S")
+
+[node name="SouthUrca" type="StaticBody2D" parent="Walls"]
+position = Vector2(1903, 386)
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/SouthUrca"]
+shape = SubResource("WallH_SUrca")
 
 [node name="WestSide" type="StaticBody2D" parent="Walls"]
 position = Vector2(-1506, -1150)

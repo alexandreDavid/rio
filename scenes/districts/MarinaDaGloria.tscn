@@ -12,7 +12,7 @@
 size = Vector2(900, 12)
 
 [sub_resource type="RectangleShape2D" id="WallV"]
-size = Vector2(12, 320)
+size = Vector2(12, 412)
 
 [sub_resource type="RectangleShape2D" id="WaterShape"]
 size = Vector2(880, 220)
