@@ -1,0 +1,65 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/ActCard.gd" id="1_actcard"]
+
+[sub_resource type="StyleBoxFlat" id="PanelStyle"]
+bg_color = Color(0.1, 0.1, 0.14, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.95, 0.75, 0.32, 0.9)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+content_margin_left = 26
+content_margin_top = 22
+content_margin_right = 26
+content_margin_bottom = 22
+shadow_color = Color(0, 0, 0, 0.7)
+shadow_size = 16
+
+[node name="ActCard" type="CanvasLayer"]
+layer = 121
+process_mode = 3
+script = ExtResource("1_actcard")
+
+[node name="Backdrop" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.78)
+
+[node name="Panel" type="PanelContainer" parent="."]
+theme_override_styles/panel = SubResource("PanelStyle")
+
+[node name="Margin" type="MarginContainer" parent="Panel"]
+
+[node name="VBox" type="VBoxContainer" parent="Panel/Margin"]
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="Panel/Margin/VBox"]
+text = "Acte"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(0.95, 0.75, 0.32, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.7)
+theme_override_constants/outline_size = 3
+
+[node name="Subtitle" type="Label" parent="Panel/Margin/VBox"]
+text = "Sous-titre"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 15
+theme_override_colors/font_color = Color(0.85, 0.82, 0.75, 1)
+
+[node name="Body" type="Label" parent="Panel/Margin/VBox"]
+text = "Texte"
+theme_override_font_sizes/font_size = 15
+theme_override_colors/font_color = Color(0.95, 0.92, 0.85, 1)
+autowrap_mode = 2
+size_flags_vertical = 3
+
+[node name="Continue" type="Button" parent="Panel/Margin/VBox"]
+text = "Continuer"
+custom_minimum_size = Vector2(0, 48)
+theme_override_font_sizes/font_size = 16

@@ -12,7 +12,7 @@ const KNOTS: Dictionary = {
 	# --- ACTE 3 : Dom Nilton vient personnellement marquer le pivot ---
 	"consortium_act3_intro": {
 		"speaker": "Dom Nilton (consortium)",
-		"text": "*claque la porte de sa Maverick blanche, traverse l'avenida sans regarder les voitures* Sobrinho. Vingt-cinq mille reais en quelques semaines. Tu m'as surpris — sincèrement. *te plante une carte de visite dans la poche* Maintenant écoute-moi : la moitié restante, tu vas pas la sortir de ton milho. Trois portes s'ouvrent à toi à partir de ce soir. Tu peux te poser dans la maison bleue avec Capitão Ramos. Tu peux porter un sac pour Tito et faire la corrida du Carnaval. Ou tu peux serrer des mains à la chapelle avec le padre et te présenter Prefeito. *recule d'un pas* T'as le Carnaval pour clôturer. Choisis vite, malandro.",
+		"text": "*claque la porte de sa Maverick blanche, traverse l'avenida sans regarder les voitures* Sobrinho. Deux mille reais en quelques semaines. Tu m'as surpris — sincèrement. *te plante une carte de visite dans la poche* Maintenant écoute-moi : le reste, tu vas pas le sortir de ton milho. T'as goûté aux patrons ; ce soir, tu en choisis UN, et tu signes. Quatre portes. Tu peux te poser dans la maison bleue avec Capitão Ramos. Tu peux porter un sac pour Tito et faire la corrida du Carnaval. Tu peux serrer des mains à la chapelle avec le padre et te présenter Prefeito. Ou tu peux mettre un costume propre et travailler pour la maison — Magalhães, à la Barra, c'est nous, en plus élégant. *recule d'un pas* Une porte ferme les trois autres. Chaque boulot de ton parrain, je le déduis de ton carnet. Choisis vite, malandro.",
 		"choices": ["Compris, Dom Nilton"],
 	},
 	"consortium_settled": {

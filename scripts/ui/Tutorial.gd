@@ -6,7 +6,7 @@ extends CanvasLayer
 const PAGES: Array = [
 	{
 		"title": "Bem-vindo a Copacabana",
-		"text": "Tu hérites d'une dette de 50 000 R$ envers le consortium. Trois voies s'offrent à toi pour t'en sortir : Polícia, Tráfico, Prefeito. Joue ce que tu veux devenir.",
+		"text": "Ton oncle Zé a disparu. Il te laisse sa carrocinha de milho et 50 000 R$ de dette envers le consortium de Dom Nilton.\n\nQuatre voies pour t'en sortir : Polícia (Capitão Ramos), Tráfico (Tito), Prefeito (le Padre) ou Consórcio (Magalhães). Tu les goûteras toutes avant de choisir.",
 	},
 	{
 		"title": "Comment bouger",
@@ -26,7 +26,7 @@ const PAGES: Array = [
 	},
 	{
 		"title": "Première étape",
-		"text": "Sors de la maison de tio Zé par la pente sud. Descends jusqu'au calçadão de Copacabana. Cherche Seu João près de sa charrette de milho — il te lancera la trame.\n\nBonne chance, sobrinho.",
+		"text": "Tu es dans la maison de Zé, au morro, avec mãe et vovó. Seu João — le vieux compadre de Zé — va débarquer avec des nouvelles.\n\nEnsuite : le morro d'abord (un gamin a disparu), puis l'escalier vers Copacabana, la carrocinha, et 500 R$ d'acompte chez Dom Nilton.\n\nBonne chance, sobrinho.",
 	},
 ]
 

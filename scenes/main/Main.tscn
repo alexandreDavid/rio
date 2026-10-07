@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3]
+[gd_scene load_steps=21 format=3]
 
 [ext_resource type="Script" path="res://scripts/main/MainBoot.gd" id="1_boot"]
 [ext_resource type="Script" path="res://scripts/world/DayLighting.gd" id="12_lighting"]
@@ -19,6 +19,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/Tutorial.tscn" id="17_tuto"]
 [ext_resource type="PackedScene" path="res://scenes/ui/CreditsScreen.tscn" id="18_credits"]
 [ext_resource type="PackedScene" path="res://scenes/ui/CharacterCreator.tscn" id="19_creator"]
+[ext_resource type="PackedScene" path="res://scenes/ui/ActCard.tscn" id="20_actcard"]
 
 [node name="Main" type="Node"]
 script = ExtResource("1_boot")
@@ -64,3 +65,5 @@ layer = 10
 [node name="CreditsScreen" parent="." instance=ExtResource("18_credits")]
 
 [node name="CharacterCreator" parent="." instance=ExtResource("19_creator")]
+
+[node name="ActCard" parent="." instance=ExtResource("20_actcard")]

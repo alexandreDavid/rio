@@ -1,6 +1,6 @@
 extends NPC
 
-# Spécialisation : tio Zé (Seu João) parle différemment selon où il est et où
+# Spécialisation : Seu João (le compadre de Zé, PAS l'oncle) parle différemment selon où il est et où
 # en est l'histoire. Dans la maison du morro, il devient le mentor familial qui
 # commente les pivots narratifs (1er acompte, reveal du Concierge, choix de voie,
 # veille du Carnaval). Sur le calçadão / charrette, il garde son rôle d'origine.

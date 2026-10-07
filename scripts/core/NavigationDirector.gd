@@ -53,7 +53,7 @@ const PATRONS: Array = [
 const STEP: Dictionary = {
 	# --- PROLOGUE : recherche de Pedrinho (1re quête principale) ---
 	"prologue_pedrinho/ask_mae": {"text": "🎯 Parle à la mère de Pedrinho (favela)", "dist": "favela_morro", "anchor": "", "short": "La mère"},
-	"prologue_pedrinho/ask_vovo": {"text": "🎯 Demande à la vovó ce qu'elle a vu (chez tio Zé)", "dist": "favela_morro", "anchor": "", "short": "Vovó (maison)"},
+	"prologue_pedrinho/ask_vovo": {"text": "🎯 Demande à la vovó ce qu'elle a vu (à la maison)", "dist": "favela_morro", "anchor": "", "short": "Vovó (maison)"},
 	"prologue_pedrinho/ask_garoto": {"text": "🎯 Fais parler Juca, le gamin qui jouait avec Pedrinho (favela)", "dist": "favela_morro", "anchor": "", "short": "Juca"},
 	"prologue_pedrinho/find_pedrinho": {"text": "🎯 Cherche Pedrinho dans la vieille citerne (haut du morro, près de la chapelle)", "dist": "favela_morro", "anchor": "", "short": "La citerne"},
 	"prologue_pedrinho/bring_home": {"text": "🎯 Ramène Pedrinho à sa mère", "dist": "favela_morro", "anchor": "", "short": "La mère"},
@@ -244,21 +244,21 @@ func _compute_selection() -> Dictionary:
 				return pro
 		if not CampaignManager.has_flag("intro_bump_seen"):
 			return _S("🎯 Sors de la maison — Seu João arrive avec des nouvelles")
-		return _S("🎯 Parle à tio Zé", "", "npc:seu_joao", "Tio Zé")
+		return _S("🎯 Parle à Seu João, le compadre de Zé (maison)", "", "npc:seu_joao", "Seu João")
 
 	# --- Soir : la famille attend pour le jantar ---
 	if is_evening and act <= 3 and CampaignManager.chosen_endgame == CampaignManager.Endgame.NONE \
 			and district != "favela_morro":
-		return _S("🌙 Rentre dîner — tio Zé et mãe attendent", "favela_morro", "", "Maison")
+		return _S("🌙 Rentre dîner — mãe, vovó et Seu João t'attendent (maison du morro)", "favela_morro", "", "Maison")
 
 	# --- Acte 1 — clôture : acompte payé (act1_heritage finie) mais retour maison
-	#     + nuit chez tio Zé pas encore faits → rentrer parler à tio Zé. C'est CE
+	#     + nuit dans la maison de Zé pas encore faits → rentrer parler à Seu João. C'est CE
 	#     retour qui ferme l'acte 1 et ouvre l'acte 2. ---
 	if act == 1 and QuestManager.is_completed("act1_heritage") \
 			and not CampaignManager.has_flag("act1_closed"):
 		if district == "favela_morro":
-			return _S("🎯 Rentre dans la maison parler à tio Zé (la nuit va tomber)", "", "npc:seu_joao", "Maison · tio Zé")
-		return _S("🎯 Acompte payé — rentre à la favela parler à tio Zé", "favela_morro", "", "Maison · tio Zé")
+			return _S("🎯 Rentre dans la maison parler à Seu João (la nuit va tomber)", "", "npc:seu_joao", "Maison · Seu João")
+		return _S("🎯 Acompte payé — rentre à la maison du morro parler à Seu João", "favela_morro", "", "Maison · Seu João")
 
 	# --- Dans la favela ---
 	if district == "favela_morro":
@@ -266,9 +266,9 @@ func _compute_selection() -> Dictionary:
 		# En acte 2+, ne pas la ressortir : la logique d'acte (famille / nuit /
 		# patrons) doit prendre la main.
 		if act == 1 and not carrying and not CampaignManager.has_flag("first_sale_done"):
-			return _S("🎯 Prends la carrocinha à côté de chez tio Zé", "", "cart", "Carrocinha")
+			return _S("🎯 Prends la carrocinha de Zé, à côté de la maison", "", "cart", "Carrocinha")
 		if CampaignManager.has_flag("should_visit_home") and not CampaignManager.has_flag("home_visit_done"):
-			return _S("🎯 Monte voir tio Zé et la famille", "", "npc:seu_joao", "Tio Zé")
+			return _S("🎯 Monte voir Seu João et la famille (maison)", "", "npc:seu_joao", "Seu João")
 		# En acte 1, le défaut favela = redescendre vendre. En acte 2+, on laisse
 		# la logique d'acte décider (Tito est ici : _patron_target le ciblera).
 		if act == 1:
@@ -287,10 +287,10 @@ func _compute_selection() -> Dictionary:
 			if carrying:
 				return _S("🎯 Sers les clients du calçadão (R$ %d / %d)" % [money, still_to_pay], "", "calcadao", "Calçadão")
 			return _S("🎯 Continue de gagner R$ — il manque %d pour l'acompte" % (still_to_pay - money), "", "calcadao", "Calçadão")
-		return _S("🎯 Acompte payé — rentre à la favela parler à tio Zé", "favela_morro", "", "Maison · tio Zé")
+		return _S("🎯 Acompte payé — rentre à la maison du morro parler à Seu João", "favela_morro", "", "Maison · Seu João")
 
 	# --- Acte 2 : échantillon des 4 patrons (1re mission de chaque voie) ---
-	# La clôture de l'acte 1 (retour maison + nuit chez tio Zé) est désormais un
+	# La clôture de l'acte 1 (retour maison + nuit dans la maison de Zé) est désormais un
 	# prérequis de l'acte 2 — plus besoin de la gérer ici.
 	if act == 2:
 		if not CampaignManager.has_flag("tito_approached") \
@@ -323,7 +323,7 @@ func _compute_selection() -> Dictionary:
 			var ptp: Dictionary = _patron_target(true)
 			if not ptp.is_empty():
 				return ptp
-			return _S("🎯 Le vrai choix : va sceller un pacte (Tito / Ramos / Magalhães / Padre)")
+			return _S("🎯 Le vrai choix : scelle un pacte — Tito (morro), Ramos (Academia), Magalhães (Barra) ou le Padre (église)")
 		var st3: Dictionary = _active_step()
 		if not st3.is_empty():
 			return st3
@@ -333,14 +333,14 @@ func _compute_selection() -> Dictionary:
 			return vc3
 		if debt_paid < CampaignManager.ACT3_THRESHOLD:
 			var still3: int = CampaignManager.ACT3_THRESHOLD - debt_paid
-			return _S("🎯 Avance dans ta voie — %s R$ avant les Grands Lances (acte 4)" % still3)
+			return _S("🎯 Avance dans ta voie — chaque mission crédite ta dette ; encore %s R$ avant les Grands Lances (acte 4)" % still3)
 
 	# --- Acte 4 : Os Grandes Lances ---
 	if act == 4:
 		var st4: Dictionary = _active_step()
 		if not st4.is_empty():
 			return st4
-		return _S("🎯 Os Grandes Lances — gros coup, couronnement, ou assassinat du consortium")
+		return _S("🎯 Os Grandes Lances — retrouve ton parrain : le gros coup, puis le couronnement")
 
 	# --- Acte 5 : reinado — les quêtes de règne d'abord, le desfile en climax ---
 	if act == 5:

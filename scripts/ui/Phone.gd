@@ -408,15 +408,14 @@ func _add_act_tracker() -> void:
 		hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		stats_box.add_child(hint)
 		return
-	if act == 3:
-		section.text = "🎯 Acte 3 — Choisir une voie"
-		stats_box.add_child(section)
-		_add_act3_hint()
-		return
-	section.text = "🎯 Acte %d → %d" % [act, act + 1]
+	section.text = "🎯 %s → Acte %d" % [CampaignManager.act_title(act), act + 1]
 	stats_box.add_child(section)
+	if act == 3:
+		_add_act3_hint()
 	# Barre de progression dette (seuils lus depuis CampaignManager).
-	var threshold: int = CampaignManager.ACT1_THRESHOLD if act == 1 else CampaignManager.ACT2_THRESHOLD
+	var threshold: int = CampaignManager.next_act_threshold()
+	if threshold <= 0:
+		return
 	var paid: int = CampaignManager.debt_paid
 	var pct_bar: HBoxContainer = HBoxContainer.new()
 	pct_bar.add_theme_constant_override("separation", 8)
@@ -456,10 +455,10 @@ func _add_act3_hint() -> void:
 	hint.add_theme_font_size_override("font_size", 12)
 	hint.add_theme_color_override("font_color", Color(0.7, 0.7, 0.75))
 	if endgame == CampaignManager.Endgame.NONE:
-		hint.text = "Trois voies, mutuellement exclusives :\n  • Ramos (Bar) → Polícia\n  • Miguel (Morro) → Tráfico\n  • Padre (Chapelle) → Prefeito"
+		hint.text = "Quatre voies, mutuellement exclusives — scelle un pacte :\n  • Capitão Ramos (Academia, Copa) → Polícia\n  • Tito (Favela do Morro) → Tráfico\n  • Padre Anselmo (église, Copa) → Prefeito\n  • Sr. Magalhães (Riserva Uno, Barra) → Consórcio"
 	else:
 		var name: String = CampaignManager.endgame_name()
-		hint.text = "Voie scellée : %s. Termine la chaîne pour l'acte 4." % name
+		hint.text = "Voie scellée : %s. Chaque mission crédite ta dette — 6 000 R$ ouvrent l'acte 4." % name
 	stats_box.add_child(hint)
 
 func _add_stat_label(prefix: String, value: String, color: Color) -> void:
@@ -569,6 +568,7 @@ func _refresh_cronica() -> void:
 	main_lines.sort_custom(_cronica_sort)
 	side_lines.sort_custom(_cronica_sort)
 
+	_add_cronica_resumo()
 	if not main_lines.is_empty():
 		_add_cronica_section("HISTÓRIA", Color(1.0, 0.9, 0.55, 1))
 		for line in main_lines:
@@ -606,6 +606,20 @@ func _cronica_sort(a: Dictionary, b: Dictionary) -> bool:
 	if ai != bi:
 		return ai < bi
 	return (a.quest as Quest).display_name < (b.quest as Quest).display_name
+
+# « Onde estou » en tête de la Crônica : la situation en quelques phrases
+# (qui est qui, la dette, ce qu'on attend de toi). Généré par NarrativeJournal.
+func _add_cronica_resumo() -> void:
+	_add_cronica_section("📍 ONDE ESTOU", Color(0.95, 0.85, 0.4, 1))
+	for line in NarrativeJournal.story_so_far():
+		var lbl: Label = Label.new()
+		lbl.text = line
+		lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		lbl.add_theme_font_size_override("font_size", 14)
+		lbl.add_theme_color_override("font_color", Color(0.92, 0.9, 0.85, 1))
+		cronica_box.add_child(lbl)
+	var sep: HSeparator = HSeparator.new()
+	cronica_box.add_child(sep)
 
 func _add_cronica_section(title: String, color: Color) -> void:
 	var label: Label = Label.new()

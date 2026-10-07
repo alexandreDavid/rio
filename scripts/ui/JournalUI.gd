@@ -52,14 +52,11 @@ func _on_entry_unlocked(_knot_id: String) -> void:
 		_refresh_counter()
 
 func _select_first_unlocked_category() -> void:
-	# Préfère une catégorie qui a des entrées débloquées.
-	for cat in NarrativeJournal.CATEGORIES:
-		if NarrativeJournal.entries_in(cat.id).size() > 0:
-			_current_category = cat.id
-			return
-	# Fallback : première catégorie déclarative.
-	if NarrativeJournal.CATEGORIES.size() > 0:
-		_current_category = NarrativeJournal.CATEGORIES[0].id
+	# « Onde estou » d'abord : c'est la réponse à « je suis perdu », elle a
+	# toujours du contenu. Sinon, première catégorie qui a des entrées.
+	if _current_category != "":
+		return
+	_current_category = NarrativeJournal.RESUMO_ID
 
 func _refresh_counter() -> void:
 	if counter:
@@ -70,10 +67,11 @@ func _refresh_categories() -> void:
 		return
 	for child in category_list.get_children():
 		child.queue_free()
-	for cat in NarrativeJournal.CATEGORIES:
-		var count: int = NarrativeJournal.entries_in(cat.id).size()
+	for cat in NarrativeJournal.categories():
+		var is_resumo: bool = cat.id == NarrativeJournal.RESUMO_ID
+		var count: int = 1 if is_resumo else NarrativeJournal.entries_in(cat.id).size()
 		var btn: Button = Button.new()
-		btn.text = "%s  (%d)" % [cat.label, count]
+		btn.text = cat.label if is_resumo else "%s  (%d)" % [cat.label, count]
 		btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		btn.flat = true
 		btn.add_theme_font_size_override("font_size", 14)
@@ -99,6 +97,16 @@ func _refresh_entries() -> void:
 		return
 	for child in entry_list.get_children():
 		child.queue_free()
+	if _current_category == NarrativeJournal.RESUMO_ID:
+		# Une seule « entrée », générée : la situation en 4-7 phrases.
+		_show_detail("Onde estou — où j'en suis", "", "\n\n".join(NarrativeJournal.story_so_far()))
+		var lbl: Label = Label.new()
+		lbl.text = "Résumé de ta situation, mis à jour en direct."
+		lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		lbl.add_theme_font_size_override("font_size", 13)
+		lbl.add_theme_color_override("font_color", Color(0.7, 0.7, 0.75, 1))
+		entry_list.add_child(lbl)
+		return
 	var entries: Array = NarrativeJournal.entries_in(_current_category)
 	if entries.is_empty():
 		var empty: Label = Label.new()

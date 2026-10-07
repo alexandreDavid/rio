@@ -281,7 +281,7 @@ variants = [{
 "not_flag": "mae_sick_seen",
 "set_flag_after": "mae_sick_seen",
 "speaker": "Mãe",
-"text": "*tousse profondément, s'assied sur la chaise sans pouvoir terminer la moqueca* Ne t'inquiète pas, sobrinho. *reprend son souffle* Vovó dit que je marche trop vite vers la chapelle. *te tend une enveloppe pliée trois fois* Pour la pharmacie de Tito — il a une remise pour la famille maintenant. Si tu peux passer, je dormirai mieux.",
+"text": "*tousse profondément, s'assied sur la chaise sans pouvoir terminer la moqueca* Ne t'inquiète pas, filho. *reprend son souffle* Vovó dit que je marche trop vite vers la chapelle. *te tend une enveloppe pliée trois fois* Pour la pharmacie de Tito — il a une remise pour la famille maintenant. Si tu peux passer, je dormirai mieux.",
 "choices": ["Vai dar tudo certo, mãe"]
 }, {
 "id": "revisit",
@@ -289,7 +289,7 @@ variants = [{
 "not_flag": "mae_revisit_seen",
 "set_flag_after": "mae_revisit_seen",
 "speaker": "Mãe",
-"text": "*ne se retourne pas, fixe la marmite* Ils sont revenus aujourd'hui. Trois hommes cette fois. *touille très lentement* Ils ont demandé du sucre. Du sucre, sobrinho. Pour me faire savoir qu'ils savent où on vit, où je range mes provisions, comment fonctionne ma cuisine. *te regarde enfin* Continue de payer. Mais pas trop vite. Si tu paies trop vite ils penseront que tu mens sur tes revenus.",
+"text": "*ne se retourne pas, fixe la marmite* Ils sont revenus aujourd'hui. Trois hommes cette fois. *touille très lentement* Ils ont demandé du sucre. Du sucre, filho. Pour me faire savoir qu'ils savent où on vit, où je range mes provisions, comment fonctionne ma cuisine. *te regarde enfin* Continue de payer. Mais pas trop vite. Si tu paies trop vite ils penseront que tu mens sur tes revenus.",
 "choices": ["Compris, mãe"]
 }, {
 "id": "letter",
@@ -297,14 +297,14 @@ variants = [{
 "not_flag": "mae_letter_seen",
 "set_flag_after": "mae_letter_seen",
 "speaker": "Mãe",
-"text": "*tient une enveloppe froissée, les mains tremblantes* Sobrinho... un homme du consortium est passé pendant que tu vendais. Costume blanc, sourire trop large. *te tend la lettre, une croix noire au dos* Ils savent que t'es le neveu de Zé. Ils savent où on dort. *éclate en larmes silencieuses, sans bouger* Promets-moi que tu rentres entier ce soir. Promets-moi.",
+"text": "*tient une enveloppe froissée, les mains tremblantes* Meu filho... un homme du consortium est passé pendant que tu vendais. Costume blanc, sourire trop large. *te tend la lettre, une croix noire au dos* Ils savent que t'es le neveu de Zé. Ils savent où on dort. *éclate en larmes silencieuses, sans bouger* Promets-moi que tu rentres entier ce soir. Promets-moi.",
 "choices": ["Promets, mãe"]
 }, {
 "id": "after_payment",
 "flag": "first_payment_done",
 "set_flag_after": "home_visit_done",
 "speaker": "Mãe",
-"text": "*pose la louche, te regarde enfin droit dans les yeux* Cinq cents reais d'acompte. *sa voix tremble un peu* Tu portes la famille comme Zé portait la charrette. Mange, sobrinho. C'est encore chaud. Et le consortium peut attendre cinq minutes.",
+"text": "*pose la louche, te regarde enfin droit dans les yeux* Cinq cents reais d'acompte. *sa voix tremble un peu* Tu portes la famille comme Zé portait la charrette. Mange, filho. C'est encore chaud. Et le consortium peut attendre cinq minutes.",
 "choices": ["Obrigado, mãe"]
 }, {
 "id": "after_first_sale",
@@ -316,12 +316,12 @@ variants = [{
 "id": "intro_worried",
 "not_flag": "intro_bump_seen",
 "speaker": "Mãe",
-"text": "*essuie ses mains à son tablier, regard qui glisse vers la porte* Sobrinho... ton tio Zé n'est pas rentré hier soir. Ni avant-hier. *baisse la voix* Trois matins que sa cachaça reste fermée. *pose la louche, te touche le bras* Va voir dehors, mon fils. Demande à Seu João — il sait peut-être quelque chose. Mais reviens vite.",
+"text": "*essuie ses mains à son tablier, regard qui glisse vers la porte* Meu filho... ton tio Zé n'est pas rentré hier soir. Ni avant-hier. *baisse la voix* Trois matins que sa cachaça reste fermée. *pose la louche, te touche le bras* Va voir dehors, mon fils. Demande à Seu João — il sait peut-être quelque chose. Mais reviens vite.",
 "choices": ["J'y vais, mãe"]
 }, {
 "id": "default",
 "speaker": "Mãe",
-"text": "*remue la moqueca, ne te regarde pas* Mange avant de partir, sobrinho. La rue est dure ce matin. Et n'oublie pas le jantar — j'ai mis le couvert pour trois, comme avant. Comme si Zé allait rentrer.",
+"text": "*remue la moqueca, ne te regarde pas* Mange avant de partir, filho. La rue est dure ce matin. Et n'oublie pas le jantar — j'ai mis le couvert pour trois, comme avant. Comme si Zé allait rentrer.",
 "choices": ["Obrigado, mãe"]
 }]
 
@@ -341,7 +341,7 @@ variants = [{
 "flag": "is_ng_plus",
 "set_flag_after": "vovo_ng_plus_seen",
 "speaker": "Vovó",
-"text": "*pose son tricot, te scrute longuement* Sobrinho. Cette nuit j'ai rêvé de toi en écharpe verte. Ou en uniforme bleu. Ou avec un drapeau rouge à la fenêtre — j'sais plus, je vieillis. *reprend son tricot, voix plus basse* Mais je sais que je t'ai déjà vu rentrer entier. *sourit pour elle-même* La famille reste debout. À chaque fois.",
+"text": "*pose son tricot, te scrute longuement* Meu neto. Cette nuit j'ai rêvé de toi en écharpe verte. Ou en uniforme bleu. Ou avec un drapeau rouge à la fenêtre — j'sais plus, je vieillis. *reprend son tricot, voix plus basse* Mais je sais que je t'ai déjà vu rentrer entier. *sourit pour elle-même* La famille reste debout. À chaque fois.",
 "choices": ["Sim, vovó"]
 }, {
 "id": "ze_anonymous_letter",
@@ -349,26 +349,26 @@ variants = [{
 "not_flag": "vovo_ze_letter_seen",
 "set_flag_after": "vovo_ze_letter_seen",
 "speaker": "Vovó",
-"text": "*sort une feuille pliée de sous son tricot, la garde dans sa main, ne te la donne pas* Sobrinho. Hier sous la porte. Pas de signature. Mais l'écriture, je la connais depuis cinquante ans. *lit à voix basse, sans articuler* « Le neveu fait honneur. Ne pose pas de questions. Continue. » *replie la feuille, la rentre dans son tricot* Tu n'as rien vu. Tu m'as rien entendu. *reprend sa maille comme si rien*",
+"text": "*sort une feuille pliée de sous son tricot, la garde dans sa main, ne te la donne pas* Meu neto. Hier sous la porte. Pas de signature. Mais l'écriture, je la connais depuis cinquante ans. *lit à voix basse, sans articuler* « Le neveu fait honneur. Ne pose pas de questions. Continue. » *replie la feuille, la rentre dans son tricot* Tu n'as rien vu. Tu m'as rien entendu. *reprend sa maille comme si rien*",
 "choices": ["…Obrigado, vovó"]
 }, {
 "id": "letter_observed",
 "flag": "mae_letter_triggered",
 "speaker": "Vovó",
-"text": "*continue de tricoter, voix très basse* Ta mère a pleuré sans bruit cet après-midi. Elle pleure toujours sans bruit, comme sa mère. *ne lève pas les yeux* La lettre, elle l'a brûlée. Mais l'enveloppe avec la croix, elle l'a glissée sous mon tricot. *te regarde enfin* Fais-leur du mal en retour, sobrinho. Pas de la peur. Du mal.",
+"text": "*continue de tricoter, voix très basse* Ta mère a pleuré sans bruit cet après-midi. Elle pleure toujours sans bruit, comme sa mère. *ne lève pas les yeux* La lettre, elle l'a brûlée. Mais l'enveloppe avec la croix, elle l'a glissée sous mon tricot. *te regarde enfin* Fais-leur du mal en retour, neto. Pas de la peur. Du mal.",
 "choices": ["Sim, vovó"]
 }, {
 "id": "after_reveal",
 "flag": "tio_ze_revealed",
 "speaker": "Vovó",
-"text": "*sans cesser de tricoter* Sobrinho. Le Concierge du Palace… *baisse la voix d'un cran* La famille n'est pas toujours où on croit. Mais c'est encore la famille, hein. Le sang ne ment pas, même quand l'homme se cache derrière un uniforme.",
+"text": "*sans cesser de tricoter* Meu neto. Le Concierge du Palace… *baisse la voix d'un cran* La famille n'est pas toujours où on croit. Mais c'est encore la famille, hein. Le sang ne ment pas, même quand l'homme se cache derrière un uniforme.",
 "choices": ["Sim, vovó"]
 }, {
 "id": "after_payment",
 "flag": "first_payment_done",
 "set_flag_after": "home_visit_done",
 "speaker": "Vovó",
-"text": "*pose son tricot* Cinq cents reais. *te prend la main, ses doigts secs et chauds* Le premier billet est le plus dur, sobrinho. Les autres suivront, comme les vagues. Tudo é teu, comme disait Zé. Maintenant prouve-le.",
+"text": "*pose son tricot* Cinq cents reais. *te prend la main, ses doigts secs et chauds* Le premier billet est le plus dur, neto. Les autres suivront, comme les vagues. Tudo é teu, comme disait Zé. Maintenant prouve-le.",
 "choices": ["Obrigado, vovó"]
 }, {
 "id": "after_first_sale",
@@ -380,11 +380,11 @@ variants = [{
 "id": "intro_worried",
 "not_flag": "intro_bump_seen",
 "speaker": "Vovó",
-"text": "*pose son tricot, fixe la porte sans cligner* Mon Zé. *long silence* Il a dit qu'il allait au calçadão. Il n'est pas revenu. Quatre matins. *reprend une maille très lentement* Va dehors, sobrinho. Le morro a une langue. Quelqu'un sait quelque chose. Et ramène-moi des nouvelles, même mauvaises.",
+"text": "*pose son tricot, fixe la porte sans cligner* Mon Zé. *long silence* Il a dit qu'il allait au calçadão. Il n'est pas revenu. Quatre matins. *reprend une maille très lentement* Va dehors, neto. Le morro a une langue. Quelqu'un sait quelque chose. Et ramène-moi des nouvelles, même mauvaises.",
 "choices": ["Sim, vovó"]
 }, {
 "id": "default",
 "speaker": "Vovó",
-"text": "*sans cesser de tricoter, voix douce* Sobrinho. J'ai rêvé de ton oncle cette nuit. Il était assis au bord de la mer, en train de faire griller du milho, comme quand t'étais petit. Il riait. Va lui faire honneur. Vends son milho. La famille tient debout par les mains qui travaillent.",
+"text": "*sans cesser de tricoter, voix douce* Meu neto. J'ai rêvé de ton oncle cette nuit. Il était assis au bord de la mer, en train de faire griller du milho, comme quand t'étais petit. Il riait. Va lui faire honneur. Vends son milho. La famille tient debout par les mains qui travaillent.",
 "choices": ["Sim, vovó"]
 }]

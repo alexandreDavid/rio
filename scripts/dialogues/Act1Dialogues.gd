@@ -21,7 +21,7 @@ const KNOTS: Dictionary = {
 	},
 	"game_intro_disparu": {
 		"speaker": "Narrateur",
-		"text": "Rio de Janeiro. Copacabana. Un matin comme les autres, sauf que Zé — ton oncle, ton parrain, ton problème — a disparu.\n\nIl t'a laissé trois choses : sa carrocinha de milho, les clefs d'un studio au Morro, et une dette de cinquante mille reais.\n\nLe Carnaval est dans un mois. Tu ferais mieux d'avoir réglé la note d'ici là.",
+		"text": "Rio de Janeiro. Copacabana. Un matin comme les autres, sauf que Zé — ton oncle, le frère de ta mère, ton parrain, ton problème — a disparu.\n\nIl t'a laissé trois choses : sa carrocinha de milho, sa maison du Morro où tu vis avec mãe et vovó, et une dette de cinquante mille reais.\n\nDans la cuisine, mãe fait chauffer la moqueca. Seu João, le vieux compadre de Zé — trente ans de calçadão côte à côte, pas ton sang mais tu l'appelles tio depuis toujours — ne va pas tarder à monter.\n\nLe Carnaval est dans un mois. Tu ferais mieux d'avoir réglé la note d'ici là.",
 		"choices": ["Continuer"],
 		"on_choose": {"0": {"next": "game_intro_voies"}},
 	},
@@ -143,7 +143,7 @@ const KNOTS: Dictionary = {
 	},
 	"seu_joao_evening_what_next": {
 		"speaker": "Seu João",
-		"text": "Après ? Tu retournes au calçadão demain matin, et tu poses 500 de plus. Et 500 de plus. Et 500 de plus. Cinquante mille avant le Carnaval, sobrinho. *rire amer* Ou tu choisis un parrain, pô. Ramos, Tito, ou le padre de la chapelle. Tous les trois te trouveront avant que tu les trouves.",
+		"text": "Après ? Tu retournes au calçadão demain matin, et tu poses 500 de plus. Et 500 de plus. Et 500 de plus. Cinquante mille avant le Carnaval, sobrinho. *rire amer* Ou tu choisis un parrain, pô. Ramos à l'Academia, Tito au morro, le padre de la chapelle — ou Magalhães, le costume propre du consortium, là-bas à la Barra. Tous les quatre te trouveront avant que tu les trouves. Écoute-les tous avant de signer quoi que ce soit.",
 		"choices": ["D'accord, tio"],
 	},
 	# --- Soirée 2 : Seu João après le reveal du Concierge (flag tio_ze_revealed) ---
@@ -268,7 +268,7 @@ const KNOTS: Dictionary = {
 	},
 	"act1_night_wake": {
 		"speaker": "Narrateur",
-		"text": "Matin. Tu as dormi par à-coups. Le morro s'éveille, en bas le calçadão vibre déjà. T'as fait tes preuves face au consortium — au morro les nouvelles montent vite, Tito doit déjà le savoir. Tu te lèves : il est temps de choisir un camp.",
+		"text": "Matin. Tu as dormi par à-coups. Le morro s'éveille, en bas le calçadão vibre déjà. T'as fait tes preuves face au consortium — au morro les nouvelles montent vite, Tito doit déjà le savoir. Et les autres aussi. Tu te lèves : ils vont venir te renifler, chacun avec un petit boulot. Écoute-les tous. Le choix, ce sera pour plus tard.",
 		"choices": ["Sortir"],
 		"on_choose": {"0": {"set_flag": "act1_closed"}},
 	},

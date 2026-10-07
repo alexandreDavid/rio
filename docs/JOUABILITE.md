@@ -78,6 +78,18 @@ calçadão), et l'app Saúde explique enfin cash ≠ dette. **Reste ouvert** :
 pas de décroissance de réputation, milho toujours anecdotique passé
 l'acte 1, Fishing/Exercise toujours superficiels (axe F).
 
+### P6. Le scénario est confus — RÉSOLU (clarté, 2026-09-16)
+Retour utilisateur du 2026-09-16. Causes vérifiées : Seu João appelé « tio Zé »
+par le guidage/Diário (alors que Zé est le disparu), mãe qui dit « sobrinho »,
+titres d'acte différents selon la surface, bascule d'acte = toast de 1,2 s,
+chiffres faux chez Nilton (« 25 000 », « trois portes »), 3 voies dans le
+tutoriel/Saúde, messages contradictoires en acte 2, aucun résumé de situation.
+Livré : canon des identités + réécriture des surfaces, `ACT_TITLES` source
+unique, **carte d'acte** à chaque bascule, **« Onde estou »** généré
+(`story_so_far`) en tête de la Crônica et du Diário, 4 voies et vrais seuils
+partout. Détail : `NARRATIF.md` §8. Reste ouvert : l'Épilogue ne reflète pas
+encore les carrefours ; Contessa orpheline après le gala.
+
 ## Bugs & frictions à corriger vite (petits, forts en impact)
 
 | # | Problème | Où |

@@ -15,6 +15,7 @@ func run() -> void:
 	_test_pmpatrol_act_dispatch()
 	_test_reactive_variant_matching()
 	_test_epilogue_paths_present()
+	_test_story_clarity()
 
 
 # Bascule acte 1 → 2 via les vrais mécanismes : accepter act1_heritage,
@@ -424,3 +425,105 @@ func _test_epilogue_paths_present() -> void:
 		_assert(String(data.get("title", "")) != "", "voie %d : title non vide" % path)
 		_assert(String(data.get("body", "")).length() > 200, "voie %d : body substantiel (>200 chars)" % path)
 
+
+# Clarté du scénario (retour 2026-09-16 « le scénario est confus ») :
+#  - Seu João n'est jamais appelé « tio Zé » dans les surfaces joueur ;
+#  - une seule source pour les titres d'acte (HUD, Diário, Saúde, carte) ;
+#  - chaque bascule d'acte a une carte non vide ;
+#  - « Onde estou » (story_so_far) reflète l'état : Zé, Nilton, dette, patrons
+#    goûtés, voie scellée, règne.
+func _test_story_clarity() -> void:
+	_section("Clarté du scénario — identités, titres d'acte, « Onde estou »")
+	_reset_campaign_state()
+	# 1. Titres et cartes d'acte : source unique, complète.
+	for n in range(1, 6):
+		_assert(CampaignManager.ACT_TITLES.has(n), "ACT_TITLES a l'acte %d" % n)
+		_assert(CampaignManager.act_title(n).begins_with("Acte %d" % n), "act_title(%d) commence par « Acte %d »" % [n, n])
+	for n in range(2, 6):
+		_assert(CampaignManager.act_card_body(n).length() > 120, "carte d'acte %d substantielle" % n)
+		_assert(not ("tio Zé" in CampaignManager.act_card_body(n)), "carte d'acte %d : pas de « tio Zé »" % n)
+	_assert(CampaignManager.act_card_body(1) == "", "pas de carte pour l'acte 1 (l'intro narrative s'en charge)")
+	_assert("Magalhães" in CampaignManager.act_card_body(2) and "Ramos" in CampaignManager.act_card_body(2),
+		"carte acte 2 : nomme les 4 patrons")
+	_assert("2 000" in CampaignManager.act_card_body(2), "carte acte 2 : dit le seuil 2 000 R$")
+	_assert("6 000" in CampaignManager.act_card_body(3), "carte acte 3 : dit le seuil 6 000 R$")
+	# Le Diário lit les mêmes titres.
+	var cats: Array = NarrativeJournal.categories()
+	_assert(cats.size() > 0 and cats[0].id == NarrativeJournal.RESUMO_ID, "Diário : « Onde estou » en première catégorie")
+	for cat in cats:
+		if cat.has("act"):
+			_assert(cat.label == CampaignManager.act_title(int(cat.act)), "Diário : libellé acte %d = ACT_TITLES" % int(cat.act))
+	# Les titres de journal ne confondent plus Seu João et Zé (les knots où
+	# Seu João PARLE ne sont pas titrés « tio Zé … » ; « L'héritage de tio Zé »
+	# reste juste : c'est bien l'héritage de l'oncle).
+	for knot in ["seu_joao_evening_ramos", "seu_joao_ng_plus_intro", "seu_joao_advice"]:
+		var title: String = String(NarrativeJournal.JOURNAL_ENTRIES.get(knot, {}).get("title", ""))
+		_assert(title != "" and not ("tio Zé" in title) and not ("tio Seu" in title),
+			"titre Diário '%s' nomme Seu João, pas « tio Zé » (%s)" % [knot, title])
+	# 2. Guidage acte 1 : Seu João nommé, jamais « tio Zé ».
+	CampaignManager.set_flag("intro_bump_seen")
+	NavigationDirector._recompute()
+	var g: String = NavigationDirector.current_text()
+	_assert("Seu João" in g, "guidage pré-héritage nomme Seu João (obtenu : %s)" % g)
+	_assert(not ("tio Zé" in g), "guidage pré-héritage sans « tio Zé »")
+	var all_nav: String = FileAccess.get_file_as_string("res://scripts/core/NavigationDirector.gd")
+	_assert(all_nav.count("Parle à tio Zé") == 0 and all_nav.count("voir tio Zé") == 0,
+		"NavigationDirector : aucune instruction « parle/voir tio Zé »")
+	# Le tutoriel et l'app Saúde disent 4 voies.
+	var tuto: Dictionary = (load("res://scripts/ui/Tutorial.gd") as GDScript).get_script_constant_map()
+	var page0: String = String(tuto["PAGES"][0].get("text", ""))
+	_assert("Quatre voies" in page0 and "Magalhães" in page0, "Tutorial : 4 voies dont Consórcio")
+	_assert(not ("Trois voies" in page0), "Tutorial : plus de « trois voies »")
+	# 3. « Onde estou » — acte 1.
+	var so: Array[String] = NarrativeJournal.story_so_far()
+	var joined: String = "\n".join(so)
+	_assert(so.size() >= 4, "acte 1 : ≥ 4 phrases (%d)" % so.size())
+	_assert("Zé" in joined and "disparu" in joined, "acte 1 : Zé disparu")
+	_assert("Seu João" in joined and "compadre" in joined, "acte 1 : Seu João situé (compadre)")
+	_assert("Nilton" in joined, "acte 1 : Dom Nilton nommé")
+	_assert("Pedrinho" in joined, "acte 1 : le prologue Pedrinho d'abord")
+	_assert("0 R$ payés" in joined and "500" in joined, "acte 1 : dette 0 payé, palier 500")
+	# 4. « Onde estou » — acte 2, un patron goûté.
+	_reset_campaign_state()
+	CampaignManager.current_act = 2
+	CampaignManager.debt_paid = 700
+	QuestManager.accept("policia_b1_intel")
+	_complete_quest_all_objectives("policia_b1_intel")
+	so = NarrativeJournal.story_so_far()
+	joined = "\n".join(so)
+	_assert("Déjà goûtés : Capitão Ramos" in joined, "acte 2 : Ramos goûté listé")
+	_assert("Encore à voir" in joined and "Tito" in joined and "Magalhães" in joined, "acte 2 : patrons restants listés")
+	_assert("il manque 1300" in joined, "acte 2 : manque calculé vers 2 000 (obtenu : %s)" % joined)
+	_assert("le vrai choix vient à l'acte 3" in joined, "acte 2 : dit que rien n'est scellé")
+	# 5. « Onde estou » — acte 3 sans voie, puis voie scellée.
+	CampaignManager.current_act = 3
+	CampaignManager.debt_paid = 2000
+	joined = "\n".join(NarrativeJournal.story_so_far())
+	_assert("scelle le pacte" in joined, "acte 3 sans voie : invite à sceller")
+	CampaignManager.flags["voie_policia"] = true
+	joined = "\n".join(NarrativeJournal.story_so_far())
+	_assert("Ta voie : Polícia, avec Capitão Ramos" in joined, "acte 3 : voie Polícia nommée")
+	_assert("1 mission sur 9 jouée" in joined, "acte 3 : progression de voie (obtenu : %s)" % joined)
+	# 6. Zé révélé / secouru, puis règne.
+	CampaignManager.flags["tio_ze_revealed"] = true
+	joined = "\n".join(NarrativeJournal.story_so_far())
+	_assert("concierge" in joined and "n'est pas mort" in joined, "Zé révélé : dit concierge")
+	CampaignManager.flags["ze_rescued"] = true
+	joined = "\n".join(NarrativeJournal.story_so_far())
+	_assert("arraché" in joined, "Zé secouru : dit le rescue")
+	CampaignManager.current_act = 5
+	CampaignManager.chosen_endgame = CampaignManager.Endgame.POLICIA
+	CampaignManager.debt_paid = CampaignManager.DEBT_TOTAL
+	joined = "\n".join(NarrativeJournal.story_so_far())
+	_assert("Dette soldée" in joined and "Chefe de Polícia" in joined, "acte 5 : dette soldée + titre de règne")
+	# 7. La maison : mãe et vovó ne disent plus « sobrinho » (mãe = mère, vovó = grand-mère).
+	var house: String = FileAccess.get_file_as_string("res://scenes/interiors/HouseInterior.tscn")
+	_assert(house.to_lower().count("sobrinho") == 0, "HouseInterior : mãe/vovó ne disent pas « sobrinho »")
+	# 8. Nilton (acte 3) et Seu João parlent de 4 patrons, avec les vrais chiffres.
+	var d: Dictionary = DialogueBridge.all_dialogues()
+	var nilton: String = String(d.get("consortium_act3_intro", {}).get("text", ""))
+	_assert("Quatre portes" in nilton and "Magalhães" in nilton, "Nilton acte 3 : quatre portes dont Magalhães")
+	_assert(not ("Vingt-cinq mille" in nilton), "Nilton acte 3 : plus de « vingt-cinq mille »")
+	var sj: String = String(d.get("seu_joao_evening_what_next", {}).get("text", ""))
+	_assert("Magalhães" in sj, "Seu João : nomme aussi Magalhães")
+	_reset_campaign_state()

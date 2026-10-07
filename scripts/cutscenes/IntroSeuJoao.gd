@@ -1,7 +1,7 @@
 extends RefCounted
 class_name IntroSeuJoao
 
-# Cinématique d'introduction : tio Zé (Seu João) attend dans la maison du morro,
+# Cinématique d'introduction : Seu João (le compadre de Zé) attend dans la maison du morro,
 # vient annoncer la mort de l'oncle et la dette de cinquante mille reais.
 # Joue une seule fois (flag intro_seen).
 
@@ -19,7 +19,7 @@ static func run() -> void:
 		await CutsceneRunner.walk_npc_to("seu_joao", target)
 		CutsceneRunner.face_npc("seu_joao", CutsceneRunner.DIR_RIGHT)
 		await CutsceneRunner.wait(0.2)
-		# Run+ : tio Zé acknowledge le déjà-vu avant l'héritage canonique.
+		# Run+ : Seu João acknowledge le déjà-vu avant l'héritage canonique.
 		# Le knot heritage reste le même (pivot quest), on précède juste d'un beat.
 		if CampaignManager.ng_plus_count > 0:
 			await CutsceneRunner.say("seu_joao", "seu_joao_ng_plus_intro")
@@ -27,7 +27,7 @@ static func run() -> void:
 		await CutsceneRunner.say("seu_joao", "seu_joao_heritage")
 		CampaignManager.set_flag("intro_seen")
 		await CutsceneRunner.wait(POST_DIALOGUE_PAUSE)
-		# Tutoriel narratif : tio Zé pointe la carrocinha + Copa + acompte.
+		# Tutoriel narratif : Seu João pointe la carrocinha + Copa + acompte.
 		await CutsceneRunner.say("seu_joao", "seu_joao_intro_tutorial")
-		# Tio Zé reste dans la maison — pas de retour au calçadão.
+		# Seu João reste dans la maison — pas de retour au calçadão.
 	)

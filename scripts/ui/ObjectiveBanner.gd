@@ -72,7 +72,7 @@ func _act_state() -> Dictionary:
 	if act >= 5 and CampaignManager.chosen_endgame != CampaignManager.Endgame.NONE:
 		return {"label": "👑 Reinado · %s" % CampaignManager.reign_title(), "ratio": -1.0}
 	if act == 4:
-		return {"label": "Acte 4 · Os Grandes Lances", "ratio": -1.0}
+		return {"label": CampaignManager.act_title(4), "ratio": -1.0}
 	var thr: int = 0
 	match act:
 		1: thr = CampaignManager.ACT1_THRESHOLD
@@ -80,8 +80,8 @@ func _act_state() -> Dictionary:
 		3: thr = CampaignManager.ACT3_THRESHOLD
 	if thr > 0:
 		var paid: int = clampi(CampaignManager.debt_paid, 0, thr)
-		return {"label": "Acte %d → Acte %d" % [act, act + 1], "ratio": float(paid) / float(thr)}
-	return {"label": "Acte %d" % act, "ratio": -1.0}
+		return {"label": "%s → Acte %d" % [CampaignManager.act_title(act), act + 1], "ratio": float(paid) / float(thr)}
+	return {"label": CampaignManager.act_title(act), "ratio": -1.0}
 
 # Ligne OÙ : libellé + pictogramme selon le mode de cible.
 func _place_line() -> String:

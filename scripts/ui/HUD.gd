@@ -438,14 +438,10 @@ func _on_minigame_ended(_id: String, _result: Dictionary) -> void:
 func _on_act_changed(new_act: int) -> void:
 	_refresh_debt()
 	_refresh_day()
-	var titles: Dictionary = {
-		2: "Acte 2 — Os verdadeiros rostos",
-		3: "Acte 3 — A última volta",
-		4: "Acte 4 — Os Grandes Lances",
-		5: "Acte 5 — O Reinado",
-	}
-	if titles.has(new_act):
-		_flash_toast(titles[new_act])
+	# La carte d'acte (ActCard) affiche titre + ce qu'on attend du joueur ; le
+	# toast ne sert que de filet quand elle n'est pas dans la scène.
+	if new_act >= 2 and get_tree().get_first_node_in_group("act_card") == null:
+		_flash_toast(CampaignManager.act_title(new_act))
 
 func _refresh_day() -> void:
 	if day_label:
@@ -564,7 +560,7 @@ const MAIN_NEXT_HINT: Dictionary = {
 		"hide_signals": ["act1_heritage"],
 	},
 	"trafico_a1_livraison": {
-		"text": "✓ Paquet livré — Si tu veux la suite, signe le pacte avec Tito (acte 3)",
+		"text": "✓ Paquet livré — Tito t'a jaugé. Goûte les autres patrons ; le pacte se signe à l'acte 3, quand Nilton aura ses 2 000 R$",
 		"hide_signals": ["trafico_a2_pickup"],
 	},
 	"trafico_a2_pickup": {
@@ -608,7 +604,7 @@ const MAIN_NEXT_HINT: Dictionary = {
 		"hide_signals": ["act4_carnaval_desfile"],
 	},
 	"policia_b1_intel": {
-		"text": "✓ Visage rapporté — Si tu veux porter le badge, scelle avec Ramos (acte 3)",
+		"text": "✓ Visage rapporté — Ramos te garde en tête. Goûte les autres patrons ; le pacte se signe à l'acte 3, quand Nilton aura ses 2 000 R$",
 		"hide_signals": ["policia_b2_filature"],
 	},
 	"policia_b2_filature": {
@@ -652,7 +648,7 @@ const MAIN_NEXT_HINT: Dictionary = {
 		"hide_signals": ["act4_carnaval_desfile"],
 	},
 	"consortium_c1_recouvrement": {
-		"text": "✓ Recouvrement effectué — Pour la maison, scelle avec Magalhães (acte 3)",
+		"text": "✓ Recouvrement effectué — La maison a noté ton élégance. Goûte les autres patrons ; le pacte se signe à l'acte 3, quand Nilton aura ses 2 000 R$",
 		"hide_signals": ["consortium_c2_loyers"],
 	},
 	"consortium_c2_loyers": {
@@ -696,7 +692,7 @@ const MAIN_NEXT_HINT: Dictionary = {
 		"hide_signals": ["act4_carnaval_desfile"],
 	},
 	"prefeito_d1_peticao": {
-		"text": "✓ Pétition signée — Pour porter la cause, scelle avec le Padre (acte 3)",
+		"text": "✓ Pétition signée — Le Padre a vu ta parole douce. Goûte les autres patrons ; le pacte se signe à l'acte 3, quand Nilton aura ses 2 000 R$",
 		"hide_signals": ["prefeito_d2_basquete"],
 	},
 	"prefeito_d2_basquete": {

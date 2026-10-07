@@ -98,15 +98,16 @@ func _run() -> void:
 	_ok(inv.money == before - 500, "argent déduit de 500 sans rebond (attendu %d, obtenu %d)" % [before - 500, inv.money])
 	_ok(CampaignManager.debt_paid >= 500, "dette payée >= 500")
 
-	# 6. Le paiement SEUL ne suffit plus : il faut rentrer parler à tio Zé.
+	# 6. Le paiement SEUL ne suffit plus : il faut rentrer parler à Seu João.
 	_step("Acte 1 maintenu après paiement seul (retour maison requis)")
 	_ok(CampaignManager.current_act == 1, "reste en acte 1 après le seul paiement (act=%d)" % CampaignManager.current_act)
 	NavigationDirector._recompute()
 	var gh: String = NavigationDirector.current_text().to_lower()
 	print("    guidage post-paiement = %s" % NavigationDirector.current_text())
-	_ok(("tio zé" in gh) or ("maison" in gh) or ("favela" in gh), "guide vers le retour maison / tio Zé")
+	_ok(("seu joão" in gh) or ("maison" in gh) or ("favela" in gh), "guide vers le retour maison / Seu João")
+	_ok(not ("tio zé" in gh), "le guidage n'appelle jamais Seu João « tio Zé » (Zé = le disparu)")
 
-	# 7. Retour maison + nuit chez tio Zé (act1_closed) → bascule acte 2.
+	# 7. Retour maison + nuit dans la maison de Zé (act1_closed) → bascule acte 2.
 	_step("Retour maison + nuit (act1_closed) → acte 2")
 	CampaignManager.set_flag("act1_closed")
 	_ok(CampaignManager.current_act == 2, "acte 2 SEULEMENT après le retour maison (act=%d)" % CampaignManager.current_act)
@@ -139,7 +140,7 @@ func _run() -> void:
 			"Ramos lance ramos_intro_b1_offer")
 
 	# 9. GUIDAGE nouveau flux : acompte payé mais retour maison PAS fait → on
-	#    guide vers tio Zé (aucun patron tant que l'acte 1 n'est pas clos), puis
+	#    guide vers Seu João (aucun patron tant que l'acte 1 n'est pas clos), puis
 	#    le retour maison (act1_closed) bascule en acte 2 = échantillon.
 	if DialogueBridge.is_active():
 		DialogueBridge.end_dialogue()
@@ -155,7 +156,7 @@ func _run() -> void:
 	NavigationDirector._recompute()
 	var g1: String = NavigationDirector.current_text().to_lower()
 	print("    guidage (acte 1, Copa) = %s" % NavigationDirector.current_text())
-	_ok(("tio zé" in g1) or ("maison" in g1) or ("favela" in g1), "guide vers le retour maison / tio Zé")
+	_ok(("seu joão" in g1) or ("maison" in g1) or ("favela" in g1), "guide vers le retour maison / Seu João")
 	_ok(not ("ramos" in g1), "aucun patron tant que l'acte 1 n'est pas clos")
 
 	CampaignManager.set_flag("act1_closed")  # retour maison + nuit

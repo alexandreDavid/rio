@@ -136,3 +136,47 @@ Dimanche soir → `jogo_pending` → résultat déterministe (`seed = 1950 + day
 8. **Symétrie A/B/C/D = calque structurel** (même squelette 1→9).
 9. **Vie aléatoire cloisonnée à Copacabana** — les autres districts sont inertes
    hors quêtes scriptées.
+
+## 8. Clarté du scénario — chantier du 2026-09-16
+
+Retour : « le scénario est un peu confusant ». Diagnostic vérifié dans les
+surfaces joueur (guidage, Diário, HUD, tutoriel, app Saúde, dialogues) :
+
+1. **Seu João était appelé « tio Zé »** partout dans le guidage (« Parle à tio
+   Zé » pointait `npc:seu_joao`), dans les titres du Diário et une conquista —
+   alors que l'intro annonce la disparition de Zé. Le joueur ne pouvait pas
+   comprendre qui avait disparu. Mãe appelait son fils « sobrinho », vovó son
+   petit-fils aussi. → Canon posé dans `CampaignManager` (en-tête) et
+   `CLAUDE.md` ; toutes les surfaces réécrites ; l'intro narrative situe Seu
+   João (compadre de Zé, pas du sang) ; mãe dit « meu filho », vovó « meu neto ».
+2. **Titres d'acte incohérents** : HUD « Os verdadeiros rostos », Diário « Le
+   carrefour », Saúde « Choisir une voie » — et une bascule d'acte = toast de
+   1,2 s. → `CampaignManager.ACT_TITLES` (source unique) + **carte d'acte**
+   (`scenes/ui/ActCard.tscn`, `scripts/ui/ActCard.gd`) à chaque bascule 2→5 :
+   titre, sous-titre, et un corps concret (ce qui vient de se passer, qui te
+   propose quoi, où, le prochain seuil). Pause du jeu, bouton Continuer ≥ 44 pt,
+   attend la fin du dialogue/cinématique en cours, jamais au chargement d'une
+   save ni en headless ; `Act3IntroCutscene` attend sa fermeture.
+3. **Chiffres et comptes faux** : Nilton (acte 3) disait « vingt-cinq mille
+   reais » (seuil réel 2 000) et « trois portes » ; Seu João, le tutoriel, l'app
+   Saúde disaient 3 voies (et « Miguel » pour Tito). → 4 voies partout, seuils
+   réels, Magalhães présenté comme « la maison en costume propre » (lien
+   Nilton ↔ Consórcio enfin dit).
+4. **Messages contradictoires en acte 2** : « il est temps de choisir un camp »
+   au réveil, puis « signe le pacte avec Tito (acte 3) » après la mission intro
+   alors que rien ne se signe avant 2 000 R$. → réveil : « écoute-les tous, le
+   choix c'est pour plus tard » ; toasts a1/b1/c1/d1 : « goûte les autres
+   patrons ; le pacte se signe à l'acte 3, quand Nilton aura ses 2 000 R$ ».
+5. **Aucun résumé de situation** (le Diário = codex de knots lus). →
+   `NarrativeJournal.story_so_far()` : 4-7 phrases générées depuis l'état (Zé
+   disparu / concierge / secouru, Seu João, Nilton, dette + palier, prologue,
+   patrons goûtés / restants, voie + progression, règne, J-x Carnaval). Affiché
+   en tête de l'app Crônica (« ONDE ESTOU ») et comme première catégorie du
+   Diário.
+
+Tests : `TestGroupNarrative._test_story_clarity()` (identités dans le guidage,
+source unique des titres, cartes non vides, résumé par état, maison sans
+« sobrinho », Nilton/Seu João à 4 patrons) + `PlaythroughDriver` vérifie que
+le guidage post-acompte nomme Seu João et jamais « tio Zé ».
+Aperçu visuel de la carte sans jouer : `godot --path . tools/PreviewActCard.tscn -- <acte> <out.png> [w] [h]`
+(vérifié en 1280×720 et 390×844 — panneau adaptatif, hauteur au contenu).

@@ -8,13 +8,20 @@ extends Node
 
 signal entry_unlocked(knot_id: String)
 
+# Catégorie synthétique « Onde estou » : pas de knots, son contenu est généré
+# par story_so_far() (résumé de la situation depuis les flags). Toujours en tête.
+const RESUMO_ID: String = "resumo"
+
 # Catégories ordonnées (affichage UI). Clé = id interne, valeur = libellé.
+# Les libellés d'acte sont remplacés à l'affichage par CampaignManager.ACT_TITLES
+# (source unique) — voir categories().
 const CATEGORIES: Array = [
-	{"id": "act1",      "label": "Acte 1 — L'héritage"},
-	{"id": "act2",      "label": "Acte 2 — Le carrefour"},
-	{"id": "act3",      "label": "Acte 3 — Choix de voie"},
-	{"id": "act4",      "label": "Acte 4 — Os Grandes Lances"},
-	{"id": "act5",      "label": "Acte 5 — Reinado"},
+	{"id": RESUMO_ID,   "label": "📍 Onde estou — où j'en suis"},
+	{"id": "act1",      "label": "Acte 1", "act": 1},
+	{"id": "act2",      "label": "Acte 2", "act": 2},
+	{"id": "act3",      "label": "Acte 3", "act": 3},
+	{"id": "act4",      "label": "Acte 4", "act": 4},
+	{"id": "act5",      "label": "Acte 5", "act": 5},
 	{"id": "consortium","label": "Le consortium"},
 	{"id": "police",    "label": "Capitão Ramos & la police"},
 	{"id": "trafico",   "label": "Tito & le morro"},
@@ -31,9 +38,9 @@ const JOURNAL_ENTRIES: Dictionary = {
 	# --- ACTE 1 ---
 	"seu_joao_heritage":        {"category": "act1", "title": "L'héritage de tio Zé"},
 	"seu_joao_debt_who":        {"category": "act1", "title": "Une dette de cinquante mille"},
-	"seu_joao_advice":          {"category": "act1", "title": "Les conseils de tio Seu João"},
+	"seu_joao_advice":          {"category": "act1", "title": "Les conseils de Seu João"},
 	"seu_joao_evening_first_payment": {"category": "act1", "title": "Premier acompte — la soirée"},
-	"seu_joao_evening_ramos":   {"category": "act1", "title": "Tio Zé sur Capitão Ramos"},
+	"seu_joao_evening_ramos":   {"category": "act1", "title": "Seu João sur Capitão Ramos"},
 	"seu_joao_evening_what_next":{"category": "act1", "title": "Trouver un parrain ou payer seul"},
 	# --- CONSORTIUM ---
 	"consortium_intro":         {"category": "consortium", "title": "Première visite chez Dom Nilton"},
@@ -68,7 +75,7 @@ const JOURNAL_ENTRIES: Dictionary = {
 	"spot_vizinho_jorge_return":    {"category": "sides", "title": "Beto renvoyé chez Seu Jorge"},
 	"spot_beto_lost":               {"category": "sides", "title": "Beto fourgue sur le calçadão"},
 	# --- META : runs cumulées ---
-	"seu_joao_ng_plus_intro":       {"category": "act1", "title": "Le déjà-vu de tio Zé"},
+	"seu_joao_ng_plus_intro":       {"category": "act1", "title": "Le déjà-vu de Seu João"},
 	"spot_vovo_ng_plus_dejavu":     {"category": "carnaval", "title": "Vovó se souvient des autres règnes"},
 	# --- ACTE 3 ---
 	# (Les knots act3_ sont auto-générés ; on documente les pivots clés.)
@@ -119,6 +126,121 @@ const JOURNAL_ENTRIES: Dictionary = {
 }
 
 var _read: Dictionary = {}  # knot_id -> true
+
+# Catégories avec les libellés d'acte résolus depuis CampaignManager.ACT_TITLES
+# (le Diário, le HUD et l'app Saúde disent ainsi la même chose).
+func categories() -> Array:
+	var out: Array = []
+	for cat in CATEGORIES:
+		var c: Dictionary = cat.duplicate()
+		if c.has("act"):
+			c["label"] = CampaignManager.act_title(int(c.act))
+		out.append(c)
+	return out
+
+# --- « Onde estou » : résumé de la situation, généré depuis l'état ---
+#
+# Répond en 4-7 phrases à « qui est qui, qu'est-ce que je dois, où j'en suis,
+# qu'est-ce qu'on attend de moi ». Pure (lit CampaignManager / QuestManager /
+# CarnavalCalendar), testable, sans effet de bord. Affiché en tête de l'app
+# Crônica et comme première catégorie du Diário.
+
+# Les 4 patrons et leur mission d'échantillon (acte 2) / leur flag de voie.
+const PATRONS_RESUMO: Array = [
+	{"name": "Tito", "where": "le morro", "intro": "trafico_a1_livraison", "voie": "voie_trafico", "label": "Tráfico", "prefix": "trafico_a"},
+	{"name": "Capitão Ramos", "where": "l'Academia de Copa", "intro": "policia_b1_intel", "voie": "voie_policia", "label": "Polícia", "prefix": "policia_b"},
+	{"name": "Magalhães", "where": "le Riserva Uno, à la Barra", "intro": "consortium_c1_recouvrement", "voie": "voie_consortium", "label": "Consórcio", "prefix": "consortium_c"},
+	{"name": "le Padre", "where": "l'église de Copa", "intro": "prefeito_d1_peticao", "voie": "voie_prefeito", "label": "Prefeito", "prefix": "prefeito_d"},
+]
+
+func story_so_far() -> Array[String]:
+	var lines: Array[String] = []
+	var act: int = CampaignManager.current_act
+	# 1. Qui est qui.
+	if CampaignManager.has_flag("ze_rescued"):
+		lines.append("Zé, ton oncle, est vivant : tu l'as arraché à la Mafia da Baía. Il est de retour derrière la réception du Copacabana Palace.")
+	elif CampaignManager.has_flag("tio_ze_revealed"):
+		lines.append("Zé, ton oncle, n'est pas mort : il se cache comme concierge du Copacabana Palace. Mãe ne le sait pas encore.")
+	else:
+		lines.append("Zé, ton oncle, a disparu. Il t'a laissé sa carrocinha de milho, sa maison du morro — et 50 000 R$ de dette.")
+	lines.append("Seu João, le vieux compadre de Zé, veille sur mãe et vovó à la maison. Dom Nilton, le consortium, attend son argent sur l'Av. Atlântica.")
+	# 2. La dette et le palier.
+	var paid: int = CampaignManager.debt_paid
+	if act >= 5 or CampaignManager.debt_remaining() <= 0:
+		lines.append("Dette soldée. Dom Nilton a fermé son carnet noir.")
+	else:
+		var thr: int = CampaignManager.next_act_threshold()
+		var debt_line: String = "Dette : %d R$ payés sur 50 000." % paid
+		if thr > 0 and paid < thr:
+			debt_line += " Prochain palier : %d R$ (il manque %d)." % [thr, thr - paid]
+		lines.append(debt_line)
+	# 3. Où j'en suis dans la trame.
+	match act:
+		1:
+			if not QuestManager.is_completed("prologue_pedrinho"):
+				lines.append("Avant tout : Pedrinho, le petit du morro, a disparu. Personne ne descend à Copa tant qu'il n'est pas retrouvé.")
+			elif paid < CampaignManager.ACT1_THRESHOLD:
+				lines.append("Vends du milho au calçadão et pose 500 R$ d'acompte chez Nilton — il te laissera respirer.")
+			else:
+				lines.append("Acompte payé. Rentre à la maison du morro parler à Seu João : la nuit fermera l'acte.")
+		2:
+			var tasted: Array[String] = []
+			var left: Array[String] = []
+			for p in PATRONS_RESUMO:
+				if QuestManager.is_completed(String(p.intro)):
+					tasted.append(String(p.name))
+				else:
+					left.append("%s (%s)" % [p.name, p.where])
+			lines.append("Quatre patrons te proposent chacun un premier boulot, sans engagement. Rien n'est scellé : le vrai choix vient à l'acte 3.")
+			if not tasted.is_empty():
+				lines.append("Déjà goûtés : %s." % ", ".join(tasted))
+			if not left.is_empty():
+				lines.append("Encore à voir : %s." % ", ".join(left))
+		3, 4:
+			var voie: Dictionary = _voie_resumo()
+			if voie.is_empty():
+				lines.append("Le milho ne suffira plus. Choisis ton parrain et scelle le pacte — Tito, Ramos, Magalhães ou le Padre. Une seule voie, jusqu'au bout.")
+			else:
+				lines.append("Ta voie : %s, avec %s. %s" % [voie.label, voie.name, _voie_progress(String(voie.prefix))])
+				if act == 3:
+					lines.append("Chaque mission de la voie crédite ta dette. À 6 000 R$ payés, les Grands Lances s'ouvrent.")
+				else:
+					lines.append("Reste le pivot au Palace, le gros coup, puis le couronnement — c'est lui qui solde la dette.")
+		_:
+			var title: String = CampaignManager.reign_title()
+			if title != "":
+				lines.append("Tu es %s. Deux missions de règne sur le calçadão, puis le desfile de la Sapucaí." % title)
+			else:
+				lines.append("Le Carnaval est là. Le Sambódromo t'attend.")
+	# 4. Le calendrier.
+	var cal: String = CarnavalCalendar.hud_label()
+	if cal != "":
+		lines.append("Calendrier : %s." % cal)
+	return lines
+
+# Voie scellée → {label, name, prefix} ou {} si aucune.
+func _voie_resumo() -> Dictionary:
+	for p in PATRONS_RESUMO:
+		if CampaignManager.has_flag(String(p.voie)):
+			return {"label": p.label, "name": p.name, "prefix": p.prefix}
+	return {}
+
+# « 3 missions sur 9 jouées. » pour une voie (préfixe ex. "trafico_a").
+func _voie_progress(prefix: String) -> String:
+	var done: int = 0
+	var total: int = 0
+	for q in QuestManager._quests.values():
+		if not (q is Quest):
+			continue
+		var quest: Quest = q
+		if quest.quest_type != Quest.QuestType.MAIN or not quest.id.begins_with(prefix):
+			continue
+		total += 1
+		if QuestManager.is_completed(quest.id):
+			done += 1
+	if total == 0:
+		return ""
+	return "%d mission%s sur %d jouée%s." % [done, "s" if done > 1 else "", total, "s" if done > 1 else ""]
 
 func mark_read(knot_id: String) -> void:
 	if knot_id == "" or _read.has(knot_id):

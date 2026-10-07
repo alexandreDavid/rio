@@ -22,7 +22,7 @@ const POIS: Dictionary = {
 	"TaxiStand":        Color(0.95, 0.85, 0.4, 1),    # jaune taxi
 	"MissionBoard":     Color(0.95, 0.5, 0.4, 1),     # rouge tableau
 	"Consortium":       Color(0.6, 0.3, 0.55, 1),     # violet consortium
-	"SeuJoao":          Color(0.55, 0.85, 0.55, 1),   # vert tio Zé
+	"SeuJoao":          Color(0.55, 0.85, 0.55, 1),   # vert Seu João
 }
 
 @onready var bg: ColorRect = $Bg

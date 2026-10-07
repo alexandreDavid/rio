@@ -21,6 +21,10 @@ static func run() -> void:
 	if DialogueBridge.is_active():
 		await DialogueBridge.dialogue_finished
 	await CutsceneRunner.get_tree().create_timer(0.6).timeout
+	# La carte d'acte 3 se lit d'abord ; Nilton ne parle pas par-dessous.
+	var card: Node = CutsceneRunner.get_tree().get_first_node_in_group("act_card")
+	if card != null and card.has_method("is_showing") and card.call("is_showing"):
+		await card.dismissed
 	if CampaignManager.has_flag("act3_intro_played"):
 		return
 	# Cinématique réservée au calçadão (sinon Nilton marche depuis l'autre bout

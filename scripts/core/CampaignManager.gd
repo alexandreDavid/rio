@@ -1,8 +1,15 @@
 extends Node
 
 # Suit l'état narratif global : acte courant, dette envers le consortium,
-# progression vers l'un des trois endgames (Prefeito / Polícia / Tráfico).
-# Autoload name: CampaignManager.
+# progression vers l'un des quatre endgames (Prefeito / Polícia / Tráfico /
+# Consórcio). Autoload name: CampaignManager.
+#
+# Canon des personnages de la maison (à respecter dans TOUT texte joueur) :
+#   - Zé = l'oncle disparu (frère de mãe). Sa maison, sa carrocinha, sa dette.
+#     Il se cache comme concierge du Palace (révélé au pivot tioze de la voie).
+#   - Seu João = le vieux compadre de Zé, pas du sang. Il a pris place à la
+#     table pour veiller sur mãe et vovó. Le joueur l'appelle « tio » par
+#     respect carioca — mais il n'est JAMAIS « tio Zé » dans l'UI.
 
 # CONSORTIUM ajouté en dernier : préserve les valeurs int existantes
 # (NONE=0, PREFEITO=1, POLICIA=2, TRAFICO=3, CONSORTIUM=4) pour les saves.
@@ -22,6 +29,27 @@ const ACT2_THRESHOLD: int = 2000
 # être franchi en complétant la chaîne (les missions paient désormais le gros du
 # revenu), laissant A8 (gros coup) / A9 (couronnement) pour l'acte 4.
 const ACT3_THRESHOLD: int = 6000
+
+# Titres d'acte — SOURCE UNIQUE pour le HUD, le bandeau, le Diário, l'app
+# Saúde et la carte d'acte. Titre portugais (identité) + sous-titre français
+# (ce que l'acte attend du joueur). Ne pas dupliquer ces chaînes ailleurs.
+const ACT_TITLES: Dictionary = {
+	1: {"title": "Acte 1 — A herança", "subtitle": "L'héritage"},
+	2: {"title": "Acte 2 — Os verdadeiros rostos", "subtitle": "Les vrais visages"},
+	3: {"title": "Acte 3 — A última volta", "subtitle": "Le dernier tour"},
+	4: {"title": "Acte 4 — Os Grandes Lances", "subtitle": "Les grands coups"},
+	5: {"title": "Acte 5 — O Reinado", "subtitle": "Le règne"},
+}
+
+# Carte d'acte (ActCard) : ce qui vient de se passer + ce qu'on attend de toi.
+# Le corps est volontairement concret (qui, où, combien) — c'est LA réponse à
+# « je ne comprends pas où j'en suis » à chaque bascule.
+const ACT_CARDS: Dictionary = {
+	2: "Cinq cents reais posés sur la table de Dom Nilton, et une nuit dans la maison de Zé. Le morro a parlé : quatre patrons ont senti l'odeur d'un môme qui paie à l'heure.\n\nChacun te propose UN premier boulot — Tito au morro, Capitão Ramos à l'Academia, le Padre à l'église, Magalhães à la Barra. Goûte-les tous : rien ne t'engage encore.\n\nNilton veut 2 000 R$ au total avant de t'ouvrir le vrai choix. Milho, missions, courriers — tout compte.",
+	3: "Deux mille reais. Dom Nilton l'a dit lui-même : le reste ne sortira pas de ta carrocinha.\n\nC'est le moment du pacte. Choisis ton parrain — Tito, Ramos, Magalhães ou le Padre — et scelle-le. Une seule voie, jusqu'au bout : les trois autres se ferment.\n\nChaque mission de ta voie crédite ta dette directement. À 6 000 R$ payés, les Grands Lances s'ouvrent.",
+	4: "Six mille reais. Le bairro connaît ton nom, et ton parrain te confie les gros coups.\n\nTa voie va au bout : le pivot au Copacabana Palace (un vieux du Palace en sait long sur Zé), le gros coup, puis le couronnement. C'est LÀ que la dette se solde — pas au milho.\n\nLe Fixer du calçadão a aussi des lances hors trame, si tu veux les tenter.",
+	5: "La dette est soldée. Dom Nilton a fermé son carnet noir.\n\nCopacabana est à toi, à ta manière. Deux missions de règne t'attendent sur le calçadão, dans le verbe de ta voie. Puis la Sapucaí : trois cent mille voix, et les tiens en première ligne.\n\nC'est le Carnaval. Va la tête haute.",
+}
 
 var current_act: int = 1
 var debt_paid: int = 0
@@ -160,6 +188,18 @@ func complete_endgame(path: int) -> void:
 	if current_act < 5:
 		current_act = 5
 		EventBus.act_changed.emit(5)
+
+# Titre d'acte complet (« Acte 2 — Os verdadeiros rostos »).
+func act_title(n: int) -> String:
+	return String(ACT_TITLES.get(n, {}).get("title", "Acte %d" % n))
+
+# Sous-titre français (« Les vrais visages »).
+func act_subtitle(n: int) -> String:
+	return String(ACT_TITLES.get(n, {}).get("subtitle", ""))
+
+# Corps de la carte d'acte ("" pour l'acte 1 — l'intro narrative s'en charge).
+func act_card_body(n: int) -> String:
+	return String(ACT_CARDS.get(n, ""))
 
 # Titre du joueur en acte 5 (Reinado) selon la voie.
 func reign_title() -> String:
