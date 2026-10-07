@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="Quest" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="obj_regata"]
+script = ExtResource("2_obj")
+id = "terminar_regata"
+description = "Terminer la Regata da Glória — prouver à Lia que tu lis le vent"
+optional = false
+kind = 1
+minigame_id = "regata"
+
+[sub_resource type="Resource" id="obj_inscrever"]
+script = ExtResource("2_obj")
+id = "inscrever_pedrinho"
+description = "Revenir voir Lia : inscrire Pedrinho à l'escolinha de vela"
+optional = false
+
+[resource]
+script = ExtResource("1_quest")
+id = "vela_pedrinho"
+display_name = "Vela pro Pedrinho"
+description = "L'escolinha de vela de la Marina da Glória apprend aux gosses du morro à lire le vent. Il reste une place cette saison — pour Pedrinho, le gamin que tu as sorti de la citerne. Mais Lia ne confie pas un enfant à quelqu'un qui ne sait pas naviguer."
+journal_text = "Finir la Regata da Glória, puis revenir voir Lia pour inscrire Pedrinho."
+giver_npc_id = "lia_vela"
+ink_knot = "lia_offer"
+objectives = Array[Resource]([SubResource("obj_regata"), SubResource("obj_inscrever")])
+money_reward = 0
+reputation_rewards = {}
+required_reputation = {}
+required_act = 2
+prerequisite_quest_ids = Array[String](["prologue_pedrinho"])

@@ -26,6 +26,7 @@ func run() -> void:
 	_test_reputation_affinity_effects()
 	_test_minigame_depth_contracts()
 	_test_milho_rush()
+	_test_regata_desembarque()
 
 
 # Garde-fou : les intérieurs hors-monde (positions y≈-3000 dans Copacabana)
@@ -936,6 +937,72 @@ func _test_milho_rush() -> void:
 	_assert(game._cash == cash_before and game._score == 6, "garniture fausse : refus, rien payé")
 	game.free()
 	_reset_campaign_state()
+
+
+# Marina (Regata) et Santos Dumont (Desembarque) : règles pures et contrats.
+func _test_regata_desembarque() -> void:
+	_section("Regata da Glória — polaire et virements")
+	var north: float = -PI / 2.0
+	_assert(RegataGame.polar(0.0) == 0.0 and RegataGame.polar(RegataGame.NO_GO_DEG - 1.0) == 0.0, "vent debout : la voile fasseye (vitesse 0)")
+	_assert(RegataGame.polar(90.0) == 1.0, "travers : allure la plus rapide")
+	_assert(RegataGame.polar(90.0) > RegataGame.polar(45.0) and RegataGame.polar(90.0) > RegataGame.polar(180.0), "travers > près et > vent arrière")
+	_assert(is_equal_approx(RegataGame.off_wind_deg(north, north), 0.0), "cap face au vent = 0°")
+	_assert(is_equal_approx(RegataGame.off_wind_deg(PI / 2.0, north), 180.0), "cap sous le vent = 180°")
+	_assert(RegataGame.tack_side(north, north) == 0, "vent debout : pas d'amures")
+	_assert(RegataGame.tack_side(north + deg_to_rad(60.0), north) == -RegataGame.tack_side(north - deg_to_rad(60.0), north), "deux bords = deux amures opposées")
+	_assert(RegataGame.MARKS[0].y < RegataGame.START.y and RegataGame.MARKS.size() == RegataGame.MARK_NAMES.size(), "parcours : la 1re bouée est au vent")
+	_assert(RegataGame.RIVAL_PATH[RegataGame.RIVAL_PATH.size() - 1] == RegataGame.MARKS[RegataGame.MARKS.size() - 1], "Bia finit sur la ligne d'arrivée")
+	for i in range(1, RegataGame.RIVAL_PATH.size()):
+		var dir: Vector2 = RegataGame.RIVAL_PATH[i] - RegataGame.RIVAL_PATH[i - 1]
+		_assert(RegataGame.off_wind_deg(dir.angle(), north) >= RegataGame.NO_GO_DEG, "Bia : segment %d navigable (pas face au vent)" % i)
+	_assert(ActivityRewards.SIGNATURES.has("regata"), "signature d'activité « regata »")
+	_section("Desembarque — un seul bon passager")
+	var rng: RandomNumberGenerator = RandomNumberGenerator.new()
+	rng.seed = 42
+	var all_ok: bool = true
+	var decoys_ok: bool = true
+	for i in 40:
+		var n: int = 6 + i % 6
+		var decoys: int = 1 + (i % 6) / 2
+		var r: Dictionary = DesembarqueGame.make_round(rng, n, decoys)
+		var hits: int = 0
+		var near: int = 0
+		for p in r.passengers:
+			if DesembarqueGame.matches(p, r.client):
+				hits += 1
+			else:
+				var same: int = int(p.shirt == r.client.shirt) + int(p.hat == r.client.hat) + int(p.bag == r.client.bag)
+				if same == 2:
+					near += 1
+		all_ok = all_ok and hits == 1 and r.passengers.size() == n
+		decoys_ok = decoys_ok and near >= decoys
+	_assert(all_ok, "40 manches : exactement un passager correspond, n passagers")
+	_assert(decoys_ok, "40 manches : au moins `decoys` leurres à 2 indices sur 3")
+	_assert(DesembarqueGame.QUALIFY_SCORE <= DesembarqueGame.ROUNDS * 3 and DesembarqueGame.QUALIFY_SCORE > DesembarqueGame.ROUNDS, "Desembarque : seuil exigeant mais atteignable")
+	_assert(ActivityRewards.SIGNATURES.has("desembarque"), "signature d'activité « desembarque »")
+	# Un client trouvé dans la vraie scène.
+	var g: DesembarqueGame = load("res://scenes/minigames/Desembarque.tscn").instantiate()
+	add_child(g)
+	g.set_process(false)
+	for i in 30:
+		g._process(0.1)
+	var target: Dictionary = {}
+	for p in g._passengers:
+		if DesembarqueGame.matches(p.attrs, g._client):
+			target = p
+	if target.is_empty():
+		for i in 40:
+			g._process(0.1)
+			for p in g._passengers:
+				if DesembarqueGame.matches(p.attrs, g._client):
+					target = p
+			if not target.is_empty():
+				break
+	_assert(not target.is_empty(), "scène : le bon passager finit par sortir de la porte")
+	if not target.is_empty():
+		g.tap_at(target.sprite.position)
+		_assert(g._score >= 2 and g._cash >= DesembarqueGame.FARE and g._round == 1, "toucher le bon passager : course payée, client suivant")
+	g.free()
 
 
 func _test_minigame_depth_contracts() -> void:

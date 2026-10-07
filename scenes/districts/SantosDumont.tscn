@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/props/TaxiStand.tscn" id="1_taxi"]
 [ext_resource type="PackedScene" path="res://scenes/npcs/DonSalvatore.tscn" id="2_salvatore"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" path="res://scenes/props/StreetVendor.tscn" id="5_vendor"]
 [ext_resource type="Script" path="res://scripts/districts/District.gd" id="6_drift"]
 [ext_resource type="PackedScene" path="res://scenes/props/ReactiveDialogueSpot.tscn" id="7_reactive"]
+[ext_resource type="PackedScene" path="res://scenes/props/DesembarqueStation.tscn" id="8_desembarque"]
 
 [sub_resource type="RectangleShape2D" id="WallH"]
 size = Vector2(700, 16)
@@ -504,3 +505,34 @@ speed = 24.0
 roam_zone = Rect2(-100, -20, 200, 40)
 pause_random_jitter = 1.5
 look_at_player_distance = 60.0
+
+[node name="DesembarqueStation" parent="." instance=ExtResource("8_desembarque")]
+position = Vector2(-20, 96)
+
+[node name="NonatoSpot" parent="." instance=ExtResource("7_reactive")]
+position = Vector2(-70, 104)
+npc_id = "nonato_cooperativa"
+prompt = "Seu Nonato (cooperativa)"
+character_seed = 40556
+variants = [{
+"id": "default",
+"speaker": "Seu Nonato",
+"text": "*gilet de la cooperativa, casquette, planchette sous le bras* Ô, freguês. Tu vois ce monde qui sort de la ponte aérea ? Chacun a un chauffeur qui l'attend — ou devrait. *il te tend une plaque en carton* Tu veux ta corrida ? Mets-toi à la sortie, lis la fiche, trouve le client avant la concurrence. Mas olho vivo : à Santos Dumont, tous les executivos se ressemblent.",
+"choices": ["Me passa a placa"]
+}]
+
+[node name="SpotterA" parent="." instance=ExtResource("3_wander")]
+position = Vector2(290, 150)
+color = Color(0.3, 0.3, 0.34, 1)
+size = Vector2(10, 16)
+roam_zone = Rect2(-20, -8, 40, 16)
+speed = 5.0
+pause_at_waypoints = 5.0
+
+[node name="SpotterB" parent="." instance=ExtResource("3_wander")]
+position = Vector2(315, 160)
+color = Color(0.85, 0.4, 0.25, 1)
+size = Vector2(10, 16)
+roam_zone = Rect2(-16, -8, 32, 16)
+speed = 5.0
+pause_at_waypoints = 6.0

@@ -92,6 +92,8 @@ const JOURNAL_ENTRIES: Dictionary = {
 	"contessa_date_done_smitten":{"category": "sides","title": "Le sourire de la Contessa"},
 	"contessa_fundo_offer":     {"category": "sides", "title": "L'argent du gala n'est jamais arrivé"},
 	"contessa_fundo_reveal":    {"category": "sides", "title": "Pourquoi la Contessa a quitté Milan"},
+	"lia_offer":                {"category": "sides", "title": "Une place à l'escolinha pour Pedrinho"},
+	"lia_done":                 {"category": "sides", "title": "Pedrinho à la barre"},
 	# --- DISTRICTS ---
 	"ronaldo_dj_offer":         {"category": "districts", "title": "DJ au Pão de Açúcar"},
 	"ronaldo_torcida_offer":    {"category": "districts", "title": "Mener la torcida au Maracanã"},

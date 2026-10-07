@@ -77,6 +77,7 @@ const QUEST_RESOURCES: Array[String] = [
 	"res://resources/quests/carlos_lagoa_volta.tres",
 	"res://resources/quests/contessa_date.tres",
 	"res://resources/quests/contessa_fundo.tres",
+	"res://resources/quests/vela_pedrinho.tres",
 	"res://resources/quests/tourist_vip_tour.tres",
 	"res://resources/quests/ronaldo_maracana_torcida.tres",
 	"res://resources/quests/consortium_airport_pickup.tres",
@@ -449,6 +450,8 @@ const SCRIPT_COMPLETED_OBJECTIVES: Dictionary = {
 	"policia_b4_descente": ["filer_dealer", "bust_dealer"],
 	# Contessa : filature StakeoutZone depuis le Palace, écoute au spot du Colombo.
 	"contessa_fundo": ["filer_ferretti", "ecouter_colombo"],
+	# Marina : la Regata (MINIJEU) prouve qu'on lit le vent.
+	"vela_pedrinho": ["terminar_regata"],
 	"policia_b5_reperage": ["scout_corcovado"],
 	# B6 : reperer_sombra via StakeoutZone (le guetteur du Palace).
 	"policia_b6_tioze": ["ask_temoin", "porter_lembranca", "reperer_sombra", "hear_concierge"],

@@ -265,4 +265,36 @@ const KNOTS: Dictionary = {
 		"text": "*ne te regarde plus, ferme son carnet quand tu passes* Je n'ai rien à ajouter.",
 		"choices": ["..."],
 	},
+	# --- Marina da Glória : l'escolinha de vela de Lia (projet social) ---
+	"lia_intro": {
+		"speaker": "Professora Lia",
+		"text": "*un sifflet autour du cou, elle hisse la voile d'un Optimist plus petit qu'elle* Escolinha de vela da Glória. Ici, les gosses du morro apprennent à lire le vent — le seul patron qui ne ment jamais. *elle te jauge* Tu sais naviguer, toi ? Le ponton est là. Bia t'attend, si t'as le courage.",
+		"choices": ["Plus tard, professora"],
+	},
+	"lia_offer": {
+		"speaker": "Professora Lia",
+		"text": "*elle compte des gilets de sauvetage ; il en manque un* Il me reste une place à l'escolinha, cette saison. On m'a parlé d'un gamin du morro — Pedrinho, celui que tu as sorti de la citerne. *elle relève les yeux* Je ne confie pas un enfant à quelqu'un qui ne sait pas ce qu'est le vent. Termine la régate, et la place est à lui.",
+		"choices": ["Je vais lire le vent", "Pas maintenant"],
+		"on_choose": {
+			"0": {"accept_quest": "vela_pedrinho"},
+		},
+	},
+	"lia_remind": {
+		"speaker": "Professora Lia",
+		"text": "Le ponton, la régate, Bia. Finis le parcours — deux bords de près, pas de raccourci face au vent. Le vent ne négocie pas, querido.",
+		"choices": ["J'y vais"],
+	},
+	"lia_inscrever": {
+		"speaker": "Professora Lia",
+		"text": "*elle sort un petit gilet rouge, taille enfant, et écrit un nom au marqueur : PEDRINHO* Tu as lu le vent ; il pourra apprendre. *elle sourit pour la première fois* Samedi, je monte au morro avec le gilet. Dis à sa mãe que la mer, ça fait peur une semaine — et qu'après, ça fait des gens libres.",
+		"choices": ["Il sera là, professora"],
+		"on_choose": {
+			"0": {"finish_quest": {"quest": "vela_pedrinho", "objective": "inscrever_pedrinho", "payout": 0}, "set_flag": "pedrinho_vela", "rep": {0: 4}},
+		},
+	},
+	"lia_done": {
+		"speaker": "Professora Lia",
+		"text": "*au loin, un Optimist zigzague entre les bouées, un petit gilet rouge à la barre* Regarde-le. Trois semaines, et il vire déjà plus proprement que toi. *elle siffle* PEDRINHO ! Borda, borda ! *elle rit* Il me fait penser à toi. En plus doué.",
+		"choices": ["…Valeu, professora"],
+	},
 }

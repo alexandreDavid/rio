@@ -1,0 +1,35 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/minigames/regata/RegataGame.gd" id="1_game"]
+[ext_resource type="PackedScene" path="res://scenes/ui/MinigameQuitButton.tscn" id="2_quit"]
+
+[node name="Regata" type="Node2D"]
+script = ExtResource("1_game")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="Bay" type="ColorRect" parent="."]
+z_index = -10
+offset_left = -1200.0
+offset_top = -700.0
+offset_right = 1200.0
+offset_bottom = 700.0
+color = Color(0.13, 0.42, 0.6, 1)
+
+[node name="PaoDeAcucar" type="ColorRect" parent="."]
+z_index = -9
+offset_left = 760.0
+offset_top = -560.0
+offset_right = 940.0
+offset_bottom = -400.0
+color = Color(0.22, 0.36, 0.25, 1)
+
+[node name="AterroShore" type="ColorRect" parent="."]
+z_index = -9
+offset_left = -1200.0
+offset_top = 450.0
+offset_right = 1200.0
+offset_bottom = 700.0
+color = Color(0.86, 0.8, 0.62, 1)
+
+[node name="MinigameQuitButton" parent="." instance=ExtResource("2_quit")]

@@ -85,7 +85,7 @@ const DISTRICTS: Dictionary = {
 		"node_name": "ForteDeCopacabanaDistrict",
 	},
 	"marina_gloria": {
-		"label": "Marina da Glória — yachts + SUP navigable",
+		"label": "Marina da Glória — escolinha de vela",
 		"fare": 12,
 		"node_name": "MarinaDaGloriaDistrict",
 	},

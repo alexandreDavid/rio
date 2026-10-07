@@ -1,0 +1,57 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/minigames/desembarque/DesembarqueGame.gd" id="1_game"]
+[ext_resource type="PackedScene" path="res://scenes/ui/MinigameQuitButton.tscn" id="2_quit"]
+
+[node name="Desembarque" type="Node2D"]
+script = ExtResource("1_game")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="HallFloor" type="ColorRect" parent="."]
+z_index = -10
+offset_left = -1200.0
+offset_top = -700.0
+offset_right = 1200.0
+offset_bottom = 700.0
+color = Color(0.78, 0.76, 0.72, 1)
+
+[node name="Gate" type="ColorRect" parent="."]
+z_index = -9
+offset_left = -760.0
+offset_top = -360.0
+offset_right = 760.0
+offset_bottom = -330.0
+color = Color(0.3, 0.32, 0.38, 1)
+
+[node name="GateSign" type="Label" parent="."]
+z_index = -8
+offset_left = -300.0
+offset_top = -395.0
+offset_right = 300.0
+offset_bottom = -362.0
+text = "DESEMBARQUE · PONTE AÉREA"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(0.2, 0.2, 0.24, 1)
+
+[node name="ExitLine" type="ColorRect" parent="."]
+z_index = -9
+offset_left = -1200.0
+offset_top = 420.0
+offset_right = 1200.0
+offset_bottom = 440.0
+color = Color(0.95, 0.75, 0.15, 1)
+
+[node name="ExitSign" type="Label" parent="."]
+z_index = -8
+offset_left = -300.0
+offset_top = 440.0
+offset_right = 300.0
+offset_bottom = 470.0
+text = "SAÍDA · TÁXI"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 20
+theme_override_colors/font_color = Color(0.2, 0.2, 0.24, 1)
+
+[node name="MinigameQuitButton" parent="." instance=ExtResource("2_quit")]

@@ -1,10 +1,12 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=12 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/props/TaxiStand.tscn" id="1_taxi"]
 [ext_resource type="PackedScene" path="res://scenes/props/DistrictExit.tscn" id="2_exit"]
 [ext_resource type="PackedScene" path="res://scenes/props/AmbientWanderer.tscn" id="3_wander"]
 [ext_resource type="Script" path="res://scripts/districts/District.gd" id="4_drift"]
 [ext_resource type="PackedScene" path="res://scenes/props/ReactiveDialogueSpot.tscn" id="6_reactive"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/Lia.tscn" id="7_lia"]
+[ext_resource type="PackedScene" path="res://scenes/props/RegataStation.tscn" id="8_regata"]
 
 [sub_resource type="RectangleShape2D" id="WallH"]
 size = Vector2(900, 12)
@@ -258,7 +260,7 @@ offset_left = -180.0
 offset_top = 156.0
 offset_right = 180.0
 offset_bottom = 172.0
-text = "🛶 Prends le SUP — pars naviguer dans la baie"
+text = "⛵ Escolinha de vela — la régate part du ponton"
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 11
 theme_override_colors/font_color = Color(0.32, 0.32, 0.4, 1)
@@ -459,7 +461,7 @@ character_seed = 80501
 variants = [{
 "id": "default",
 "speaker": "Capitaine de port",
-"text": "*tape sa pipe, vue sur la baie* La Marina ferme jamais. Le SUP est à toi tant que tu le ramènes avant le coucher du soleil — ou que tu le ramènes pas, mais alors faut payer. Vou Niemeyer en arrière-plan, Pão de Açúcar derrière toi, tu te crois où, en vacances ? *sourit* C'est exactement ça.",
+"text": "*tape sa pipe, vue sur la baie* La Marina ferme jamais. Les dériveurs de l'escolinha, c'est Lia qui les prête — demande-lui, et sors faire la régate si t'as le cœur accroché. Niemeyer en arrière-plan, Pão de Açúcar derrière toi, tu te crois où, en vacances ? *sourit* C'est exactement ça.",
 "choices": ["Obrigado, capitão"]
 }]
 
@@ -478,3 +480,38 @@ size = Vector2(10, 17)
 roam_zone = Rect2(-60, -30, 120, 50)
 speed = 12.0
 pause_at_waypoints = 2.0
+
+[node name="Lia" parent="." instance=ExtResource("7_lia")]
+position = Vector2(-90, 110)
+
+[node name="RegataStation" parent="." instance=ExtResource("8_regata")]
+position = Vector2(30, 70)
+
+[node name="PedrinhoVelaSpot" parent="." instance=ExtResource("6_reactive")]
+position = Vector2(-30, 60)
+npc_id = "pedrinho_vela"
+prompt = "Pedrinho (gilet rouge)"
+character_seed = 40555
+required_flag = "pedrinho_vela"
+variants = [{
+"id": "default",
+"speaker": "Pedrinho",
+"text": "*dans un gilet rouge trop grand, il tient la barre d'un Optimist amarré et te fait de grands signes* Tio ! TIO ! J'ai viré de bord tout seul ! Lia dit que je lis le vent mieux que les grands. *il baisse la voix* Maman a pleuré la première fois. Maintenant, elle vient me regarder le samedi.",
+"choices": ["Borda, comandante !"]
+}]
+
+[node name="FamilyAterro" parent="." instance=ExtResource("3_wander")]
+position = Vector2(-300, 150)
+color = Color(0.95, 0.75, 0.35, 1)
+size = Vector2(10, 16)
+roam_zone = Rect2(-90, -20, 180, 40)
+speed = 10.0
+pause_at_waypoints = 2.4
+
+[node name="PescadorPonton" parent="." instance=ExtResource("3_wander")]
+position = Vector2(330, 120)
+color = Color(0.45, 0.5, 0.42, 1)
+size = Vector2(10, 17)
+roam_zone = Rect2(-20, -10, 40, 20)
+speed = 6.0
+pause_at_waypoints = 4.0

@@ -173,9 +173,11 @@ avancée TimeOfDay, domingo/blocos/coût humain.
 ## Disparités restantes (entrée pour JOUABILITE.md)
 
 1. ~~Vie ambiante exclusive à Copa~~ **traité le 2026-07-21** (events
-   multi-districts, soirs Arpoador/Icaraí, Forte et Aterro meublés) — restent
-   Marina da Glória et Santos Dumont squelettiques, et domingo/blocos/coût
-   humain encore Copa-only.
+   multi-districts, soirs Arpoador/Icaraí, Forte et Aterro meublés) ; Marina
+   da Glória et Santos Dumont **meublés le 2026-10-07** (Regata da Glória +
+   escolinha de Lia + « Vela pro Pedrinho » ; Desembarque de la ponte aérea +
+   Seu Nonato ; 3 événements zonés chacun, spotters, pêcheur du ponton). Restent
+   domingo/blocos/coût humain encore Copa-only.
 2. 4 intérieurs sans aucun gameplay (Police, Palace Lobby, Bar, Mercadinho).
 3. Donneurs fantômes sans corps ni « ! » — lisibilité 100 % NavigationDirector.
 4. Cycle 15 min/jour, 3 phases.

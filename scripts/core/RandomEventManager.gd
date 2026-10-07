@@ -371,6 +371,81 @@ const EVENT_POOL: Array = [
 		"spawn_zones": ["calcadao"],
 		"districts": ["copacabana", "zona_sul"],
 	},
+	# --- Marina da Glória ---
+	{
+		"id": "regata_optimist",
+		"label": "Flottille d'Optimist",
+		"speaker": "Sobrinho",
+		"text": "Une flottille d'Optimist sort de la Marina, voiles blanches comme une volée de mouettes. Sur le ponton, des parents crient des conseils que le vent emporte. Un gamin chavire, remonte, repart. Personne ne rit : ici, on applaudit ceux qui remontent.",
+		"money": 0,
+		"rep_axis": 0,  # CIVIC
+		"rep_amount": 1,
+		"icon": "⛵",
+		"spawn_zones": ["calcadao"],
+		"districts": ["marina_gloria"],
+	},
+	{
+		"id": "pescador_ponton",
+		"label": "Le pêcheur du ponton",
+		"speaker": "Pescador",
+		"text": "*au bout du ponton, un vieux te montre son seau : deux sardinhas et une canette* A baía já foi farta, moço. Mon père en remontait des paniers entiers, ici même. *il te tend une sardinha quand même* Pour la chance. La baie rend toujours un peu à ceux qui la regardent.",
+		"money": 0,
+		"rep_axis": 0,  # CIVIC
+		"rep_amount": 1,
+		"icon": "🎣",
+		"spawn_zones": ["calcadao"],
+		"districts": ["marina_gloria"],
+	},
+	{
+		"id": "luau_marina",
+		"label": "Luau na Marina",
+		"speaker": "Sobrinho",
+		"text": "Le soleil tombe derrière le Pão de Açúcar. Sur la pelouse de la Marina : un violão, trois inconnus, une glacière. On te tend une latinha sans te demander ton nom, et quelqu'un entame une bossa que tout le monde connaît à moitié.",
+		"money": 0,
+		"rep_axis": 2,  # STREET
+		"rep_amount": 1,
+		"icon": "🎸",
+		"spawn_zones": ["calcadao"],
+		"districts": ["marina_gloria"],
+		"phases": [2],
+	},
+	# --- Santos Dumont ---
+	{
+		"id": "executivo_pao_de_queijo",
+		"label": "L'executivo de la ponte aérea",
+		"speaker": "Executivo",
+		"text": "*cravate dénouée, deux téléphones* Me diz uma coisa : où on trouve um pão de queijo de verdade ? Pas cette éponge d'aéroport. *tu lui indiques la padaria d'en face ; il te glisse un billet comme on tipe un guide* Rio, rio… À São Paulo, personne ne m'aurait répondu.",
+		"money": 20,
+		"rep_axis": 3,  # TOURIST
+		"rep_amount": 1,
+		"icon": "💼",
+		"spawn_zones": ["calcadao"],
+		"districts": ["santos_dumont"],
+	},
+	{
+		"id": "spotters_pista",
+		"label": "Les spotters de la piste",
+		"speaker": "Sobrinho",
+		"text": "Au bout de la piste, trois spotters guettent le vol de 17h40, objectifs braqués sur la baie. Le Boeing frôle l'eau, roues sorties, le Pão de Açúcar en arrière-plan. Ils hurlent comme à un gol du Mengão, se montrent leurs écrans, et t'en tendent un : « Olha isso, cara ! »",
+		"money": 0,
+		"rep_axis": 3,  # TOURIST
+		"rep_amount": 1,
+		"icon": "📸",
+		"spawn_zones": ["calcadao"],
+		"districts": ["santos_dumont"],
+	},
+	{
+		"id": "mala_de_minas",
+		"label": "La valise de Minas",
+		"speaker": "Dona Zuleica",
+		"text": "*une mamie de Belo Horizonte, au bord des larmes devant le tapis vide* Minha mala, meu filho… *sa valise tournait juste sur le mauvais tapis. Tu la lui ramènes ; elle fouille son sac et te met un pot dans les mains* Doce de leite de Minas. O legítimo. Não conta pra ninguém.",
+		"money": 0,
+		"rep_axis": 0,  # CIVIC
+		"rep_amount": 1,
+		"icon": "🧳",
+		"spawn_zones": ["calcadao"],
+		"districts": ["santos_dumont"],
+	},
 ]
 
 # Zones de spawn par district → bbox en coordonnées LOCALES du district
@@ -398,6 +473,14 @@ const DISTRICT_ZONES: Dictionary = {
 	"niteroi": {
 		"sand":     {"x": [900, 1680], "y": [-30, 110]},
 		"calcadao": {"x": [900, 1680], "y": [122, 150]},
+	},
+	# Marina da Glória : la promenade le long des pontons.
+	"marina_gloria": {
+		"calcadao": {"x": [-420, 420], "y": [70, 180]},
+	},
+	# Santos Dumont : le parvis entre le terminal et la piste.
+	"santos_dumont": {
+		"calcadao": {"x": [-320, 320], "y": [90, 170]},
 	},
 }
 

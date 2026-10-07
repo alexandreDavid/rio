@@ -65,8 +65,9 @@ les payoffs narratifs restent à Copa) ; vie du soir hors Copa (palmas
 d'Arpoador, seresta d'Icaraí) ; bouton ⚽ altinha sur les plages d'Ipanema et
 Icaraí ; Forte et Aterro meublés (fila du Colombo, pêcheur, vétéran, pipas,
 queijo coalho, flâneurs) ; ~330 assertions de test sur l'ambiance (pool,
-éligibilité, bandes de plage, EveningOnly). **Reste ouvert** : Marina da
-Glória et Santos Dumont toujours squelettiques, 4 intérieurs sans gameplay
+éligibilité, bandes de plage, EveningOnly). Marina da Glória et Santos
+Dumont meublés le 2026-10-07 (Regata, Desembarque — voir BACKLOG). **Reste
+ouvert** : 4 intérieurs sans gameplay
 (Police, Palace Lobby, Bar, Mercadinho), domingo/blocos/coût humain encore
 Copa-only, cobrador limité à Copa/ZonaSul/Favela.
 

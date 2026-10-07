@@ -83,6 +83,8 @@ const STEP: Dictionary = {
 	"contessa_fundo/filer_ferretti": {"text": "🎯 → Copa Palace : filer Ferretti, l'administrateur de la Contessa", "dist": "copacabana", "anchor": "palace", "short": "Copa Palace"},
 	"contessa_fundo/ecouter_colombo": {"text": "🎯 → Forte : Ferretti est entré au Café Colombo — écoute son rendez-vous", "dist": "forte", "anchor": "", "short": "Café Colombo (Forte)"},
 	"contessa_fundo/decidir_fundo": {"text": "🎯 → Copa Palace : tout rapporter à la Contessa", "dist": "copacabana", "anchor": "npc:contessa", "short": "La Contessa"},
+	"vela_pedrinho/terminar_regata": {"text": "🎯 → Marina da Glória : finir la Regata au ponton de l'escolinha", "dist": "marina_gloria", "anchor": "", "short": "Marina da Glória"},
+	"vela_pedrinho/inscrever_pedrinho": {"text": "🎯 → Marina da Glória : inscrire Pedrinho chez Lia", "dist": "marina_gloria", "anchor": "npc:lia_vela", "short": "Lia (Marina)"},
 	"policia_b4_descente/filer_dealer": {"text": "🎯 → Zona Sul (Arpoador) : filer le dealer jusqu'à sa planque (planque)", "dist": "zona_sul", "anchor": "", "short": "Arpoador"},
 	"policia_b4_descente/bust_dealer": {"text": "🎯 → Zona Sul (Arpoador) : coffrer le dealer à sa planque", "dist": "zona_sul", "anchor": "", "short": "Arpoador"},
 	"policia_b5_reperage/scout_corcovado": {"text": "🎯 → Corcovado : filer le contremaître au mirante", "dist": "corcovado", "anchor": "", "short": "Corcovado"},

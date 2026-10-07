@@ -27,6 +27,8 @@ const SIGNATURES: Dictionary = {
 	"altinha":          {"axis": 2, "amount": 1, "npc": "", "label": "altinha da praia"},
 	"kitesurf":         {"axis": 2, "amount": 1, "npc": "", "label": "kite da Barra"},
 	"milho":            {"axis": 0, "amount": 1, "npc": "seu_joao", "label": "hora do rush do milho"},
+	"regata":           {"axis": 3, "amount": 2, "npc": "lia_vela", "label": "regata da Glória"},
+	"desembarque":      {"axis": 3, "amount": 2, "npc": "nonato_cooperativa", "label": "desembarque da ponte aérea"},
 }
 const MESTRE_THRESHOLD: int = 3
 # La réputation d'activité est plafonnée par source : au-delà de 3 réussites

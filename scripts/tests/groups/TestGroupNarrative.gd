@@ -18,6 +18,7 @@ func run() -> void:
 	_test_epilogue_memory()
 	_test_pos_carnaval()
 	_test_contessa_fundo()
+	_test_vela_pedrinho()
 	_test_story_clarity()
 
 
@@ -638,6 +639,35 @@ func _test_contessa_fundo() -> void:
 	CampaignManager.set_flag("contessa_discreta")
 	_assert(ep.compose_body(CampaignManager.Endgame.PREFEITO).find("la Contessa à ta gauche") != -1, "Prefeito + alliée : la Contessa à ta gauche")
 	ep.free()
+	_reset_campaign_state()
+
+
+# Vela pro Pedrinho (Marina) : le gamin du prologue revient — Lia l'inscrit à
+# l'escolinha si le joueur termine la Regata (objectif MINIJEU auto).
+func _test_vela_pedrinho() -> void:
+	_section("Marina — Vela pro Pedrinho")
+	var q: Quest = QuestManager.get_quest("vela_pedrinho")
+	_assert(q != null and q.prerequisite_quest_ids.has("prologue_pedrinho") and q.required_act == 2, "quête gated : acte 2 + prologue Pedrinho")
+	_assert(q != null and q.objectives[0].kind == QuestObjective.Kind.MINIJEU and q.objectives[0].minigame_id == "regata", "objectif 1 = finir la Regata (MINIJEU)")
+	_reset_campaign_state()
+	var lia: Node = load("res://scripts/npcs/Lia.gd").new()
+	CampaignManager.current_act = 2
+	_assert(lia._pick_knot() == "lia_intro", "sans le prologue : simple présentation")
+	_complete_quest_all_objectives("prologue_pedrinho")
+	_assert(lia._pick_knot() == "lia_offer", "prologue fait, acte 2 → offre")
+	DialogueBridge.start_dialogue("lia_vela", "lia_offer")
+	DialogueBridge.choose(0)
+	_assert(QuestManager.is_active("vela_pedrinho"), "offre acceptée")
+	_assert(lia._pick_knot() == "lia_remind", "avant la régate : rappel")
+	EventBus.minigame_ended.emit("regata", {"qualifies": false})
+	_assert(lia._pick_knot() == "lia_remind", "abandon : l'objectif ne se coche pas")
+	EventBus.minigame_ended.emit("regata", {"qualifies": true, "won": false})
+	_assert(lia._pick_knot() == "lia_inscrever", "régate finie (même sans battre Bia) → inscription")
+	DialogueBridge.start_dialogue("lia_vela", "lia_inscrever")
+	DialogueBridge.choose(0)
+	_assert(QuestManager.is_completed("vela_pedrinho") and CampaignManager.has_flag("pedrinho_vela"), "Pedrinho inscrit (flag pedrinho_vela)")
+	_assert(lia._pick_knot() == "lia_done", "après : Pedrinho à la barre")
+	lia.free()
 	_reset_campaign_state()
 
 
