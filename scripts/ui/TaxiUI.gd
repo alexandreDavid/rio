@@ -49,9 +49,9 @@ func _on_destination_pressed(district_id: String) -> void:
 	if DistrictManager.travel_to(district_id):
 		close()
 	elif DistrictManager.travel_lock_reason() != "":
-		if taxi_status:
-			taxi_status.text = DistrictManager.travel_lock_reason()
-			taxi_status.modulate = Color(0.95, 0.6, 0.4, 1)
+		if status_label:
+			status_label.text = DistrictManager.travel_lock_reason()
+			status_label.modulate = Color(0.95, 0.6, 0.4, 1)
 	else:
 		# Échec (probablement pas assez d'argent) : on signale.
 		_update_status_insufficient(district_id)
