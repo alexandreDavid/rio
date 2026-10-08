@@ -1088,7 +1088,7 @@ func _region_bounds() -> Rect2:
 			continue
 		var bb: Rect2 = _rects_bbox(n)
 		if bb.size.x > 0.0 and bb.grow(120.0).has_point(p):
-			return bb.grow(60.0)
+			return _quantize(bb.grow(60.0))
 	var cur: String = DistrictManager.current()
 	# Copa et la Zona Sul forment un littoral continu : une seule grille.
 	if cur == "copacabana" or cur == "zona_sul":
@@ -1106,7 +1106,7 @@ func _region_bounds() -> Rect2:
 		if dn != null:
 			var bb2: Rect2 = _ground_bbox(dn)
 			if bb2.size.x > 0.0 and bb2.grow(300.0).has_point(p):
-				return bb2.grow(150.0)
+				return _quantize(bb2.grow(150.0))
 	if COPA_BOUNDS.has_point(p):
 		return COPA_BOUNDS
 	return Rect2(p - Vector2(1200, 900), Vector2(2400, 1800))
@@ -1128,6 +1128,17 @@ func _district_at(p: Vector2) -> String:
 		if bb.size.x > 0.0 and bb.grow(200.0).has_point(p):
 			return id
 	return "copacabana"
+
+
+# Bornes arrondies à 512 px : un décor animé (nuage, bondinho) qui déplace la
+# bbox d'un district ne doit pas faire reconstruire la grille à chaque image.
+func _quantize(r: Rect2) -> Rect2:
+	var q: float = 512.0
+	var x0: float = floor(r.position.x / q) * q
+	var y0: float = floor(r.position.y / q) * q
+	var x1: float = ceil(r.end.x / q) * q
+	var y1: float = ceil(r.end.y / q) * q
+	return Rect2(x0, y0, x1 - x0, y1 - y0)
 
 
 func _region_key(b: Rect2) -> String:

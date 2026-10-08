@@ -368,6 +368,11 @@ func _compute_selection() -> Dictionary:
 
 	# --- Acte 4 : Os Grandes Lances ---
 	if act == 4:
+		# Finale Polícia : la Madrugada se lance chez Ramos (flag madrugada_lancee)
+		# AVANT de monter au morro — sinon la PM en faction dit « pas encore »
+		# (playtest 2026-10-08 : 22 min au point de ralliement sans signal).
+		if QuestManager.is_active("policia_b9_madrugada") and not CampaignManager.has_flag("madrugada_lancee"):
+			return _S("🎯 → Copa (Academia) : Ramos donne le signal de la Madrugada", "copacabana", "npc:ramos", "Ramos · Academia")
 		var st4: Dictionary = _active_step()
 		if not st4.is_empty():
 			return st4

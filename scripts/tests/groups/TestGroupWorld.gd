@@ -1154,6 +1154,20 @@ func _test_navigation_director_prologue_and_jantar() -> void:
 		_assert(String(vc.get("text", "")).find("Ramos") == -1, "…et le bandeau ne renvoie plus chez Ramos (%s)" % vc.get("text", ""))
 	_reset_campaign_state()
 	CampaignManager.set_flag("act1_started")
+	# Finale Polícia : B9 active sans signal → Ramos d'abord, puis le morro.
+	_reset_campaign_state()
+	CampaignManager.current_act = 4
+	CampaignManager.set_flag("act1_closed")
+	CampaignManager.set_flag("voie_policia")
+	QuestManager._state["policia_b9_madrugada"] = QuestManager.State.ACTIVE
+	QuestManager._objectives["policia_b9_madrugada"] = {"complete_madrugada": false}
+	var b9: Dictionary = NavigationDirector._compute_selection()
+	_assert(String(b9.get("anchor", "")) == "npc:ramos", "B9 sans signal → Ramos (%s)" % b9.get("text", ""))
+	CampaignManager.set_flag("madrugada_lancee")
+	b9 = NavigationDirector._compute_selection()
+	_assert(b9.get("dist", "") == "favela_morro", "B9 lancée → le morro (%s)" % b9.get("text", ""))
+	_reset_campaign_state()
+	CampaignManager.set_flag("act1_started")
 	# Ancre npc: d'un PNJ d'intérieur → la porte de son bâtiment (Ramos → Academia).
 	var ramos: Node2D = NPCScheduler.get_npc("ramos")
 	if ramos != null:
