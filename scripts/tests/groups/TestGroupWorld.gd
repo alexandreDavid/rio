@@ -21,6 +21,7 @@ func run() -> void:
 	_test_quest_objectives_reachable()
 	_test_navigation_director_targets()
 	_test_navigation_director_prologue_and_jantar()
+	_test_dynamic_missions_not_farmable()
 	await _test_mobile_controls_invariants()
 	_test_random_events_multi_district()
 	await _test_ambient_life_out_of_copa()
@@ -1193,3 +1194,62 @@ func _test_navigation_director_prologue_and_jantar() -> void:
 	TimeOfDay.current_phase = saved_phase
 	DistrictManager.set_current(saved_dist)
 	_reset_campaign_state()
+
+
+# Playtest 2026-10-07 — F1 : un job ne se re-tire pas aussitôt, et la paie
+# suit la distance (un marqueur sous les pieds paie 30 %).
+func _test_dynamic_missions_not_farmable() -> void:
+	_section("Missions dynamiques — pas farmables sur place")
+	var dm: Node = get_node_or_null("/root/DynamicMissionManager")
+	_assert(dm != null, "autoload DynamicMissionManager présent")
+	if dm == null:
+		return
+	var cat: int = DynamicMissionManager.Category.VOYOU
+	var pool: Array = DynamicMissionManager.TEMPLATES[cat]
+	var last: String = String(pool[0].get("title", ""))
+	dm._last_title[cat] = last
+	var repeated: int = 0
+	for i in 30:
+		dm._generate_for(cat)
+		if String(dm.get_mission(cat).get("title", "")) == last:
+			repeated += 1
+	_assert(repeated == 0, "le dernier job joué n'est jamais re-tiré aussitôt (%d/30)" % repeated)
+	var m: Dictionary = dm.get_mission(cat)
+	_assert(int(m.get("base_money", 0)) == DynamicMissionManager.REWARD_TABLE[int(m.get("tier", 0))], "base_money = table du tier")
+	if GameManager.player != null and is_instance_valid(GameManager.player):
+		var player: Node2D = GameManager.player as Node2D
+		var saved: Vector2 = player.global_position
+		# Un job de Copa (sans district) : debout sur son 1er point → 30 %.
+		var copa_tpl: Dictionary = {}
+		for tpl in pool:
+			if not tpl.has("district") and (tpl.get("points", []) as Array).size() == 1:
+				copa_tpl = tpl
+				break
+		if not copa_tpl.is_empty():
+			var t: Dictionary = copa_tpl.duplicate(true)
+			t["category"] = cat
+			t["tier"] = 0
+			t["base_money"] = 80
+			t["money"] = 80
+			t["progress"] = 0
+			t["accepted"] = false
+			dm._active[cat] = t
+			player.global_position = (t.points as Array)[0]
+			_assert(dm.accept(cat), "acceptation sur place")
+			_assert(int(dm.get_mission(cat).get("money", 0)) == 24, "job sous les pieds → 30 %% de la paie (%d)" % int(dm.get_mission(cat).get("money", 0)))
+			dm._despawn_marker(cat)
+			# Même job accepté à 1 000 px → pleine paie.
+			var t2: Dictionary = copa_tpl.duplicate(true)
+			t2["category"] = cat
+			t2["tier"] = 0
+			t2["base_money"] = 80
+			t2["money"] = 80
+			t2["progress"] = 0
+			t2["accepted"] = false
+			dm._active[cat] = t2
+			player.global_position = (t2.points as Array)[0] + Vector2(1000, 0)
+			_assert(dm.accept(cat), "acceptation à distance")
+			_assert(int(dm.get_mission(cat).get("money", 0)) == 80, "job à 1 000 px → pleine paie (%d)" % int(dm.get_mission(cat).get("money", 0)))
+			dm._despawn_marker(cat)
+		player.global_position = saved
+	dm._generate_for(cat)

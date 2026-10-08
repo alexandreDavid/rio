@@ -153,6 +153,11 @@ const TIME_PER_POINT_SEC: float = 15.0      # marge par point à toucher
 const TIME_MIN_SEC: float = 45.0
 const TIME_MAX_SEC: float = 420.0
 const FAST_BONUS_RATIO: float = 0.25         # finir avec >25% du budget restant = bonus
+# Paie ∝ distance à parcourir (playtest 2026-10-07, F1 : trois jobs acceptés
+# debout au Posto 1 payaient 650 R$ en 40 s). Pleine paie à partir de
+# REWARD_FULL_DIST_PX ; un job sous les pieds ne paie que REWARD_MIN_FACTOR.
+const REWARD_FULL_DIST_PX: float = 700.0
+const REWARD_MIN_FACTOR: float = 0.3
 # Au-delà de cette distance brute, la cible est dans un autre district
 # (offsets de scène) : budget plancher, la distance px n'a plus de sens.
 const INTER_DISTRICT_DIST_PX: float = 3000.0
@@ -189,6 +194,11 @@ func accept(cat: int) -> bool:
 	m["accepted"] = true
 	m["progress"] = 0
 	_resolve_points_to_world(m)
+	# La paie suit la distance réelle depuis l'endroit où on accepte.
+	var dist: float = _mission_distance(m)
+	var factor: float = 1.0 if dist > INTER_DISTRICT_DIST_PX else clampf(dist / REWARD_FULL_DIST_PX, REWARD_MIN_FACTOR, 1.0)
+	m["dist_factor"] = factor
+	m["money"] = int(round(float(m.get("base_money", m.get("money", 0))) * factor))
 	var budget: float = _time_budget(m)
 	m["time_total"] = budget
 	m["time_left"] = budget
@@ -216,10 +226,11 @@ func _resolve_points_to_world(m: Dictionary) -> void:
 
 # Budget temps = distance du joueur au 1er point + segments suivants, à ~90 px/s,
 # plus des marges fixes. Clampé pour rester jouable sur les missions inter-districts.
-func _time_budget(m: Dictionary) -> float:
+# Distance joueur → 1er point → points suivants (points déjà en coordonnées monde).
+func _mission_distance(m: Dictionary) -> float:
 	var points: Array = m.get("points", [])
 	if points.is_empty():
-		return TIME_MIN_SEC
+		return 0.0
 	var dist: float = 0.0
 	var from: Vector2 = points[0]
 	if GameManager.player and is_instance_valid(GameManager.player):
@@ -227,6 +238,13 @@ func _time_budget(m: Dictionary) -> float:
 	for p in points:
 		dist += from.distance_to(p)
 		from = p
+	return dist
+
+func _time_budget(m: Dictionary) -> float:
+	var points: Array = m.get("points", [])
+	if points.is_empty():
+		return TIME_MIN_SEC
+	var dist: float = _mission_distance(m)
 	var budget: float = TIME_BASE_SEC + dist * TIME_PER_PX + TIME_PER_POINT_SEC * points.size()
 	# Cible manifestement dans un autre district (les scènes sont instanciées à
 	# des offsets de plusieurs milliers de px) : la distance brute ne veut rien
@@ -257,6 +275,7 @@ func _expire(cat: int) -> void:
 		Color(0.95, 0.45, 0.4, 1))
 	mission_expired.emit(cat)
 	_despawn_marker(cat)
+	_last_title[cat] = String(m.get("title", ""))
 	_generate_for(cat)
 
 # Appelé par DynamicMissionMarker quand le joueur entre dans la zone du point courant.
@@ -274,12 +293,21 @@ func mark_progress(cat: int) -> void:
 
 # --- Logique interne ---
 
+# Titre du dernier job joué/expiré par catégorie : on ne le re-tire pas aussitôt.
+var _last_title: Dictionary = {}
+
 func _generate_for(cat: int) -> void:
 	var pool: Array = TEMPLATES[cat]
-	var t: Dictionary = pool[randi() % pool.size()].duplicate(true)
+	var candidates: Array = []
+	for tpl in pool:
+		if pool.size() > 1 and String(tpl.get("title", "")) == String(_last_title.get(cat, "")):
+			continue
+		candidates.append(tpl)
+	var t: Dictionary = candidates[randi() % candidates.size()].duplicate(true)
 	var tier: int = clamp(int(_tier.get(cat, 0)), 0, REWARD_TABLE.size() - 1)
 	t["category"] = cat
 	t["tier"] = tier
+	t["base_money"] = REWARD_TABLE[tier]
 	t["money"] = REWARD_TABLE[tier]
 	t["rep"] = REP_TABLE[tier]
 	t["progress"] = 0
@@ -310,6 +338,7 @@ func _complete(cat: int) -> void:
 	_tier[cat] = int(_tier.get(cat, 0)) + 1
 	mission_completed.emit(cat, money, rep)
 	_despawn_marker(cat)
+	_last_title[cat] = String(m.get("title", ""))
 	_generate_for(cat)
 
 func _spawn_marker(cat: int) -> void:
