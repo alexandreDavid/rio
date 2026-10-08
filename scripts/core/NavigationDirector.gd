@@ -61,7 +61,7 @@ const STEP: Dictionary = {
 	"prologue_pedrinho/bring_home": {"text": "🎯 Ramène Pedrinho à sa mère", "dist": "favela_morro", "anchor": "spot:vizinha", "short": "La mère"},
 	# --- VOIE TRÁFICO (A1 → A9) ---
 	"trafico_a1_livraison/drop_calcadao": {"text": "🎯 → Copa (calçadão, face mer) : déposer le paquet au contact", "dist": "copacabana", "anchor": "spot:trafico_contact", "short": "Calçadão"},
-	"trafico_a2_pickup/pickup_palace": {"text": "🎯 → Copa Palace : récupérer la sacoche chez le groom", "dist": "copacabana", "anchor": "palace", "short": "Copa Palace"},
+	"trafico_a2_pickup/pickup_palace": {"text": "🎯 → Copa Palace : récupérer la sacoche chez le groom", "dist": "copacabana", "anchor": "spot:trafico_contact", "short": "Copa Palace"},
 	"trafico_a2_pickup/despistar_pm": {"text": "🎯 Copa : sème la PM dans les transversales !", "dist": "copacabana", "anchor": "", "short": "Copa"},
 	"trafico_a3_chauffeur/drive_botafogo": {"text": "🎯 → Botafogo (Bondinho) : livrer le coffre AVANT la relève de la PM !", "dist": "botafogo_flamengo", "anchor": "", "short": "Botafogo ⏱"},
 	"trafico_a4_ipanema/deal_ipanema": {"text": "🎯 → Zona Sul (Ipanema, posto 9) : refourguer la marchandise", "dist": "zona_sul", "anchor": "", "short": "Ipanema"},
