@@ -90,7 +90,7 @@ const STEP: Dictionary = {
 	"policia_b4_descente/filer_dealer": {"text": "🎯 → Zona Sul (Arpoador) : filer le dealer jusqu'à sa planque (planque)", "dist": "zona_sul", "anchor": "", "short": "Arpoador"},
 	"policia_b4_descente/bust_dealer": {"text": "🎯 → Zona Sul (Arpoador) : coffrer le dealer à sa planque", "dist": "zona_sul", "anchor": "", "short": "Arpoador"},
 	"policia_b5_reperage/scout_corcovado": {"text": "🎯 → Corcovado : filer le contremaître au mirante", "dist": "corcovado", "anchor": "", "short": "Corcovado"},
-	"policia_b6_tioze/ask_temoin": {"text": "🎯 → Copa (Bar do Policial) : fais parler le vieux garçom", "dist": "copacabana", "anchor": "", "short": "Bar do Policial"},
+	"policia_b6_tioze/ask_temoin": {"text": "🎯 → Copa (Bar do Policial) : fais parler le vieux garçom", "dist": "copacabana", "anchor": "spot:policia_garcom", "short": "Bar do Policial"},
 	"policia_b6_tioze/porter_lembranca": {"text": "🎯 → Copa (calçadão) : le souvenir de Zé chez Seu Osmar, PM réformé", "dist": "copacabana", "anchor": "calcadao", "short": "Calçadão"},
 	"policia_b6_tioze/reperer_sombra": {"text": "🎯 → Copa Palace : repère le guetteur qui surveille le concierge (planque)", "dist": "copacabana", "anchor": "palace", "short": "Copa Palace"},
 	"policia_b6_tioze/hear_concierge": {"text": "🎯 → Copa Palace : poser la chope devant le concierge", "dist": "copacabana", "anchor": "palace", "short": "Copa Palace"},
@@ -431,7 +431,7 @@ func _resolve_point(anchor: String, cur: String) -> Vector2:
 		return _node_pos_guard(_entrance_or_self(NPCScheduler.get_npc(anchor.substr(4))))
 	# `spot:<npc_id>` = ReactiveDialogueSpot ; `node:<name>` = nœud du monde par nom.
 	if anchor.begins_with("spot:") or anchor.begins_with("node:"):
-		return _node_pos_guard(_find_world_node(anchor))
+		return _node_pos_guard(_entrance_or_self(_find_world_node(anchor)))
 	# Ancrages fixes valides uniquement quand on est physiquement à Copacabana.
 	if cur == "copacabana":
 		match anchor:
