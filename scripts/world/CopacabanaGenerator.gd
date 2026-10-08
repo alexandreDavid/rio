@@ -48,6 +48,7 @@ func _ready() -> void:
 	_spawn_cop_bar()
 	_spawn_academia()
 	_paint_landmark_facades()
+	_spawn_seagulls()
 	_spawn_metro_entrances()
 	_spawn_favelas()
 	_spawn_botafogo_tunnels()
@@ -70,6 +71,9 @@ func _ready() -> void:
 	_spawn_human_cost()
 	_spawn_reinado()
 	_spawn_arpoador_seam()
+	# Tri en Y (rendu E) : personnages, props et façades (origine au pied) se
+	# recouvrent selon leur position ; les sols restent sur leurs z négatifs.
+	WorldFx.enable_y_sort(self)
 
 func _spawn_tile_strip(container_name: String, y_top: float, y_bot: float, tile_region: Rect2, z_idx: int = -5) -> void:
 	var container: Node2D = Node2D.new()
@@ -117,6 +121,7 @@ func _spawn_sea() -> void:
 			s.region_rect = region
 			s.scale = scale
 			s.position = Vector2(cx, top + row * Cfg.GROUND_TILE_SIZE + Cfg.GROUND_TILE_SIZE * 0.5)
+			s.material = WorldFx.water_material(s.position)
 			container.add_child(s)
 
 # Collision du rivage : empêche le joueur de marcher sur l'eau, en suivant la
@@ -260,6 +265,7 @@ func _spawn_sea_foam() -> void:
 		s.region_rect = Cfg.FOAM_TILE_REGION
 		s.scale = Vector2(scale_x, scale_y)
 		s.position = Vector2(cx, Cfg.shore_y(cx) + strip_h * 0.5 - 8.0)
+		s.material = WorldFx.foam_material(s.position)
 		container.add_child(s)
 
 func _spawn_beach_props() -> void:
@@ -419,6 +425,14 @@ func _paint_landmark_facades() -> void:
 		BuildingDressing.paint_relief(parent, facade.get_index(), r, facade.color, opts)
 
 
+func _spawn_seagulls() -> void:
+	var gulls: Seagulls = Seagulls.new()
+	gulls.name = "Seagulls"
+	gulls.band = Rect2(Cfg.MAP_LEFT + 100.0, 300.0, Cfg.MAP_TOTAL_W - 200.0, 170.0)
+	gulls.z_index = 1
+	add_child(gulls)
+
+
 func _spawn_building(parent: Node, pos: Vector2, color: Color) -> void:
 	var body: StaticBody2D = StaticBody2D.new()
 	body.position = pos
@@ -463,6 +477,9 @@ func _spawn_palace() -> void:
 	sprite.region_enabled = true
 	sprite.region_rect = Cfg.PALACE_REGION
 	sprite.scale = Vector2(Cfg.BUILDINGS_SCALE, Cfg.BUILDINGS_SCALE)
+	# Origine au bas du bâtiment (tri en Y), dessin remonté par offset.
+	sprite.position = Vector2(0, Cfg.PALACE_REGION.size.y * Cfg.BUILDINGS_SCALE * 0.5)
+	sprite.offset = Vector2(0, -Cfg.PALACE_REGION.size.y * 0.5)
 	body.add_child(sprite)
 
 	_add_door(container, Vector2(Cfg.PALACE_X, Cfg.PALACE_Y), Cfg.PALACE_SIZE.y * 0.5, _palace_spawn, "Entrer au palace")
@@ -669,6 +686,8 @@ func _spawn_commerce(parent: Node, x: float, region: Rect2, spawn: Vector2, prom
 	sprite.region_enabled = true
 	sprite.region_rect = region
 	sprite.scale = Vector2(Cfg.BUILDINGS_SCALE, Cfg.BUILDINGS_SCALE)
+	sprite.position = Vector2(0, region.size.y * Cfg.BUILDINGS_SCALE * 0.5)
+	sprite.offset = Vector2(0, -region.size.y * 0.5)
 	body.add_child(sprite)
 
 	_add_door(parent, Vector2(x, Cfg.BUILDING_Y), Cfg.COMMERCE_SIZE.y * 0.5, spawn, prompt)

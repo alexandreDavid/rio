@@ -29,6 +29,9 @@ var _mounted_vehicle: Node = null
 func _ready() -> void:
 	add_to_group("player")
 	GameManager.register_player(self)
+	var dust: FootDust = FootDust.new()
+	dust.name = "FootDust"
+	add_child(dust)
 	EventBus.interaction_available.connect(_on_interaction_available)
 	EventBus.interaction_lost.connect(_on_interaction_lost)
 	EventBus.interaction_unavailable.connect(_on_interaction_unavailable)

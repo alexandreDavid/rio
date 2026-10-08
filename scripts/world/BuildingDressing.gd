@@ -56,7 +56,11 @@ static func paint_relief(parent: Node, insert_at: int, rect: Rect2, color: Color
 		spr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		spr.scale = Vector2(FacadePainter.DENSITY, FacadePainter.DENSITY)
 		var painted: Vector2 = Vector2(tex.get_size()) * FacadePainter.DENSITY
-		spr.position = rect.position + ((rect.size - painted) * 0.5).floor()
+		# Origine au BAS de la façade (tri en Y : un personnage dont les pieds
+		# sont plus bas passe devant), dessin décalé vers le haut via offset.
+		var off: Vector2 = ((rect.size - painted) * 0.5).floor()
+		spr.position = Vector2(rect.position.x + off.x, rect.end.y - off.y)
+		spr.offset = Vector2(0, -tex.get_size().y)
 		parent.add_child(spr)
 		parent.move_child(spr, idx)
 		idx += 1
@@ -72,6 +76,7 @@ static func paint_relief(parent: Node, insert_at: int, rect: Rect2, color: Color
 		night.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		night.scale = spr.scale
 		night.position = spr.position
+		night.offset = spr.offset
 		night.visible = false
 		night.add_to_group("nightlight")
 		parent.add_child(night)
@@ -79,9 +84,15 @@ static func paint_relief(parent: Node, insert_at: int, rect: Rect2, color: Color
 		idx += 1
 		var roof_offset_p: float = float(opts.get("roof_offset", 0.0))
 		if opts.get("roof_band", true):
-			var roof_p: ColorRect = _rect(parent, Vector2(rect.position.x - overhang, rect.position.y - roof_h * 0.6), Vector2(rect.size.x + overhang * 2.0, roof_h * 0.6 + 1.0),
-				Color(color.r * 0.40, color.g * 0.40, color.b * 0.40, 1), "Roof")
+			# Toit plat vu du dessus (faux 3/4) : dalle béton claire + arête sombre.
+			var roof_top: float = rect.position.y - roof_h * 0.6
+			var roof_p: ColorRect = _rect(parent, Vector2(rect.position.x - overhang, roof_top), Vector2(rect.size.x + overhang * 2.0, roof_h * 0.6 + 1.0),
+				Color(0.62, 0.60, 0.56, 1), "Roof")
 			parent.move_child(roof_p, idx)
+			idx += 1
+			var roof_edge: ColorRect = _rect(parent, Vector2(rect.position.x - overhang, roof_top + roof_h * 0.6 - 1.0), Vector2(rect.size.x + overhang * 2.0, 2.0),
+				Color(color.r * 0.35, color.g * 0.35, color.b * 0.35, 1), "RoofEdge")
+			parent.move_child(roof_edge, idx)
 			idx += 1
 			roof_offset_p = roof_h * 0.6
 		var kind_p: int = int(opts.get("roof_kind", Roof.NONE))

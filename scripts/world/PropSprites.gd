@@ -63,8 +63,11 @@ static func spawn(parent: Node, region: Rect2, pos: Vector2, target_height: floa
 	s.texture = resampled(region, target_height)
 	s.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	s.scale = Vector2(PIXEL_DENSITY, PIXEL_DENSITY)
-	var world_h: float = float(s.texture.get_height() * PIXEL_DENSITY)
-	s.position = Vector2(pos.x, pos.y - world_h * 0.5)
+	# Origine du nœud = le pied (tri en Y correct) ; le dessin est décalé vers le haut.
+	s.position = pos
+	s.offset = Vector2(0, -s.texture.get_height() * 0.5)
+	if PALM_REGIONS.has(region):
+		s.material = WorldFx.sway_material(pos)
 	parent.add_child(s)
 	return s
 

@@ -55,8 +55,15 @@ uniform vec2 cell = vec2(64.0, 64.0);
 uniform vec4 tint = vec4(1.0);
 uniform float mean_lum = 0.0;  // > 0 : recolorise (luminance relative × tint)
 uniform float grain = 1.0;
+uniform float wave = 0.0;      // > 0 : ondulation (mer)
+varying vec4 vcol;
+void vertex() { vcol = COLOR; }
 void fragment() {
 	vec2 world_px = UV / TEXTURE_PIXEL_SIZE;
+	if (wave > 0.0) {
+		world_px.x += sin(TIME * 1.2 + world_px.y * 0.08) * wave * 2.0;
+		world_px.y += cos(TIME * 0.9 + world_px.x * 0.07) * wave * 1.5;
+	}
 	vec2 t = fract(world_px / cell);
 	// demi-pixel de marge pour ne pas échantillonner le cadre décoratif voisin
 	vec2 px = region.xy + 0.5 + t * (region.zw - 1.0);
@@ -65,7 +72,10 @@ void fragment() {
 		float l = dot(c.rgb, vec3(0.299, 0.587, 0.114)) / mean_lum;
 		c.rgb = tint.rgb * mix(1.0, l, grain);
 	}
-	COLOR = c;
+	if (wave > 0.0) {
+		c.rgb += 0.05 * sin(TIME * 2.0 + world_px.x * 0.11 + world_px.y * 0.09);
+	}
+	COLOR = c * vcol;
 }
 """
 
@@ -213,6 +223,8 @@ static func _overlay_tiles(cr: ColorRect, group: String) -> void:
 		mat.set_shader_parameter("tint", cr.color)
 		mat.set_shader_parameter("mean_lum", _mean_luminance(tex, region))
 		mat.set_shader_parameter("grain", spec.get("grain", 1.0))
+	if group == "ground_sea":
+		mat.set_shader_parameter("wave", 1.0)
 	s.material = mat
 	cr.add_child(s)
 
@@ -278,6 +290,7 @@ static func _foam_strip(tex: Texture2D, from: Vector2, to: Vector2, sea_normal: 
 		s.scale = Vector2(scale_x, scale_y)
 		s.rotation = rot
 		s.position = from + dir * (done + seg * 0.5) + sea_normal * FOAM_SEA_OFFSET
+		s.material = WorldFx.foam_material(from + s.position)
 		container.add_child(s)
 		done += seg
 	return container
@@ -335,6 +348,18 @@ static func _dress_building(cr: ColorRect, rects: Array[ColorRect]) -> void:
 			if mine.encloses(o) and o.get_area() < mine.get_area() * 0.3 and other.get_child_count() == 0:
 				other.visible = false
 	BuildingDressing.paint_relief(parent, cr.get_index(), r, cr.color, opts)
+	# Tri en Y : un Control est classé par son coin haut-gauche, donc une
+	# enseigne posée sur le haut de la façade passerait sous le sprite (ancré
+	# au pied). Tout ce que la scène dessine après la façade et qui la touche
+	# remonte d'un cran, comme il l'était en ordre d'arbre.
+	for child in parent.get_children():
+		if not (child is Control) or child.get_index() <= cr.get_index() or not child.visible:
+			continue
+		var c: Control = child as Control
+		if c.name.begins_with("Roof") or c.name == "Shadow":
+			continue
+		if mine.intersects(c.get_global_rect()):
+			c.z_index = maxi(c.z_index, 1)
 
 
 # Les districts sont plus compacts que Copa (bandes de 30-50 px contre 64) :

@@ -33,6 +33,20 @@ echo "Godot: $GODOT_BIN"
 echo "Lancement des tests d'intégration…"
 echo ""
 
+# Les drivers instancient Main : SaveSystem autosauve dans le slot courant.
+# On met les vraies sauvegardes à l'abri le temps des tests et on les remet
+# (y compris sur Ctrl-C). Sans ça, un run de tests écrase la partie du joueur.
+SAVEDIR="$HOME/Library/Application Support/Godot/app_userdata/Rio — Copacabana"
+STASH="$(mktemp -d)"
+restore_saves() {
+	rm -f "$SAVEDIR"/savegame_slot[123].json
+	cp -p "$STASH"/* "$SAVEDIR"/ 2>/dev/null || true
+	rm -rf "$STASH"
+}
+trap restore_saves EXIT
+cp -p "$SAVEDIR"/savegame_slot[123].json "$SAVEDIR"/ng_plus.json "$STASH"/ 2>/dev/null || true
+rm -f "$SAVEDIR"/savegame_slot[123].json
+
 # Suite d'intégration (assertions abstraites) + pilotes « réels » qui chargent la
 # vraie scène Main et simulent les interactions joueur (flux acte 1→3, paiement,
 # patrons, et contrat complet par voie) + audit d'accessibilité géométrique (le

@@ -161,6 +161,29 @@ contour) pour que tout nouvel asset respecte le langage GBA.
   de taches jaunes assombries. Non fait : reflets sur la mer, néons des
   enseignes de l'atlas, ombres longues du matin.
 
+- **C** : `scripts/world/WorldFx.gd` — trois shaders de monde : **eau**
+  (deux ondes lentes qui décalent l'UV et une bande claire mobile), **écume**
+  (opacité qui respire, déphasée selon la position) et **balancement** des
+  couronnes de palmiers (torsion douce par l'UV, pied immobile, phase par
+  position). Posés sur les tuiles de mer et l'écume de Copa comme des
+  districts (`DistrictDresser`), et sur chaque palmier via `PropSprites`.
+  **Mouettes** (`Seagulls.gd`, oiseaux 9×5 natifs à 2 frames) qui glissent
+  dans une bande au ras de l'eau et rebouclent. **Poussière de pas**
+  (`FootDust.gd`, bouffées tous les 22 px quand le joueur court sur le
+  sable). Non fait : stores et drapeaux animés, ombres des nuages.
+- **E** : **tri en Y** réel. `WorldFx.enable_y_sort` active `y_sort_enabled`
+  sur le monde et ses conteneurs ; les `z_index` fixes des personnages
+  (joueur, PNJ, clients, Miguel, PM) sont retirés des scènes ; toute texture
+  posée (façades `Facade`/`FacadeNight`, palmiers, parasols, carrocinha,
+  Palace et commerces peints) a son **origine au pied** (`position` = base,
+  `offset` remonte le dessin) pour que l'ordre de dessin suive la hauteur à
+  l'écran. Un personnage passe désormais derrière la couronne d'un palmier
+  et devant une façade dont il dépasse la base. Les toits reçoivent une
+  dalle (`RoofEdge`) qui lit comme un volume vu d'en haut. Les tests
+  (`TestGroupWorld`) vérifient l'ancrage du sprite de façade.
+
+Restent **G** (interface) et **H** (intérieurs).
+
 ## Séquence recommandée
 
 1. **F + I** (1 j) : pixels propres et captures de référence — on mesure

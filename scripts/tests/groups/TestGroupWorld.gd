@@ -1405,7 +1405,8 @@ func _test_facade_painter() -> void:
 	_assert(spr != null, "paint_relief → Sprite2D 'Facade'")
 	if spr != null:
 		_assert(spr.scale == Vector2(3, 3) and spr.texture_filter == CanvasItem.TEXTURE_FILTER_NEAREST, "…×3, NEAREST")
-		_assert(spr.position == Vector2(0, 0) and Vector2i(spr.texture.get_size()) == Vector2i(33, 21), "…calé dans la façade (%s)" % spr.position)
+		# Origine au pied (tri en Y) : position = coin bas-gauche, offset remonte le dessin.
+		_assert(spr.position == Vector2(0, 64) and spr.offset == Vector2(0, -21) and Vector2i(spr.texture.get_size()) == Vector2i(33, 21), "…calé dans la façade, origine au pied (%s / %s)" % [spr.position, spr.offset])
 	_assert(holder.get_node_or_null("Window") == null and holder.get_node_or_null("Door") == null, "plus de fenêtres/porte en rects")
 	_assert(holder.get_node_or_null("Shadow") != null, "l'ombre portée reste")
 	holder.queue_free()

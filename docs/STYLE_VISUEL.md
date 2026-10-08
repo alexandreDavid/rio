@@ -20,12 +20,23 @@ est dessiné ou rééchantillonné respecte cette grille.
    (morro) sont les bases ; les rampes dérivent par `FacadePainter.ramp()`
    (−35 % / base / +12 % / vitres bleu `WINDOW_COLOR`). Pas de couleur
    « Godot » brute (ni blanc pur ni noir pur sur une surface).
-6. **Ancrage** : un prop ou un personnage est ancré par ses pieds ; un
-   bâtiment par le bas de sa façade. Le tri en Y suit l'ancre.
-7. **Tailles** : porte 7×9 natifs, fenêtre 5×5, étage 8 natifs (rez-de-chaussée 10), un personnage fait un étage et demi. Un bâtiment de Copa = 33×21 natifs, une maison du morro = 13-40 natifs de haut. Sols peints : tuile 16×16 natifs (48 px monde), marche de 3 natifs.
-   personnage fait un étage. Un bâtiment de Copa = 33×21 natifs, une maison du
-   morro = 14-20 natifs de haut.
-8. **Texte dans le monde** : étiquettes en police UI avec contour, jamais
+6. **Ancrage et tri** : un prop ou un personnage est ancré par ses pieds ;
+   un bâtiment par le bas de sa façade. Le monde est en `y_sort_enabled`
+   (`WorldFx.enable_y_sort`) : l'ordre de dessin suit l'origine du nœud,
+   donc **l'origine d'un Sprite2D est toujours au pied** — `position` = la
+   base, `offset = Vector2(0, -hauteur*0.5)` (ou `-hauteur` avec `centered`
+   à faux) remonte le dessin. Pas de `z_index` fixe sur ce qui vit dans le
+   monde ; il reste réservé aux sols (négatif) et aux effets au ras de l'eau.
+7. **Tailles** : porte 7×9 natifs, fenêtre 5×5, étage 8 natifs
+   (rez-de-chaussée 10), un personnage fait un étage et demi. Un bâtiment de
+   Copa = 33×21 natifs, une maison du morro = 13-40 natifs de haut. Sols
+   peints : tuile 16×16 natifs (48 px monde), marche de 3 natifs.
+8. **Mouvement** : l'eau, l'écume et les couronnes de palmiers bougent par
+   shader (`WorldFx`), phase dérivée de la position pour ne jamais être en
+   chœur ; les mouettes et la poussière de pas sont les seuls éléments
+   animés en code. Tout mouvement est lent (périodes de 2 à 6 s) : il doit
+   se remarquer à la deuxième seconde, pas à la première.
+9. **Texte dans le monde** : étiquettes en police UI avec contour, jamais
    dessinées dans les sprites (localisation).
 
 ## Vérifier

@@ -9,3 +9,4 @@ extends AmbientDrifter
 func _ready() -> void:
 	super._ready()
 	DistrictDresser.dress(self)
+	WorldFx.enable_y_sort(self)
