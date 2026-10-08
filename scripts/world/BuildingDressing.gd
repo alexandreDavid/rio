@@ -60,6 +60,23 @@ static func paint_relief(parent: Node, insert_at: int, rect: Rect2, color: Color
 		parent.add_child(spr)
 		parent.move_child(spr, idx)
 		idx += 1
+		# Fenêtres allumées le soir (groupe nightlight, matériau émissif posé
+		# par DayLighting) — rendu D.
+		var night: Sprite2D = Sprite2D.new()
+		night.name = "FacadeNight"
+		night.texture = FacadePainter.build_night(rect.size, color, {
+			"style": style, "seed": seed, "door": opts.get("door", true),
+			"door_left": opts.get("door_left", false), "shop": opts.get("shop", false),
+			"windows": opts.get("windows", true), "balconies": opts.get("balconies", true)})
+		night.centered = false
+		night.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		night.scale = spr.scale
+		night.position = spr.position
+		night.visible = false
+		night.add_to_group("nightlight")
+		parent.add_child(night)
+		parent.move_child(night, idx)
+		idx += 1
 		var roof_offset_p: float = float(opts.get("roof_offset", 0.0))
 		if opts.get("roof_band", true):
 			var roof_p: ColorRect = _rect(parent, Vector2(rect.position.x - overhang, rect.position.y - roof_h * 0.6), Vector2(rect.size.x + overhang * 2.0, roof_h * 0.6 + 1.0),

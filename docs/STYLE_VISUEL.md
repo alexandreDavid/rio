@@ -22,7 +22,7 @@ est dessiné ou rééchantillonné respecte cette grille.
    « Godot » brute (ni blanc pur ni noir pur sur une surface).
 6. **Ancrage** : un prop ou un personnage est ancré par ses pieds ; un
    bâtiment par le bas de sa façade. Le tri en Y suit l'ancre.
-7. **Tailles** : porte 7×11 natifs, fenêtre 5×6, étage ≈ 11 natifs, un
+7. **Tailles** : porte 7×9 natifs, fenêtre 5×5, étage 8 natifs (rez-de-chaussée 10), un personnage fait un étage et demi. Un bâtiment de Copa = 33×21 natifs, une maison du morro = 13-40 natifs de haut. Sols peints : tuile 16×16 natifs (48 px monde), marche de 3 natifs.
    personnage fait un étage. Un bâtiment de Copa = 33×21 natifs, une maison du
    morro = 14-20 natifs de haut.
 8. **Texte dans le monde** : étiquettes en police UI avec contour, jamais

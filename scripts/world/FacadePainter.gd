@@ -76,6 +76,77 @@ static func build_image(size: Vector2, color: Color, opts: Dictionary = {}) -> I
 	return img
 
 
+# Calque de nuit : les vitres deviennent lumineuses (une fenêtre sur ~3 reste
+# éteinte, déterministe), avec un halo d'un pixel ; le reste est transparent.
+# Affiché en « émissif » (hors CanvasModulate) par DayLighting (rendu D).
+const NIGHT_GLASS: Color = Color(1.0, 0.86, 0.48, 1.0)
+const NIGHT_HALO: Color = Color(1.0, 0.80, 0.40, 0.35)
+
+static var _night_cache: Dictionary = {}
+
+static func build_night(size: Vector2, color: Color, opts: Dictionary = {}) -> ImageTexture:
+	var n: Vector2i = native_size(size)
+	var key: String = "%d_%d_%s_%s" % [n.x, n.y, color.to_html(false), JSON.stringify(opts)]
+	if _night_cache.has(key):
+		return _night_cache[key]
+	var tex: ImageTexture = ImageTexture.create_from_image(build_night_image(size, color, opts))
+	_night_cache[key] = tex
+	return tex
+
+
+static func build_night_image(size: Vector2, color: Color, opts: Dictionary = {}) -> Image:
+	var day: Image = build_image(size, color, opts)
+	var w: int = day.get_width()
+	var h: int = day.get_height()
+	var night: Image = Image.create(w, h, false, Image.FORMAT_RGBA8)
+	night.fill(Color(0, 0, 0, 0))
+	var rng: RandomNumberGenerator = RandomNumberGenerator.new()
+	rng.seed = int(opts.get("seed", 1)) * 31 + 7
+	# Étiquetage des vitres (composantes connexes de pixels « verre »).
+	var seen: Dictionary = {}
+	var blobs: Array = []
+	for y in h:
+		for x in w:
+			var key: int = y * w + x
+			if seen.has(key) or not _is_glass(day.get_pixel(x, y)):
+				continue
+			var blob: Array = []
+			var stack: Array = [Vector2i(x, y)]
+			while not stack.is_empty():
+				var p: Vector2i = stack.pop_back()
+				var k: int = p.y * w + p.x
+				if seen.has(k) or p.x < 0 or p.y < 0 or p.x >= w or p.y >= h:
+					continue
+				if not _is_glass(day.get_pixel(p.x, p.y)):
+					continue
+				seen[k] = true
+				blob.append(p)
+				stack.append(p + Vector2i(1, 0))
+				stack.append(p + Vector2i(-1, 0))
+				stack.append(p + Vector2i(0, 1))
+				stack.append(p + Vector2i(0, -1))
+			blobs.append(blob)
+	for blob in blobs:
+		if rng.randf() < 0.35:
+			continue  # éteinte
+		for p in blob:
+			for dx in [-1, 0, 1]:
+				for dy in [-1, 0, 1]:
+					var q: Vector2i = p + Vector2i(dx, dy)
+					if q.x < 0 or q.y < 0 or q.x >= w or q.y >= h:
+						continue
+					if night.get_pixel(q.x, q.y).a < NIGHT_HALO.a:
+						night.set_pixel(q.x, q.y, NIGHT_HALO)
+		for p in blob:
+			night.set_pixel(p.x, p.y, NIGHT_GLASS)
+	return night
+
+
+static func _is_glass(c: Color) -> bool:
+	# Les vitres sont bleu sombre (WINDOW_GLASS et ses variantes claires/foncées).
+	return c.a > 0.5 and c.b > c.r + 0.12 and c.b > c.g + 0.05 and c.b < 0.85
+
+
 # ----------------------------------------------------------------- Copa
 
 static func _paint_copa(img: Image, r: Dictionary, rng: RandomNumberGenerator, opts: Dictionary) -> void:

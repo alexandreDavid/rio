@@ -11,10 +11,10 @@ extends RefCounted
 #   ground_sand / ground_sea / ground_road / ground_calcadao / ground_sidewalk /
 #   ground_grass   → tuile répétée par-dessus la dalle (cellules 64×64 monde,
 #                    comme _spawn_tile_strip côté Copa)
-#   ground_plaza / ground_dirt → grain du pavé / du sable RECOLORÉ par la couleur
-#                    de la dalle : les esplanades (mirante, Maracanã, Sambódromo,
-#                    cour du Forte) et la terre du morro gardent leur palette,
-#                    elles gagnent juste de la matière
+#   ground_plaza / ground_dirt / ground_stairs → tuile PEINTE (GroundPainter,
+#                    pixel-art à la densité du jeu) dans la couleur de la dalle :
+#                    pavés des esplanades et ruelles, terre du morro, marches
+#                    d'escalier (la largeur de la dalle = la largeur des marches)
 #   district_backdrop → la dalle est étendue à toute la bbox du district + marge
 #                    et envoyée à z=-10 : plus de gris Godot hors carte
 #   building / building_favela → relief de façade via BuildingDressing (ombre,
@@ -40,7 +40,7 @@ const FOAM_SEA_OFFSET: float = 8.0   # l'écume mord surtout sur l'eau (cf. _spa
 const SEAM_TOLERANCE: float = 12.0
 const MIN_SEAM_LEN: float = 32.0
 const BACKDROP_MARGIN: float = 1400.0
-const GROUND_GROUPS: Array = ["ground_sand", "ground_sea", "ground_road", "ground_calcadao", "ground_sidewalk", "ground_grass", "ground_plaza", "ground_dirt"]
+const GROUND_GROUPS: Array = ["ground_sand", "ground_sea", "ground_road", "ground_calcadao", "ground_sidewalk", "ground_grass", "ground_plaza", "ground_dirt", "ground_stairs"]
 # Contraste du grain recoloré : 1 = contraste brut de la tuile, 0 = aplat. Le pavé
 # a des joints marqués (on l'adoucit), le sable est très doux (on l'amplifie).
 const PLAZA_GRAIN: float = 0.65
@@ -167,13 +167,35 @@ static func _tile_shader_res() -> Shader:
 # Sprite enfant de la dalle : il hérite de sa position, de son z et de son
 # ordre de dessin (dessiné juste après elle), donc l'empilement existant tient.
 static func _overlay_tiles(cr: ColorRect, group: String) -> void:
-	var spec: Dictionary = _ground_spec(group)
-	if spec.is_empty():
-		return
-	var tex: Texture2D = load(spec.tex)
+	var tex: Texture2D = null
+	var region: Rect2
+	var cell: Vector2 = CELL
+	var spec: Dictionary = {}
+	# Sols peints (GroundPainter, densité GBA) : la tuile native est générée
+	# dans la couleur de la dalle — pavés des esplanades, terre du morro,
+	# escaliers (rendu B, docs/VISUEL_ETUDE_2026-10-08.md).
+	var seed: int = int(absf(cr.position.x * 7.0 + cr.position.y * 13.0)) % 977 + 1
+	match group:
+		"ground_plaza":
+			tex = GroundPainter.cobble(cr.color, seed)
+			region = Rect2(0, 0, GroundPainter.TILE, GroundPainter.TILE)
+			cell = Vector2(GroundPainter.TILE * GroundPainter.DENSITY, GroundPainter.TILE * GroundPainter.DENSITY)
+		"ground_dirt":
+			tex = GroundPainter.dirt(cr.color, seed)
+			region = Rect2(0, 0, GroundPainter.TILE, GroundPainter.TILE)
+			cell = Vector2(GroundPainter.TILE * GroundPainter.DENSITY, GroundPainter.TILE * GroundPainter.DENSITY)
+		"ground_stairs":
+			tex = GroundPainter.stairs(cr.size.x, cr.color)
+			region = Rect2(0, 0, tex.get_width(), tex.get_height())
+			cell = Vector2(tex.get_width(), tex.get_height()) * GroundPainter.DENSITY
+		_:
+			spec = _ground_spec(group)
+			if spec.is_empty():
+				return
+			tex = load(spec.tex)
+			region = spec.region
 	if tex == null:
 		return
-	var region: Rect2 = spec.region
 	var s: Sprite2D = Sprite2D.new()
 	s.name = "TileOverlay"
 	s.texture = tex
@@ -181,10 +203,12 @@ static func _overlay_tiles(cr: ColorRect, group: String) -> void:
 	s.region_enabled = true
 	s.region_rect = Rect2(Vector2.ZERO, cr.size)
 	s.texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
+	if spec.is_empty():
+		s.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	var mat: ShaderMaterial = ShaderMaterial.new()
 	mat.shader = _tile_shader_res()
 	mat.set_shader_parameter("region", Vector4(region.position.x, region.position.y, region.size.x, region.size.y))
-	mat.set_shader_parameter("cell", CELL)
+	mat.set_shader_parameter("cell", cell)
 	if spec.get("recolor", false):
 		mat.set_shader_parameter("tint", cr.color)
 		mat.set_shader_parameter("mean_lum", _mean_luminance(tex, region))

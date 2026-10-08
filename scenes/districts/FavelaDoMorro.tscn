@@ -313,7 +313,7 @@ offset_right = 380.0
 offset_bottom = 70.0
 color = Color(0.28, 0.45, 0.28, 1)
 
-[node name="StairsCenter" type="ColorRect" parent="." unique_id=40839512]
+[node name="StairsCenter" type="ColorRect" parent="." unique_id=40839512 groups=["ground_stairs"]]
 offset_left = -28.0
 offset_top = -1000.0
 offset_right = 28.0
@@ -334,7 +334,7 @@ offset_right = 32.0
 offset_bottom = 280.0
 color = Color(0.32, 0.22, 0.18, 1)
 
-[node name="EscadariaEsqCenter" type="ColorRect" parent="."]
+[node name="EscadariaEsqCenter" type="ColorRect" parent="." groups=["ground_stairs"]]
 offset_left = -180.0
 offset_top = -1000.0
 offset_right = -168.0

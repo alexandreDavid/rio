@@ -146,6 +146,21 @@ contour) pour que tout nouvel asset respecte le langage GBA.
   12 districts. Les 4 façades peintes de l'atlas (Palace, Cantinho, Quiosque,
   Rio Style) restent telles quelles — décision à prendre.
 
+- **B** : `GroundPainter` (pavés irréguliers, terre à cailloux et touffes,
+  marches nez/giron/contremarche) branché dans `DistrictDresser` pour les
+  groupes `ground_plaza`, `ground_dirt` et le nouveau `ground_stairs` (les
+  deux escaliers du morro sont tagués) ; chaque dalle garde sa couleur, la
+  tuile est générée dedans à la densité GBA. Les ombres portées existaient
+  déjà (rect à 30 %).
+- **D** : `FacadePainter.build_night` (vitres allumées une sur trois éteinte,
+  halo d'un pixel) posé par `BuildingDressing` en Sprite2D `FacadeNight`
+  (groupe `nightlight`) ; `DayLighting` applique à tout nœud `nightlight` un
+  matériau **émissif** (shader qui ignore la couleur de vertex, donc le
+  `CanvasModulate`) et remplace les halos en rect des lampadaires par un
+  dégradé radial 2,4× plus large. Le soir a désormais des lumières au lieu
+  de taches jaunes assombries. Non fait : reflets sur la mer, néons des
+  enseignes de l'atlas, ombres longues du matin.
+
 ## Séquence recommandée
 
 1. **F + I** (1 j) : pixels propres et captures de référence — on mesure
