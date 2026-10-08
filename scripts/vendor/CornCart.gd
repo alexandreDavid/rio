@@ -147,9 +147,14 @@ func _on_quest_accepted(accepted_id: String) -> void:
 	if interactable and (accepted_id == quest_id or accepted_id == "act1_heritage"):
 		interactable.enabled = true
 
-func _on_act_changed(_new_act: int) -> void:
+func _on_act_changed(new_act: int) -> void:
+	# Bascule vers le rush : une charrette encore portée rentre à sa place —
+	# sinon elle restait collée au joueur avec un prompt « rush » inerte
+	# (playtest 2026-10-07, F6).
+	if _carrying and new_act >= 2:
+		drop_off(null)
 	# Au cas où le flag act1_started ait été posé sans passer par quest_accepted.
-	if interactable and not interactable.enabled:
+	if interactable and not interactable.enabled and not _carrying:
 		interactable.enabled = _should_be_enabled()
 	_refresh_prompt()
 

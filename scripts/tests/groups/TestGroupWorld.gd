@@ -20,6 +20,7 @@ func run() -> void:
 	_test_runtime_spot_action_applies()
 	_test_quest_objectives_reachable()
 	_test_navigation_director_targets()
+	_test_navigation_director_prologue_and_jantar()
 	await _test_mobile_controls_invariants()
 	_test_random_events_multi_district()
 	await _test_ambient_life_out_of_copa()
@@ -572,7 +573,11 @@ func _test_navigation_director_targets() -> void:
 		var d: String = e.get("dist", "")
 		_assert(d == "" or DistrictManager.DISTRICTS.has(d), "STEP %s district valide (%s)" % [key, d])
 		var a: String = e.get("anchor", "")
-		_assert(a in valid_anchors or a.begins_with("npc:"), "STEP %s anchor valide (%s)" % [key, a])
+		_assert(a in valid_anchors or a.begins_with("npc:") or a.begins_with("spot:") or a.begins_with("node:"),
+			"STEP %s anchor valide (%s)" % [key, a])
+		# Une ancre `spot:<npc_id>` doit désigner un ReactiveDialogueSpot existant.
+		if a.begins_with("spot:"):
+			_assert(_spot_npc_ids().has(a.substr(5)), "STEP %s : spot '%s' existe dans une scène" % [key, a.substr(5)])
 	# 2. Chaque étape des quêtes MAIN de voie (A/B/C/D) a une cible résoluble.
 	var voie_prefixes: Array = ["trafico_a", "policia_b", "consortium_c", "prefeito_d"]
 	for path in QUEST_RESOURCES:
@@ -1029,3 +1034,94 @@ func _test_minigame_depth_contracts() -> void:
 	_assert(ExerciseGame.QUALIFY_SCORE > max_score / 3 and ExerciseGame.QUALIFY_SCORE < max_score,
 		"treino : seuil qualifiant exigeant mais atteignable (%d / max %d)"
 			% [ExerciseGame.QUALIFY_SCORE, max_score])
+
+
+# npc_id de tous les ReactiveDialogueSpot déclarés dans les scènes (Copa + districts + intérieurs).
+var _spot_ids_cache: Array = []
+func _spot_npc_ids() -> Array:
+	if not _spot_ids_cache.is_empty():
+		return _spot_ids_cache
+	var re: RegEx = RegEx.new()
+	re.compile("npc_id = \"([a-z0-9_]+)\"")
+	var files: Array = ["res://scenes/world/Copacabana.tscn"]
+	files.append_array(_list_scenes_under("res://scenes/districts/"))
+	files.append_array(_list_scenes_under("res://scenes/interiors/"))
+	for f in files:
+		var txt: String = FileAccess.get_file_as_string(f)
+		for m in re.search_all(txt):
+			_spot_ids_cache.append(m.get_string(1))
+	return _spot_ids_cache
+
+
+# Playtest 2026-10-07 — F2 : le prologue prime même quand act1_started est déjà
+# posé (ordre réel : bump de Seu João, puis la mère de Pedrinho) ; F3 : le dîner
+# ne rappelle qu'une fois par jour et, dans la favela, pointe la maison.
+func _test_navigation_director_prologue_and_jantar() -> void:
+	_section("NavigationDirector — prologue prioritaire et jantar quotidien")
+	_reset_campaign_state()
+	var saved_phase: int = TimeOfDay.current_phase
+	var saved_dist: String = DistrictManager.current()
+	TimeOfDay.current_phase = TimeOfDay.Phase.MORNING
+	CampaignManager.set_flag("act1_started")
+	QuestManager.accept("act1_heritage")
+	QuestManager.accept("prologue_pedrinho")
+	DistrictManager.set_current("favela_morro")
+	var sel: Dictionary = NavigationDirector._compute_selection()
+	_assert(String(sel.get("text", "")).find("Pedrinho") != -1, "prologue actif + act1_started → guide la mère de Pedrinho (%s)" % sel.get("text", ""))
+	_assert(String(sel.get("anchor", "")) == "spot:vizinha", "…avec une ancre spot: sur la mère")
+	QuestManager.complete_objective("prologue_pedrinho", "ask_mae", false)
+	sel = NavigationDirector._compute_selection()
+	_assert(String(sel.get("anchor", "")) == "spot:vovo_morro", "étape 2 → ancre sur la vovó do morro (%s)" % sel.get("anchor", ""))
+	TimeOfDay.current_phase = TimeOfDay.Phase.EVENING
+	sel = NavigationDirector._compute_selection()
+	_assert(String(sel.get("text", "")).find("dîner") == -1, "le soir ne coupe pas le prologue")
+	# Jantar : acte 1 sans prologue, le soir.
+	_reset_campaign_state()
+	CampaignManager.set_flag("act1_started")
+	CampaignManager.set_flag("met_consortium")
+	CampaignManager.set_flag("first_sale_done")
+	QuestManager.accept("act1_heritage")
+	TimeOfDay.current_phase = TimeOfDay.Phase.EVENING
+	DistrictManager.set_current("copacabana")
+	sel = NavigationDirector._compute_selection()
+	_assert(String(sel.get("text", "")).find("dîner") != -1 and sel.get("dist", "") == "favela_morro", "Copa le soir → rentre dîner au morro (%s)" % sel.get("text", ""))
+	DistrictManager.set_current("favela_morro")
+	sel = NavigationDirector._compute_selection()
+	_assert(String(sel.get("text", "")).find("dîner") != -1 and sel.get("anchor", "") == "node:TioZeDoor",
+		"favela le soir → la porte de la maison, pas l'escalier (%s / %s)" % [sel.get("text", ""), sel.get("anchor", "")])
+	CampaignManager.set_flag("jantar_day", TimeOfDay.day_count)
+	sel = NavigationDirector._compute_selection()
+	_assert(String(sel.get("text", "")).find("dîner") == -1, "dîner pris → plus de rappel ce jour-là (%s)" % sel.get("text", ""))
+	_assert(String(sel.get("text", "")).find("Descends") != -1, "…et la favela renvoie à Copa normalement")
+	# La variante jantar de mãe : phase soir, une fois par jour, acte ≤ 3.
+	var house: Node = (load("res://scenes/interiors/HouseInterior.tscn") as PackedScene).instantiate()
+	add_child(house)
+	var mae: Node = house.get_node_or_null("MotherSpot")
+	_assert(mae != null, "MotherSpot présent")
+	if mae != null:
+		CampaignManager.flags.erase("jantar_day")
+		var v: Dictionary = mae._pick_variant()
+		_assert(String(v.get("id", "")) == "jantar", "le soir, mãe sert le jantar (variante '%s')" % v.get("id", ""))
+		CampaignManager.set_flag("jantar_day", TimeOfDay.day_count)
+		v = mae._pick_variant()
+		_assert(String(v.get("id", "")) != "jantar", "jantar déjà pris aujourd'hui → autre variante")
+		CampaignManager.flags.erase("jantar_day")
+		TimeOfDay.current_phase = TimeOfDay.Phase.MORNING
+		v = mae._pick_variant()
+		_assert(String(v.get("id", "")) != "jantar", "le matin → pas de jantar")
+	house.queue_free()
+	# F6 : la charrette portée est déposée à la bascule d'acte.
+	var cart_scene: PackedScene = load("res://scenes/props/CornCart.tscn")
+	if cart_scene != null:
+		var cart: Node2D = cart_scene.instantiate()
+		add_child(cart)
+		cart.global_position = Vector2(100, 100)
+		cart.pick_up(null)
+		_assert(cart.is_carrying(), "fixture : charrette portée")
+		cart._on_act_changed(2)
+		_assert(not cart.is_carrying(), "bascule d'acte → charrette déposée")
+		_assert(cart.interactable != null and cart.interactable.enabled, "…et de nouveau interactive (rush)")
+		cart.queue_free()
+	TimeOfDay.current_phase = saved_phase
+	DistrictManager.set_current(saved_dist)
+	_reset_campaign_state()

@@ -202,6 +202,9 @@ func is_active() -> bool:
 	return _active_npc_id != ""
 
 func _apply_placeholder_action(action: Dictionary) -> void:
+	# Flag-jour (beats quotidiens : le jantar) — valeur = jour courant.
+	if action.has("set_flag_day"):
+		CampaignManager.set_flag(String(action.set_flag_day), TimeOfDay.day_count)
 	var cart: CornCart = get_tree().get_first_node_in_group("corn_cart") as CornCart
 	var inv: Inventory = null
 	if GameManager.player:

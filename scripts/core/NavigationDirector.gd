@@ -52,11 +52,13 @@ const PATRONS: Array = [
 # source unique ici (le bandeau lit ce cerveau).
 const STEP: Dictionary = {
 	# --- PROLOGUE : recherche de Pedrinho (1re quête principale) ---
-	"prologue_pedrinho/ask_mae": {"text": "🎯 Parle à la mère de Pedrinho (favela)", "dist": "favela_morro", "anchor": "", "short": "La mère"},
-	"prologue_pedrinho/ask_vovo": {"text": "🎯 Demande à la vovó ce qu'elle a vu (à la maison)", "dist": "favela_morro", "anchor": "", "short": "Vovó (maison)"},
-	"prologue_pedrinho/ask_garoto": {"text": "🎯 Fais parler Juca, le gamin qui jouait avec Pedrinho (favela)", "dist": "favela_morro", "anchor": "", "short": "Juca"},
-	"prologue_pedrinho/find_pedrinho": {"text": "🎯 Cherche Pedrinho dans la vieille citerne (haut du morro, près de la chapelle)", "dist": "favela_morro", "anchor": "", "short": "La citerne"},
-	"prologue_pedrinho/bring_home": {"text": "🎯 Ramène Pedrinho à sa mère", "dist": "favela_morro", "anchor": "", "short": "La mère"},
+	# Ancres `spot:<npc_id>` : les témoins du prologue sont des ReactiveDialogueSpot
+	# de FavelaDoMorro.tscn — la boussole les pointe (playtest 2026-10-07, F2).
+	"prologue_pedrinho/ask_mae": {"text": "🎯 Parle à la mère de Pedrinho (favela)", "dist": "favela_morro", "anchor": "spot:vizinha", "short": "La mère"},
+	"prologue_pedrinho/ask_vovo": {"text": "🎯 Demande à la vovó du morro ce qu'elle a vu (sur son tabouret, près de la maison)", "dist": "favela_morro", "anchor": "spot:vovo_morro", "short": "Vovó do morro"},
+	"prologue_pedrinho/ask_garoto": {"text": "🎯 Fais parler Juca, le gamin qui jouait avec Pedrinho (favela)", "dist": "favela_morro", "anchor": "spot:juca_morro", "short": "Juca"},
+	"prologue_pedrinho/find_pedrinho": {"text": "🎯 Cherche Pedrinho dans la vieille citerne (haut du morro, près de la chapelle)", "dist": "favela_morro", "anchor": "spot:pedrinho", "short": "La citerne"},
+	"prologue_pedrinho/bring_home": {"text": "🎯 Ramène Pedrinho à sa mère", "dist": "favela_morro", "anchor": "spot:vizinha", "short": "La mère"},
 	# --- VOIE TRÁFICO (A1 → A9) ---
 	"trafico_a1_livraison/drop_calcadao": {"text": "🎯 → Copa (calçadão, face mer) : déposer le paquet au contact", "dist": "copacabana", "anchor": "calcadao", "short": "Calçadão"},
 	"trafico_a2_pickup/pickup_palace": {"text": "🎯 → Copa Palace : récupérer la sacoche chez le groom", "dist": "copacabana", "anchor": "palace", "short": "Copa Palace"},
@@ -242,6 +244,14 @@ func _compute_selection() -> Dictionary:
 	var carrying: bool = _cart_carrying()
 	var is_evening: bool = TimeOfDay.current_phase == TimeOfDay.Phase.EVENING
 
+	# --- Prologue : la recherche de Pedrinho prime sur tout, quel que soit
+	#     l'ordre des flags (le bump de Seu João pose act1_started AVANT que la
+	#     mère n'aborde le joueur — la branche ci-dessous ne suffisait pas). ---
+	if QuestManager.is_active("prologue_pedrinho"):
+		var pro0: Dictionary = _active_step()
+		if not pro0.is_empty():
+			return pro0
+
 	# --- Prologue + Acte 1 : démarrage ---
 	if not CampaignManager.has_flag("act1_started"):
 		# La recherche de Pedrinho EST la première quête principale : tant qu'elle
@@ -254,10 +264,15 @@ func _compute_selection() -> Dictionary:
 			return _S("🎯 Sors de la maison — Seu João arrive avec des nouvelles")
 		return _S("🎯 Parle à Seu João, le compadre de Zé (maison)", "", "npc:seu_joao", "Seu João")
 
-	# --- Soir : la famille attend pour le jantar ---
+	# --- Soir : la famille attend pour le jantar — une fois par jour (le flag
+	#     `jantar_day` = jour du dernier dîner, posé par la variante de mãe) ;
+	#     dans la favela on pointe la porte de la maison, pas l'escalier. ---
+	var jantar_done: bool = int(CampaignManager.flags.get("jantar_day", 0)) == TimeOfDay.day_count
 	if is_evening and act <= 3 and CampaignManager.chosen_endgame == CampaignManager.Endgame.NONE \
-			and district != "favela_morro":
-		return _S("🌙 Rentre dîner — mãe, vovó et Seu João t'attendent (maison du morro)", "favela_morro", "", "Maison")
+			and not jantar_done:
+		if district != "favela_morro":
+			return _S("🌙 Rentre dîner — mãe a mis le couvert (maison du morro)", "favela_morro", "", "Maison")
+		return _S("🌙 Rentre dîner — mãe a mis le couvert, entre dans la maison", "", "node:TioZeDoor", "Maison")
 
 	# --- Acte 1 — clôture : acompte payé (act1_heritage finie) mais retour maison
 	#     + nuit dans la maison de Zé pas encore faits → rentrer parler à Seu João. C'est CE
@@ -406,6 +421,9 @@ func _resolve_point(anchor: String, cur: String) -> Vector2:
 		return _node_pos_guard(get_tree().get_first_node_in_group("corn_cart"))
 	if anchor.begins_with("npc:"):
 		return _node_pos_guard(NPCScheduler.get_npc(anchor.substr(4)))
+	# `spot:<npc_id>` = ReactiveDialogueSpot ; `node:<name>` = nœud du monde par nom.
+	if anchor.begins_with("spot:") or anchor.begins_with("node:"):
+		return _node_pos_guard(_find_world_node(anchor))
 	# Ancrages fixes valides uniquement quand on est physiquement à Copacabana.
 	if cur == "copacabana":
 		match anchor:
@@ -450,6 +468,32 @@ func _patron_target(pacto: bool) -> Dictionary:
 		chosen = pool[0]
 	var verb: String = "sceller un pacte avec" if pacto else "voir"
 	return _S("🎯 Va %s %s" % [verb, chosen.short], chosen.dist, chosen.anchor, chosen.short)
+
+# Cache des ancres `spot:`/`node:` (les districts sont instanciés une fois).
+var _anchor_cache: Dictionary = {}
+
+func _find_world_node(anchor: String) -> Node:
+	var cached: Node = _anchor_cache.get(anchor)
+	if cached != null and is_instance_valid(cached) and cached.is_inside_tree():
+		return cached
+	var root: Node = get_tree().current_scene
+	if root == null:
+		return null
+	var found: Node = null
+	if anchor.begins_with("node:"):
+		var wanted: String = anchor.substr(5)
+		for n in root.find_children(wanted, "", true, false):
+			found = n
+			break
+	else:
+		var npc_id: String = anchor.substr(5)
+		for n in root.find_children("*", "Node2D", true, false):
+			if n is ReactiveDialogueSpot and String(n.get("npc_id")) == npc_id:
+				found = n
+				break
+	if found != null:
+		_anchor_cache[anchor] = found
+	return found
 
 # Position d'un nœud, ou NO_POS s'il est invalide / trop loin (= autre district).
 func _node_pos_guard(n: Node) -> Vector2:

@@ -114,6 +114,11 @@ func _on_interacted(_by: Node) -> void:
 	var earn_after: int = int(variant.get("earn_after", 0))
 	if earn_after > 0:
 		post_actions["earn"] = earn_after
+	# `set_flag_day_after` : pose flag = jour courant (un beat « une fois par jour »,
+	# ex. le jantar de mãe ; lu via `flag_not_today`).
+	var day_flag: String = variant.get("set_flag_day_after", "")
+	if day_flag != "":
+		post_actions["set_flag_day"] = day_flag
 	var passthrough: Dictionary = variant.get("actions", {})
 	for k in passthrough:
 		post_actions[k] = passthrough[k]
@@ -184,6 +189,15 @@ func _variant_matches(v: Dictionary) -> bool:
 		var state2: Dictionary = QuestManager.get_objectives_state(String(obj_pending[0]))
 		if bool(state2.get(String(obj_pending[1]), false)):
 			return false
+	# `flag_not_today` : le flag-jour ne doit PAS valoir le jour courant (beat
+	# quotidien pas encore joué aujourd'hui).
+	var not_today: String = v.get("flag_not_today", "")
+	if not_today != "" and int(CampaignManager.flags.get(not_today, 0)) == TimeOfDay.day_count:
+		return false
+	# `act_max` : acte maximal (la variante disparaît ensuite).
+	var max_act: int = int(v.get("act_max", 0))
+	if max_act > 0 and CampaignManager.current_act > max_act:
+		return false
 	# Phase de la journée — TimeOfDay.Phase : 0=MORNING, 1=AFTERNOON, 2=EVENING.
 	# `phase` : la variante ne s'affiche que pendant cette phase.
 	# `not_phase` : la variante ne s'affiche PAS pendant cette phase.

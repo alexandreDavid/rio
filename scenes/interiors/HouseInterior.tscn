@@ -254,6 +254,15 @@ npc_id = "mae"
 prompt = "Parler à Mãe"
 character_seed = 70411
 variants = [{
+"id": "jantar",
+"phase": 2,
+"act_max": 3,
+"flag_not_today": "jantar_day",
+"set_flag_day_after": "jantar_day",
+"speaker": "Mãe",
+"text": "*elle pose la marmite au milieu de la table — trois assiettes, la troisième reste vide, comme chaque soir* Senta, meu filho. Mange pendant que c'est chaud. *elle te regarde manger plus qu'elle ne mange* Raconte-moi ta journée. Pas les chiffres — le reste. Qui t'a souri, qui t'a regardé de travers. *un silence, les yeux sur l'assiette vide* Demain tu repars tôt, je sais. Mais ce soir tu es là, et ça, personne ne nous le prend.",
+"choices": ["Obrigado, mãe"]
+}, {
 "id": "ze_hibiscus",
 "flag": "ze_rescued",
 "not_flag": "mae_hibiscus_seen",
