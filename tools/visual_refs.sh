@@ -3,7 +3,7 @@
 #   tools/visual_refs.sh          → capture dans tools/visual_refs/current/ et compare à ref/
 #   tools/visual_refs.sh --update → remplace les références par les captures courantes
 # Nécessite une fenêtre (pas headless). Les sauvegardes sont mises à l'abri le
-# temps de la capture. Un écart > 2 % sur une vue = sortie 1 (changement à regarder).
+# temps de la capture. Un écart > 4 % sur une vue = sortie 1 (PNJ et trafic font ~2 % de bruit).
 set -u
 cd "$(dirname "$0")/.."
 GODOT_BIN="${GODOT_BIN:-$HOME/Downloads/Godot.app/Contents/MacOS/Godot}"
@@ -32,7 +32,7 @@ fi
 rc=0
 for n in "${NAMES[@]}"; do
 	if [ -f "$DIR/ref/$n.png" ]; then
-		"$GODOT_BIN" --headless --path . -s tools/image_diff.gd -- "$DIR/ref/$n.png" "$DIR/current/$n.png" 2 2>&1 | grep "écart\|DIFF" || rc=1
+		"$GODOT_BIN" --headless --path . -s tools/image_diff.gd -- "$DIR/ref/$n.png" "$DIR/current/$n.png" 4 2>&1 | grep "écart\|DIFF" || rc=1
 	else
 		echo "$n : pas de référence"
 	fi

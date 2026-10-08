@@ -39,6 +39,39 @@ static func paint_relief(parent: Node, insert_at: int, rect: Rect2, color: Color
 	parent.move_child(shadow, idx)
 	idx += 2  # après l'ombre ET la façade
 
+	# Façade peinte (pixel-art, FacadePainter) par-dessus l'aplat : elle porte
+	# fenêtres, porte, arêtes et fondation ; on ne garde en rects que l'ombre,
+	# la bande de toit et le décor de toit. `painter: false` = ancien relief.
+	if opts.get("painter", true) and FacadePainter.native_size(rect.size).x >= 6 \
+			and FacadePainter.native_size(rect.size).y >= 8:
+		var style: String = String(opts.get("style", "copa"))
+		var tex: ImageTexture = FacadePainter.build(rect.size, color, {
+			"style": style, "seed": seed, "door": opts.get("door", true),
+			"door_left": opts.get("door_left", false), "shop": opts.get("shop", false),
+			"windows": opts.get("windows", true), "balconies": opts.get("balconies", true)})
+		var spr: Sprite2D = Sprite2D.new()
+		spr.name = "Facade"
+		spr.texture = tex
+		spr.centered = false
+		spr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		spr.scale = Vector2(FacadePainter.DENSITY, FacadePainter.DENSITY)
+		var painted: Vector2 = Vector2(tex.get_size()) * FacadePainter.DENSITY
+		spr.position = rect.position + ((rect.size - painted) * 0.5).floor()
+		parent.add_child(spr)
+		parent.move_child(spr, idx)
+		idx += 1
+		var roof_offset_p: float = float(opts.get("roof_offset", 0.0))
+		if opts.get("roof_band", true):
+			var roof_p: ColorRect = _rect(parent, Vector2(rect.position.x - overhang, rect.position.y - roof_h * 0.6), Vector2(rect.size.x + overhang * 2.0, roof_h * 0.6 + 1.0),
+				Color(color.r * 0.40, color.g * 0.40, color.b * 0.40, 1), "Roof")
+			parent.move_child(roof_p, idx)
+			idx += 1
+			roof_offset_p = roof_h * 0.6
+		var kind_p: int = int(opts.get("roof_kind", Roof.NONE))
+		if kind_p != Roof.NONE:
+			_paint_roof_decor(parent, idx, rect, kind_p, roof_offset_p, small)
+		return
+
 	# Arête éclairée à gauche (lumière du matin venant de l'est)
 	var hi: ColorRect = _rect(parent, rect.position + Vector2(0, roof_h * 0.6), Vector2(highlight_w, h - roof_h * 0.6 - foundation_h - 1.0),
 		Color(minf(color.r + 0.12, 1.0), minf(color.g + 0.12, 1.0), minf(color.b + 0.12, 1.0), 0.9), "Highlight")

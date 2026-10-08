@@ -293,12 +293,23 @@ static func _dress_building(cr: ColorRect, rects: Array[ColorRect]) -> void:
 			break
 	var favela: bool = cr.is_in_group("building_favela")
 	var seed: int = int(absf(r.position.x * 7.0 + r.position.y * 13.0))
-	var opts: Dictionary = {"windows": bare, "door": bare, "seed": seed, "door_left": (seed % 2) == 0}
+	# Le peintre dessine toujours fenêtres et porte ; les petits rects que la
+	# scène avait posés dans la façade (fenêtres, portes en aplat) sont masqués,
+	# sauf ceux qui portent un enfant (enseigne avec Label).
+	var opts: Dictionary = {"windows": true, "door": true, "seed": seed, "door_left": (seed % 2) == 0,
+		"style": "favela" if favela else "copa", "shop": (not favela) and (seed % 4) == 0}
 	if favela:
 		# La scène dessine déjà des toits de 10 px : pas de bande, décor par-dessus.
 		opts["roof_band"] = false
 		opts["roof_offset"] = 10.0
 		opts["roof_kind"] = seed % 4
+	if not bare:
+		for other in rects:
+			if other == cr or other.get_parent() != parent or other.get_index() < cr.get_index():
+				continue
+			var o: Rect2 = other.get_global_rect()
+			if mine.encloses(o) and o.get_area() < mine.get_area() * 0.3 and other.get_child_count() == 0:
+				other.visible = false
 	BuildingDressing.paint_relief(parent, cr.get_index(), r, cr.color, opts)
 
 

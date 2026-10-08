@@ -127,6 +127,25 @@ une comparaison (diff d'images) dans `run_tests.sh` en mode optionnel, et
 contour) pour que tout nouvel asset respecte le langage GBA.
 - Impact ★★ · effort **S** (½ j).
 
+## Livré (2026-10-08)
+
+- **F** : `PropSprites.resampled` — palmiers, parasols, serviettes et
+  carrocinha réduits une fois à la densité GBA (hauteur/3, LANCZOS, alpha
+  durci) puis affichés ×3 NEAREST.
+- **I** : `tools/visual_refs.sh` (6 vues de référence, diff `tools/image_diff.gd`,
+  seuil 4 %) + `docs/STYLE_VISUEL.md`.
+- **A, en peintre procédural** : `scripts/world/FacadePainter.gd` dessine
+  chaque façade à largeur/3 × hauteur/3 (rampe de 5 tons dérivée de la
+  couleur, enduit ou brique, étages compacts de 8 px natifs, fenêtres à
+  volets, balcons, climatiseurs, rez-de-chaussée porte ou vitrine à auvent,
+  arêtes, fondation, contour). Styles `copa`, `favela`, `igreja`. Branché
+  dans `BuildingDressing.paint_relief` (les rects de relief ne restent que
+  pour l'ombre, la bande de toit et le décor de toit), donc actif sur les
+  deux rangées de Copa, les 6 repères de la 2e rangée (post-traitement
+  `_paint_landmark_facades`), les maisons du morro et les façades taguées des
+  12 districts. Les 4 façades peintes de l'atlas (Palace, Cantinho, Quiosque,
+  Rio Style) restent telles quelles — décision à prendre.
+
 ## Séquence recommandée
 
 1. **F + I** (1 j) : pixels propres et captures de référence — on mesure

@@ -47,6 +47,7 @@ func _ready() -> void:
 	_spawn_police_station()
 	_spawn_cop_bar()
 	_spawn_academia()
+	_paint_landmark_facades()
 	_spawn_metro_entrances()
 	_spawn_favelas()
 	_spawn_botafogo_tunnels()
@@ -375,6 +376,49 @@ func _near_cross_street(x: float) -> bool:
 			return true
 	return false
 
+# Les bâtiments repères de la 2e rangée (police, Academia, bar, église,
+# pharmacie, padaria) sont dessinés à la main en rects : on repeint leur
+# façade (le plus grand ColorRect du bloc) avec FacadePainter et on masque les
+# petits rects de fenêtres/porte qu'elle recouvre. Enseignes, auvents et
+# Labels restent.
+const LANDMARK_STYLES: Dictionary = {
+	"PoliceStation": {"style": "copa", "shop": false},
+	"Academia": {"style": "copa", "shop": true},
+	"CopBar": {"style": "copa", "shop": true},
+	"Igreja": {"style": "igreja"},
+	"Farmacia": {"style": "copa", "shop": true},
+	"Padaria": {"style": "copa", "shop": true},
+}
+
+func _paint_landmark_facades() -> void:
+	for cname in LANDMARK_STYLES:
+		var container: Node = get_node_or_null(cname)
+		if container == null:
+			continue
+		var rects: Array = container.find_children("*", "ColorRect", true, false)
+		var facade: ColorRect = null
+		for cr in rects:
+			if facade == null or (cr as ColorRect).size.x * (cr as ColorRect).size.y > facade.size.x * facade.size.y:
+				facade = cr
+		if facade == null:
+			continue
+		var parent: Node = facade.get_parent()
+		var r: Rect2 = Rect2(facade.position, facade.size)
+		var mine: Rect2 = facade.get_global_rect()
+		for other in rects:
+			if other == facade or other.get_parent() != parent or other.get_index() < facade.get_index():
+				continue
+			var o: Rect2 = (other as ColorRect).get_global_rect()
+			if mine.encloses(o) and o.get_area() < mine.get_area() * 0.3 and other.get_child_count() == 0:
+				(other as ColorRect).visible = false
+		var opts: Dictionary = (LANDMARK_STYLES[cname] as Dictionary).duplicate()
+		opts["seed"] = hash(cname) & 0xFFFF
+		opts["roof_band"] = false
+		opts["windows"] = true
+		opts["door"] = true
+		BuildingDressing.paint_relief(parent, facade.get_index(), r, facade.color, opts)
+
+
 func _spawn_building(parent: Node, pos: Vector2, color: Color) -> void:
 	var body: StaticBody2D = StaticBody2D.new()
 	body.position = pos
@@ -393,25 +437,11 @@ func _spawn_building(parent: Node, pos: Vector2, color: Color) -> void:
 	facade.offset_bottom = Cfg.BUILDING_SIZE.y * 0.5
 	facade.color = color
 	body.add_child(facade)
-	BuildingDressing.paint_relief(body, facade.get_index(), Rect2(-Cfg.BUILDING_SIZE * 0.5, Cfg.BUILDING_SIZE), color)
-
-	for j in 3:
-		var win: ColorRect = ColorRect.new()
-		var wx: float = -30.0 + j * 22.0
-		win.offset_left = wx
-		win.offset_top = -20.0
-		win.offset_right = wx + 12.0
-		win.offset_bottom = -8.0
-		win.color = Cfg.WINDOW_COLOR
-		body.add_child(win)
-
-	var door: ColorRect = ColorRect.new()
-	door.offset_left = -6.0
-	door.offset_top = 12.0
-	door.offset_right = 6.0
-	door.offset_bottom = 32.0
-	door.color = Cfg.DOOR_COLOR
-	body.add_child(door)
+	# Façade peinte (fenêtres, balcons, porte, et une boutique à auvent sur
+	# une partie du front de mer) — cf. FacadePainter.
+	var seed: int = int(absf(pos.x * 7.0 + pos.y * 13.0))
+	BuildingDressing.paint_relief(body, facade.get_index(), Rect2(-Cfg.BUILDING_SIZE * 0.5, Cfg.BUILDING_SIZE), color,
+		{"style": "copa", "seed": seed, "windows": true, "door": true, "shop": (seed % 3) == 0})
 
 func _spawn_palace() -> void:
 	var container: Node2D = Node2D.new()
@@ -1057,7 +1087,8 @@ func _spawn_favela_house(parent: Node, pos: Vector2, size: Vector2, color: Color
 	wall.color = color
 	node.add_child(wall)
 	BuildingDressing.paint_relief(node, wall.get_index(), local, color,
-		{"windows": true, "door": true, "door_left": door_left, "roof_kind": roof_kind})
+		{"style": "favela", "seed": int(absf(pos.x * 7.0 + pos.y * 13.0)),
+		"windows": true, "door": true, "door_left": door_left, "roof_kind": roof_kind})
 
 # Quiosques du calçadão — les petits kiosques à água de coco omniprésents sur
 # le front de mer. Décor pur, posés sur le bord sud du calçadão.

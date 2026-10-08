@@ -24,6 +24,7 @@ func run() -> void:
 	_test_dynamic_missions_not_farmable()
 	_test_prologue_lock_and_spots()
 	_test_intro_ngplus_bondinho()
+	_test_facade_painter()
 	await _test_mobile_controls_invariants()
 	_test_random_events_multi_district()
 	await _test_ambient_life_out_of_copa()
@@ -1358,3 +1359,57 @@ func _test_intro_ngplus_bondinho() -> void:
 	routed = NavigationDirector._route_via_bondinho(NavigationDirector._S("🎯 → Pão de Açúcar : jouer le set DJ", "pao_acucar", "", "Pão"))
 	_assert(routed.get("dist", "") == "pao_acucar", "sur place → inchangé")
 	DistrictManager.set_current(saved_dist)
+
+
+# Rendu A — FacadePainter : taille native = taille/3, déterministe, porte et
+# fenêtres présentes, contour sombre, et le relief en rects remplacé par un
+# Sprite2D « Facade » en NEAREST ×3.
+func _test_facade_painter() -> void:
+	_section("FacadePainter — façades en pixel-art")
+	# build_image (pas d'ImageTexture.get_image : en headless il attend le renderer).
+	var img: Image = FacadePainter.build_image(Vector2(100, 64), Color(0.88, 0.78, 0.64), {"style": "copa", "seed": 7, "shop": true})
+	_assert(img.get_size() == Vector2i(33, 21), "100×64 monde → 33×21 natifs (%s)" % img.get_size())
+	var tex: ImageTexture = FacadePainter.build(Vector2(100, 64), Color(0.88, 0.78, 0.64), {"style": "copa", "seed": 7, "shop": true})
+	var colors: Dictionary = {}
+	var has_glass: bool = false
+	var has_door: bool = false
+	for y in img.get_height():
+		for x in img.get_width():
+			var c: Color = img.get_pixel(x, y)
+			colors[c.to_html(false)] = true
+			# RGBA8 quantifie : tolérance d'un cran par canal.
+			if _near_color(c, FacadePainter.WINDOW_GLASS):
+				has_glass = true
+			if _near_color(c, FacadePainter.DOOR_BASE):
+				has_door = true
+	_assert(colors.size() >= 8, "façade copa : au moins 8 couleurs (%d)" % colors.size())
+	_assert(has_glass and has_door, "façade copa : vitres et porte présentes")
+	var dark: Color = FacadePainter.ramp(Color(0.88, 0.78, 0.64)).dark
+	_assert(_near_color(img.get_pixel(0, 0), dark) and _near_color(img.get_pixel(32, 20), dark), "contour sombre aux coins")
+	var tex2: ImageTexture = FacadePainter.build(Vector2(100, 64), Color(0.88, 0.78, 0.64), {"style": "copa", "seed": 7, "shop": true})
+	_assert(tex2 == tex, "même taille/couleur/options → même texture (cache)")
+	var fav: ImageTexture = FacadePainter.build(Vector2(60, 40), Color(0.88, 0.35, 0.32), {"style": "favela", "seed": 3, "door_left": true})
+	_assert(Vector2i(fav.get_size()) == Vector2i(20, 13), "maison 60×40 → 20×13 natifs")
+	var tiny: ImageTexture = FacadePainter.build(Vector2(12, 12), Color(0.5, 0.5, 0.5), {})
+	_assert(Vector2i(tiny.get_size()) == Vector2i(4, 4), "façade minuscule : simple aplat contouré")
+	var igreja: ImageTexture = FacadePainter.build(Vector2(120, 90), Color(0.92, 0.88, 0.78), {"style": "igreja"})
+	_assert(Vector2i(igreja.get_size()) == Vector2i(40, 30), "église 120×90 → 40×30")
+	# Intégration : paint_relief pose un Sprite2D « Facade » ×3 NEAREST et plus de rects de fenêtres.
+	var holder: Node2D = Node2D.new()
+	add_child(holder)
+	var cr: ColorRect = ColorRect.new()
+	cr.size = Vector2(100, 64)
+	holder.add_child(cr)
+	BuildingDressing.paint_relief(holder, cr.get_index(), Rect2(Vector2.ZERO, Vector2(100, 64)), Color(0.8, 0.7, 0.6), {"windows": true, "door": true})
+	var spr: Sprite2D = holder.get_node_or_null("Facade") as Sprite2D
+	_assert(spr != null, "paint_relief → Sprite2D 'Facade'")
+	if spr != null:
+		_assert(spr.scale == Vector2(3, 3) and spr.texture_filter == CanvasItem.TEXTURE_FILTER_NEAREST, "…×3, NEAREST")
+		_assert(spr.position == Vector2(0, 0) and Vector2i(spr.texture.get_size()) == Vector2i(33, 21), "…calé dans la façade (%s)" % spr.position)
+	_assert(holder.get_node_or_null("Window") == null and holder.get_node_or_null("Door") == null, "plus de fenêtres/porte en rects")
+	_assert(holder.get_node_or_null("Shadow") != null, "l'ombre portée reste")
+	holder.queue_free()
+
+
+func _near_color(a: Color, b: Color) -> bool:
+	return absf(a.r - b.r) < 0.01 and absf(a.g - b.g) < 0.01 and absf(a.b - b.b) < 0.01
