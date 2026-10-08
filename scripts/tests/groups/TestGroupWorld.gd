@@ -1136,6 +1136,24 @@ func _test_navigation_director_prologue_and_jantar() -> void:
 		v = mae._pick_variant()
 		_assert(String(v.get("id", "")) != "jantar", "le matin → pas de jantar")
 	house.queue_free()
+	# Voie scellée sans mission active → le donneur de la prochaine mission
+	# (B3 s'offre au spot de filature du morro, pas chez Ramos).
+	_reset_campaign_state()
+	CampaignManager.current_act = 3
+	CampaignManager.set_flag("act1_closed")
+	CampaignManager.set_flag("voie_policia")
+	for q in ["prologue_pedrinho", "act1_heritage", "policia_b1_intel", "policia_b2_filature"]:
+		QuestManager._state[q] = QuestManager.State.COMPLETED
+	_assert(QuestManager.is_available("policia_b3_escorte"), "fixture : B3 disponible après B2")
+	var vc: Dictionary = NavigationDirector._voie_continue()
+	_assert(String(vc.get("anchor", "")) == "spot:policia_filature" or String(vc.get("anchor", "")).begins_with("npc:"),
+		"voie Polícia après B2 → le donneur de B3 (%s)" % vc.get("anchor", ""))
+	if String(vc.get("anchor", "")) == "spot:policia_filature":
+		_assert(vc.get("dist", "") == "favela_morro", "…dans la favela (%s)" % vc.get("dist", ""))
+	if NavigationDirector._find_world_node("spot:policia_filature") != null:
+		_assert(String(vc.get("text", "")).find("Ramos") == -1, "…et le bandeau ne renvoie plus chez Ramos (%s)" % vc.get("text", ""))
+	_reset_campaign_state()
+	CampaignManager.set_flag("act1_started")
 	# Ancre npc: d'un PNJ d'intérieur → la porte de son bâtiment (Ramos → Academia).
 	var ramos: Node2D = NPCScheduler.get_npc("ramos")
 	if ramos != null:

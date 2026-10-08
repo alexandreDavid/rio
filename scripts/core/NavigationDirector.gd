@@ -564,8 +564,23 @@ func _cart_carrying() -> bool:
 	return cart.call("is_carrying")
 
 # Quand une voie est scellée mais qu'aucune mission n'est active, renvoie vers
-# le patron de CETTE voie pour décrocher la suite de la chaîne.
+# le DONNEUR de la prochaine mission disponible de la chaîne (souvent un spot
+# de district, pas le patron — playtest 2026-10-08 : « retrouve Ramos » 60 min
+# alors que B3 s'offrait au spot de filature du morro) ; sinon vers le patron.
+const VOIE_PREFIX: Dictionary = {
+	"voie_trafico": ["trafico_a", "Tráfico"],
+	"voie_policia": ["policia_b", "Polícia"],
+	"voie_consortium": ["consortium_c", "Consórcio"],
+	"voie_prefeito": ["prefeito_d", "Prefeito"],
+}
+
 func _voie_continue() -> Dictionary:
+	for flag in VOIE_PREFIX:
+		if not CampaignManager.has_flag(flag):
+			continue
+		var next: Dictionary = _next_voie_quest_target(String(VOIE_PREFIX[flag][0]), String(VOIE_PREFIX[flag][1]))
+		if not next.is_empty():
+			return next
 	if CampaignManager.has_flag("voie_trafico"):
 		return _S("🎯 Continue ta voie Tráfico — retrouve Tito à la Favela", "favela_morro", "npc:tito", "Tito · Favela")
 	if CampaignManager.has_flag("voie_policia"):
@@ -575,6 +590,51 @@ func _voie_continue() -> Dictionary:
 	if CampaignManager.has_flag("voie_prefeito"):
 		return _S("🎯 Continue ta voie Prefeito — retrouve le Padre (église)", "copacabana", "church", "Padre · l'église")
 	return {}
+
+# Prochaine MAIN disponible de la chaîne (ordre des ids) → son donneur.
+func _next_voie_quest_target(prefix: String, voie_label: String) -> Dictionary:
+	var ids: Array = []
+	for id in QuestManager._quests.keys():
+		var q: Quest = QuestManager.get_quest(id)
+		if q != null and q.quest_type == Quest.QuestType.MAIN and String(id).begins_with(prefix) \
+				and QuestManager.is_available(id):
+			ids.append(id)
+	if ids.is_empty():
+		return {}
+	ids.sort()
+	var quest: Quest = QuestManager.get_quest(ids[0])
+	var giver: String = quest.giver_npc_id
+	if giver == "":
+		return {}
+	var node: Node = NPCScheduler.get_npc(giver)
+	var anchor: String = "npc:" + giver
+	if node == null:
+		node = _find_world_node("spot:" + giver)
+		anchor = "spot:" + giver
+	if node == null:
+		return {}
+	var dist: String = _district_of_node(node)
+	var where: String = _short_district(dist) if dist != "copacabana" else "Copa"
+	return _S("🎯 Voie %s — « %s » : retourne voir ton contact (%s)" % [voie_label, quest.display_name, where],
+			dist, anchor, where)
+
+# District qui contient un nœud (enfant direct de World portant une scène de
+# district), sinon Copacabana. Les ids partageant une scène (Aterro/Botafogo)
+# se départagent par l'absence de spawn_marker (l'id « principal »).
+func _district_of_node(node: Node) -> String:
+	var n: Node = node
+	var world: Node = get_tree().current_scene.get_node_or_null("World") if get_tree().current_scene else null
+	while n != null and n.get_parent() != null and n.get_parent() != world:
+		n = n.get_parent()
+	if n == null:
+		return "copacabana"
+	var fallback: String = ""
+	for id in DistrictManager.DISTRICTS:
+		if String(DistrictManager.DISTRICTS[id].get("node_name", "")) == n.name:
+			if not DistrictManager.DISTRICTS[id].has("spawn_marker"):
+				return id
+			fallback = id
+	return fallback if fallback != "" else "copacabana"
 
 func _no_voie_chosen() -> bool:
 	for f in CampaignManager.VOIE_FLAGS:
