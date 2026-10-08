@@ -1565,6 +1565,7 @@ variants = Array[Dictionary]([{
 [node name="TraficoIntimSpot" parent="." unique_id=1773870891 instance=ExtResource("7_reactive")]
 position = Vector2(-30, -300)
 npc_id = "trafico_intim"
+required_act = 2
 prompt = "Le voisin bavard"
 variants = Array[Dictionary]([{
 "choices": ["Le briser : qu'il tremble chaque fois qu'il entendra ton nom", "Lui payer en douce le bus pour Caxias — « t'es parti tout seul, entendu ? » (150 R$)", "Le livrer à Miguel pour l'exemple — le morro doit voir"],
@@ -1716,6 +1717,7 @@ character_seed = 70433
 [node name="TraficoZildaSpot" parent="." instance=ExtResource("7_reactive")]
 position = Vector2(150, -330)
 npc_id = "trafico_zilda"
+required_act = 2
 prompt = "La doyenne du morro"
 character_seed = 815101
 required_flag = "voie_trafico"
@@ -1763,6 +1765,7 @@ color = Color(0.4, 0.55, 0.85, 1)
 [node name="OperacaoMadrugadaSpot" parent="." instance=ExtResource("7_reactive")]
 position = Vector2(40, -420)
 npc_id = "operacao_madrugada"
+required_act = 2
 prompt = "Le point de ralliement de la PM"
 character_seed = 90208
 variants = [{
@@ -1783,6 +1786,7 @@ variants = [{
 [node name="PoliciaFilatureSpot" parent="." unique_id=185039548 instance=ExtResource("7_reactive")]
 position = Vector2(26, -486)
 npc_id = "policia_filature"
+required_act = 2
 prompt = "Observer le réseau (planque)"
 variants = Array[Dictionary]([{
 "actions": {
@@ -1826,6 +1830,7 @@ character_seed = 80107
 [node name="FamiliaConflitoSpot" parent="." instance=ExtResource("7_reactive")]
 position = Vector2(-140, -250)
 npc_id = "familia_conflito"
+required_act = 2
 prompt = "Dona Cléo (la famille)"
 character_seed = 70441
 variants = [{
@@ -1852,6 +1857,7 @@ variants = [{
 [node name="CapangaTitoSpot" parent="." instance=ExtResource("7_reactive")]
 position = Vector2(20, -248)
 npc_id = "capanga_nenem"
+required_act = 2
 prompt = "Neném (l'homme de Tito)"
 character_seed = 70442
 variants = [{
@@ -1896,6 +1902,7 @@ variants = [{
 [node name="PrefeitoFavelaSpot" parent="." unique_id=1439209239 instance=ExtResource("7_reactive")]
 position = Vector2(-60, -260)
 npc_id = "prefeito_favela"
+required_act = 2
 prompt = "La médiation"
 variants = Array[Dictionary]([{
 "choices": ["La laje de Nino : Neném exécute son ordre sans toucher à la famille", "Plus loin : le placer sous la protection du Padre — qu'il SORTE de l'ordre de Tito", "Souffler le point de guet à la PM — plus d'olheiro, plus de problème"],

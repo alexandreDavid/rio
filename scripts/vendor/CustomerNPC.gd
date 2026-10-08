@@ -1,8 +1,10 @@
 class_name CustomerNPC
 extends NPC
 
-# Client de la plage. Une vente par client. Après achat, le dialogue change
-# ("já comprei") et aucune vente supplémentaire n'est possible.
+# Client de la plage. Une vente par client et par tournée : après achat, le
+# dialogue change ("já comprei") jusqu'à la prochaine prise de la carrocinha ou
+# la phase suivante de la journée (playtest 2026-10-07, F5 : les 3 clients
+# n'achetaient qu'une fois pour toute la partie — 15 R$ de milho en acte 1).
 
 enum Archetype { TOURIST, LOCAL, KID }
 
@@ -32,6 +34,10 @@ var has_purchased: bool = false
 func _ready() -> void:
 	super._ready()
 	EventBus.customer_served.connect(_on_customer_served)
+	EventBus.time_of_day_changed.connect(func(_phase: int) -> void: has_purchased = false)
+	EventBus.corn_cart_state_changed.connect(func(carrying: bool) -> void:
+		if carrying:
+			has_purchased = false)
 	var sprite: Sprite2D = get_node_or_null("Sprite2D") as Sprite2D
 	if sprite == null:
 		return

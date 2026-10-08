@@ -177,11 +177,23 @@ func available_destinations() -> Array:
 		out.append(id)
 	return out
 
+# Verrou narratif du voyage (taxi du téléphone compris) : tant que le prologue
+# n'est pas résolu, on ne quitte pas le morro — même règle que la sortie
+# piétonne (playtest 2026-10-07, F4 : le 📱 contournait le verrou, course à 0 R$).
+func travel_lock_reason() -> String:
+	if QuestManager.is_active("prologue_pedrinho"):
+		return "Pas de taxi tant que Pedrinho n'est pas retrouvé — le morro d'abord."
+	return ""
+
 func travel_to(district_id: String) -> bool:
 	if not DISTRICTS.has(district_id):
 		push_warning("[DistrictManager] district inconnu : %s" % district_id)
 		return false
 	if district_id == _current:
+		return false
+	var lock: String = travel_lock_reason()
+	if lock != "":
+		EventBus.notification_requested.emit("🚕 " + lock, Color(0.95, 0.6, 0.4, 1))
 		return false
 	# Paiement de la course si applicable.
 	var fare: int = get_fare(district_id)

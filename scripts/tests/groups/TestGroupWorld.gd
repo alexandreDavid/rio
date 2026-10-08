@@ -22,6 +22,7 @@ func run() -> void:
 	_test_navigation_director_targets()
 	_test_navigation_director_prologue_and_jantar()
 	_test_dynamic_missions_not_farmable()
+	_test_prologue_lock_and_spots()
 	await _test_mobile_controls_invariants()
 	_test_random_events_multi_district()
 	await _test_ambient_life_out_of_copa()
@@ -1253,3 +1254,59 @@ func _test_dynamic_missions_not_farmable() -> void:
 			dm._despawn_marker(cat)
 		player.global_position = saved
 	dm._generate_for(cat)
+
+
+# Playtest 2026-10-07 — F4 : le taxi respecte le verrou du prologue ; F5 : les
+# clients du milho se ré-arment ; F7 : les spots de voie attendent l'acte 2.
+func _test_prologue_lock_and_spots() -> void:
+	_section("Prologue — verrou du taxi, clients du milho, spots de voie")
+	_reset_campaign_state()
+	QuestManager.accept("prologue_pedrinho")
+	_assert(DistrictManager.travel_lock_reason() != "", "prologue actif → taxi verrouillé")
+	var cur: String = DistrictManager.current()
+	var target: String = "zona_sul" if cur != "zona_sul" else "copacabana"
+	_assert(not DistrictManager.travel_to(target), "travel_to refusé pendant le prologue")
+	_assert(DistrictManager.current() == cur, "…et on n'a pas bougé")
+	_complete_quest_all_objectives("prologue_pedrinho")
+	_assert(DistrictManager.travel_lock_reason() == "", "prologue résolu → taxi libre")
+	# F5
+	var cust_scene: PackedScene = load("res://scenes/npcs/Customer.tscn")
+	if cust_scene != null:
+		var cust: Node = cust_scene.instantiate()
+		add_child(cust)
+		cust.has_purchased = true
+		EventBus.corn_cart_state_changed.emit(true)
+		_assert(not bool(cust.has_purchased), "prendre la carrocinha ré-arme les clients")
+		cust.has_purchased = true
+		EventBus.time_of_day_changed.emit(TimeOfDay.Phase.AFTERNOON)
+		_assert(not bool(cust.has_purchased), "une nouvelle phase ré-arme les clients")
+		cust.queue_free()
+	# F7
+	CampaignManager.current_act = 1
+	var favela: Node = (load("res://scenes/districts/FavelaDoMorro.tscn") as PackedScene).instantiate()
+	add_child(favela)
+	var hidden: int = 0
+	var gated: Array = []
+	for n in _all_descendants(favela):
+		if n is ReactiveDialogueSpot and int(n.get("required_act")) >= 2:
+			gated.append(n)
+			if not (n as CanvasItem).visible and not n.interactable.enabled:
+				hidden += 1
+	_assert(gated.size() >= 7, "favela : %d spots de voie gated par l'acte" % gated.size())
+	_assert(hidden == gated.size(), "acte 1 : tous masqués et non interactifs (%d/%d)" % [hidden, gated.size()])
+	for name in ["VizinhaSpot", "VovoSpot", "GarotoSpot", "PedrinhoSpot"]:
+		var sp: Node = favela.get_node_or_null(name)
+		_assert(sp != null and (sp as CanvasItem).visible, "prologue : %s reste visible" % name)
+	CampaignManager.current_act = 2
+	EventBus.act_changed.emit(2)
+	var shown: int = 0
+	var expected: int = 0
+	for n in gated:
+		if String(n.get("required_flag")) != "":
+			continue  # gated aussi par un flag de voie : reste masqué, normal
+		expected += 1
+		if (n as CanvasItem).visible and n.interactable.enabled:
+			shown += 1
+	_assert(shown == expected and expected > 0, "acte 2 : les spots de voie sans flag apparaissent (%d/%d)" % [shown, expected])
+	favela.queue_free()
+	_reset_campaign_state()

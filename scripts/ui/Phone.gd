@@ -308,6 +308,10 @@ func _refresh_taxi() -> void:
 func _on_taxi_pressed(district_id: String) -> void:
 	if DistrictManager.travel_to(district_id):
 		close()
+	elif DistrictManager.travel_lock_reason() != "":
+		if taxi_status:
+			taxi_status.text = DistrictManager.travel_lock_reason()
+			taxi_status.modulate = Color(0.95, 0.6, 0.4, 1)
 	else:
 		var fare: int = DistrictManager.get_fare(district_id)
 		if taxi_status:

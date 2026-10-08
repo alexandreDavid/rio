@@ -335,6 +335,7 @@ variants = [{
 [node name="TraficoContactSpot" parent="." instance=ExtResource("62_reactive")]
 position = Vector2(640, 232)
 npc_id = "trafico_contact"
+required_act = 2
 prompt = "Le contact du calçadão"
 character_seed = 80101
 variants = [{
@@ -563,6 +564,7 @@ variants = [{
 [node name="PoliciaContactSpot" parent="." instance=ExtResource("62_reactive")]
 position = Vector2(520, 232)
 npc_id = "policia_contact"
+required_act = 2
 prompt = "L'agent en civil"
 character_seed = 80102
 variants = [{
@@ -701,6 +703,7 @@ variants = [{
 [node name="ConsortiumContactSpot" parent="." instance=ExtResource("62_reactive")]
 position = Vector2(760, 232)
 npc_id = "consortium_contact"
+required_act = 2
 prompt = "Le recouvreur de la maison"
 character_seed = 80103
 variants = [{
@@ -857,6 +860,7 @@ variants = [{
 [node name="PrefeitoContactSpot" parent="." instance=ExtResource("62_reactive")]
 position = Vector2(880, 232)
 npc_id = "prefeito_contact"
+required_act = 2
 prompt = "La table de la pétition"
 character_seed = 70401
 variants = [{

@@ -32,6 +32,10 @@ extends Node2D
 # Zé concierge » de chaque voie en même temps devant le Palace — seul celui de
 # la voie choisie se montre.
 @export var required_flag: String = ""
+# Acte minimal d'apparition (0 = toujours). Les spots des voies n'ont rien à
+# dire pendant le prologue : ils encombraient la recherche de Pedrinho
+# (playtest 2026-10-07, F7).
+@export var required_act: int = 0
 
 @onready var interactable: Interactable = $Interactable
 
@@ -40,12 +44,15 @@ func _ready() -> void:
 		return
 	interactable.prompt = prompt
 	interactable.interacted.connect(_on_interacted)
+	if required_act > 0:
+		EventBus.act_changed.connect(func(_a: int) -> void: _refresh_gate())
 	_refresh_gate()
 
 # Active/masque le spot selon required_flag. Tant qu'il est masqué on poll
 # (léger : ≤ qq spots, seulement avant que la voie soit choisie).
 func _refresh_gate() -> void:
-	var active: bool = required_flag == "" or CampaignManager.has_flag(required_flag)
+	var active: bool = (required_flag == "" or CampaignManager.has_flag(required_flag)) \
+			and (required_act == 0 or CampaignManager.current_act >= required_act)
 	visible = active
 	if interactable:
 		interactable.enabled = active
