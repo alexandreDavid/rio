@@ -185,7 +185,9 @@ func _connect_signals() -> void:
 	EventBus.quest_accepted.connect(_on_quest_accepted)
 	EventBus.quest_updated.connect(_on_quest_updated)
 	EventBus.quest_completed.connect(_on_quest_completed)
-	EventBus.quest_failed.connect(func(q: String) -> void: _ev("quest_failed", {"q": q}))
+	EventBus.quest_failed.connect(func(q: String) -> void:
+		_tried.clear()
+		_ev("quest_failed", {"q": q}))
 	EventBus.money_changed.connect(_on_money_changed)
 	EventBus.debt_paid.connect(_on_debt_paid)
 	EventBus.act_changed.connect(_on_act_changed)
@@ -255,6 +257,8 @@ func _on_chrono_updated(src: String, label: String, s: float) -> void:
 func _on_chrono_cleared(src: String) -> void:
 	_counters.erase("chrono:" + src)
 	_ev("chrono_end", {"src": src})
+	if src == "stakeout" or src.begins_with("chase:"):
+		_tried.clear()  # on peut retenter auprès du donneur
 
 
 func _on_chase_ended(c: String, e: bool) -> void:
