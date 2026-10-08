@@ -188,6 +188,13 @@ des courbes de difficulté. NB : la signature de réputation pêche exige
 désormais une session qualifiante (standard des autres jeux), le cash reste
 à la prise.
 
+## Playtest grandeur nature (2026-10-07)
+Un bot-joueur qui joue le vrai jeu sans téléport (`tools/playtest/`) a
+produit `PLAYTEST_2026-10-07.md` : 10 constats mesurés sur 7 runs (missions
+dynamiques farmables, guidage du prologue mort, dîner du soir en ping-pong,
+taxi qui contourne le verrou du morro, milho de l'acte 1 sans poids,
+charrette collée après la bascule…). À lire avant tout chantier acte 1-2.
+
 ## Méthode
 
 Chaque chantier retenu passe par `BACKLOG.md` (skill `backlog`), le contenu
