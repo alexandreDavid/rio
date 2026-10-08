@@ -1157,8 +1157,10 @@ func _test_navigation_director_prologue_and_jantar() -> void:
 	# Finale Polícia : B9 active sans signal → Ramos d'abord, puis le morro.
 	_reset_campaign_state()
 	CampaignManager.current_act = 4
+	CampaignManager.set_flag("act1_started")
 	CampaignManager.set_flag("act1_closed")
 	CampaignManager.set_flag("voie_policia")
+	TimeOfDay.current_phase = TimeOfDay.Phase.MORNING
 	QuestManager._state["policia_b9_madrugada"] = QuestManager.State.ACTIVE
 	QuestManager._objectives["policia_b9_madrugada"] = {"complete_madrugada": false}
 	var b9: Dictionary = NavigationDirector._compute_selection()
