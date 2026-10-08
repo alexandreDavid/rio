@@ -229,8 +229,29 @@ func _S(text: String, dist: String = "", anchor: String = "", short: String = ""
 	return {"text": text, "dist": dist, "anchor": anchor, "short": short}
 
 func _recompute() -> void:
-	_sel = _compute_selection()
+	_sel = _route_via_bondinho(_compute_selection())
 	nav_target_changed.emit()
+
+# Le Pão de Açúcar n'a pas de taxi : on dit comment y aller (Botafogo, puis la
+# borne du bondinho) au lieu de laisser la boussole sur un taxi qui refuse
+# (playtest 2026-10-08, F10 : 17 à 28 min de bandeau sans issue).
+func _route_via_bondinho(sel: Dictionary) -> Dictionary:
+	if sel.is_empty() or String(sel.get("dist", "")) != "pao_acucar":
+		return sel
+	var cur: String = DistrictManager.current()
+	if cur == "pao_acucar":
+		return sel
+	var out: Dictionary = sel.duplicate()
+	if cur == "botafogo_flamengo":
+		out["text"] = String(sel.text) + " — prends le bondinho (borne au sud-est de Botafogo)"
+		out["dist"] = "botafogo_flamengo"
+		out["anchor"] = "class:BondinhoLauncher"
+		out["short"] = "Bondinho"
+	else:
+		out["text"] = String(sel.text) + " — pas de taxi là-haut : Botafogo d'abord, puis le bondinho"
+		out["dist"] = "botafogo_flamengo"
+		out["short"] = "Botafogo (bondinho)"
+	return out
 
 # Porté depuis ObjectiveBanner._compute_hint : l'ordre des conditions == priorité.
 # Différence clé : quand le macro-hint d'acte est générique (acte 3/4, fallback),
@@ -435,7 +456,7 @@ func _resolve_point(anchor: String, cur: String) -> Vector2:
 	if anchor.begins_with("npc:"):
 		return _node_pos_guard(_entrance_or_self(NPCScheduler.get_npc(anchor.substr(4))))
 	# `spot:<npc_id>` = ReactiveDialogueSpot ; `node:<name>` = nœud du monde par nom.
-	if anchor.begins_with("spot:") or anchor.begins_with("node:"):
+	if anchor.begins_with("spot:") or anchor.begins_with("node:") or anchor.begins_with("class:"):
 		return _node_pos_guard(_entrance_or_self(_find_world_node(anchor)))
 	# Ancrages fixes valides uniquement quand on est physiquement à Copacabana.
 	if cur == "copacabana":
@@ -498,6 +519,12 @@ func _find_world_node(anchor: String) -> Node:
 		for n in root.find_children(wanted, "", true, false):
 			found = n
 			break
+	elif anchor.begins_with("class:"):
+		var cls: String = anchor.substr(6)
+		for n in root.find_children("*", "Node2D", true, false):
+			if n.get_script() != null and String(n.get_script().get_global_name()) == cls:
+				found = n
+				break
 	else:
 		var npc_id: String = anchor.substr(5)
 		for n in root.find_children("*", "Node2D", true, false):

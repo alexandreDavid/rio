@@ -23,6 +23,7 @@ func run() -> void:
 	_test_navigation_director_prologue_and_jantar()
 	_test_dynamic_missions_not_farmable()
 	_test_prologue_lock_and_spots()
+	_test_intro_ngplus_bondinho()
 	await _test_mobile_controls_invariants()
 	_test_random_events_multi_district()
 	await _test_ambient_life_out_of_copa()
@@ -575,7 +576,7 @@ func _test_navigation_director_targets() -> void:
 		var d: String = e.get("dist", "")
 		_assert(d == "" or DistrictManager.DISTRICTS.has(d), "STEP %s district valide (%s)" % [key, d])
 		var a: String = e.get("anchor", "")
-		_assert(a in valid_anchors or a.begins_with("npc:") or a.begins_with("spot:") or a.begins_with("node:"),
+		_assert(a in valid_anchors or a.begins_with("npc:") or a.begins_with("spot:") or a.begins_with("node:") or a.begins_with("class:"),
 			"STEP %s anchor valide (%s)" % [key, a])
 		# Une ancre `spot:<npc_id>` doit désigner un ReactiveDialogueSpot existant.
 		if a.begins_with("spot:"):
@@ -1310,3 +1311,50 @@ func _test_prologue_lock_and_spots() -> void:
 	_assert(shown == expected and expected > 0, "acte 2 : les spots de voie sans flag apparaissent (%d/%d)" % [shown, expected])
 	favela.queue_free()
 	_reset_campaign_state()
+
+
+# Playtest 2026-10-07 — F8 : intro courte ; F9 : NG+ seulement à la demande ;
+# F10 : le Pão de Açúcar se guide via Botafogo et le bondinho.
+func _test_intro_ngplus_bondinho() -> void:
+	_section("Intro courte, NG+ à la demande, route du bondinho")
+	var knots: Dictionary = DialogueBridge.all_dialogues()
+	var chain: Array = []
+	var k: String = "game_intro_open"
+	var total_chars: int = 0
+	for i in 8:
+		if not knots.has(k):
+			break
+		chain.append(k)
+		total_chars += String(knots[k].get("text", "")).length()
+		var oc: Dictionary = knots[k].get("on_choose", {})
+		var nxt: Variant = oc.get("0", {}).get("next", null) if oc.has("0") else null
+		if nxt == null:
+			break
+		k = String(nxt)
+	_assert(chain == ["game_intro_open", "game_intro_disparu", "game_intro_time", "game_intro_controles"],
+		"intro : 4 écrans, sans le sermon des voies (%s)" % str(chain))
+	_assert(total_chars <= 1000, "intro : ≤ 1 000 caractères avant le premier pas (%d)" % total_chars)
+	# F9
+	_assert(not GameManager.ng_plus_requested, "fixture : pas de NG+ demandé")
+	var saved_count: int = CampaignManager.ng_plus_count
+	CampaignManager.ng_plus_count = 0
+	CampaignManager.flags.erase("is_ng_plus")
+	var boot: Node = load("res://scripts/main/MainBoot.gd").new()
+	boot._load_ng_plus_meta()
+	_assert(CampaignManager.ng_plus_count == 0 and not CampaignManager.has_flag("is_ng_plus"),
+		"nouvelle partie sans demande → pas NG+ même si ng_plus.json existe")
+	boot.free()
+	CampaignManager.ng_plus_count = saved_count
+	# F10 : route du bondinho
+	var saved_dist: String = DistrictManager.current()
+	DistrictManager.set_current("copacabana")
+	var routed: Dictionary = NavigationDirector._route_via_bondinho(NavigationDirector._S("🎯 → Pão de Açúcar : jouer le set DJ", "pao_acucar", "", "Pão"))
+	_assert(routed.get("dist", "") == "botafogo_flamengo" and String(routed.get("text", "")).find("Botafogo") != -1,
+		"Pão de Açúcar depuis Copa → Botafogo d'abord (%s)" % routed.get("text", ""))
+	DistrictManager.set_current("botafogo_flamengo")
+	routed = NavigationDirector._route_via_bondinho(NavigationDirector._S("🎯 → Pão de Açúcar : jouer le set DJ", "pao_acucar", "", "Pão"))
+	_assert(String(routed.get("anchor", "")) == "class:BondinhoLauncher", "à Botafogo → la borne du bondinho (%s)" % routed.get("anchor", ""))
+	DistrictManager.set_current("pao_acucar")
+	routed = NavigationDirector._route_via_bondinho(NavigationDirector._S("🎯 → Pão de Açúcar : jouer le set DJ", "pao_acucar", "", "Pão"))
+	_assert(routed.get("dist", "") == "pao_acucar", "sur place → inchangé")
+	DistrictManager.set_current(saved_dist)

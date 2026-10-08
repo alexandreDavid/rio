@@ -84,8 +84,29 @@ static func spawn(cfg: Dictionary = {}) -> CobradorChase:
 	var rng: RandomNumberGenerator = RandomNumberGenerator.new()
 	rng.randomize()
 	var side: float = -1.0 if rng.randf() < 0.5 else 1.0
-	chase.position = player.global_position \
-		+ Vector2(side * SPAWN_DIST, rng.randf_range(-40.0, 40.0))
+	# Spawn sur du sol libre : coincé dans un rocher ou l'eau (couture de
+	# l'Arpoador), il ne bougeait pas et la fuite se gagnait en 1,4 s
+	# (playtest 2026-10-08, F10). On essaie les deux côtés, de plus en plus près.
+	var space: PhysicsDirectSpaceState2D = player.get_world_2d().direct_space_state
+	var probe: CircleShape2D = CircleShape2D.new()
+	probe.radius = 10.0
+	var params: PhysicsShapeQueryParameters2D = PhysicsShapeQueryParameters2D.new()
+	params.shape = probe
+	params.collision_mask = 1 | 4
+	params.collide_with_areas = false
+	var spawn_pos: Vector2 = player.global_position + Vector2(side * SPAWN_DIST, rng.randf_range(-40.0, 40.0))
+	var found: bool = false
+	for d in [SPAWN_DIST, 300.0, 240.0, 180.0]:
+		for sd in [side, -side]:
+			var cand: Vector2 = player.global_position + Vector2(sd * d, rng.randf_range(-40.0, 40.0))
+			params.transform = Transform2D(0.0, cand)
+			if space.intersect_shape(params, 1).is_empty():
+				spawn_pos = cand
+				found = true
+				break
+		if found:
+			break
+	chase.position = spawn_pos
 	var world: Node = tree.current_scene.get_node_or_null("World")
 	if world == null:
 		world = tree.current_scene
@@ -142,7 +163,9 @@ func _physics_process(delta: float) -> void:
 	var give_up_sec: float = float(_cfg("give_up_sec"))
 	EventBus.chrono_updated.emit(_chrono_source(), String(_cfg("chrono_label")),
 		max(give_up_sec - _elapsed, 0.0))
-	if dist >= float(_cfg("give_up_dist")) or _elapsed >= give_up_sec:
+	# Abandon par distance seulement après 3 s : pas de fuite « gratuite » à
+	# la seconde où il te repère.
+	if (dist >= float(_cfg("give_up_dist")) and _elapsed >= 3.0) or _elapsed >= give_up_sec:
 		_escape()
 		return
 	if dist <= CATCH_DIST:

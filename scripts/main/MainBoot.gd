@@ -271,6 +271,12 @@ func _check_auto_accept() -> void:
 # Charge le fichier méta NG+ (écrit par Epilogue.gd au "Nouvelle partie+"). Sert
 # à ce que IntroSeuJoao et autres dialogues sachent qu'on n'est pas la 1re run.
 func _load_ng_plus_meta() -> void:
+	# Une partie chargée garde son flag is_ng_plus (sauvé) ; une partie neuve
+	# n'est NG+ que si l'épilogue l'a demandé — pas parce qu'un ng_plus.json
+	# traîne dans user:// (playtest 2026-10-07, F9).
+	if not GameManager.ng_plus_requested:
+		return
+	GameManager.ng_plus_requested = false
 	if not FileAccess.file_exists(NG_PLUS_META_PATH):
 		return
 	var f: FileAccess = FileAccess.open(NG_PLUS_META_PATH, FileAccess.READ)

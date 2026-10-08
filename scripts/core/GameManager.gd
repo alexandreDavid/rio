@@ -10,6 +10,10 @@ var is_paused: bool = false
 # CharacterSpriteFactory.ATTRIBUTES). Vide ⇒ apparence par défaut. Persistée
 # par save (SaveSystem._serialize_player) ; éditée via CharacterCreator.
 var player_appearance: Dictionary = {}
+# Posé par l'épilogue (« Nouvelle partie+ ») : la prochaine partie lit la méta
+# NG+. Une « Nouvelle partie » depuis l'écran des slots reste vierge
+# (playtest 2026-10-07, F9).
+var ng_plus_requested: bool = false
 
 # Indices effectifs (défaut si non personnalisé). Toujours sûr à passer à
 # CharacterSpriteFactory.config_from_indices.

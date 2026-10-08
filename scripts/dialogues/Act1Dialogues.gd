@@ -21,13 +21,7 @@ const KNOTS: Dictionary = {
 	},
 	"game_intro_disparu": {
 		"speaker": "Narrateur",
-		"text": "Rio de Janeiro. Copacabana. Un matin comme les autres, sauf que Zé — ton oncle, le frère de ta mère, ton parrain, ton problème — a disparu.\n\nIl t'a laissé trois choses : sa carrocinha de milho, sa maison du Morro où tu vis avec mãe et vovó, et une dette de cinquante mille reais.\n\nDans la cuisine, mãe fait chauffer la moqueca. Seu João, le vieux compadre de Zé — trente ans de calçadão côte à côte, pas ton sang mais tu l'appelles tio depuis toujours — ne va pas tarder à monter.\n\nLe Carnaval est dans un mois. Tu ferais mieux d'avoir réglé la note d'ici là.",
-		"choices": ["Continuer"],
-		"on_choose": {"0": {"next": "game_intro_voies"}},
-	},
-	"game_intro_voies": {
-		"speaker": "Narrateur",
-		"text": "À toi de choisir comment t'en sortir.\n\nDeviens un pilier de la communauté. Entre dans la police. Prends la rue. Ou signe avec le consortium.\n\nSelon les gens que tu aides, les gens que tu trahis, et la tête que tu gardes quand tout dérape, tu finiras Prefeito, Chefe de Polícia, Rei do Tráfico — ou sócio do Consórcio.",
+		"text": "Zé — ton oncle, le frère de ta mère, ton parrain, ton problème — a disparu.\n\nIl te laisse sa carrocinha de milho, la maison du Morro où tu vis avec mãe et vovó… et une dette de cinquante mille reais au consortium. Le Carnaval est dans un mois.\n\nDans la cuisine, mãe fait chauffer la moqueca. Seu João monte l'escalier.",
 		"choices": ["Continuer"],
 		"on_choose": {"0": {"next": "game_intro_time"}},
 	},
@@ -46,7 +40,7 @@ const KNOTS: Dictionary = {
 	},
 	"game_intro_controles": {
 		"speaker": "Narrateur",
-		"text": "Contrôles :\n\n• Joystick en bas à gauche — se déplacer\n• Bouton E en bas à droite — interagir (parler, prendre, acheter…)\n• Bouton ☰ en haut à droite — voir tes caractéristiques\n\nLes dialogues ont souvent plusieurs choix. Chaque choix modifie tes stats (Respect, Voyou, Police, Touristes, Charisma).\n\nBoa sorte, parceiro.",
+		"text": "Joystick à gauche pour marcher, bouton E à droite pour parler, prendre, acheter. Le reste, la rue te l'apprendra.\n\nBoa sorte, parceiro.",
 		"choices": ["C'est parti"],
 	},
 	# --- META : Run+ (joueur a déjà bouclé une voie au moins une fois) ---

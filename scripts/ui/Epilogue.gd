@@ -193,6 +193,7 @@ func _on_credits() -> void:
 func _on_replay() -> void:
 	# Sauvegarde méta : NG+ count + entrées journal débloquées (pour usage futur).
 	_write_ng_meta()
+	GameManager.ng_plus_requested = true
 	# Efface la save et recharge la scène. Le boot relancera une nouvelle partie.
 	SaveSystem.discard_save()
 	get_tree().paused = false
