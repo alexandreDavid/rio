@@ -60,7 +60,7 @@ const STEP: Dictionary = {
 	"prologue_pedrinho/find_pedrinho": {"text": "🎯 Cherche Pedrinho dans la vieille citerne (haut du morro, près de la chapelle)", "dist": "favela_morro", "anchor": "spot:pedrinho", "short": "La citerne"},
 	"prologue_pedrinho/bring_home": {"text": "🎯 Ramène Pedrinho à sa mère", "dist": "favela_morro", "anchor": "spot:vizinha", "short": "La mère"},
 	# --- VOIE TRÁFICO (A1 → A9) ---
-	"trafico_a1_livraison/drop_calcadao": {"text": "🎯 → Copa (calçadão, face mer) : déposer le paquet au contact", "dist": "copacabana", "anchor": "calcadao", "short": "Calçadão"},
+	"trafico_a1_livraison/drop_calcadao": {"text": "🎯 → Copa (calçadão, face mer) : déposer le paquet au contact", "dist": "copacabana", "anchor": "spot:trafico_contact", "short": "Calçadão"},
 	"trafico_a2_pickup/pickup_palace": {"text": "🎯 → Copa Palace : récupérer la sacoche chez le groom", "dist": "copacabana", "anchor": "palace", "short": "Copa Palace"},
 	"trafico_a2_pickup/despistar_pm": {"text": "🎯 Copa : sème la PM dans les transversales !", "dist": "copacabana", "anchor": "", "short": "Copa"},
 	"trafico_a3_chauffeur/drive_botafogo": {"text": "🎯 → Botafogo (Bondinho) : livrer le coffre AVANT la relève de la PM !", "dist": "botafogo_flamengo", "anchor": "", "short": "Botafogo ⏱"},
@@ -79,7 +79,7 @@ const STEP: Dictionary = {
 	"trafico_a8_baia/semer_flagrante": {"text": "🎯 Niterói : échappe au flagrante — sème la PM des quais !", "dist": "niteroi", "anchor": "", "short": "Niterói"},
 	"trafico_a9_corrida/execute_run": {"text": "🎯 → Favela : retrouver Tito pour la corrida finale", "dist": "favela_morro", "anchor": "npc:tito", "short": "Tito (Favela)"},
 	# --- VOIE POLÍCIA (B1 → B9) ---
-	"policia_b1_intel/report_face": {"text": "🎯 → Copa (calçadão) : rapporter le visage à l'agent en civil", "dist": "copacabana", "anchor": "calcadao", "short": "Calçadão"},
+	"policia_b1_intel/report_face": {"text": "🎯 → Copa (calçadão) : rapporter le visage à l'agent en civil", "dist": "copacabana", "anchor": "spot:policia_contact", "short": "Calçadão"},
 	"policia_b2_filature/map_network": {"text": "🎯 → Favela : filer l'olheiro de Tito (planque, haut du morro)", "dist": "favela_morro", "anchor": "", "short": "Morro"},
 	"policia_b3_escorte/escort_patrol": {"text": "🎯 → Botafogo : mener la patrouille au garage aux volets verts (elle te suit)", "dist": "botafogo_flamengo", "anchor": "", "short": "Botafogo"},
 	"contessa_fundo/filer_ferretti": {"text": "🎯 → Copa Palace : filer Ferretti, l'administrateur de la Contessa", "dist": "copacabana", "anchor": "palace", "short": "Copa Palace"},
@@ -102,7 +102,7 @@ const STEP: Dictionary = {
 	"act2_pecheur_secret/observe_canots": {"text": "🎯 → Botafogo (mureta da Urca) : observer les canots à la nuit", "dist": "botafogo_flamengo", "anchor": "", "short": "Mureta"},
 	"act2_contessa_gala/secured_trio": {"text": "🎯 → Zona Sul (Garota de Ipanema) : engager le trio bossa", "dist": "zona_sul", "anchor": "", "short": "Ipanema"},
 	# --- VOIE CONSORTIUM (C1 → C9) ---
-	"consortium_c1_recouvrement/collect_calcadao": {"text": "🎯 → Copa (calçadão) : recouvrer auprès des vendeurs", "dist": "copacabana", "anchor": "calcadao", "short": "Calçadão"},
+	"consortium_c1_recouvrement/collect_calcadao": {"text": "🎯 → Copa (calçadão) : recouvrer auprès des vendeurs", "dist": "copacabana", "anchor": "spot:consortium_contact", "short": "Calçadão"},
 	"consortium_c2_loyers/collect_condos": {"text": "🎯 → Copa (av. Atlântica) : encaisser chez les commerçants", "dist": "copacabana", "anchor": "atlantica", "short": "Av. Atlântica"},
 	"consortium_c3_partenariat/force_signature": {"text": "🎯 → Zona Sul (Ipanema) : faire signer le restaurateur — lis-le avant de choisir", "dist": "zona_sul", "anchor": "", "short": "Ipanema"},
 	"consortium_c4_vip/drive_vip": {"text": "🎯 → Santos Dumont : réceptionner le VIP — il n'attend pas !", "dist": "santos_dumont", "anchor": "", "short": "Santos Dumont ⏱"},
@@ -114,7 +114,7 @@ const STEP: Dictionary = {
 	"consortium_c8_menace/break_holdout": {"text": "🎯 → Copa (calçadão) : faire signer la dernière commerçante — lis-la avant de parler", "dist": "copacabana", "anchor": "calcadao", "short": "Calçadão"},
 	"consortium_c9_pacto/seal_pacto": {"text": "🎯 → Barra : sceller le pacte avec Magalhães", "dist": "barra_tijuca", "anchor": "", "short": "Barra"},
 	# --- VOIE PREFEITO (D1 → D9) ---
-	"prefeito_d1_peticao/gather_signatures": {"text": "🎯 → Copa : faire signer la pétition au calçadão", "dist": "copacabana", "anchor": "calcadao", "short": "Calçadão"},
+	"prefeito_d1_peticao/gather_signatures": {"text": "🎯 → Copa : faire signer la pétition au calçadão", "dist": "copacabana", "anchor": "spot:prefeito_contact", "short": "Calçadão"},
 	"prefeito_d2_basquete/run_tournament": {"text": "🎯 → Aterro (Botafogo) : organiser le tournoi de basket", "dist": "aterro_flamengo", "anchor": "", "short": "Aterro"},
 	"prefeito_d3_mediation/ouvir_familia": {"text": "🎯 → Favela : écouter Dona Cléo, la mère de famille", "dist": "favela_morro", "anchor": "", "short": "Favela"},
 	"prefeito_d3_mediation/ouvir_capanga": {"text": "🎯 → Favela : trouver le bon levier avec Neném — écoute avant de menacer", "dist": "favela_morro", "anchor": "", "short": "Favela"},
@@ -272,6 +272,8 @@ func _compute_selection() -> Dictionary:
 			and not jantar_done:
 		if district != "favela_morro":
 			return _S("🌙 Rentre dîner — mãe a mis le couvert (maison du morro)", "favela_morro", "", "Maison")
+		if BuildingManager.is_inside:
+			return _S("🌙 À table — mãe a servi, va la voir", "", "spot:mae", "Mãe")
 		return _S("🌙 Rentre dîner — mãe a mis le couvert, entre dans la maison", "", "node:TioZeDoor", "Maison")
 
 	# --- Acte 1 — clôture : acompte payé (act1_heritage finie) mais retour maison
@@ -336,8 +338,12 @@ func _compute_selection() -> Dictionary:
 			var pt2: Dictionary = _patron_target(false)
 			if not pt2.is_empty():
 				return pt2
-			# Tous goûtés → reste à réunir l'argent (milho, missions).
+			# Tous goûtés → reste à réunir l'argent (milho, missions) ; si on l'a
+			# déjà en poche, on le dit (playtest 2026-10-07 : 13 000 R$ en poche et
+			# un bandeau qui disait encore « Réunis »).
 			var still: int = CampaignManager.ACT2_THRESHOLD - debt_paid
+			if money >= still:
+				return _S("🎯 Tu as de quoi : va verser %s R$ à Dom Nilton (Av. Atlântica) pour ouvrir l'acte 3" % still, "copacabana", "consortium", "Consortium")
 			return _S("🎯 Réunis %s R$ (milho au calçadão, missions) pour ouvrir l'acte 3" % still, "", "calcadao", "Calçadão")
 
 	# --- Acte 3 : nudge tant qu'aucune voie n'est scellée ---
@@ -356,6 +362,8 @@ func _compute_selection() -> Dictionary:
 			return vc3
 		if debt_paid < CampaignManager.ACT3_THRESHOLD:
 			var still3: int = CampaignManager.ACT3_THRESHOLD - debt_paid
+			if money >= still3:
+				return _S("🎯 Tu as de quoi : va verser %s R$ à Dom Nilton (Av. Atlântica) — les Grands Lances t'attendent" % still3, "copacabana", "consortium", "Consortium")
 			return _S("🎯 Avance dans ta voie — chaque mission crédite ta dette ; encore %s R$ avant les Grands Lances (acte 4)" % still3)
 
 	# --- Acte 4 : Os Grandes Lances ---

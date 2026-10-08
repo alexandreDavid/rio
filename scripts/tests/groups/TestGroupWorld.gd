@@ -1089,11 +1089,37 @@ func _test_navigation_director_prologue_and_jantar() -> void:
 	sel = NavigationDirector._compute_selection()
 	_assert(String(sel.get("text", "")).find("dîner") != -1 and sel.get("anchor", "") == "node:TioZeDoor",
 		"favela le soir → la porte de la maison, pas l'escalier (%s / %s)" % [sel.get("text", ""), sel.get("anchor", "")])
+	BuildingManager.is_inside = true
+	sel = NavigationDirector._compute_selection()
+	_assert(sel.get("anchor", "") == "spot:mae", "dans la maison le soir → mãe (%s)" % sel.get("anchor", ""))
+	BuildingManager.is_inside = false
 	CampaignManager.set_flag("jantar_day", TimeOfDay.day_count)
 	sel = NavigationDirector._compute_selection()
 	_assert(String(sel.get("text", "")).find("dîner") == -1, "dîner pris → plus de rappel ce jour-là (%s)" % sel.get("text", ""))
+	# Acte 2, tous les patrons goûtés, le cash en poche : on dit d'aller payer.
+	CampaignManager.set_flag("act1_closed")
+	CampaignManager.set_flag("tito_approached")
+	CampaignManager.current_act = 2
+	CampaignManager.debt_paid = 1000
+	TimeOfDay.current_phase = TimeOfDay.Phase.MORNING
+	DistrictManager.set_current("copacabana")
+	for q in ["policia_b1_intel", "prefeito_d1_peticao", "trafico_a1_livraison", "consortium_c1_recouvrement"]:
+		QuestManager._state[q] = QuestManager.State.COMPLETED
+	var inv: Node = GameManager.player.get_node_or_null("Inventory") if GameManager.player else null
+	if inv != null:
+		var saved_money: int = inv.money
+		inv.money = 0
+		sel = NavigationDirector._compute_selection()
+		_assert(String(sel.get("text", "")).find("Réunis") != -1, "acte 2 sans cash → réunir l'argent (%s)" % sel.get("text", ""))
+		inv.money = 5000
+		sel = NavigationDirector._compute_selection()
+		_assert(String(sel.get("text", "")).find("verser") != -1 and sel.get("anchor", "") == "consortium",
+			"acte 2 avec le cash → va verser au consortium (%s)" % sel.get("text", ""))
+		inv.money = saved_money
 	_assert(String(sel.get("text", "")).find("Descends") != -1, "…et la favela renvoie à Copa normalement")
 	# La variante jantar de mãe : phase soir, une fois par jour, acte ≤ 3.
+	TimeOfDay.current_phase = TimeOfDay.Phase.EVENING
+	CampaignManager.current_act = 1
 	var house: Node = (load("res://scenes/interiors/HouseInterior.tscn") as PackedScene).instantiate()
 	add_child(house)
 	var mae: Node = house.get_node_or_null("MotherSpot")

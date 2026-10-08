@@ -159,7 +159,11 @@ func _run() -> void:
 	_ev("start", {"budget": budget_sec, "district": DistrictManager.current(),
 			"save_present": SaveSystem.has_save()})
 	_last_progress_t = 0.0
+	var next_dump: float = 300.0
 	while not _finished:
+		if _t >= next_dump:
+			next_dump += 300.0
+			_dump(false)
 		if _t >= budget_sec:
 			_finish("budget de temps atteint")
 			break
@@ -354,10 +358,12 @@ func _tick() -> void:
 	var chaser: Node2D = _find_node_of_class("CobradorChase")
 	if chaser != null:
 		await _flee(chaser)
+		await _frame()
 		return
 	var stake: Node2D = _find_node_of_class("StakeoutZone")
 	if stake != null:
 		await _stakeout(stake)
+		await _frame()
 		return
 	# 7. Navigation selon le guidage.
 	await _navigate()
@@ -534,7 +540,13 @@ func _stakeout(zone: Node2D) -> void:
 	if to_me.length() < 0.1:
 		to_me = Vector2.DOWN
 	var target: Vector2 = zone.global_position + to_me * 150.0
-	await _walk_to(target, 20.0, 1.0, false)
+	var d: float = _player.global_position.distance_to(zone.global_position)
+	if d > 90.0 and d < 220.0:
+		await _wait(0.5)  # bonne distance : on reste planqué
+		return
+	var ok: bool = await _walk_to(target, 20.0, 1.0, false)
+	if not ok:
+		await _wait(0.5)
 
 
 # ---------------------------------------------------------------- navigation
@@ -560,8 +572,10 @@ func _navigate() -> void:
 	# Dans un intérieur et la cible n'y est pas (pas de point ici) : on sort,
 	# après avoir salué les présents une fois (recherche courte).
 	if _in_interior() and (kind != NavigationDirector.Kind.POINT or not _region_bounds().has_point(live.world_pos)):
-		var fresh: Node2D = _unvisited_in_region()
-		if fresh != null and _interior_chat_count < 3:
+		# On parle d'abord à ceux qu'on n'a pas encore essayés pour cet objectif
+		# (un joueur dans la maison le soir va voir sa mère), puis on sort.
+		var fresh: Node2D = _untried_in_region()
+		if fresh != null and _interior_chat_count < 6:
 			_interior_chat_count += 1
 			await _goto_node(fresh, "recherche", text)
 			return
@@ -845,6 +859,21 @@ func _exit_door_in_region() -> Node2D:
 			if d < best_d:
 				best_d = d
 				best = n
+	return best
+
+
+func _untried_in_region() -> Node2D:
+	var best: Node2D = null
+	var best_d: float = INF
+	for n in _interactables_in_region():
+		if n is BuildingDoor or _tried.has(n.get_instance_id()):
+			continue
+		if _t - float(_interacted_at.get(n.get_instance_id(), -1000.0)) < INTERACT_COOLDOWN:
+			continue
+		var d: float = n.global_position.distance_to(_player.global_position)
+		if d < best_d:
+			best_d = d
+			best = n
 	return best
 
 
@@ -1247,12 +1276,12 @@ func _stand_pos_for(node: Node2D) -> Vector2:
 
 # ---------------------------------------------------------------- sortie
 
-func _dump() -> void:
+func _dump(final: bool = true) -> void:
 	var wall: int = Time.get_ticks_msec() - _wall0
 	var summary: Dictionary = {
 		"game_time_s": snappedf(_t, 0.1),
 		"wall_ms": wall,
-		"reason": _finish_reason,
+		"reason": _finish_reason if _finished else "en cours",
 		"act": CampaignManager.current_act,
 		"debt_paid": CampaignManager.debt_paid,
 		"money": _money(),
@@ -1274,6 +1303,8 @@ func _dump() -> void:
 	if f:
 		f.store_string(JSON.stringify(data, "", false))
 		f.close()
+	if not final:
+		return
 	print("\n=============== PLAYTEST ===============")
 	print(JSON.stringify(summary, "  "))
 	print("écrit : %s" % out_path)
