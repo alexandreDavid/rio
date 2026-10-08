@@ -36,3 +36,4 @@ __pycache__/
 .idea/
 *.swp
 .env
+tools/visual_refs/current/
