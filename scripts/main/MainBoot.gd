@@ -138,6 +138,7 @@ const AUTO_ACCEPT_ON_AVAILABLE: Array[String] = []
 const NG_PLUS_META_PATH: String = "user://ng_plus.json"
 
 func _ready() -> void:
+	UITheme.apply(get_tree().root)
 	print("[Rio] boot\n" + _autoload_report())
 	_register_quests()
 	_load_ng_plus_meta()

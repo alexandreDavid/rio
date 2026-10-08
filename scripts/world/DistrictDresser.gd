@@ -114,6 +114,19 @@ static func dress(root: Node) -> void:
 	for cr in rects:
 		if cr.is_in_group("district_backdrop"):
 			_expand_backdrop(cr, rects)
+	# Intérieurs instanciés dans le district (rendu H) et étiquettes du monde en
+	# police pixel (rendu G) — idempotent : une Label déjà stylée est laissée.
+	InteriorDresser.dress_all_under(root)
+	style_world_labels(root)
+
+
+# Toutes les Labels du sous-arbre passent en police pixel (échelle entière,
+# contour cuit) ; celles qui ont déjà une police surchargée sont laissées.
+static func style_world_labels(root: Node) -> void:
+	for l in root.find_children("*", "Label", true, false):
+		var label: Label = l as Label
+		if label != null and not label.has_theme_font_override("font"):
+			PixelFont.style_world_label(label)
 
 
 static func _collect_color_rects(node: Node, out: Array[ColorRect]) -> void:
@@ -165,6 +178,11 @@ static func _mean_luminance(tex: Texture2D, region: Rect2) -> float:
 	var mean: float = total / float(count) if count > 0 else 0.5
 	_lum_cache[key] = maxf(mean, 0.05)
 	return _lum_cache[key]
+
+
+# Shader de tuiles partagé (InteriorDresser s'en sert aussi).
+static func tile_shader() -> Shader:
+	return _tile_shader_res()
 
 
 static func _tile_shader_res() -> Shader:

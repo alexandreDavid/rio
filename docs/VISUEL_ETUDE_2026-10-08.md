@@ -182,7 +182,41 @@ contour) pour que tout nouvel asset respecte le langage GBA.
   dalle (`RoofEdge`) qui lit comme un volume vu d'en haut. Les tests
   (`TestGroupWorld`) vérifient l'ancrage du sprite de façade.
 
-Restent **G** (interface) et **H** (intérieurs).
+- **G** : `scripts/ui/PixelFont.gd` — police bitmap 5×7 dessinée en code
+  (capitales, minuscules, chiffres, ponctuation, accents composés, cédille),
+  construite en `FontFile` à trois échelles entières (11/22/33 px, atlas
+  agrandi NEAREST, contour noir cuit en variante, police système en secours
+  pour les emojis). Toutes les étiquettes du monde (enseignes, postos,
+  prompts de porte, intérieurs) passent par `PixelFont.style_world_label`
+  (échelle choisie par la taille demandée et bornée par la largeur de
+  l'enseigne ; une étiquette sombre reste sans contour). `scripts/ui/UITheme.gd`
+  — thème construit en code et **fusionné dans le thème par défaut du
+  moteur** (un thème posé sur la fenêtre ne traverse pas les CanvasLayer) :
+  cadres 9-slice peints (trait / liseré or / trait / fond), boutons, barres,
+  variations `TouchButton` (pastille ronde translucide), `Pastille` (prompt
+  d'interaction), `PixelTitle` / `PixelButton`. Diário **replié** derrière
+  un badge « ✦ principales · activités » (tap = ouvre et épingle, nouvelle
+  quête = ouverture 6 s), bandeau d'objectif sur **une ligne** (quoi · où,
+  barre d'acte fine, titre d'acte en infobulle), boutons tactiles en
+  pastilles ✋ / 🏃 / ⚽ (104-128 px), minimap déplacée en haut à gauche
+  (le bas-droit est aux pouces). Outils : `tools/preview_pixel_font.gd`,
+  `tools/preview_ui_theme.gd`.
+- **H** : `scripts/world/InteriorPainter.gd` (planches, carrelage, marbre,
+  moquette, pierre, bande de mur à plinthe et cimaise, fenêtre) +
+  `scripts/world/InteriorDresser.gd` appliqué aux **21 scènes** de
+  `scenes/interiors/` (par `DistrictDresser.dress` pour les districts, par
+  `CopacabanaGenerator` pour Copa) : sol peint dans la couleur de la dalle
+  (genre par nom de scène), mur extérieur sombre autour du sol, mur du fond
+  avec fenêtres et flaques de lumière, bandes de mur latérales, et pour
+  chaque meuble un contour, une arête claire, une ombre portée et un grain
+  de bois quand la couleur s'y prête. Tout est **enfant du rect** habillé
+  (suit sa visibilité — mémorial, bascules par flag) ; aucune collision
+  ajoutée. Non fait : kit de meubles dessinés (lit, cuisinière, étagère
+  reconnaissables), portes peintes, nuit dans les intérieurs.
+
+Les neuf pistes sont livrées. Ce qui reste est de l'ordre de la finition :
+façades peintes de l'atlas (Palace, Cantinho…) à harmoniser avec le peintre,
+meubles dessinés, stores et drapeaux animés, reflets sur la mer.
 
 ## Séquence recommandée
 

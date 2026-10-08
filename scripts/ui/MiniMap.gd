@@ -1,6 +1,7 @@
 extends Control
 
-# Mini-carte top-down de Copacabana, coin bas-droit du HUD. Affiche la position
+# Mini-carte top-down de Copacabana, coin haut-gauche du HUD (sous la barre
+# d'état ; le bas-droit est aux pouces : pastilles tactiles). Affiche la position
 # du joueur, du TaxiStand, du MissionBoard et du consortium. Quand le joueur
 # est hors Copacabana (dans un district), la mini-carte affiche le label du
 # district courant à la place.

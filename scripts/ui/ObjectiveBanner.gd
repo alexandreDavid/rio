@@ -1,32 +1,29 @@
 extends PanelContainer
 
-# Panneau « Objectif » unique et persistant (haut-centre). Consolide ce qui était
-# auparavant éclaté entre le bandeau d'objectif et le Quest Tracker :
-#   - Ligne ACTE  : où j'en suis dans la trame + barre de progression vers l'acte suivant.
-#   - Ligne QUOI  : le prochain pas, calculé par NavigationDirector.
-#   - Ligne OÙ    : destination + mode (📍 lieu / 🚕 quartier).
-# Le bord et la barre se teintent de la couleur de la voie scellée. Le QUOI fait
-# un petit « punch » quand il change. Tap → rejoue le dernier toast jalon.
+# Panneau « Objectif » unique et persistant (haut-centre), sur UNE ligne :
+#   🎯 le prochain pas (NavigationDirector)  ·  📍 destination / 🚕 quartier
+# et, dessous, une barre fine de progression vers l'acte suivant (le titre
+# d'acte complet est en infobulle ; le HUD le dit déjà en haut à gauche).
+# Le cadre et la barre se teintent de la couleur de la voie scellée. Le texte
+# fait un petit « punch » quand il change. Tap → rejoue le dernier toast jalon.
 
-@onready var act_line: Label = $Margin/VBox/ActLine
 @onready var act_bar: ProgressBar = $Margin/VBox/ActBar
 @onready var what_label: Label = $Margin/VBox/WhatLabel
-@onready var place_line: Label = $Margin/VBox/PlaceLine
 
-var _panel_style: StyleBoxFlat = null
-var _bar_fill: StyleBoxFlat = null
+var _panel_style: StyleBox = null
+var _bar_fill: StyleBox = null
 var _last_what: String = ""
 
 func _ready() -> void:
 	# Copies locales des styles pour pouvoir les recolorer sans toucher la ressource partagée.
 	var ps: StyleBox = get_theme_stylebox("panel")
-	if ps is StyleBoxFlat:
-		_panel_style = (ps as StyleBoxFlat).duplicate()
+	if ps != null:
+		_panel_style = ps.duplicate()
 		add_theme_stylebox_override("panel", _panel_style)
 	if act_bar:
 		var fs: StyleBox = act_bar.get_theme_stylebox("fill")
-		if fs is StyleBoxFlat:
-			_bar_fill = (fs as StyleBoxFlat).duplicate()
+		if fs != null:
+			_bar_fill = fs.duplicate()
 			act_bar.add_theme_stylebox_override("fill", _bar_fill)
 	NavigationDirector.nav_target_changed.connect(_refresh)
 	gui_input.connect(_on_gui_input)
@@ -38,33 +35,32 @@ func _refresh() -> void:
 	if not visible:
 		_last_what = ""
 		return
-	# Teinte d'identité de la voie (bord + barre).
+	# Teinte d'identité de la voie (cadre + barre).
 	var voie: Color = NavigationDirector.voie_color()
-	if _panel_style:
-		_panel_style.border_color = Color(voie.r, voie.g, voie.b, 0.7)
-	if _bar_fill:
-		_bar_fill.bg_color = voie
-	# Ligne QUOI + punch au changement.
+	_tint(_panel_style, Color(voie.r, voie.g, voie.b, 1.0).lerp(Color.WHITE, 0.35))
+	_tint(_bar_fill, voie)
+	# Ligne unique QUOI · OÙ + punch au changement.
 	if what_label:
-		what_label.text = what
+		var p: String = _place_line()
+		what_label.text = what if p == "" else "%s   ·   %s" % [what, p]
 		if what != _last_what and _last_what != "":
 			_punch()
 	_last_what = what
-	# Ligne ACTE + barre.
+	# Barre d'acte (titre en infobulle).
 	var act: Dictionary = _act_state()
-	if act_line:
-		act_line.text = act.label
-		act_line.visible = act.label != ""
+	tooltip_text = act.label
 	if act_bar:
 		var ratio: float = act.ratio
 		act_bar.visible = ratio >= 0.0
 		if ratio >= 0.0:
 			act_bar.value = ratio
-	# Ligne OÙ.
-	if place_line:
-		var p: String = _place_line()
-		place_line.text = p
-		place_line.visible = p != ""
+
+# Teinte un style (cadre 9-slice du thème ou aplat) sans toucher la ressource partagée.
+func _tint(sb: StyleBox, color: Color) -> void:
+	if sb is StyleBoxTexture:
+		(sb as StyleBoxTexture).modulate_color = color
+	elif sb is StyleBoxFlat:
+		(sb as StyleBoxFlat).border_color = color
 
 # État de la ligne d'acte : { label, ratio (-1 = pas de barre) }.
 func _act_state() -> Dictionary:

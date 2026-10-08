@@ -25,6 +25,9 @@ func run() -> void:
 	_test_prologue_lock_and_spots()
 	_test_intro_ngplus_bondinho()
 	_test_facade_painter()
+	await _test_pixel_font_and_theme()
+	await _test_interior_dresser()
+	await _test_quest_log_folded()
 	await _test_mobile_controls_invariants()
 	_test_random_events_multi_district()
 	await _test_ambient_life_out_of_copa()
@@ -1414,3 +1417,121 @@ func _test_facade_painter() -> void:
 
 func _near_color(a: Color, b: Color) -> bool:
 	return absf(a.r - b.r) < 0.01 and absf(a.g - b.g) < 0.01 and absf(a.b - b.b) < 0.01
+
+
+# Rendu G : police pixel (glyphes, échelles entières, contour cuit, secours
+# emoji) et thème UI (cadres 9-slice, variations de type) dans le thème par défaut.
+func _test_pixel_font_and_theme() -> void:
+	print("\n--- Rendu G : police pixel + thème UI ---")
+	var f1: FontFile = PixelFont.font(1, false)
+	var f3: FontFile = PixelFont.font(3, true)
+	_assert(f1 != null and f3 != null and f1 != f3, "PixelFont : polices ×1 et ×3 (contour) distinctes")
+	_assert(PixelFont.font(2, false) == PixelFont.font(2, false), "PixelFont : mise en cache par (échelle, contour)")
+	for ch in ["A", "z", "0", "é", "Ã", "ç", "Ç", "·", "✦", "—", "†"]:
+		_assert(f1.has_char(ch.unicode_at(0)), "glyphe « %s » dessiné" % ch)
+	_assert(not f1.has_char("🥖".unicode_at(0)) and f1.fallbacks.size() == 1, "emoji absent → police de secours")
+	_assert(f1.fixed_size == 11 and f3.fixed_size == 33, "taille fixe = 11 × échelle")
+	_assert(PixelFont.native_width("BAR DO MORRO") == 66, "largeur native BAR DO MORRO = 66 (%d)" % PixelFont.native_width("BAR DO MORRO"))
+	var img: Image = f3.get_texture_image(0, Vector2i(33, 0), 0)
+	_assert(img != null and img.get_width() >= 600, "atlas ×3 agrandi NEAREST (%s)" % (str(img.get_size()) if img else "null"))
+	# Étiquette du monde : échelle bornée par la largeur, contour selon la luminance.
+	var holder: Node2D = Node2D.new()
+	add_child(holder)
+	var sign: Label = Label.new()
+	sign.text = "BAR DO MORRO"
+	sign.size = Vector2(140, 16)
+	sign.add_theme_font_size_override("font_size", 11)
+	holder.add_child(sign)
+	PixelFont.style_world_label(sign)
+	_assert(sign.get_theme_font_size("font_size") == 22 and sign.get_theme_font("font") == PixelFont.font(2, true), "enseigne 140 px large → ×2 contourée")
+	var dark: Label = Label.new()
+	dark.text = "tio Zé †"
+	dark.size = Vector2(50, 14)
+	dark.add_theme_font_size_override("font_size", 9)
+	dark.add_theme_color_override("font_color", Color(0.2, 0.15, 0.1, 1))
+	holder.add_child(dark)
+	PixelFont.style_world_label(dark)
+	_assert(dark.get_theme_font("font") == PixelFont.font(2, false) and dark.size.x > 50.0, "étiquette sombre → sans contour, élargie plutôt que ×1 (%.0f px)" % dark.size.x)
+	var small: Label = Label.new()
+	small.text = "ILHAS CAGARRAS"
+	small.add_theme_font_size_override("font_size", 8)
+	holder.add_child(small)
+	PixelFont.style_world_label(small)
+	_assert(small.get_theme_font_size("font_size") == 11, "8 px demandés → ×1")
+	holder.queue_free()
+	# Thème : fusionné dans le thème par défaut, donc visible sous un CanvasLayer.
+	UITheme.apply(get_tree().root)
+	var base: Theme = ThemeDB.get_default_theme()
+	_assert(base.get_stylebox("panel", "Panel") is StyleBoxTexture, "Panel → cadre 9-slice peint")
+	_assert(base.get_stylebox("normal", "TouchButton") is StyleBoxTexture and base.get_type_variation_base("TouchButton") == &"Button", "TouchButton : variation de Button en pastille")
+	_assert(base.get_type_variation_base("Pastille") == &"Label" and base.get_font("font", "PixelTitle") == PixelFont.font(2, false), "Pastille (Label) et PixelTitle (police pixel ×2)")
+	var tex: Texture2D = (base.get_stylebox("panel", "Panel") as StyleBoxTexture).texture
+	_assert(tex.get_width() == 36 and tex.get_height() == 36, "cadre 12×12 natifs ×3")
+	var layer: CanvasLayer = CanvasLayer.new()
+	add_child(layer)
+	var p: Panel = Panel.new()
+	layer.add_child(p)
+	await get_tree().process_frame
+	_assert(p.get_theme_stylebox("panel") is StyleBoxTexture, "un Panel sous CanvasLayer reçoit le cadre du thème")
+	layer.queue_free()
+
+
+# Rendu H : la maison habillée — sol peint, mur du fond + fenêtres, relief des
+# meubles en enfants (suivent la visibilité), étiquettes pixel, idempotence.
+func _test_interior_dresser() -> void:
+	print("\n--- Rendu H : habillage des intérieurs ---")
+	var packed: PackedScene = load("res://scenes/interiors/HouseInterior.tscn") as PackedScene
+	_assert(packed != null, "HouseInterior.tscn charge")
+	if packed == null:
+		return
+	var house: Node2D = packed.instantiate()
+	add_child(house)
+	await get_tree().process_frame
+	var rects_before: int = house.find_children("*", "ColorRect", true, false).size()
+	_assert(InteriorDresser.is_interior(house), "scène reconnue comme intérieur")
+	_assert(InteriorDresser.floor_kind(house) == "planks", "maison → plancher")
+	InteriorDresser.dress(house)
+	var floor: ColorRect = house.get_node("Floor") as ColorRect
+	_assert(floor.get_node_or_null("FloorTiles") is Sprite2D and floor.get_node_or_null("BackWall") is Sprite2D, "sol peint + mur du fond (enfants du sol)")
+	_assert(floor.get_node_or_null("Window0") is Sprite2D and floor.get_node_or_null("WallB") is ColorRect, "fenêtre + bandes de mur")
+	var outer: ColorRect = floor.get_node_or_null("OuterWall") as ColorRect
+	_assert(outer != null and outer.show_behind_parent and outer.offset_left < 0.0, "mur extérieur derrière le sol")
+	var bed: ColorRect = house.get_node("Bed/Frame") as ColorRect
+	_assert(bed.get_node_or_null("OutlineT") != null and bed.get_node_or_null("Shadow") != null and bed.get_node_or_null("Grain") is Sprite2D, "lit : contour, ombre, grain de bois")
+	var rug: ColorRect = house.get_node("Rug") as ColorRect
+	_assert(rug.get_node_or_null("OutlineT") != null and rug.get_node_or_null("Shadow") == null, "tapis translucide : contour sans ombre")
+	var memorial: Label = house.get_node("MemorialLabel") as Label
+	_assert(memorial.has_theme_font_override("font"), "étiquette du mémorial en police pixel")
+	# Les ajouts suivent la visibilité du rect (bascules par flag).
+	bed.visible = false
+	_assert(not (bed.get_node("OutlineT") as CanvasItem).is_visible_in_tree(), "relief masqué avec son meuble")
+	bed.visible = true
+	var count: int = house.find_children("*", "ColorRect", true, false).size()
+	InteriorDresser.dress(house)
+	_assert(house.find_children("*", "ColorRect", true, false).size() == count and count > rects_before, "idempotent (%d rects, %d avant)" % [count, rects_before])
+	# Les collisions n'ont pas bougé : rien de tout ça n'est un corps.
+	_assert(house.find_children("*", "StaticBody2D", true, false).size() == 7, "aucun corps ajouté")
+	house.queue_free()
+
+
+# Rendu G : Diário replié derrière un badge, ouverture au tap (épinglée) ou
+# automatique quelques secondes à l'acceptation d'une quête.
+func _test_quest_log_folded() -> void:
+	print("\n--- Rendu G : Diário replié ---")
+	var packed: PackedScene = load("res://scenes/ui/QuestLog.tscn") as PackedScene
+	var log: Control = packed.instantiate()
+	add_child(log)
+	await get_tree().process_frame
+	_assert(not log.is_open(), "replié par défaut")
+	var badge: Button = log.get_node("Badge") as Button
+	_assert(badge != null and badge.text.begins_with("✦") and badge.size.y >= 44.0, "badge ✦ principales · activités (%s)" % badge.text)
+	log.toggle()
+	_assert(log.is_open(), "tap → ouvert")
+	log.toggle()
+	_assert(not log.is_open(), "second tap → replié")
+	log.peek()
+	_assert(log.is_open(), "peek (nouvelle quête) → ouvert")
+	log.fold()
+	_assert(not log.is_open(), "fold() → replié")
+	log.queue_free()
+

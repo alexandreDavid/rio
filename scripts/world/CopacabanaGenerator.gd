@@ -71,6 +71,10 @@ func _ready() -> void:
 	_spawn_human_cost()
 	_spawn_reinado()
 	_spawn_arpoador_seam()
+	# Intérieurs (ceux du générateur comme ceux posés dans la scène) habillés
+	# (rendu H), puis étiquettes du monde en police pixel (rendu G).
+	InteriorDresser.dress_all_under(self)
+	DistrictDresser.style_world_labels(self)
 	# Tri en Y (rendu E) : personnages, props et façades (origine au pied) se
 	# recouvrent selon leur position ; les sols restent sur leurs z négatifs.
 	WorldFx.enable_y_sort(self)
@@ -1516,6 +1520,7 @@ func _spawn_sign(parent: Node, pos: Vector2, text: String, color: Color, size: i
 	label.add_theme_color_override("font_color", color)
 	label.add_theme_font_size_override("font_size", size)
 	parent.add_child(label)
+	PixelFont.style_world_label(label)
 
 # Ajoute une vingtaine de passants ambiants sur Copacabana — joggers sur le
 # calçadão, touristes sur l'av. Atlântica, baigneurs sur le sable, locaux dans

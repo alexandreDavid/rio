@@ -15,6 +15,7 @@ const MAIN_SCENE: String = "res://scenes/main/Main.tscn"
 var _reset_pending: int = 0  # 1..3 = slot en attente de confirmation, 0 = aucun
 
 func _ready() -> void:
+	UITheme.apply(get_tree().root)
 	for i in 3:
 		var slot: int = i + 1
 		slot_buttons[i].pressed.connect(_on_slot_pressed.bind(slot))

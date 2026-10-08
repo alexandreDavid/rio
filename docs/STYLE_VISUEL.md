@@ -36,13 +36,32 @@ est dessiné ou rééchantillonné respecte cette grille.
    chœur ; les mouettes et la poussière de pas sont les seuls éléments
    animés en code. Tout mouvement est lent (périodes de 2 à 6 s) : il doit
    se remarquer à la deuxième seconde, pas à la première.
-9. **Texte dans le monde** : étiquettes en police UI avec contour, jamais
-   dessinées dans les sprites (localisation).
+9. **Texte dans le monde** : étiquettes en `PixelFont` (5×7, échelle
+   entière ×1/×2/×3 choisie par `PixelFont.style_world_label`, contour
+   noir cuit pour les couleurs claires, pas de contour pour les sombres),
+   jamais dessinées dans les sprites (localisation). Les emojis viennent
+   de la police de secours, à la même taille.
+10. **Interface** : cadres 9-slice de `UITheme` (trait sombre / liseré or /
+   trait / fond nuit à 92 %), jamais de `StyleBoxFlat` à coins arrondis ni
+   de couleur « Godot ». Les boutons tactiles sont des pastilles rondes
+   translucides (`TouchButton`, ≥ 104 px), les prompts des `Pastille`, les
+   titres en `PixelTitle` (police pixel ×2) ; le corps de texte reste en
+   police système (lisibilité sur téléphone). Le thème est fusionné dans
+   le thème par défaut du moteur (`UITheme.apply`) : il vaut pour tout
+   Control, même sous un CanvasLayer ou instancié plus tard.
+11. **Intérieurs** : un sol peint dans la couleur du rect (planches,
+   carrelage, marbre, moquette, pierre — genre par nom de scène dans
+   `InteriorDresser.FLOOR_KINDS`), un mur du fond de 10 natifs avec plinthe
+   et fenêtres, des murs sombres autour ; chaque meuble = contour 1 natif,
+   arête claire haut-gauche, ombre portée à 1 natif. Tout ce qui est
+   ajouté est enfant du rect habillé.
 
 ## Vérifier
 - `tools/visual_refs.sh` : 6 vues de référence (Copa jour/soir, favela, Zona
   Sul, maison) comparées pixel à pixel ; `--update` après un changement
   d'art validé à l'œil.
-- `tools/ScreenshotMain.tscn` pour toute autre vue ; `tools/preview_character_factory.gd`
-  pour les personnages.
+- `tools/capture_main.sh <prefix> "x:y:zoom,…"` pour toute autre vue du jeu
+  complet (sauvegardes du joueur mises à l'abri) ; `tools/preview_character_factory.gd`
+  pour les personnages, `tools/preview_pixel_font.gd` pour la police,
+  `tools/preview_ui_theme.gd` pour les cadres et boutons du thème.
 - On ne livre jamais un changement d'art sans l'avoir regardé.

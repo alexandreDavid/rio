@@ -1,26 +1,69 @@
-extends Panel
+extends Control
 
 # Journal des quêtes actives, reconstruit sur chaque événement pertinent.
 # Sépare visuellement la trame principale (MAIN) des activités libres (SIDE) :
 # section "História", puis "Atividades", chacune avec son propre style.
+# Replié par défaut derrière un badge (✦ principales · activités) : il s'ouvre
+# au tap (et reste ouvert tant qu'on ne le referme pas) ou de lui-même pendant
+# quelques secondes à chaque quête acceptée / terminée (rendu G).
+
+const AUTO_OPEN_SEC: float = 6.0
 
 const MAIN_TITLE_COLOR: Color = Color(1.0, 0.9, 0.55)      # doré : trame
 const SIDE_TITLE_COLOR: Color = Color(0.65, 0.85, 1.0)     # bleu pâle : activité
 const SECTION_HEADER_COLOR: Color = Color(0.95, 0.85, 0.4, 0.85)
 const SIDE_SECTION_HEADER_COLOR: Color = Color(0.55, 0.78, 1.0, 0.85)
 
-@onready var vbox: VBoxContainer = $VBox
-@onready var header_count: Label = $HeaderBg/HeaderCount
+@onready var vbox: VBoxContainer = $Panel/VBox
+@onready var header_count: Label = $Panel/HeaderBg/HeaderCount
+@onready var panel: Panel = $Panel
+@onready var badge: Button = $Badge
+
+var _pinned: bool = false       # ouvert par le joueur : reste ouvert
+var _auto_timer: SceneTreeTimer = null
 
 func _ready() -> void:
 	EventBus.quest_accepted.connect(_on_quest_event)
 	EventBus.quest_updated.connect(_on_quest_updated)
 	EventBus.quest_completed.connect(_on_quest_event)
 	EventBus.quest_failed.connect(_on_quest_event)
+	if badge:
+		badge.pressed.connect(toggle)
 	_redraw()
+
+func is_open() -> bool:
+	return panel != null and panel.visible
+
+# Tap sur le badge : ouvre et épingle, ou referme.
+func toggle() -> void:
+	if is_open() and _pinned:
+		fold()
+	else:
+		_pinned = true
+		_set_open(true)
+
+func fold() -> void:
+	_pinned = false
+	_set_open(false)
+
+# Ouverture automatique (nouvelle quête) : quelques secondes, sauf si épinglé.
+func peek() -> void:
+	if _pinned:
+		return
+	_set_open(true)
+	_auto_timer = get_tree().create_timer(AUTO_OPEN_SEC)
+	var mine: SceneTreeTimer = _auto_timer
+	mine.timeout.connect(func() -> void:
+		if _auto_timer == mine and not _pinned:
+			_set_open(false))
+
+func _set_open(open: bool) -> void:
+	if panel:
+		panel.visible = open
 
 func _on_quest_event(_quest_id: String) -> void:
 	_redraw()
+	peek()
 
 func _on_quest_updated(_quest_id: String, _objective_id: String) -> void:
 	_redraw()
@@ -40,6 +83,8 @@ func _redraw() -> void:
 
 	if header_count:
 		header_count.text = "%d ✦ %d" % [main_ids.size(), side_ids.size()]
+	if badge:
+		badge.text = "✦ %d · %d" % [main_ids.size(), side_ids.size()]
 
 	if active.is_empty():
 		var none: Label = Label.new()
@@ -69,8 +114,8 @@ func _clear() -> void:
 func _add_section_header(text: String, color: Color) -> void:
 	var label: Label = Label.new()
 	label.text = text.to_upper()
+	label.theme_type_variation = &"PixelTitle"
 	label.add_theme_color_override("font_color", color)
-	label.add_theme_font_size_override("font_size", 13)
 	vbox.add_child(label)
 
 func _add_spacer() -> void:
