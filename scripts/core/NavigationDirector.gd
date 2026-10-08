@@ -428,7 +428,7 @@ func _resolve_point(anchor: String, cur: String) -> Vector2:
 	if anchor == "cart":
 		return _node_pos_guard(get_tree().get_first_node_in_group("corn_cart"))
 	if anchor.begins_with("npc:"):
-		return _node_pos_guard(NPCScheduler.get_npc(anchor.substr(4)))
+		return _node_pos_guard(_entrance_or_self(NPCScheduler.get_npc(anchor.substr(4))))
 	# `spot:<npc_id>` = ReactiveDialogueSpot ; `node:<name>` = nœud du monde par nom.
 	if anchor.begins_with("spot:") or anchor.begins_with("node:"):
 		return _node_pos_guard(_find_world_node(anchor))
@@ -502,6 +502,41 @@ func _find_world_node(anchor: String) -> Node:
 	if found != null:
 		_anchor_cache[anchor] = found
 	return found
+
+# Un PNJ qui vit dans un intérieur (Ramos à l'Academia, le Padre à l'église…) :
+# la boussole doit pointer la PORTE de son bâtiment, pas le nœud posé hors
+# carte (playtest 2026-10-08 : 62 min de flèche vers le vide au nord de Copa).
+# On cherche la BuildingDoor d'entrée dont la destination tombe près du PNJ.
+var _entrance_cache: Dictionary = {}
+
+func _entrance_or_self(npc: Node) -> Node:
+	if npc == null or not is_instance_valid(npc) or not (npc is Node2D):
+		return npc
+	var key: int = npc.get_instance_id()
+	if _entrance_cache.has(key):
+		var cached: Node = _entrance_cache[key]
+		if cached == null:
+			return npc
+		if is_instance_valid(cached) and cached.is_inside_tree():
+			return cached
+	var root: Node = get_tree().current_scene
+	if root == null:
+		return npc
+	var pos: Vector2 = (npc as Node2D).global_position
+	var best: Node = null
+	var best_d: float = 400.0
+	for d in root.find_children("*", "", true, false):
+		if not (d is BuildingDoor) or bool(d.get("is_exit")):
+			continue
+		var dest: Vector2 = d.get("destination")
+		if dest == Vector2.ZERO:
+			continue
+		var dd: float = dest.distance_to(pos)
+		if dd < best_d:
+			best_d = dd
+			best = d
+	_entrance_cache[key] = best
+	return best if best != null else npc
 
 # Position d'un nœud, ou NO_POS s'il est invalide / trop loin (= autre district).
 func _node_pos_guard(n: Node) -> Vector2:

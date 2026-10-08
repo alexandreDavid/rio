@@ -1136,6 +1136,14 @@ func _test_navigation_director_prologue_and_jantar() -> void:
 		v = mae._pick_variant()
 		_assert(String(v.get("id", "")) != "jantar", "le matin → pas de jantar")
 	house.queue_free()
+	# Ancre npc: d'un PNJ d'intérieur → la porte de son bâtiment (Ramos → Academia).
+	var ramos: Node2D = NPCScheduler.get_npc("ramos")
+	if ramos != null:
+		var target: Node = NavigationDirector._entrance_or_self(ramos)
+		_assert(target != ramos and target is BuildingDoor, "npc:ramos → porte de l'Academia (%s)" % (target.name if target else "null"))
+		if target is BuildingDoor:
+			_assert((target as Node2D).global_position.y > -300.0 and (target as Node2D).global_position.y < 0.0,
+				"…sur la carte de Copa, pas dans l'intérieur (%s)" % (target as Node2D).global_position)
 	# F6 : la charrette portée est déposée à la bascule d'acte.
 	var cart_scene: PackedScene = load("res://scenes/props/CornCart.tscn")
 	if cart_scene != null:
