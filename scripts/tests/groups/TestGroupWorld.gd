@@ -35,6 +35,7 @@ func run() -> void:
 	_test_minigame_depth_contracts()
 	_test_milho_rush()
 	_test_regata_desembarque()
+	_test_lisibilite_ui()
 
 
 # Garde-fou : les intérieurs hors-monde (positions y≈-3000 dans Copacabana)
@@ -1017,6 +1018,49 @@ func _test_regata_desembarque() -> void:
 	g.free()
 
 
+# Corrections rapides de lisibilité (critique joueur neuf, 2026-10-12).
+func _test_lisibilite_ui() -> void:
+	_section("Lisibilité — écran titre, dialogue, prompts, repère joueur")
+	var intro: GDScript = load("res://scripts/main/Intro.gd")
+	_assert(intro.voie_label(CampaignManager.Endgame.PREFEITO) == "Prefeito", "écran titre : Prefeito n'est plus étiqueté Polícia")
+	_assert(intro.voie_label(CampaignManager.Endgame.POLICIA) == "Polícia", "écran titre : Polícia")
+	_assert(intro.voie_label(CampaignManager.Endgame.TRAFICO) == "Tráfico", "écran titre : Tráfico")
+	_assert(intro.voie_label(CampaignManager.Endgame.CONSORTIUM) == "Consórcio", "écran titre : Consórcio")
+	_assert(intro.voie_label(CampaignManager.Endgame.NONE) == "", "écran titre : pas de voie = rien")
+	var dlg_script: GDScript = load("res://scripts/ui/DialogueUI.gd")
+	var consts: Dictionary = dlg_script.get_script_constant_map()
+	_assert(int(consts["TEXT_SIZE"]) >= 30, "dialogue : texte ≥ 30 px (≈ 11 pt sur iPhone)")
+	var dlg: Node = load("res://scenes/ui/DialogueUI.tscn").instantiate()
+	add_child(dlg)
+	var line: String = dlg.format_line("*pose la louche* Mange, [filho].")
+	_assert(line.begins_with("[i][color=") and line.find("pose la louche") != -1, "didascalie en italique atténué")
+	_assert(line.find("[lb]filho]") != -1, "crochets du texte échappés (pas de BBCode parasite)")
+	dlg.free()
+	_assert(InputHints.act() == "✋" or InputHints.act() == "[E]", "prompt : ✋ en tactile, [E] au clavier")
+	var hud_src: String = FileAccess.get_file_as_string("res://scripts/ui/HUD.gd")
+	_assert(hud_src.find("\"[E] \" + prompt_text") == -1, "HUD : plus de « [E] » codé en dur")
+	# Étiquette du monde : jamais au-delà de ×2.
+	var l: Label = Label.new()
+	l.text = "Carrocinha de tio Zé"
+	l.add_theme_font_size_override("font_size", 18)
+	PixelFont.style_world_label(l)
+	_assert(l.get_theme_font_size("font_size") <= PixelFont.SIZE * 2, "étiquette du monde plafonnée à ×2")
+	l.free()
+	# Repère joueur : visible au départ, ré-armé par un saut de position.
+	var holder: Node2D = Node2D.new()
+	add_child(holder)
+	var m: PlayerMarker = PlayerMarker.new()
+	holder.add_child(m)
+	m._process(0.1)
+	_assert(m.is_showing(), "repère visible au démarrage")
+	m._process(PlayerMarker.SHOW_SEC + 1.0)
+	_assert(not m.is_showing(), "repère éteint après quelques secondes")
+	holder.global_position += Vector2(PlayerMarker.TELEPORT_PX + 50.0, 0)
+	m._process(0.1)
+	_assert(m.is_showing(), "téléportation → repère rallumé")
+	holder.free()
+
+
 func _test_minigame_depth_contracts() -> void:
 	_section("Mini-jeux refondus — courbes de difficulté cohérentes")
 	var bands: Array = FishingGame.BANDS
@@ -1524,7 +1568,7 @@ func _test_quest_log_folded() -> void:
 	await get_tree().process_frame
 	_assert(not log.is_open(), "replié par défaut")
 	var badge: Button = log.get_node("Badge") as Button
-	_assert(badge != null and badge.text.begins_with("✦") and badge.size.y >= 44.0, "badge ✦ principales · activités (%s)" % badge.text)
+	_assert(badge != null and badge.text.begins_with("Quêtes") and badge.size.y >= 44.0, "badge lisible « Quêtes N » (%s)" % badge.text)
 	log.toggle()
 	_assert(log.is_open(), "tap → ouvert")
 	log.toggle()

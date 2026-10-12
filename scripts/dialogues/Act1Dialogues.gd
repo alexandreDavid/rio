@@ -40,7 +40,7 @@ const KNOTS: Dictionary = {
 	},
 	"game_intro_controles": {
 		"speaker": "Narrateur",
-		"text": "Joystick à gauche pour marcher, bouton E à droite pour parler, prendre, acheter. Le reste, la rue te l'apprendra.\n\nBoa sorte, parceiro.",
+		"text": "Joystick à gauche pour marcher, bouton ✋ à droite pour parler, prendre, acheter. Le reste, la rue te l'apprendra.\n\nBoa sorte, parceiro.",
 		"choices": ["C'est parti"],
 	},
 	# --- META : Run+ (joueur a déjà bouclé une voie au moins une fois) ---

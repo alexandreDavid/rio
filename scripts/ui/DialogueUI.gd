@@ -9,10 +9,29 @@ extends Control
 
 var _indicator_tween: Tween = null
 
+# Lisible sur iPhone : le canevas fait 1080 px de haut, un px logique y vaut
+# ~0,36 pt en paysage — 30 px ≈ 11 pt, le plancher de lecture d'Apple.
+const TEXT_SIZE: int = 30
+const SPEAKER_SIZE: int = 26
+const CHOICE_SIZE: int = 28
+const CHOICE_H: int = 68
+const CHOICE_GAP: int = 8
+# Didascalies (*il pose sa louche*) : en italique atténué, pour qu'on
+# distingue d'un coup d'œil le geste de la parole.
+const STAGE_COLOR: String = "#c9bc96"
+var _stage_re: RegEx = RegEx.create_from_string("\\*([^*]+)\\*")
+
 func _ready() -> void:
 	DialogueBridge.line_shown.connect(_on_line_shown)
 	DialogueBridge.choices_presented.connect(_on_choices_presented)
 	DialogueBridge.dialogue_finished.connect(_on_dialogue_finished)
+	if speaker_label:
+		speaker_label.add_theme_font_size_override("font_size", SPEAKER_SIZE)
+	if text_label:
+		for key in ["normal_font_size", "bold_font_size", "italics_font_size", "bold_italics_font_size"]:
+			text_label.add_theme_font_size_override(key, TEXT_SIZE)
+	if choices_container:
+		choices_container.add_theme_constant_override("separation", CHOICE_GAP)
 	if panel:
 		# Tap dans la zone libre du panel → avance le dialogue si une seule
 		# option (knot purement informatif). Les zones de Button restent
@@ -56,7 +75,8 @@ func _on_line_shown(speaker: String, text: String) -> void:
 	if speaker_label:
 		speaker_label.text = speaker
 	if text_label:
-		text_label.text = text
+		text_label.text = format_line(text)
+		text_label.scroll_to_line(0)
 	_clear_choices()
 
 func _on_choices_presented(choices: Array) -> void:
@@ -67,9 +87,9 @@ func _on_choices_presented(choices: Array) -> void:
 	for i in choices.size():
 		var btn: Button = Button.new()
 		btn.text = str(choices[i])
-		btn.custom_minimum_size = Vector2(0, 64)
+		btn.custom_minimum_size = Vector2(0, CHOICE_H)
 		btn.focus_mode = Control.FOCUS_ALL
-		btn.add_theme_font_size_override("font_size", 22)
+		btn.add_theme_font_size_override("font_size", CHOICE_SIZE)
 		btn.pressed.connect(_on_choice_pressed.bind(i))
 		choices_container.add_child(btn)
 	# Focus le premier bouton pour Enter/flèches au clavier.
@@ -79,6 +99,21 @@ func _on_choices_presented(choices: Array) -> void:
 			first.grab_focus()
 	# Indicateur « tap pour avancer » : visible uniquement quand 1 seul choix.
 	_set_next_indicator(choices.size() == 1)
+	_layout_for(choices.size())
+
+# La zone de choix épouse le nombre de boutons : le texte récupère la place
+# (avant : 300 px réservés même pour un seul « Continuer »).
+func _layout_for(n: int) -> void:
+	var h: float = float(n * CHOICE_H + maxi(n - 1, 0) * CHOICE_GAP)
+	if choices_container:
+		choices_container.offset_top = -(h + 16.0)
+	if text_label:
+		text_label.offset_bottom = -(h + 28.0)
+
+# Échappe le BBCode du texte brut puis met les didascalies en italique atténué.
+func format_line(text: String) -> String:
+	var safe: String = text.replace("[", "[lb]")
+	return _stage_re.sub(safe, "[i][color=%s]$1[/color][/i]" % STAGE_COLOR, true)
 
 func _on_choice_pressed(index: int) -> void:
 	print("[DialogueUI] _on_choice_pressed(%d) — button clicked" % index)

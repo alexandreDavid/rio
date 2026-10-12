@@ -23,7 +23,6 @@ func _ready() -> void:
 	_refresh()
 
 func _refresh() -> void:
-	var path_labels: Array[String] = ["Polícia", "Tráfico", "Consortium", "Prefeito"]
 	for i in 3:
 		var slot: int = i + 1
 		var info: Dictionary = SaveSystem.slot_info(slot)
@@ -38,8 +37,8 @@ func _refresh() -> void:
 			var debt: int = int(info.get("debt_paid", 0))
 			var endgame: int = int(info.get("endgame", 0))
 			var path_str: String = ""
-			if endgame >= 1 and endgame <= 4:
-				path_str = "  ·  " + path_labels[endgame - 1]
+			if voie_label(endgame) != "":
+				path_str = "  ·  " + voie_label(endgame)
 			text = "%sSlot %d  ·  Jour %d  ·  Acte %d%s  ·  R$ %d payés" % [
 					prefix, slot, day, act, path_str, debt]
 		slot_buttons[i].text = text
@@ -52,6 +51,16 @@ func _refresh() -> void:
 			reset_buttons[i].text = "🗑"
 			reset_buttons[i].modulate = Color(1, 1, 1)
 	reset_hint.visible = _reset_pending != 0
+
+# Indexé par l'enum Endgame (NONE, PREFEITO, POLICIA, TRAFICO, CONSORTIUM) —
+# l'ancien tableau positionnel décalait toutes les voies d'un cran.
+static func voie_label(endgame: int) -> String:
+	match endgame:
+		CampaignManager.Endgame.PREFEITO: return "Prefeito"
+		CampaignManager.Endgame.POLICIA: return "Polícia"
+		CampaignManager.Endgame.TRAFICO: return "Tráfico"
+		CampaignManager.Endgame.CONSORTIUM: return "Consórcio"
+	return ""
 
 func _on_slot_pressed(slot: int) -> void:
 	# Tap sur un slot annule un éventuel reset en cours sur un autre.

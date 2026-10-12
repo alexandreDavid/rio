@@ -366,13 +366,13 @@ func _refresh_context_label() -> void:
 				found = i
 		if found >= 0:
 			if _cars[found].requested_pending:
-				msg = "[E] Récupérer pour le client"
+				msg = InputHints.act() + " Récupérer pour le client"
 			else:
-				msg = "[E] Prendre la voiture"
+				msg = InputHints.act() + " Prendre la voiture"
 	else:
 		var c: Dictionary = _cars[_carried_idx]
 		if DROP_ZONE.has_point(_player_pos) and c.requested_pending:
-			msg = "[E] RESTITUER"
+			msg = InputHints.act() + " RESTITUER"
 		elif c.requested_pending:
 			msg = "→ Va à l'entrée pour restituer"
 		else:
@@ -383,7 +383,7 @@ func _refresh_context_label() -> void:
 				if _player_pos.distance_to(SLOTS[i]) < SLOT_RANGE:
 					near_free_slot = true
 					break
-			msg = "[E] Garer ici" if near_free_slot else "→ Trouve une place libre"
+			msg = InputHints.act() + " Garer ici" if near_free_slot else "→ Trouve une place libre"
 	context_label.text = msg
 
 # --- UI / fin ---

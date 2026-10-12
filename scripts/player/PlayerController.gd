@@ -32,6 +32,9 @@ func _ready() -> void:
 	var dust: FootDust = FootDust.new()
 	dust.name = "FootDust"
 	add_child(dust)
+	var marker: PlayerMarker = PlayerMarker.new()
+	marker.name = "PlayerMarker"
+	add_child(marker)
 	EventBus.interaction_available.connect(_on_interaction_available)
 	EventBus.interaction_lost.connect(_on_interaction_lost)
 	EventBus.interaction_unavailable.connect(_on_interaction_unavailable)

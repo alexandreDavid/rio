@@ -483,36 +483,36 @@ func _context_text() -> String:
 			if _carry == "":
 				if _plate_ingredients[station]:
 					return ""
-				return "[E] Prendre %s" % INGREDIENT_LABELS[station]
+				return InputHints.act() + " Prendre %s" % INGREDIENT_LABELS[station]
 			if _carry == station:
-				return "[E] Reposer %s" % INGREDIENT_LABELS[station]
+				return InputHints.act() + " Reposer %s" % INGREDIENT_LABELS[station]
 			if _carry in RECIPE:
-				return "[E] Échanger pour %s" % INGREDIENT_LABELS[station]
+				return InputHints.act() + " Échanger pour %s" % INGREDIENT_LABELS[station]
 		"plate":
 			if _plate_in_oven:
 				return ""
 			if _carry in RECIPE:
 				if _plate_ingredients[_carry]:
 					return "Déjà ajouté"
-				return "[E] Déposer %s" % INGREDIENT_LABELS[_carry]
+				return InputHints.act() + " Déposer %s" % INGREDIENT_LABELS[_carry]
 			if _carry == "":
 				if _plate_status == "BAKED":
-					return "[E] Prendre la plaque cuite"
+					return InputHints.act() + " Prendre la plaque cuite"
 				if _plate_status == "ASSEMBLY" and _all_ingredients_in():
-					return "[E] Prendre la plaque crue"
+					return InputHints.act() + " Prendre la plaque crue"
 		"oven":
 			if _carry == "plate_raw":
-				return "[E] Enfourner"
+				return InputHints.act() + " Enfourner"
 			if _carry == "" and _plate_in_oven:
-				return "[E] Sortir du four"
+				return InputHints.act() + " Sortir du four"
 		"basket":
 			if _carry.begins_with("plate_"):
-				return "[E] Vendre"
+				return InputHints.act() + " Vendre"
 		"trash":
 			if _carry.begins_with("plate_"):
-				return "[E] Jeter la plaque"
+				return InputHints.act() + " Jeter la plaque"
 			if _carry in RECIPE:
-				return "[E] Jeter l'ingrédient"
+				return InputHints.act() + " Jeter l'ingrédient"
 	return ""
 
 func _set_status(text: String) -> void:

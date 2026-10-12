@@ -84,7 +84,9 @@ func _redraw() -> void:
 	if header_count:
 		header_count.text = "%d ✦ %d" % [main_ids.size(), side_ids.size()]
 	if badge:
-		badge.text = "✦ %d · %d" % [main_ids.size(), side_ids.size()]
+		# Lisible au premier coup d'œil ; le partage ✦ histoire / • activités
+		# est dans le Diário ouvert.
+		badge.text = "Quêtes %d" % (main_ids.size() + side_ids.size())
 
 	if active.is_empty():
 		var none: Label = Label.new()

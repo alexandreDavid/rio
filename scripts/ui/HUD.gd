@@ -365,7 +365,7 @@ func _refresh_prompt() -> void:
 		prompt_text = top.prompt
 	else:
 		prompt_text = "Interagir"
-	interaction_prompt.text = "[E] " + prompt_text
+	interaction_prompt.text = InputHints.act() + " " + prompt_text
 	interaction_prompt.show()
 
 func _on_cart_state(carrying: bool) -> void:

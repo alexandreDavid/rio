@@ -10,7 +10,7 @@ const PAGES: Array = [
 	},
 	{
 		"title": "Comment bouger",
-		"text": "Mobile : joystick virtuel en bas à gauche.\nDesktop : WASD ou flèches.\n\nInteragis avec [E] (desktop) ou en t'approchant et en tapotant le NPC sur mobile. Un « ! » jaune flotte au-dessus des NPCs qui ont quelque chose à te proposer.",
+		"text": "Mobile : joystick virtuel en bas à gauche.\nDesktop : WASD ou flèches.\n\nApproche-toi : quand un prompt apparaît, touche ✋ (en bas à droite) — ou [E] au clavier. Un « ! » jaune flotte au-dessus des NPCs qui ont quelque chose à te proposer.",
 	},
 	{
 		"title": "Le HUD",

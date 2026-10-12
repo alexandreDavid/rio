@@ -20,7 +20,7 @@ offset_top = 0.0
 offset_right = 0.0
 offset_bottom = 72.0
 theme_type_variation = &"PixelButton"
-text = "✦ 0 · 0"
+text = "Quêtes 0"
 tooltip_text = "Diário de missões"
 
 [node name="Panel" type="Panel" parent="."]

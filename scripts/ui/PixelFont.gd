@@ -187,12 +187,13 @@ static func native_width(text: String) -> int:
 
 
 # Applique la police à une Label du monde : échelle entière choisie d'après la
-# taille demandée (7-8 px → ×1, 9-13 → ×2, 14+ → ×3) puis bornée par la largeur
+# taille demandée (7-8 px → ×1, 9+ → ×2 ; plus de ×3 : à ×3, enseignes et
+# panneaux couvraient les têtes des personnages) puis bornée par la largeur
 # de l'étiquette quand elle en a une. Contour cuit, filtrage NEAREST, et la
 # police système reste en secours pour les emojis et symboles inconnus.
 static func style_world_label(label: Label, outlined: bool = true) -> void:
 	var requested: int = label.get_theme_font_size("font_size")
-	var scale: int = clampi(int(roundf(float(requested - 1) / 5.0)), 1, 3)
+	var scale: int = clampi(int(roundf(float(requested - 1) / 5.0)), 1, 2)
 	var text_w: int = native_width(label.text)
 	if label.size.x > 0.0 and text_w > 0:
 		while scale > 2 and float(text_w * scale) > label.size.x + 2.0:
