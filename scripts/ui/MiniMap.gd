@@ -39,6 +39,7 @@ var _world_node: Node = null
 var _last_district: String = "copacabana"
 
 func _ready() -> void:
+	SafeArea.apply(self)
 	_setup_strips()
 	_make_poi_dots()
 	_world_node = get_tree().current_scene.get_node_or_null("World")

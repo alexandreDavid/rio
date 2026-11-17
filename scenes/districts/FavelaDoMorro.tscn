@@ -1487,11 +1487,30 @@ variants = Array[Dictionary]([{
 }
 },
 "choices": ["Merci, Juca — je monte"],
+"flag": "juca_altinha_ok",
 "id": "prologue_juca",
 "objective_done": ["prologue_pedrinho", "ask_vovo"],
 "objective_pending": ["prologue_pedrinho", "ask_garoto"],
 "speaker": "Juca",
-"text": "*arrête de taper dans sa balle, se mord la lèvre* Pedrinho ? *baisse la voix, regarde autour* Le monsieur en costume lui faisait peur. Il disait que si sa mère payait pas, ils prendraient la maison. *pointe tout en haut des escaliers* Quand il a peur, Pedrinho se planque dans la vieille citerne, juste à côté de la chapelle, tout en haut du morro. Personne monte là-haut. Mais dis pas que c'est moi."
+"text": "*cale la balle sous son bras, encore essoufflé* Bon. T'es réglo, toi. *se mord la lèvre, baisse la voix, regarde autour* Pedrinho, le monsieur en costume lui faisait peur. Il disait que si sa mère payait pas, ils prendraient la maison. *pointe tout en haut des escaliers* Quand il a peur, Pedrinho se planque dans la vieille citerne, juste à côté de la chapelle, tout en haut du morro. Personne monte là-haut. Mais dis pas que c'est moi."
+}, {
+"actions": {
+"start_altinha": {
+"flag": "juca_altinha_ok",
+"max_tries": 2,
+"relent_text": "Juca : « T'es nul, mais t'es têtu… ça me plaît. » — reparle-lui",
+"retry_text": "Juca se marre : « Encore une ! » — reparle-lui pour retenter",
+"setting": "laje",
+"touch_goal": 8,
+"win_text": "Juca : « Caraca, tu tiens la bola ! » — reparle-lui"
+}
+},
+"choices": ["Bora, joga a bola"],
+"id": "prologue_juca_roda",
+"objective_done": ["prologue_pedrinho", "ask_vovo"],
+"objective_pending": ["prologue_pedrinho", "ask_garoto"],
+"speaker": "Juca",
+"text": "*jongle avec une balle crevée sans te regarder* Pedrinho ? *hausse les épaules* Je cause pas aux grands qui savent même pas tenir une bola. *te la lance dans les mains* Sur la laje, là. Huit toques avant que ça tombe trois fois, et je te dis où il se cache. Fala sério, c'est pas dur."
 }, {
 "choices": ["Plus tard"],
 "id": "default",

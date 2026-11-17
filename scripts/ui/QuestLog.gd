@@ -23,6 +23,7 @@ var _pinned: bool = false       # ouvert par le joueur : reste ouvert
 var _auto_timer: SceneTreeTimer = null
 
 func _ready() -> void:
+	SafeArea.apply(self)
 	EventBus.quest_accepted.connect(_on_quest_event)
 	EventBus.quest_updated.connect(_on_quest_updated)
 	EventBus.quest_completed.connect(_on_quest_event)

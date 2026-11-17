@@ -8,19 +8,53 @@ extends Control
 
 const MAIN_SCENE: String = "res://scenes/main/Main.tscn"
 
-@onready var slot_buttons: Array[Button] = [$Layout/Slot1Row/Slot1, $Layout/Slot2Row/Slot2, $Layout/Slot3Row/Slot3]
-@onready var reset_buttons: Array[Button] = [$Layout/Slot1Row/Slot1Reset, $Layout/Slot2Row/Slot2Reset, $Layout/Slot3Row/Slot3Reset]
-@onready var reset_hint: Label = $Layout/ResetHint
+@onready var slot_buttons: Array[Button] = [$Panel/Layout/Slot1Row/Slot1, $Panel/Layout/Slot2Row/Slot2, $Panel/Layout/Slot3Row/Slot3]
+@onready var reset_buttons: Array[Button] = [$Panel/Layout/Slot1Row/Slot1Reset, $Panel/Layout/Slot2Row/Slot2Reset, $Panel/Layout/Slot3Row/Slot3Reset]
+@onready var reset_hint: Label = $Panel/Layout/ResetHint
+@onready var title_block: Control = $TitleBlock
+@onready var panel: Control = $Panel
 
 var _reset_pending: int = 0  # 1..3 = slot en attente de confirmation, 0 = aucun
 
 func _ready() -> void:
 	UITheme.apply(get_tree().root)
+	add_to_group("gamepad_menu")
 	for i in 3:
 		var slot: int = i + 1
 		slot_buttons[i].pressed.connect(_on_slot_pressed.bind(slot))
 		reset_buttons[i].pressed.connect(_on_reset_pressed.bind(slot))
+	_style_title()
 	_refresh()
+	slot_buttons[clampi(Settings.current_slot - 1, 0, 2)].grab_focus()
+	_play_entrance()
+
+# Titre en police pixel, agrandi par multiples entiers (net sur tout écran).
+func _style_title() -> void:
+	var big: FontFile = PixelFont.font(3, true)
+	var title: Label = $TitleBlock/Title
+	title.add_theme_font_override("font", big)
+	title.add_theme_font_size_override("font_size", big.fixed_size * 4)
+	title.add_theme_color_override("font_color", Color(1.0, 0.86, 0.38))
+	title.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	var sub: Label = $TitleBlock/Subtitle
+	sub.add_theme_font_override("font", big)
+	sub.add_theme_font_size_override("font_size", big.fixed_size * 2)
+	sub.add_theme_color_override("font_color", Color(1.0, 0.97, 0.9))
+	sub.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+
+# Le titre descend, le panneau monte : l'écran respire avant qu'on choisisse.
+func _play_entrance() -> void:
+	title_block.modulate.a = 0.0
+	panel.modulate.a = 0.0
+	var title_y: float = title_block.position.y
+	var panel_y: float = panel.position.y
+	title_block.position.y = title_y - 40.0
+	panel.position.y = panel_y + 60.0
+	var tw: Tween = create_tween().set_parallel(true).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tw.tween_property(title_block, "modulate:a", 1.0, 0.8)
+	tw.tween_property(title_block, "position:y", title_y, 0.9)
+	tw.tween_property(panel, "modulate:a", 1.0, 0.6).set_delay(0.5)
+	tw.tween_property(panel, "position:y", panel_y, 0.7).set_delay(0.5)
 
 func _refresh() -> void:
 	for i in 3:
@@ -30,7 +64,7 @@ func _refresh() -> void:
 		var prefix: String = "📍 " if current else "  "
 		var text: String
 		if info.is_empty():
-			text = "%sSlot %d  ·  ✨ Nouvelle partie" % [prefix, slot]
+			text = "%s✨ Nouvelle partie" % prefix
 		else:
 			var act: int = int(info.get("act", 1))
 			var day: int = int(info.get("day", 1))
@@ -39,8 +73,8 @@ func _refresh() -> void:
 			var path_str: String = ""
 			if voie_label(endgame) != "":
 				path_str = "  ·  " + voie_label(endgame)
-			text = "%sSlot %d  ·  Jour %d  ·  Acte %d%s  ·  R$ %d payés" % [
-					prefix, slot, day, act, path_str, debt]
+			text = "%sJour %d  ·  Acte %d%s  ·  R$ %d payés" % [
+					prefix, day, act, path_str, debt]
 		slot_buttons[i].text = text
 		reset_buttons[i].disabled = info.is_empty()
 		# Icône reset : 🗑 par défaut, ⚠ Confirmer si en attente.

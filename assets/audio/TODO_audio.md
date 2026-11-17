@@ -1,4 +1,12 @@
-# Audio à sourcer — checklist
+# Audio — checklist
+
+**État 2026-11-17 : tous les fichiers ci-dessous existent**, synthétisés par
+`tools/audio/synth_audio.py` (aucun sample externe, libre de droits). Pour
+régénérer : voir l'en-tête du script. Un `.ogg` déposé à la main au même
+chemin remplace simplement la version synthétique — la liste reste le cahier
+des charges pour des enregistrements « vrais » plus tard. Deux SFX ajoutés :
+`ui_click.ogg` (tout bouton) et `chase_escaped.ogg` (poursuivant semé).
+Les musiques et ambiances ont `loop=true` dans leur `.import`.
 
 Tous les hooks audio sont câblés côté code (`scripts/audio/AudioManager.gd`) :
 les SFX et boucles ambient se déclenchent dès qu'un fichier `.ogg` existe au bon

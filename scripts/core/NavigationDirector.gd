@@ -56,7 +56,7 @@ const STEP: Dictionary = {
 	# de FavelaDoMorro.tscn — la boussole les pointe (playtest 2026-10-07, F2).
 	"prologue_pedrinho/ask_mae": {"text": "🎯 Parle à la mère de Pedrinho (favela)", "dist": "favela_morro", "anchor": "spot:vizinha", "short": "La mère"},
 	"prologue_pedrinho/ask_vovo": {"text": "🎯 Demande à la vovó du morro ce qu'elle a vu (sur son tabouret, près de la maison)", "dist": "favela_morro", "anchor": "spot:vovo_morro", "short": "Vovó do morro"},
-	"prologue_pedrinho/ask_garoto": {"text": "🎯 Fais parler Juca, le gamin qui jouait avec Pedrinho (favela)", "dist": "favela_morro", "anchor": "spot:juca_morro", "short": "Juca"},
+	"prologue_pedrinho/ask_garoto": {"text": "🎯 Juca a la balle : tiens une roda avec lui et il parlera (favela)", "dist": "favela_morro", "anchor": "spot:juca_morro", "short": "Juca"},
 	"prologue_pedrinho/find_pedrinho": {"text": "🎯 Cherche Pedrinho dans la vieille citerne (haut du morro, près de la chapelle)", "dist": "favela_morro", "anchor": "spot:pedrinho", "short": "La citerne"},
 	"prologue_pedrinho/bring_home": {"text": "🎯 Ramène Pedrinho à sa mère", "dist": "favela_morro", "anchor": "spot:vizinha", "short": "La mère"},
 	# --- VOIE TRÁFICO (A1 → A9) ---

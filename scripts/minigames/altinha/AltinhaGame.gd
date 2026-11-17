@@ -82,6 +82,12 @@ const TECNICO_BONUS: int = 40
 # accrocs sans faire échouer une partie honnête.
 const QUALIFY_SCORE_THRESHOLD: int = 400
 
+# Défi scénarisé (ex. Juca au prologue) : la partie s'arrête au N-ième toque
+# au lieu d'attendre 3 chutes. 0 = roda libre.
+var touch_goal: int = 0
+# "praia" (défaut) ou "laje" : toit du morro, ciel et maisons au lieu de la mer.
+var setting: String = "praia"
+
 var _phase: int = Phase.PAUSED
 var _ended: bool = false
 
@@ -135,7 +141,10 @@ func _ready() -> void:
 	_ball = get_node_or_null("Ball") as AltinhaBall
 	_player = get_node_or_null("Player") as Node2D
 	_build_player_visual()
-	_build_parasols()
+	if setting == "laje":
+		_dress_laje()
+	else:
+		_build_parasols()
 
 	score_label = get_node_or_null("UI/ScoreLabel") as Label
 	sub_label = get_node_or_null("UI/SubLabel") as Label
@@ -201,6 +210,44 @@ func _build_player_visual() -> void:
 	_player.add_child(_player_sprite)
 
 # 2 parasols décoratifs (polygones code-only, pas d'asset) pour l'ambiance plage.
+func _dress_laje() -> void:
+	var sky: ColorRect = get_node_or_null("Sea") as ColorRect
+	if sky:
+		sky.color = Color(0.56, 0.76, 0.9)
+	var slab: ColorRect = get_node_or_null("Sand") as ColorRect
+	if slab:
+		slab.color = Color(0.7, 0.64, 0.58)
+	var parapet: ColorRect = get_node_or_null("Horizon") as ColorRect
+	if parapet:
+		parapet.color = Color(0.78, 0.45, 0.32)
+	# Le morro d'en face : un front de maisons colorées sous le ciel.
+	var colors: Array[Color] = [Color(0.86, 0.55, 0.38), Color(0.93, 0.8, 0.45),
+		Color(0.55, 0.7, 0.62), Color(0.82, 0.42, 0.42), Color(0.62, 0.62, 0.78), Color(0.9, 0.9, 0.82)]
+	var x: float = -960.0
+	var i: int = 0
+	while x < 960.0:
+		var w: float = 70.0 + float((i * 37) % 60)
+		var h: float = 60.0 + float((i * 53) % 110)
+		var house: ColorRect = ColorRect.new()
+		house.z_index = -9
+		house.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		house.offset_left = x
+		house.offset_right = x + w - 4.0
+		house.offset_top = -64.0 - h
+		house.offset_bottom = -64.0
+		house.color = colors[i % colors.size()]
+		add_child(house)
+		var win: ColorRect = ColorRect.new()
+		win.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		win.offset_left = 14.0
+		win.offset_right = 30.0
+		win.offset_top = 16.0
+		win.offset_bottom = 34.0
+		win.color = Color(0.2, 0.22, 0.28)
+		house.add_child(win)
+		x += w
+		i += 1
+
 func _build_parasols() -> void:
 	_spawn_parasol(Vector2(-300.0, -30.0), Color(0.85, 0.32, 0.28))
 	_spawn_parasol(Vector2(300.0, -30.0), Color(0.35, 0.55, 0.85))
@@ -344,6 +391,10 @@ func _resolve_player_hit(quality: int) -> void:
 	if quality == QUALITY_PERFECT:
 		_start_shake(4.0, 0.12)
 		_flash_screen()
+	if touch_goal > 0 and _touches >= touch_goal:
+		_update_labels()
+		_end_game()
+		return
 
 	_aimed_partner = target_which
 	_pending_quality = quality
@@ -429,6 +480,8 @@ func _end_game() -> void:
 	if result_label:
 		result_label.visible = true
 		var headline: String = "A praia respeita !" if qualifies else "A roda esfriou..."
+		if touch_goal > 0:
+			headline = "Desafio cumprido !" if _touches >= touch_goal else "Faltou pouco..."
 		result_label.text = "%s\nScore : %d — Melhor combo : x%d\nToques : %d (Perfeitos : %d)" \
 			% [headline, _score, _best_combo, _touches, _perfeitos]
 	await get_tree().create_timer(2.0).timeout
@@ -440,6 +493,7 @@ func _end_game() -> void:
 		"won": qualifies,
 		"best_combo": _best_combo,
 		"drops": _drops,
+		"goal_reached": touch_goal > 0 and _touches >= touch_goal,
 	}
 	EventBus.minigame_ended.emit("altinha", result)
 	match_ended.emit(qualifies, _score)
@@ -503,6 +557,8 @@ func _update_labels() -> void:
 		score_label.text = "⚽ %d" % _score
 	if sub_label:
 		sub_label.text = "Combo x%d   Quedas %d/%d" % [_combo, _drops, MAX_DROPS]
+		if touch_goal > 0:
+			sub_label.text = "Toques %d/%d   Quedas %d/%d" % [_touches, touch_goal, _drops, MAX_DROPS]
 
 # --- Clavier (bonus dev) ---
 

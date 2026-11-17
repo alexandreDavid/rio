@@ -75,7 +75,13 @@ const SFX_PATHS: Dictionary = {
 	"step_road":       "res://assets/audio/sfx/step_road.ogg",
 	"step_grass":      "res://assets/audio/sfx/step_grass.ogg",
 	"step_wood":       "res://assets/audio/sfx/step_wood.ogg",
+	"ui_click":        "res://assets/audio/sfx/ui_click.ogg",
+	"chase_escaped":   "res://assets/audio/sfx/chase_escaped.ogg",
 }
+
+# Baisse de la musique pendant un mini-jeu ou une poursuite : les SFX du jeu
+# passent devant sans couper l'ambiance.
+const DUCK_DB: float = -9.0
 
 # Mappings minigame_id → SFX déclenché à la fin (gain ou échec).
 const MINIGAME_WIN_SFX: Dictionary = {
@@ -107,6 +113,7 @@ var _current_ambient_district: String = ""
 # Cooldown footsteps : on accumule la distance parcourue, step toutes les ~24 px.
 var _step_distance: float = 0.0
 var _last_player_pos: Vector2 = Vector2.ZERO
+var _duck_sources: Dictionary = {}  # source -> true (mini-jeu, poursuite)
 
 func _ready() -> void:
 	_music_a = _make_player(-80.0)  # commence muets, on fade in
@@ -159,6 +166,12 @@ func _ready() -> void:
 	EventBus.customer_served.connect(_on_customer_served)
 	EventBus.debt_paid.connect(_on_debt_paid)
 	EventBus.corn_cart_state_changed.connect(_on_corn_cart_state_changed)
+	EventBus.minigame_started.connect(_on_minigame_started)
+	EventBus.chase_started.connect(_on_chase_started)
+	EventBus.chase_ended.connect(_on_chase_ended)
+	DialogueBridge.line_shown.connect(_on_line_shown)
+	# Chaque bouton de l'UI (créé maintenant ou plus tard) clique.
+	get_tree().node_added.connect(_on_node_added)
 	if Engine.has_singleton("DistrictManager") or get_tree().root.has_node("DistrictManager"):
 		DistrictManager.district_changed.connect(_on_district_changed)
 	# Réagit aux changements de volumes depuis l'app Ajustes (Phone).
@@ -180,9 +193,9 @@ func _apply_settings_volumes() -> void:
 	ambient_volume_db = _slider_to_db(Settings.ambient_volume, _AMBIENT_DB_MIN, _AMBIENT_DB_MAX)
 	sfx_volume_db = _slider_to_db(Settings.sfx_volume, _SFX_DB_MIN, _SFX_DB_MAX)
 	if _music_a:
-		_music_a.volume_db = music_volume_db if _music_active_a else -80.0
+		_music_a.volume_db = _music_target_db() if _music_active_a else -80.0
 	if _music_b:
-		_music_b.volume_db = music_volume_db if not _music_active_a else -80.0
+		_music_b.volume_db = _music_target_db() if not _music_active_a else -80.0
 	if _ambient_a:
 		_ambient_a.volume_db = ambient_volume_db if _ambient_active_a else -80.0
 	if _ambient_b:
@@ -195,15 +208,31 @@ func _slider_to_db(linear: float, min_db: float, max_db: float) -> float:
 		return -80.0
 	return lerpf(min_db, max_db, linear)
 
-func play(key: String) -> void:
+func play(key: String, pitch: float = 1.0) -> void:
 	var stream: AudioStream = _sfx_streams.get(key)
 	if stream == null:
 		return
 	for p in _sfx_pool:
 		if not p.playing:
 			p.stream = stream
+			p.pitch_scale = pitch
 			p.play()
 			return
+
+func _music_target_db() -> float:
+	return music_volume_db + (DUCK_DB if not _duck_sources.is_empty() else 0.0)
+
+func _set_duck(source: String, on: bool) -> void:
+	var was: bool = not _duck_sources.is_empty()
+	if on:
+		_duck_sources[source] = true
+	else:
+		_duck_sources.erase(source)
+	if was == (not _duck_sources.is_empty()):
+		return
+	var active: AudioStreamPlayer = _music_a if _music_active_a else _music_b
+	if active and active.playing:
+		_fade(active, _music_target_db(), 0.4)
 
 func set_music_muted(muted: bool) -> void:
 	var target_db: float = -80.0 if muted else music_volume_db
@@ -243,7 +272,7 @@ func _swap_music(district_id: String) -> void:
 		incoming.stream = stream
 		incoming.volume_db = -80.0
 		incoming.play()
-		_fade(incoming, music_volume_db, FADE_DURATION)
+		_fade(incoming, _music_target_db(), FADE_DURATION)
 	else:
 		incoming.stop()
 	if outgoing.playing:
@@ -261,10 +290,10 @@ func _fade(player: AudioStreamPlayer, target_db: float, duration: float, stop_af
 func _on_money_changed(new_amount: int) -> void:
 	if new_amount > _last_money:
 		play("coin")
+		GamepadBridge.pulse(0.25, 0.04)
 	_last_money = new_amount
 
 func _on_dialogue_started(npc_id: String) -> void:
-	play("dialogue")
 	if npc_id == "pm" or npc_id == "ramos":
 		play("whistle")
 
@@ -273,17 +302,49 @@ func _on_quest_accepted(_quest_id: String) -> void:
 
 func _on_quest_completed(_quest_id: String) -> void:
 	play("quest_complete")
+	GamepadBridge.pulse(0.6, 0.12)
+
+func _on_minigame_started(_minigame_id: String) -> void:
+	_set_duck("minigame", true)
+
+func _on_chase_started(_chaser_id: String) -> void:
+	play("whistle")
+	_set_duck("chase", true)
+
+func _on_chase_ended(_chaser_id: String, escaped: bool) -> void:
+	_set_duck("chase", false)
+	play("chase_escaped" if escaped else "quest_failed")
+	GamepadBridge.pulse(0.5 if escaped else 0.9, 0.15 if escaped else 0.3)
+
+# « Voix » à la Animal Crossing : un tic par réplique, à une hauteur propre à
+# chaque orateur (stable d'une partie à l'autre).
+func _on_line_shown(speaker: String, _text: String) -> void:
+	var h: int = absi(speaker.hash()) % 1000
+	play("dialogue", 0.8 + 0.45 * float(h) / 1000.0)
+
+func _on_node_added(node: Node) -> void:
+	if node is BaseButton and not node.has_meta("silent_click"):
+		var b: BaseButton = node
+		if not b.pressed.is_connected(_on_button_pressed):
+			b.pressed.connect(_on_button_pressed)
+
+func _on_button_pressed() -> void:
+	play("ui_click", randf_range(0.96, 1.04))
 
 func _on_minigame_ended(minigame_id: String, result: Dictionary) -> void:
+	_set_duck("minigame", false)
 	# `qualifies` vrai = victoire, sinon échec partiel.
 	var won: bool = bool(result.get("qualifies", result.get("won", false)))
 	if won:
 		var key: String = MINIGAME_WIN_SFX.get(minigame_id, "minigame_win")
 		play(key)
+		GamepadBridge.pulse(0.6, 0.15)
 	else:
 		play("minigame_lose")
 
 func _on_district_changed(district_id: String) -> void:
+	# Un voyage clôt tout mini-jeu ou poursuite : pas de musique coincée en bas.
+	_duck_sources.clear()
 	_swap_music(district_id)
 	_swap_ambient(district_id)
 
@@ -295,6 +356,7 @@ func _on_interaction_available(_interactable: Node) -> void:
 
 func _on_act_changed(_new_act: int) -> void:
 	play("act_stinger")
+	GamepadBridge.pulse(1.0, 0.35)
 
 func _on_item_acquired(_item_id: String, _quantity: int) -> void:
 	play("item_pickup")
@@ -345,4 +407,4 @@ func notify_player_position(pos: Vector2, surface: String = "road") -> void:
 		var key: String = "step_" + surface
 		if not _sfx_streams.has(key):
 			key = "step_road"  # fallback
-		play(key)
+		play(key, randf_range(0.88, 1.12))

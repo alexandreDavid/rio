@@ -39,6 +39,9 @@ signal chrono_cleared(source: String)
 
 # Bouton ⚽ (sable) → PlayerController lance le mini-jeu Altinha en additif.
 signal altinha_requested()
+# Roda scénarisée lancée par un dialogue (DialogueBridge `start_altinha`) :
+# {touch_goal, setting} — même lanceur que le bouton ⚽.
+signal altinha_challenge_requested(config: Dictionary)
 
 signal debt_paid(amount: int, remaining: int)
 signal act_changed(new_act: int)

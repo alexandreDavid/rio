@@ -41,6 +41,7 @@ func _ready() -> void:
 	EventBus.dialogue_started.connect(_on_dialogue_started)
 	EventBus.dialogue_ended.connect(_on_dialogue_ended)
 	EventBus.altinha_requested.connect(_on_altinha_requested)
+	EventBus.altinha_challenge_requested.connect(_on_altinha_requested)
 	# Sécurité : si une save a été faite pendant un freeze (cutscene ou
 	# dialogue interrompu), au reload on s'assure que le joueur est éveillé.
 	if SaveSystem.has_signal("save_loaded"):
@@ -135,7 +136,7 @@ var _altinha_game: Node = null
 var _altinha_world_cache: Node = null
 var _altinha_ui_cache: Node = null
 
-func _on_altinha_requested() -> void:
+func _on_altinha_requested(config: Dictionary = {}) -> void:
 	if _mounted_vehicle != null or _altinha_game != null:
 		return
 	var packed: PackedScene = load(ALTINHA_SCENE_PATH) as PackedScene
@@ -143,6 +144,8 @@ func _on_altinha_requested() -> void:
 		push_error("[Player] scène altinha introuvable : " + ALTINHA_SCENE_PATH)
 		return
 	_altinha_game = packed.instantiate()
+	_altinha_game.set("touch_goal", int(config.get("touch_goal", 0)))
+	_altinha_game.set("setting", String(config.get("setting", "praia")))
 	var root: Node = get_tree().current_scene
 	_altinha_world_cache = root.get_node_or_null("World")
 	_altinha_ui_cache = root.get_node_or_null("UI")

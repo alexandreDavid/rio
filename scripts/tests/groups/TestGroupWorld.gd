@@ -36,6 +36,8 @@ func run() -> void:
 	_test_milho_rush()
 	_test_regata_desembarque()
 	_test_lisibilite_ui()
+	await _test_gamepad_bridge()
+	_test_audio_assets()
 
 
 # Garde-fou : les intérieurs hors-monde (positions y≈-3000 dans Copacabana)
@@ -1579,3 +1581,94 @@ func _test_quest_log_folded() -> void:
 	_assert(not log.is_open(), "fold() → replié")
 	log.queue_free()
 
+
+
+# Manette (Switch / Steam Deck / iPad) : le pont traduit les boutons en touches
+# que le jeu lit déjà, et passe en ui_accept/ui_cancel dans un menu.
+func _test_gamepad_bridge() -> void:
+	_section("Manette — pont boutons → touches, menus, indications")
+	var pad: Node = get_tree().root.get_node_or_null("Gamepad")
+	_assert(pad != null, "autoload Gamepad présent")
+	if pad == null:
+		return
+	var owner: Control = get_viewport().gui_get_focus_owner()
+	if owner:
+		owner.release_focus()
+	var a: InputEvent = pad._translate(JOY_BUTTON_A)
+	_assert(a is InputEventKey and (a as InputEventKey).physical_keycode == KEY_E,
+		"hors menu : A = E (interagir)")
+	var b: InputEvent = pad._translate(JOY_BUTTON_B)
+	_assert(b is InputEventKey and (b as InputEventKey).physical_keycode == KEY_SHIFT,
+		"hors menu : B = Shift (courir)")
+	var y: InputEvent = pad._translate(JOY_BUTTON_START)
+	_assert(y is InputEventKey and (y as InputEventKey).physical_keycode == KEY_P,
+		"Start = P (téléphone, qui met en pause)")
+	var d: InputEvent = pad._translate(JOY_BUTTON_DPAD_LEFT)
+	_assert(d is InputEventKey and (d as InputEventKey).physical_keycode == KEY_LEFT,
+		"hors menu : croix = flèches (pistes des jeux de rythme)")
+	_assert(InputMap.action_has_event(&"move_left", _arrow(KEY_LEFT)), "flèche gauche dans move_left")
+	var stick: bool = false
+	for e in InputMap.action_get_events(&"move_right"):
+		if e is InputEventJoypadMotion and (e as InputEventJoypadMotion).axis == JOY_AXIS_LEFT_X:
+			stick = true
+	_assert(stick, "stick gauche branché sur move_right")
+	# Dans un menu : un bouton visible a le focus.
+	var layer: CanvasLayer = CanvasLayer.new()
+	add_child(layer)
+	var btn: Button = Button.new()
+	btn.text = "Choix"
+	layer.add_child(btn)
+	await get_tree().process_frame
+	pad._set_active(true)
+	_assert(GamepadBridge.active, "mode manette actif")
+	_assert(InputHints.act() == "Ⓐ", "les prompts affichent Ⓐ à la manette")
+	GamepadBridge.focus_first(layer)
+	_assert(btn.has_focus(), "focus_first donne le focus au premier bouton du menu")
+	var a2: InputEvent = pad._translate(JOY_BUTTON_A)
+	_assert(a2 is InputEventAction and (a2 as InputEventAction).action == &"ui_accept", "en menu : A = ui_accept")
+	var b2: InputEvent = pad._translate(JOY_BUTTON_B)
+	_assert(b2 is InputEventAction and (b2 as InputEventAction).action == &"ui_cancel", "en menu : B = ui_cancel")
+	_assert(pad._translate(JOY_BUTTON_DPAD_DOWN) == null, "en menu : la croix navigue nativement (pas de doublon)")
+	var hud_like: Control = Control.new()
+	var hb: Button = Button.new()
+	hud_like.add_child(hb)
+	GamepadBridge.no_focus(hud_like)
+	_assert(hb.focus_mode == Control.FOCUS_NONE, "boutons du HUD : jamais de focus (A reste « interagir »)")
+	hud_like.free()
+	pad._set_active(false)
+	_assert(not GamepadBridge.active and not btn.has_focus(), "retour au doigt : mode tactile, focus relâché")
+	_assert(InputHints.act() != "Ⓐ", "les prompts quittent Ⓐ au doigt")
+	layer.queue_free()
+	await get_tree().process_frame
+
+
+func _arrow(code: int) -> InputEventKey:
+	var k: InputEventKey = InputEventKey.new()
+	k.physical_keycode = code
+	return k
+
+
+# Le jeu n'est plus muet : chaque piste et chaque SFX câblés existent.
+func _test_audio_assets() -> void:
+	_section("Audio — musiques, ambiances et SFX présents")
+	var am: Node = get_tree().root.get_node_or_null("AudioManager")
+	_assert(am != null, "AudioManager présent")
+	if am == null:
+		return
+	var missing: Array = []
+	for d in [am.DISTRICT_MUSIC, am.DISTRICT_AMBIENT, am.SFX_PATHS]:
+		for k in d:
+			if not ResourceLoader.exists(d[k]):
+				missing.append(d[k])
+	_assert(missing.is_empty(), "tous les fichiers audio câblés existent (%s)" % str(missing))
+	var beach: AudioStream = load(am.DISTRICT_MUSIC["copacabana"])
+	_assert(beach is AudioStreamOggVorbis and (beach as AudioStreamOggVorbis).loop,
+		"la musique de Copa boucle (import loop=true)")
+	_assert(beach != null and beach.get_length() > 20.0, "la boucle de Copa dure plus de 20 s")
+	var saved_duck: Dictionary = am._duck_sources.duplicate()
+	am._duck_sources.clear()
+	am._set_duck("test", true)
+	_assert(is_equal_approx(am._music_target_db(), am.music_volume_db + am.DUCK_DB), "mini-jeu/poursuite : la musique baisse")
+	am._set_duck("test", false)
+	_assert(is_equal_approx(am._music_target_db(), am.music_volume_db), "fin : la musique remonte")
+	am._duck_sources = saved_duck

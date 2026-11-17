@@ -126,14 +126,29 @@ func _test_prologue_end_to_end() -> void:
 		if n:
 			spots.append(n)
 	var cycles: int = 16
+	var rodas: int = 0
 	while not QuestManager.is_completed("prologue_pedrinho") and cycles > 0:
 		for spot in spots:
 			spot._on_interacted(null)
 			if DialogueBridge.is_active():
 				DialogueBridge.choose(0)
+			# Juca exige une roda d'altinha : on simule la fin du mini-jeu
+			# (1er essai raté, 2e réussi) — pas de PlayerController ici.
+			if DialogueBridge.altinha_challenge_pending():
+				rodas += 1
+				var ok: bool = rodas >= 2
+				EventBus.minigame_ended.emit("altinha", {"score": 60 if ok else 4,
+					"touches": 8 if ok else 1, "goal_reached": ok, "qualifies": false})
+				if rodas == 1:
+					_assert(not CampaignManager.has_flag("juca_altinha_ok"),
+						"Juca : roda ratée → il ne parle pas encore")
+					_assert(not QuestManager.get_objectives_state("prologue_pedrinho").get("ask_garoto", false),
+						"Juca : ask_garoto reste ouvert tant que la roda n'est pas tenue")
 		cycles -= 1
+	_assert(rodas == 2, "Juca : 2 rodas jouées avant qu'il parle (%d)" % rodas)
+	_assert(CampaignManager.has_flag("juca_altinha_ok"), "Juca : roda tenue → flag juca_altinha_ok")
 	_assert(QuestManager.is_completed("prologue_pedrinho"),
-		"prologue résolu via les spots (mère→vovó→Juca→citerne→retour mère)")
+		"prologue résolu via les spots (mère→vovó→roda de Juca→citerne→retour mère)")
 	var ost: Dictionary = QuestManager.get_objectives_state("prologue_pedrinho")
 	_assert(bool(ost.get("find_pedrinho", false)),
 		"find_pedrinho clos (citerne)")

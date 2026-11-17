@@ -15,6 +15,7 @@ var _bar_fill: StyleBox = null
 var _last_what: String = ""
 
 func _ready() -> void:
+	SafeArea.apply(self)
 	# Copies locales des styles pour pouvoir les recolorer sans toucher la ressource partagée.
 	var ps: StyleBox = get_theme_stylebox("panel")
 	if ps != null:

@@ -88,6 +88,7 @@ var _badges: Dictionary = {}
 
 func _ready() -> void:
 	visible = false
+	add_to_group("gamepad_menu")
 	# Wire app icons.
 	if app_taxi:
 		app_taxi.pressed.connect(func(): _show_screen("taxi"))
@@ -182,6 +183,23 @@ func close() -> void:
 	visible = false
 	get_tree().paused = false
 
+# Manette : chaque écran s'ouvre avec le focus sur son premier bouton, et B
+# (ui_cancel) revient à l'accueil puis ferme le téléphone.
+func _focus_screen() -> void:
+	var owner: Control = get_viewport().gui_get_focus_owner()
+	if owner and not owner.is_visible_in_tree():
+		owner.release_focus()
+	GamepadBridge.focus_first(self)
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not visible or not event.is_action_pressed("ui_cancel"):
+		return
+	get_viewport().set_input_as_handled()
+	if home_screen.visible:
+		close()
+	else:
+		_show_screen("home")
+
 # ------------------------------------------------------------------
 # Screens
 # ------------------------------------------------------------------
@@ -243,6 +261,7 @@ func _update_badge(app_id: String, count: int) -> void:
 		badge.visible = false
 
 func _show_screen(name: String) -> void:
+	_focus_screen.call_deferred()
 	home_screen.visible = (name == "home")
 	taxi_screen.visible = (name == "taxi")
 	stats_screen.visible = (name == "stats")

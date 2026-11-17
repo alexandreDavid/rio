@@ -53,6 +53,8 @@ var _chronos: Dictionary = {}
 var _chrono_label: Label = null
 
 func _ready() -> void:
+	GamepadBridge.no_focus.call_deferred(self)
+	SafeArea.apply(self)
 	EventBus.money_changed.connect(_on_money_changed)
 	EventBus.interaction_available.connect(_on_interaction_available)
 	EventBus.interaction_lost.connect(_on_interaction_lost)

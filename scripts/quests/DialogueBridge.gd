@@ -39,6 +39,11 @@ var _loader: InkStoryLoader = null
 # dynamiques passent par ce dico runtime à part.
 var _runtime_dialogues: Dictionary = {}
 
+# Roda scénarisée en cours (verbe `start_altinha`). Les essais sont comptés
+# dans les flags de campagne (`<flag>_essais`) : sauvegardés et remis à zéro
+# avec la partie.
+var _altinha_challenge: Dictionary = {}
+
 # Enregistre un knot éphémère utilisable par start_dialogue. La donnée a la
 # même forme qu'une entrée de PLACEHOLDER_DIALOGUES.
 func register_runtime_dialogue(knot_id: String, data: Dictionary) -> void:
@@ -73,6 +78,7 @@ func _ready() -> void:
 	# Du point de vue de start_dialogue/choose, indistinguable d'un knot
 	# PLACEHOLDER_DIALOGUES — _has_placeholder check les deux.
 	_merge_external_dialogues()
+	EventBus.minigame_ended.connect(_on_minigame_ended_for_challenge)
 
 # Tous les knots vivent désormais dans ces scripts (split par acte/domaine).
 # PLACEHOLDER_DIALOGUES reste vide mais conservé : _has_placeholder /
@@ -226,6 +232,12 @@ func _apply_placeholder_action(action: Dictionary) -> void:
 	# duration?, seed?}. Le succès coche l'objectif via QuestManager.
 	if action.has("start_stakeout"):
 		StakeoutZone.spawn(action.start_stakeout if action.start_stakeout is Dictionary else {})
+	# `start_altinha` : une roda avec le PNJ — {flag, touch_goal, setting,
+	# max_tries, win_text, retry_text, relent_text}. Réussir (ou insister
+	# max_tries fois : on ne bloque jamais un joueur neuf) pose `flag`, que la
+	# variante suivante du spot attend. La récompense est la relation, pas l'argent.
+	if action.has("start_altinha"):
+		start_altinha_challenge(action.start_altinha if action.start_altinha is Dictionary else {})
 
 	# Cas composé accept_quest + finish_quest : la quête à accepter dépend
 	# souvent de la quête à clôre (prereq), donc on délègue à la branche
@@ -485,3 +497,40 @@ func _endgame_path_for_string(s: String) -> int:
 		"TRAFICO":  return CampaignManager.Endgame.TRAFICO
 		"CONSORTIUM": return CampaignManager.Endgame.CONSORTIUM
 		_:          return CampaignManager.Endgame.NONE
+
+
+# --- Roda scénarisée (verbe start_altinha) ---
+
+func start_altinha_challenge(config: Dictionary) -> void:
+	_altinha_challenge = config
+	EventBus.altinha_challenge_requested.emit(config)
+
+func altinha_challenge_pending() -> bool:
+	return not _altinha_challenge.is_empty()
+
+func _on_minigame_ended_for_challenge(minigame_id: String, result: Dictionary) -> void:
+	if minigame_id != "altinha" or _altinha_challenge.is_empty():
+		return
+	var cfg: Dictionary = _altinha_challenge
+	_altinha_challenge = {}
+	var flag: String = String(cfg.get("flag", ""))
+	var tries: int = int(CampaignManager.get_flag(flag + "_essais") if CampaignManager.get_flag(flag + "_essais") != null else 0) + 1
+	CampaignManager.set_flag(flag + "_essais", tries)
+	var goal: int = int(cfg.get("touch_goal", 0))
+	var won: bool = bool(result.get("goal_reached", false)) \
+		or (goal > 0 and int(result.get("touches", 0)) >= goal) \
+		or (goal == 0 and bool(result.get("qualifies", false)))
+	var text: String
+	var color: Color = Color(0.55, 0.9, 0.55, 1)
+	if won:
+		text = String(cfg.get("win_text", "Roda réussie !"))
+	elif tries >= int(cfg.get("max_tries", 2)):
+		text = String(cfg.get("relent_text", cfg.get("win_text", "")))
+		won = true
+	else:
+		text = String(cfg.get("retry_text", "Encore une — reparle-lui."))
+		color = Color(0.95, 0.8, 0.45, 1)
+	if won and flag != "":
+		CampaignManager.set_flag(flag)
+	if text != "":
+		EventBus.notification_requested.emit(text, color)

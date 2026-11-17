@@ -22,6 +22,8 @@ const STAGE_COLOR: String = "#c9bc96"
 var _stage_re: RegEx = RegEx.create_from_string("\\*([^*]+)\\*")
 
 func _ready() -> void:
+	add_to_group("gamepad_menu")
+	SafeArea.apply(self)
 	DialogueBridge.line_shown.connect(_on_line_shown)
 	DialogueBridge.choices_presented.connect(_on_choices_presented)
 	DialogueBridge.dialogue_finished.connect(_on_dialogue_finished)

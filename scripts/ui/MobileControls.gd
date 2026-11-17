@@ -25,6 +25,7 @@ const BEACH_BANDS: Dictionary = {
 @onready var joystick: VirtualJoystick = $Joystick
 
 var _sand_check_accum: float = 0.0
+var _hidden_by_context: bool = false  # dialogue ou mini-jeu en cours
 
 func _ready() -> void:
 	if interact_button:
@@ -40,6 +41,10 @@ func _ready() -> void:
 	EventBus.dialogue_ended.connect(_on_dialogue_ended)
 	EventBus.minigame_started.connect(_on_minigame_started)
 	EventBus.minigame_ended.connect(_on_minigame_ended)
+	GamepadBridge.no_focus.call_deferred(self)
+	SafeArea.apply(self)
+	# À la manette, les commandes tactiles s'effacent (et reviennent au doigt).
+	Gamepad.mode_changed.connect(_on_input_mode_changed)
 
 func _on_run_toggled(pressed: bool) -> void:
 	if joystick:
@@ -95,14 +100,23 @@ func _on_interact_pressed() -> void:
 
 func _on_dialogue_started(_npc_id: String) -> void:
 	_release_run()
+	_hidden_by_context = true
 	visible = false
 
 func _on_dialogue_ended(_npc_id: String) -> void:
-	visible = true
+	_hidden_by_context = false
+	visible = not GamepadBridge.active
 
 func _on_minigame_started(_minigame_id: String) -> void:
 	_release_run()
+	_hidden_by_context = true
 	visible = false
 
 func _on_minigame_ended(_minigame_id: String, _result: Dictionary) -> void:
-	visible = true
+	_hidden_by_context = false
+	visible = not GamepadBridge.active
+
+func _on_input_mode_changed(gamepad: bool) -> void:
+	if gamepad:
+		_release_run()
+	visible = not gamepad and not _hidden_by_context

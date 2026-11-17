@@ -15,6 +15,7 @@ Docs de contexte (état réel vérifié dans le code, 2026-07-21) : `docs/SYSTEM
 Ordre important dans `project.godot` — ne pas changer sans raison :
 - **EventBus** (`scripts/core/EventBus.gd`) — bus global de signaux. Les systèmes ne se référencent jamais directement, ils émettent/écoutent ici.
 - **GameManager**, **ReputationSystem**, **TimeOfDay**, **QuestManager**, **DialogueBridge**, **SaveSystem**, **AudioManager**, **SelfCheck**, **BuildingManager**
+- **Gamepad** (`scripts/core/GamepadBridge.gd`, en dernier) — manette : boutons → touches déjà lues (A=E, B=Shift/ui_cancel, X=Espace, Start/Y=P, Select=J, croix=flèches), ui_accept/ui_cancel quand un bouton a le focus ; `GamepadBridge.active` (statique), `focus_first(root)` pour les menus du groupe `gamepad_menu`, `no_focus(root)` pour HUD/contrôles, `pulse()` = vibration manette ou téléphone
 - **CarnavalCalendar** (jours PT via `TimeOfDay.day_count`, `hud_label()` J-x Carnaval, jogo du Domingo soir → flags `jogo_vitoria|jogo_derrota` le lendemain ; après le desfile : flag `pos_carnaval`, ellipse au mercredi des Cendres `cinzas_hoje` à la fermeture de l'épilogue, feijoada du samedi), **ActivityRewards** (mini-jeu qualifiant → réputation ciblée + `NPCAffinity.bump(npc)` + flag `mestre_<id>` au 3e succès — récompenses non fongibles)
 
 ## Layout de la map (`scripts/world/CopacabanaGenerator.gd`)
@@ -108,6 +109,8 @@ La cible primaire est iOS (`build_ios.sh`, `export_ios/`). Toute UI doit fonctio
 - Pas de feature gated derrière un raccourci clavier — toujours offrir un bouton à l'écran
 - Touch targets ≥ 44pt ; police minimum 12px (préférer 14-16px pour le contenu, 18+ pour les titres)
 - Les raccourcis clavier existants (`P`/`C`/`J`/`K`, `Ctrl+F1..F4` debug, `F5`/`F9` save) sont des bonus dev — ne pas en dépendre côté gameplay
+- **Audio** : tout est synthétisé par `tools/audio/synth_audio.py` (musiques par district, ambiances, SFX → `assets/audio/`) ; AudioManager baisse la musique pendant mini-jeux/poursuites, fait cliquer tout bouton et donne une « voix » à chaque orateur (tic par réplique)
+- **Manette & encoche** : un menu qui doit être navigable à la manette rejoint le groupe `gamepad_menu` et appelle `GamepadBridge.focus_first(self)` à l'ouverture ; toute UI ancrée aux bords appelle `SafeArea.apply(self)` dans son `_ready`
 - `MobileControls.tscn` (joystick virtuel) gère le déplacement en touch ; le bouton 📱 du HUD ouvre le téléphone, qui contient toutes les apps
 - **Thème** : `UITheme.apply()` (MainBoot/Intro) fusionne les cadres 9-slice peints dans le thème par défaut du moteur — ne pas poser de `StyleBoxFlat` local, utiliser les variations `TouchButton` (pastille), `Pastille` (prompt), `PixelTitle`/`PixelButton` (police pixel). Les étiquettes du monde passent par `PixelFont.style_world_label` (fait par `DistrictDresser.style_world_labels` et `_spawn_sign`). Le Diário est replié derrière un badge (`QuestLog.toggle/peek/fold`), le bandeau d'objectif tient sur une ligne, la minimap est en haut à gauche (le bas-droit est aux pouces)
 
