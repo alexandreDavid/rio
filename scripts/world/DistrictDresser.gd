@@ -8,9 +8,12 @@ extends RefCounted
 # couleur : c'est explicite dans le .tscn et ça ne surprend personne au runtime.
 #
 # Groupes reconnus sur un ColorRect :
-#   ground_sand / ground_sea / ground_road / ground_calcadao / ground_sidewalk /
-#   ground_grass   → tuile répétée par-dessus la dalle (cellules 64×64 monde,
-#                    comme _spawn_tile_strip côté Copa)
+#   ground_road / ground_calcadao / ground_sidewalk / ground_grass
+#                  → tuile de l'atlas répétée par-dessus la dalle (cellules
+#                    64×64 monde, comme _spawn_tile_strip côté Copa)
+#   ground_sand / ground_sea → sable et mer PEINTS (GroundPainter, palette
+#                    Cfg.SAND_COLOR / SEA_COLOR commune à Copa) ; la mer défile
+#                    et scintille par shader, sans déformer la grille de pixels
 #   ground_plaza / ground_dirt / ground_stairs → tuile PEINTE (GroundPainter,
 #                    pixel-art à la densité du jeu) dans la couleur de la dalle :
 #                    pavés des esplanades et ruelles, terre du morro, marches
@@ -28,15 +31,18 @@ extends RefCounted
 #                    deux palmiers de l'atlas alternent.
 #   prop_towel     → serviette à plat, centrée sur le rectangle, au même rang de
 #                    dessin (c'est du sol, pas un volume).
-# L'écume est posée automatiquement sur chaque couture sable/mer (4 orientations).
+# L'écume (peinte, animée) est posée automatiquement sur chaque couture
+# sable/mer (4 orientations), à cheval sur les deux dalles.
 
 const Cfg := preload("res://scripts/world/CopacabanaConfig.gd")
 const GRASS_TEXTURE: String = "res://assets/sprites/grass.png"
 const GRASS_TILE_REGION: Rect2 = Rect2(0, 80, 96, 32)
 const CELL: Vector2 = Vector2(64.0, 64.0)
-const FOAM_LEN: float = 96.0
-const FOAM_THICK: float = 32.0
-const FOAM_SEA_OFFSET: float = 8.0   # l'écume mord surtout sur l'eau (cf. _spawn_sea_foam)
+const FOAM_THICK: float = GroundPainter.FOAM_H * GroundPainter.DENSITY  # 36 px, couture au milieu
+const SEA_SCROLL: Vector2 = Vector2(0.0, -1.0)  # la houle remonte d'un pixel natif par pas
+const SEA_SCROLL_FPS: float = 1.5
+const SEA_FPS: float = 0.8    # alternance des reflets
+const FOAM_FPS: float = 2.0   # 4 frames ping-pong → une vague toutes les 2 s
 const SEAM_TOLERANCE: float = 12.0
 const MIN_SEAM_LEN: float = 32.0
 const BACKDROP_MARGIN: float = 1400.0
@@ -55,25 +61,49 @@ uniform vec2 cell = vec2(64.0, 64.0);
 uniform vec4 tint = vec4(1.0);
 uniform float mean_lum = 0.0;  // > 0 : recolorise (luminance relative × tint)
 uniform float grain = 1.0;
-uniform float wave = 0.0;      // > 0 : ondulation (mer)
+// Tuiles peintes (crisp) : chaque texel couvre exactement cell/region px, la
+// grille de la tuile est calée sur `origin` (position monde du sprite) pour
+// que deux dalles voisines se raccordent ; `mirror` retourne une cellule sur
+// deux (hachage) pour casser la répétition ; `frames` tuiles côte à côte
+// alternent à `fps` ; `scroll` décale la tuile d'un texel entier par pas
+// (elle boucle, donc aucune couture) — tout reste sur la grille de pixels.
+uniform bool crisp = false;
+uniform vec2 origin = vec2(0.0);
+uniform int mirror = 0;
+uniform int frames = 1;
+uniform float fps = 1.0;
+uniform float phase = 0.0;
+uniform vec2 scroll = vec2(0.0);
+uniform float scroll_fps = 0.0;
 varying vec4 vcol;
 void vertex() { vcol = COLOR; }
 void fragment() {
-	vec2 world_px = UV / TEXTURE_PIXEL_SIZE;
-	if (wave > 0.0) {
-		world_px.x += sin(TIME * 1.2 + world_px.y * 0.08) * wave * 2.0;
-		world_px.y += cos(TIME * 0.9 + world_px.x * 0.07) * wave * 1.5;
-	}
+	vec2 world_px = UV / TEXTURE_PIXEL_SIZE + origin;
+	vec2 cell_id = floor(world_px / cell);
 	vec2 t = fract(world_px / cell);
-	// demi-pixel de marge pour ne pas échantillonner le cadre décoratif voisin
-	vec2 px = region.xy + 0.5 + t * (region.zw - 1.0);
+	vec4 reg = region;
+	if (frames > 1) {
+		float f = mod(floor(TIME * fps + phase), float(frames));
+		reg.x += f * reg.z;
+	}
+	vec2 px;
+	if (crisp) {
+		if (mirror > 0 && fract(sin(dot(cell_id, vec2(12.9898, 78.233))) * 43758.5453) > 0.5) {
+			t.x = 1.0 - t.x;
+		}
+		vec2 texel = floor(t * reg.zw);
+		if (scroll_fps > 0.0) {
+			texel = mod(texel + floor(TIME * scroll_fps) * scroll, reg.zw);
+		}
+		px = reg.xy + texel + 0.5;
+	} else {
+		// demi-pixel de marge pour ne pas échantillonner le cadre décoratif voisin
+		px = reg.xy + 0.5 + t * (reg.zw - 1.0);
+	}
 	vec4 c = texture(TEXTURE, px * TEXTURE_PIXEL_SIZE);
 	if (mean_lum > 0.0) {
 		float l = dot(c.rgb, vec3(0.299, 0.587, 0.114)) / mean_lum;
 		c.rgb = tint.rgb * mix(1.0, l, grain);
-	}
-	if (wave > 0.0) {
-		c.rgb += 0.05 * sin(TIME * 2.0 + world_px.x * 0.11 + world_px.y * 0.09);
 	}
 	COLOR = c * vcol;
 }
@@ -138,10 +168,6 @@ static func _collect_color_rects(node: Node, out: Array[ColorRect]) -> void:
 
 static func _ground_spec(group: String) -> Dictionary:
 	match group:
-		"ground_sand":
-			return {"tex": Cfg.TILESET_TEXTURE, "region": Cfg.SAND_TILE_REGION}
-		"ground_sea":
-			return {"tex": Cfg.TILESET_TEXTURE, "region": Cfg.WATER_TILE_REGION}
 		"ground_road":
 			return {"tex": Cfg.TILESET_TEXTURE, "region": Cfg.ROAD_TILE_REGION}
 		"ground_calcadao":
@@ -152,8 +178,6 @@ static func _ground_spec(group: String) -> Dictionary:
 			return {"tex": GRASS_TEXTURE, "region": GRASS_TILE_REGION}
 		"ground_plaza":
 			return {"tex": Cfg.TILESET_TEXTURE, "region": Cfg.SIDEWALK_TILE_REGION, "recolor": true, "grain": PLAZA_GRAIN}
-		"ground_dirt":
-			return {"tex": Cfg.TILESET_TEXTURE, "region": Cfg.SAND_TILE_REGION, "recolor": true, "grain": DIRT_GRAIN}
 	return {}
 
 
@@ -204,6 +228,12 @@ static func _overlay_tiles(cr: ColorRect, group: String) -> void:
 	# escaliers (rendu B, docs/VISUEL_ETUDE_2026-10-08.md).
 	var seed: int = int(absf(cr.position.x * 7.0 + cr.position.y * 13.0)) % 977 + 1
 	match group:
+		"ground_sand":
+			cr.add_child(painted_sprite(GroundPainter.sand(Cfg.SAND_COLOR), cr.size, {"origin": cr.global_position, "mirror": true}))
+			return
+		"ground_sea":
+			cr.add_child(painted_sprite(GroundPainter.sea(Cfg.SEA_COLOR), cr.size, sea_anim(cr.global_position)))
+			return
 		"ground_plaza":
 			tex = GroundPainter.cobble(cr.color, seed)
 			region = Rect2(0, 0, GroundPainter.TILE, GroundPainter.TILE)
@@ -241,10 +271,60 @@ static func _overlay_tiles(cr: ColorRect, group: String) -> void:
 		mat.set_shader_parameter("tint", cr.color)
 		mat.set_shader_parameter("mean_lum", _mean_luminance(tex, region))
 		mat.set_shader_parameter("grain", spec.get("grain", 1.0))
-	if group == "ground_sea":
-		mat.set_shader_parameter("wave", 1.0)
 	s.material = mat
 	cr.add_child(s)
+
+
+# Paramètres d'animation de la mer peinte (partagés avec Copa).
+static func sea_anim(origin: Vector2) -> Dictionary:
+	return {"origin": origin, "mirror": true, "frames": GroundPainter.SEA_FRAMES, "fps": SEA_FPS, "scroll": SEA_SCROLL, "scroll_fps": SEA_SCROLL_FPS}
+
+
+# Sprite non centré de `size` px couvert par la tuile peinte `tex` répétée à
+# la densité du jeu (un texel = DENSITY px monde), via le shader partagé.
+# `anim` : origin (calage de la grille sur le monde), mirror, frames / fps /
+# phase (frames côte à côte dans la texture), scroll / scroll_fps (défilement
+# entier). Copa et les districts s'en servent pour le sable, la mer et l'écume.
+static func painted_sprite(tex: Texture2D, size: Vector2, anim: Dictionary = {}) -> Sprite2D:
+	var frames: int = int(anim.get("frames", 1))
+	var frame_w: float = float(tex.get_width()) / float(frames)
+	var s: Sprite2D = Sprite2D.new()
+	s.name = "TileOverlay"
+	s.texture = tex
+	s.centered = false
+	s.region_enabled = true
+	s.region_rect = Rect2(Vector2.ZERO, size)
+	s.texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
+	s.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	var mat: ShaderMaterial = ShaderMaterial.new()
+	mat.shader = _tile_shader_res()
+	mat.set_shader_parameter("crisp", true)
+	mat.set_shader_parameter("region", Vector4(0.0, 0.0, frame_w, float(tex.get_height())))
+	mat.set_shader_parameter("cell", Vector2(frame_w, float(tex.get_height())) * float(GroundPainter.DENSITY))
+	mat.set_shader_parameter("origin", anim.get("origin", Vector2.ZERO))
+	mat.set_shader_parameter("mirror", 1 if anim.get("mirror", false) else 0)
+	mat.set_shader_parameter("frames", frames)
+	mat.set_shader_parameter("fps", float(anim.get("fps", 1.0)))
+	mat.set_shader_parameter("phase", float(anim.get("phase", 0.0)))
+	mat.set_shader_parameter("scroll", anim.get("scroll", Vector2.ZERO))
+	mat.set_shader_parameter("scroll_fps", float(anim.get("scroll_fps", 0.0)))
+	s.material = mat
+	return s
+
+
+# Bande d'écume peinte : sprite centré sur la couture, tourné pour que le bas
+# de la texture (la mer) pointe vers `sea_normal` ; la longueur est couverte
+# par répétition de la tuile 32 natifs. Phase tirée de la position pour que
+# deux coutures ne respirent pas en chœur.
+static func foam_sprite(from: Vector2, to: Vector2, sea_normal: Vector2) -> Sprite2D:
+	var length: float = from.distance_to(to)
+	var s: Sprite2D = painted_sprite(GroundPainter.foam(Cfg.SEA_COLOR), Vector2(length, FOAM_THICK),
+		{"frames": GroundPainter.FOAM_FRAMES, "fps": FOAM_FPS, "phase": WorldFx.phase_at(from) * 0.7})
+	s.name = "Foam"
+	s.centered = true
+	s.rotation = sea_normal.angle() - PI * 0.5
+	s.position = (from + to) * 0.5
+	return s
 
 
 # Couture = bord d'une dalle sable collé (± tolérance) à un bord d'une dalle
@@ -252,9 +332,6 @@ static func _overlay_tiles(cr: ColorRect, group: String) -> void:
 # long de la couture, tournée pour que l'eau du sprite soit du côté mer.
 static func _spawn_foam_on_seams(root: Node, sands: Array[ColorRect], seas: Array[ColorRect]) -> void:
 	if sands.is_empty() or seas.is_empty():
-		return
-	var tex: Texture2D = load(Cfg.TILESET_TEXTURE)
-	if tex == null:
 		return
 	for sand in sands:
 		var a: Rect2 = sand.get_global_rect()
@@ -269,48 +346,29 @@ static func _spawn_foam_on_seams(root: Node, sands: Array[ColorRect], seas: Arra
 				if absf(a.end.y - b.position.y) <= SEAM_TOLERANCE:
 					# Mer au sud du sable
 					var seam_y: float = (a.end.y + b.position.y) * 0.5
-					container = _foam_strip(tex, Vector2(x0, seam_y), Vector2(x1, seam_y), Vector2.DOWN)
+					container = _foam_strip(Vector2(x0, seam_y), Vector2(x1, seam_y), Vector2.DOWN)
 				elif absf(a.position.y - b.end.y) <= SEAM_TOLERANCE:
 					# Mer au nord du sable
 					var seam_y2: float = (a.position.y + b.end.y) * 0.5
-					container = _foam_strip(tex, Vector2(x0, seam_y2), Vector2(x1, seam_y2), Vector2.UP)
+					container = _foam_strip(Vector2(x0, seam_y2), Vector2(x1, seam_y2), Vector2.UP)
 			if container == null and y1 - y0 >= MIN_SEAM_LEN:
 				if absf(a.end.x - b.position.x) <= SEAM_TOLERANCE:
 					# Mer à l'est du sable
 					var seam_x: float = (a.end.x + b.position.x) * 0.5
-					container = _foam_strip(tex, Vector2(seam_x, y0), Vector2(seam_x, y1), Vector2.RIGHT)
+					container = _foam_strip(Vector2(seam_x, y0), Vector2(seam_x, y1), Vector2.RIGHT)
 				elif absf(a.position.x - b.end.x) <= SEAM_TOLERANCE:
 					# Mer à l'ouest du sable
 					var seam_x2: float = (a.position.x + b.end.x) * 0.5
-					container = _foam_strip(tex, Vector2(seam_x2, y0), Vector2(seam_x2, y1), Vector2.LEFT)
+					container = _foam_strip(Vector2(seam_x2, y0), Vector2(seam_x2, y1), Vector2.LEFT)
 			if container != null:
 				_insert_after_later(root, container, sand, sea)
 				container.global_position = Vector2.ZERO
 
 
-static func _foam_strip(tex: Texture2D, from: Vector2, to: Vector2, sea_normal: Vector2) -> Node2D:
+static func _foam_strip(from: Vector2, to: Vector2, sea_normal: Vector2) -> Node2D:
 	var container: Node2D = Node2D.new()
 	container.name = "SeaFoam"
-	var dir: Vector2 = (to - from).normalized()
-	var total: float = from.distance_to(to)
-	var rot: float = sea_normal.angle() - PI * 0.5  # le « bas » du sprite (eau) pointe vers la mer
-	var region: Rect2 = Cfg.FOAM_TILE_REGION
-	var scale_x: float = FOAM_LEN / region.size.x
-	var scale_y: float = FOAM_THICK / region.size.y
-	var done: float = 0.0
-	while done < total:
-		var seg: float = minf(FOAM_LEN, total - done)
-		var s: Sprite2D = Sprite2D.new()
-		s.texture = tex
-		s.region_enabled = true
-		# Dernier segment tronqué : on rogne la région au prorata, pas d'écume qui déborde.
-		s.region_rect = Rect2(region.position, Vector2(region.size.x * seg / FOAM_LEN, region.size.y))
-		s.scale = Vector2(scale_x, scale_y)
-		s.rotation = rot
-		s.position = from + dir * (done + seg * 0.5) + sea_normal * FOAM_SEA_OFFSET
-		s.material = WorldFx.foam_material(from + s.position)
-		container.add_child(s)
-		done += seg
+	container.add_child(foam_sprite(from, to, sea_normal))
 	return container
 
 

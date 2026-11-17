@@ -118,6 +118,14 @@ const TILESET_TEXTURE: String = "res://assets/sprites/tileset_ai.png"
 # Régions cadrées à l'intérieur du cadre décoratif de chaque tuile pour éviter
 # les coutures visibles lors du tiling. Tuiles atlas ~143x136 px, on retire ~20 px de marge.
 const CALCADAO_TILE_REGION: Rect2 = Rect2(286, 246, 104, 96)  # Vague noir/blanc iconique de Copacabana
+# Sable, mer et écume ne viennent plus de l'atlas : ils sont peints à la
+# densité du jeu (GroundPainter.sand / sea / foam) dans cette palette, commune
+# à Copa et aux districts. Les régions ci-dessous restent l'inventaire de l'atlas.
+const SAND_COLOR: Color = Color(0.95, 0.86, 0.58)
+const SEA_COLOR: Color = Color(0.26, 0.66, 0.80)
+const SEA_BOTTOM_Y: float = 600.0     # bas de la mer dessinée
+const SEA_COLUMN_W: float = 48.0      # colonnes de mer = 16 natifs, marches de la baie sur la grille
+
 const SAND_TILE_REGION: Rect2 = Rect2(128, 92, 103, 96)       # Sable plein
 const ROAD_TILE_REGION: Rect2 = Rect2(128, 401, 103, 93)      # Asphalte plain
 const WATER_TILE_REGION: Rect2 = Rect2(1165, 145, 130, 50)    # Eau bleue (partie basse, sans sable)

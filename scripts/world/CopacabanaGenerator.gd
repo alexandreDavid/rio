@@ -99,34 +99,39 @@ func _spawn_tile_strip(container_name: String, y_top: float, y_bot: float, tile_
 			container.add_child(s)
 
 func _spawn_sand() -> void:
-	# Le sable descend jusqu'au rivage le plus profond (SHORE_EDGE_Y) ; la mer,
-	# dessinée après au même z-index, recouvre l'excédent selon la courbe de baie.
-	_spawn_tile_strip("SandTiles", 128.0, 448.0, Cfg.SAND_TILE_REGION)
+	# Sable peint (GroundPainter), une seule nappe jusqu'au rivage le plus
+	# profond ; la mer, dessinée après au même z-index, recouvre l'excédent
+	# selon la courbe de baie.
+	var container: Node2D = Node2D.new()
+	container.name = "SandTiles"
+	container.z_index = -5
+	add_child(container)
+	var pos: Vector2 = Vector2(Cfg.MAP_LEFT, 128.0)
+	var s: Sprite2D = DistrictDresser.painted_sprite(GroundPainter.sand(Cfg.SAND_COLOR), Vector2(Cfg.MAP_TOTAL_W, 448.0 - 128.0), {"origin": pos, "mirror": true})
+	s.position = pos
+	container.add_child(s)
+
+# Le rivage suit la courbe de la baie (Cfg.shore_y) par marches d'un pixel
+# natif : chaque colonne de 48 px démarre à shore_y arrondi à la grille.
+static func _shore_top(cx: float) -> float:
+	return snappedf(Cfg.shore_y(cx), float(GroundPainter.DENSITY))
 
 func _spawn_sea() -> void:
-	# La mer suit la courbe de la baie : chaque colonne de tuiles démarre à
-	# Cfg.shore_y(x) (croissant de Copacabana, mer au plus proche au centre).
+	# Mer peinte et animée (défilement entier + reflets), colonne par colonne ;
+	# `origin` cale la tuile sur la grille monde, donc les colonnes se raccordent.
 	var container: Node2D = Node2D.new()
 	container.name = "SeaTiles"
 	container.z_index = -5
 	add_child(container)
-	var tex: Texture2D = load(Cfg.TILESET_TEXTURE)
-	var region: Rect2 = Cfg.WATER_TILE_REGION
-	var scale: Vector2 = Vector2(Cfg.GROUND_TILE_SIZE / region.size.x, Cfg.GROUND_TILE_SIZE / region.size.y)
-	var cols: int = int(ceil(Cfg.MAP_TOTAL_W / Cfg.GROUND_TILE_SIZE))
+	var tex: Texture2D = GroundPainter.sea(Cfg.SEA_COLOR)
+	var cols: int = int(ceil(Cfg.MAP_TOTAL_W / Cfg.SEA_COLUMN_W))
 	for col in cols:
-		var cx: float = Cfg.MAP_LEFT + col * Cfg.GROUND_TILE_SIZE + Cfg.GROUND_TILE_SIZE * 0.5
-		var top: float = Cfg.shore_y(cx)
-		var rows: int = int(ceil((600.0 - top) / Cfg.GROUND_TILE_SIZE))
-		for row in rows:
-			var s: Sprite2D = Sprite2D.new()
-			s.texture = tex
-			s.region_enabled = true
-			s.region_rect = region
-			s.scale = scale
-			s.position = Vector2(cx, top + row * Cfg.GROUND_TILE_SIZE + Cfg.GROUND_TILE_SIZE * 0.5)
-			s.material = WorldFx.water_material(s.position)
-			container.add_child(s)
+		var x: float = Cfg.MAP_LEFT + col * Cfg.SEA_COLUMN_W
+		var top: float = _shore_top(x + Cfg.SEA_COLUMN_W * 0.5)
+		var pos: Vector2 = Vector2(x, top)
+		var s: Sprite2D = DistrictDresser.painted_sprite(tex, Vector2(Cfg.SEA_COLUMN_W, Cfg.SEA_BOTTOM_Y - top), DistrictDresser.sea_anim(pos))
+		s.position = pos
+		container.add_child(s)
 
 # Collision du rivage : empêche le joueur de marcher sur l'eau, en suivant la
 # courbe de la baie (avec ~14 px de tolérance — on peut se mouiller les pieds).
@@ -250,27 +255,17 @@ func _spawn_building_row_ground() -> void:
 	_spawn_tile_strip("SecondRowGround", -192.0, -128.0, Cfg.SIDEWALK_TILE_REGION, -6)
 
 func _spawn_sea_foam() -> void:
-	# Bande d'écume sable/mer qui épouse la courbe de la baie (Cfg.shore_y).
+	# Écume peinte à cheval sur la couture sable/mer, par segments alignés sur
+	# les colonnes de mer (mêmes marches, aucun décalage visible).
 	var container: Node2D = Node2D.new()
 	container.name = "SeaFoam"
 	container.z_index = -4
 	add_child(container)
-	var tex: Texture2D = load(Cfg.TILESET_TEXTURE)
-	var strip_h: float = 32.0
-	var tile_w: float = 96.0
-	var tile_count: int = int(ceil(Cfg.MAP_TOTAL_W / tile_w))
-	var scale_x: float = tile_w / Cfg.FOAM_TILE_REGION.size.x
-	var scale_y: float = strip_h / Cfg.FOAM_TILE_REGION.size.y
-	for i in tile_count:
-		var cx: float = Cfg.MAP_LEFT + i * tile_w + tile_w * 0.5
-		var s: Sprite2D = Sprite2D.new()
-		s.texture = tex
-		s.region_enabled = true
-		s.region_rect = Cfg.FOAM_TILE_REGION
-		s.scale = Vector2(scale_x, scale_y)
-		s.position = Vector2(cx, Cfg.shore_y(cx) + strip_h * 0.5 - 8.0)
-		s.material = WorldFx.foam_material(s.position)
-		container.add_child(s)
+	var cols: int = int(ceil(Cfg.MAP_TOTAL_W / Cfg.SEA_COLUMN_W))
+	for col in cols:
+		var x: float = Cfg.MAP_LEFT + col * Cfg.SEA_COLUMN_W
+		var top: float = _shore_top(x + Cfg.SEA_COLUMN_W * 0.5)
+		container.add_child(DistrictDresser.foam_sprite(Vector2(x, top), Vector2(x + Cfg.SEA_COLUMN_W, top), Vector2.DOWN))
 
 func _spawn_beach_props() -> void:
 	var container: Node2D = Node2D.new()

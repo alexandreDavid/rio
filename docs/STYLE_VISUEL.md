@@ -30,11 +30,16 @@ est dessiné ou rééchantillonné respecte cette grille.
 7. **Tailles** : porte 7×9 natifs, fenêtre 5×5, étage 8 natifs
    (rez-de-chaussée 10), un personnage fait un étage et demi. Un bâtiment de
    Copa = 33×21 natifs, une maison du morro = 13-40 natifs de haut. Sols
-   peints : tuile 16×16 natifs (48 px monde), marche de 3 natifs.
-8. **Mouvement** : l'eau, l'écume et les couronnes de palmiers bougent par
-   shader (`WorldFx`), phase dérivée de la position pour ne jamais être en
-   chœur ; les mouettes et la poussière de pas sont les seuls éléments
-   animés en code. Tout mouvement est lent (périodes de 2 à 6 s) : il doit
+   peints : tuile 16×16 natifs (48 px monde), marche de 3 natifs ; sable et
+   mer : tuile 64×64 natifs (192 px monde, cellules retournées une sur deux
+   par hachage), écume : bande de 12 natifs à cheval sur la couture.
+8. **Mouvement** : tout reste sur la grille de pixels. La mer défile d'un
+   texel entier (1,5 pas/s, la tuile boucle) et alterne 2 frames de reflets ;
+   l'écume avance sur le sable en 4 frames ping-pong (2 s) — shader de tuiles
+   `crisp` de `DistrictDresser`, jamais de déformation d'UV sur du pixel-art.
+   Les couronnes de palmiers se balancent par `WorldFx`, phase dérivée de la
+   position pour ne jamais être en chœur ; les mouettes et la poussière de
+   pas sont les seuls éléments animés en code. Tout mouvement est lent (périodes de 2 à 6 s) : il doit
    se remarquer à la deuxième seconde, pas à la première.
 9. **Texte dans le monde** : étiquettes en `PixelFont` (5×7, échelle
    entière ×1/×2/×3 choisie par `PixelFont.style_world_label`, contour
