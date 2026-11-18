@@ -47,8 +47,6 @@ func _on_match_ended(qualifies: bool, tips: int) -> void:
 		if inv:
 			inv.add_money(tips)
 	if qualifies:
-		ReputationSystem.gain_capped(ReputationSystem.Axis.STREET, 1, "torcida_sessions", 5)
-		ReputationSystem.gain_capped(ReputationSystem.Axis.CIVIC, 1, "torcida_sessions", 5)
 		if QuestManager.is_active(QUEST_ID):
 			QuestManager.complete_objective(QUEST_ID, OBJECTIVE_ID)
 	if _active_match:

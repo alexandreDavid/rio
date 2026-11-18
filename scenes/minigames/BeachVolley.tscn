@@ -1,56 +1,11 @@
-[gd_scene load_steps=14 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/minigames/volley/VolleyMatch.gd" id="1_match"]
 [ext_resource type="Script" path="res://scripts/minigames/volley/VolleyBall.gd" id="2_ball"]
 [ext_resource type="Script" path="res://scripts/minigames/volley/VolleyPlayer.gd" id="3_vp"]
 [ext_resource type="Script" path="res://scripts/minigames/volley/VolleyAI.gd" id="4_vai"]
 [ext_resource type="PackedScene" path="res://scenes/ui/MinigameQuitButton.tscn" id="5_quit"]
-
-[sub_resource type="StyleBoxFlat" id="ServeStyle"]
-bg_color = Color(0.2, 0.55, 0.85, 0.92)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.95, 0.92, 0.85, 0.6)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
-
-[sub_resource type="StyleBoxFlat" id="HitStyle"]
-bg_color = Color(0.9, 0.45, 0.15, 0.92)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.98, 0.92, 0.8, 0.7)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
-
-[sub_resource type="RectangleShape2D" id="GroundShape"]
-size = Vector2(500, 20)
-
-[sub_resource type="CircleShape2D" id="BallShape"]
-radius = 8.0
-
-[sub_resource type="PhysicsMaterial" id="BouncyPhys"]
-friction = 0.3
-bounce = 0.55
-
-[sub_resource type="RectangleShape2D" id="NetShape"]
-size = Vector2(8, 120)
-
-[sub_resource type="RectangleShape2D" id="CharShape"]
-size = Vector2(20, 48)
-
-[sub_resource type="CircleShape2D" id="PlayerSensorShape"]
-radius = 14.0
-
-[sub_resource type="CircleShape2D" id="BlobSensorShape"]
-radius = 22.0
+[ext_resource type="PackedScene" path="res://scenes/ui/MinigameTouchControls.tscn" id="6_touch"]
 
 [node name="BeachVolley" type="Node2D"]
 script = ExtResource("1_match")
@@ -60,219 +15,85 @@ score_label = NodePath("UI/Score")
 status_label = NodePath("UI/Status")
 
 [node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(0, -120)
 zoom = Vector2(2, 2)
 
-[node name="Background" type="ColorRect" parent="."]
-offset_left = -960.0
-offset_top = -540.0
-offset_right = 960.0
-offset_bottom = 540.0
-color = Color(0.45, 0.7, 0.85, 1)
-
-[node name="Ground" type="StaticBody2D" parent="." groups=["ground"]]
-position = Vector2(0, 10)
-
-[node name="GroundVisual" type="ColorRect" parent="Ground"]
-offset_left = -250.0
-offset_top = 0.0
-offset_right = 250.0
-offset_bottom = 80.0
-color = Color(0.95, 0.85, 0.55, 1)
-
-[node name="GroundShape" type="CollisionShape2D" parent="Ground"]
-position = Vector2(0, 10)
-shape = SubResource("GroundShape")
-
-[node name="Net" type="StaticBody2D" parent="."]
-position = Vector2(0, -50)
-
-[node name="NetVisual" type="ColorRect" parent="Net"]
-offset_left = -4.0
-offset_top = -60.0
-offset_right = 4.0
-offset_bottom = 60.0
-color = Color(0.9, 0.9, 0.85, 1)
-
-[node name="NetShape" type="CollisionShape2D" parent="Net"]
-shape = SubResource("NetShape")
-
-[node name="Ball" type="RigidBody2D" parent="."]
-script = ExtResource("2_ball")
-position = Vector2(-100, -160)
-mass = 0.3
-physics_material_override = SubResource("BouncyPhys")
-contact_monitor = true
-max_contacts_reported = 4
-gravity_scale = 0.55
-
-[node name="BallVisual" type="ColorRect" parent="Ball"]
-offset_left = -8.0
-offset_top = -8.0
-offset_right = 8.0
-offset_bottom = 8.0
-color = Color(0.97, 0.95, 0.88, 1)
-
-[node name="BallShape" type="CollisionShape2D" parent="Ball"]
-shape = SubResource("BallShape")
-
-[node name="Player" type="CharacterBody2D" parent="."]
+[node name="Player" type="Node2D" parent="."]
 script = ExtResource("3_vp")
-position = Vector2(-150, -14)
-collision_layer = 2
-collision_mask = 1
-ball = NodePath("../Ball")
+position = Vector2(-240, 0)
+side_sign = -1
 
-[node name="PlayerVisual" type="ColorRect" parent="Player"]
-offset_left = -10.0
-offset_top = -24.0
-offset_right = 10.0
-offset_bottom = 24.0
-color = Color(0.85, 0.35, 0.35, 1)
-
-[node name="PlayerShape" type="CollisionShape2D" parent="Player"]
-shape = SubResource("CharShape")
-
-[node name="BallSensor" type="Area2D" parent="Player"]
-collision_layer = 0
-collision_mask = 1
-
-[node name="BallSensorShape" type="CollisionShape2D" parent="Player/BallSensor"]
-shape = SubResource("PlayerSensorShape")
-
-[node name="AI" type="CharacterBody2D" parent="."]
+[node name="AI" type="Node2D" parent="."]
 script = ExtResource("4_vai")
-position = Vector2(150, -14)
-collision_layer = 2
-collision_mask = 1
-ball = NodePath("../Ball")
-team = 1
+position = Vector2(240, 0)
 side_sign = 1
 
-[node name="AIVisual" type="ColorRect" parent="AI"]
-offset_left = -10.0
-offset_top = -24.0
-offset_right = 10.0
-offset_bottom = 24.0
-color = Color(0.35, 0.5, 0.85, 1)
-
-[node name="AIShape" type="CollisionShape2D" parent="AI"]
-shape = SubResource("CharShape")
-
-[node name="BallSensor" type="Area2D" parent="AI"]
-collision_layer = 0
-collision_mask = 1
-
-[node name="BallSensorShape" type="CollisionShape2D" parent="AI/BallSensor"]
-shape = SubResource("BlobSensorShape")
+[node name="Ball" type="Node2D" parent="."]
+script = ExtResource("2_ball")
+position = Vector2(-210, -150)
 
 [node name="UI" type="CanvasLayer" parent="."]
 
 [node name="Score" type="Label" parent="UI"]
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -80.0
+offset_left = -360.0
 offset_top = 24.0
-offset_right = 80.0
-offset_bottom = 64.0
-theme_override_font_sizes/font_size = 36
-text = "0  —  0"
+offset_right = 360.0
+offset_bottom = 84.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.1, 0.12, 0.2, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 44
+text = "TOI  0 — 0  RIVAL"
 horizontal_alignment = 1
 
 [node name="Status" type="Label" parent="UI"]
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -240.0
-offset_top = 72.0
-offset_right = 240.0
-offset_bottom = 104.0
-theme_override_font_sizes/font_size = 22
+offset_left = -560.0
+offset_top = 92.0
+offset_right = 560.0
+offset_bottom = 136.0
+theme_override_colors/font_color = Color(1, 0.95, 0.8, 1)
+theme_override_colors/font_outline_color = Color(0.1, 0.12, 0.2, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 33
 horizontal_alignment = 1
 
 [node name="Help" type="Label" parent="UI"]
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 16.0
-offset_top = -190.0
-offset_right = 700.0
-offset_bottom = -158.0
-theme_override_font_sizes/font_size = 14
-text = "◀ ▶ bouger — SAUTER pour smasher — FRAPPER au bon moment (◀ amorti, ▶ fond de court)"
-
-[node name="MoveLeftButton" type="Button" parent="UI"]
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 16.0
-offset_top = -150.0
-offset_right = 116.0
-offset_bottom = -40.0
-text = "◀"
-theme_override_styles/normal = SubResource("ServeStyle")
-theme_override_styles/hover = SubResource("ServeStyle")
-theme_override_styles/pressed = SubResource("ServeStyle")
-theme_override_font_sizes/font_size = 30
-theme_override_colors/font_color = Color(0.98, 0.98, 0.95, 1)
-
-[node name="MoveRightButton" type="Button" parent="UI"]
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 128.0
-offset_top = -150.0
-offset_right = 228.0
-offset_bottom = -40.0
-text = "▶"
-theme_override_styles/normal = SubResource("ServeStyle")
-theme_override_styles/hover = SubResource("ServeStyle")
-theme_override_styles/pressed = SubResource("ServeStyle")
-theme_override_font_sizes/font_size = 30
-theme_override_colors/font_color = Color(0.98, 0.98, 0.95, 1)
-
-[node name="ServeButton" type="Button" parent="UI"]
-visible = false
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -110.0
-offset_top = -140.0
-offset_right = 110.0
-offset_bottom = -60.0
-text = "🏐 SERVIR"
-theme_override_styles/normal = SubResource("ServeStyle")
-theme_override_styles/hover = SubResource("ServeStyle")
-theme_override_styles/pressed = SubResource("ServeStyle")
-theme_override_font_sizes/font_size = 24
-theme_override_colors/font_color = Color(0.98, 0.98, 0.95, 1)
+offset_left = -520.0
+offset_top = -96.0
+offset_right = 520.0
+offset_bottom = -56.0
+theme_override_colors/font_color = Color(1, 1, 1, 0.9)
+theme_override_colors/font_outline_color = Color(0.1, 0.12, 0.2, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 22
+text = "Joystick pour te placer, SAUTE pour renvoyer — vise avec ta tête"
+horizontal_alignment = 1
 
 [node name="JumpButton" type="Button" parent="UI"]
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -352.0
-offset_top = -150.0
-offset_right = -216.0
-offset_bottom = -40.0
-text = "🦘 SAUTER"
-theme_override_styles/normal = SubResource("ServeStyle")
-theme_override_styles/hover = SubResource("ServeStyle")
-theme_override_styles/pressed = SubResource("ServeStyle")
-theme_override_font_sizes/font_size = 18
-theme_override_colors/font_color = Color(0.98, 0.98, 0.95, 1)
-
-[node name="HitButton" type="Button" parent="UI"]
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -200.0
-offset_top = -160.0
-offset_right = -24.0
-offset_bottom = -40.0
-text = "🏐 FRAPPER"
-theme_override_styles/normal = SubResource("HitStyle")
-theme_override_styles/hover = SubResource("HitStyle")
-theme_override_styles/pressed = SubResource("HitStyle")
-theme_override_font_sizes/font_size = 22
-theme_override_colors/font_color = Color(0.98, 0.98, 0.95, 1)
+offset_left = -420.0
+offset_top = -250.0
+offset_right = -40.0
+offset_bottom = -50.0
+mouse_filter = 2
+focus_mode = 0
+theme_type_variation = &"TouchButton"
+theme_override_font_sizes/font_size = 44
+toggle_mode = true
+text = "SAUTE"
 
 [node name="MinigameQuitButton" parent="." instance=ExtResource("5_quit")]
+
+[node name="TouchControls" parent="." instance=ExtResource("6_touch")]
+show_interact = false

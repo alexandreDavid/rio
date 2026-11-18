@@ -1,5 +1,5 @@
 class_name PadariaGame
-extends Node2D
+extends MinigameBase
 
 # Mini-jeu fournil de la Padaria São Sebastião.
 # Cycle :
@@ -27,6 +27,14 @@ const COOK_PERFECT_MIN: float = 4.0
 const COOK_PERFECT_MAX: float = 8.0
 const COOK_BURN: float = 11.0
 
+# La fila : les fregueses attendent leur pão de queijo. Sans fournée vendue
+# dans ce délai, une freguesa abandonne (et le délai repart, plus court).
+const FILA_PATIENCE: float = 32.0
+const FILA_PATIENCE_MIN: float = 20.0
+const FILA_SHRINK: float = 3.0
+# Qualifié : 3 fournées vendues dont 1 parfaite, et la fila jamais vidée 2 fois.
+const QUALIFY_BATCHES: int = 3
+const MAX_FILA_LOST: int = 1
 const TIP_RAW: int = 6
 const TIP_PERFECT: int = 22
 const TIP_OVERCOOK: int = 10
@@ -124,7 +132,9 @@ func _ready() -> void:
 	if help_button:
 		help_button.pressed.connect(_open_tutorial)
 	if tutorial_root:
+		tutorial_root.add_to_group("gamepad_menu")
 		tutorial_root.visible = true
+		GamepadBridge.focus_first.call_deferred(tutorial_root)
 	if help_button:
 		help_button.visible = false  # caché tant que le tuto est ouvert
 	if touch_controls:
@@ -135,6 +145,11 @@ func _position_perfect_markers() -> void:
 		cook_perfect_marker_a.position.x = COOK_BAR_WIDTH * (COOK_PERFECT_MIN / COOK_BURN)
 	if cook_perfect_marker_b:
 		cook_perfect_marker_b.position.x = COOK_BAR_WIDTH * (COOK_PERFECT_MAX / COOK_BURN) - 4.0
+
+var _fila_left: float = FILA_PATIENCE
+var _fila_patience: float = FILA_PATIENCE
+var _fila_lost: int = 0
+var _perfect_batches: int = 0
 
 func _process(delta: float) -> void:
 	if _ended:
@@ -148,8 +163,23 @@ func _process(delta: float) -> void:
 		return
 	_update_player(delta)
 	_update_oven(delta)
+	_update_fila(delta)
 	_update_visuals()
 	_update_labels()
+
+func _update_fila(delta: float) -> void:
+	var before: float = _fila_left
+	_fila_left -= delta
+	if before > 8.0 and _fila_left <= 8.0:
+		sfx("prompt_chime", 0.8)
+		_set_status("A fila resmunga… vite, une fournée !")
+	if _fila_left <= 0.0:
+		_fila_lost += 1
+		_fila_patience = maxf(_fila_patience - FILA_SHRINK, FILA_PATIENCE_MIN)
+		_fila_left = _fila_patience
+		sfx("mg_miss")
+		pulse(0.5, 0.15)
+		_set_status("😤 Une freguesa a abandonné la fila (%d)." % _fila_lost)
 
 func _close_tutorial() -> void:
 	_tutorial_visible = false
@@ -164,6 +194,7 @@ func _open_tutorial() -> void:
 	_tutorial_visible = true
 	if tutorial_root:
 		tutorial_root.visible = true
+		GamepadBridge.focus_first.call_deferred(tutorial_root)
 	if help_button:
 		help_button.visible = false
 	if touch_controls:
@@ -305,8 +336,17 @@ func _act_at_basket() -> void:
 			tip = PENALTY_RAW_DUMP
 	_total_tips += tip
 	_batches_sold += 1
+	if tip >= TIP_PERFECT:
+		_perfect_batches += 1
+	# Une vente (même ratée) calme la fila : elle repart, de plus en plus pressée.
+	if tip > 0:
+		_fila_patience = maxf(_fila_patience - FILA_SHRINK, FILA_PATIENCE_MIN)
+		_fila_left = _fila_patience
 	_carry = ""
 	_reset_plate()
+	if tip >= TIP_PERFECT:
+		sfx("mg_perfect")
+	sfx("coin" if tip > 0 else "mg_miss")
 	if tip > 0:
 		_set_status("+R$ %d ! Fournée %d/%d." % [tip, _batches_sold, MAX_BATCHES])
 	else:
@@ -329,7 +369,14 @@ func _act_at_trash() -> void:
 func _update_oven(delta: float) -> void:
 	if not _plate_in_oven:
 		return
+	var before: float = _plate_cook_time
 	_plate_cook_time += delta
+	# Le four parle : ding à « no ponto », grésillement à la brûlure.
+	if before < COOK_PERFECT_MIN and _plate_cook_time >= COOK_PERFECT_MIN:
+		sfx("oven_ding")
+		pulse(0.3, 0.06)
+	elif before < COOK_BURN and _plate_cook_time >= COOK_BURN:
+		sfx("mg_miss")
 
 func _carry_kind_for_baked() -> String:
 	return "plate_burnt" if _plate_cook_time >= COOK_BURN else "plate_baked"
@@ -396,8 +443,8 @@ func _highlight_station(node: ColorRect, active: bool, base: Color) -> void:
 	if node == null:
 		return
 	if active:
-		var pulse: float = 1.15 + 0.15 * sin(Time.get_ticks_msec() / 150.0)
-		node.modulate = Color(pulse, pulse, pulse, 1)
+		var glow: float = 1.15 + 0.15 * sin(Time.get_ticks_msec() / 150.0)
+		node.modulate = Color(glow, glow, glow, 1)
 	else:
 		node.modulate = Color(0.85, 0.85, 0.85, 1)
 
@@ -450,7 +497,7 @@ func _update_labels() -> void:
 	if timer_label:
 		timer_label.text = "%.1fs" % max(_time_left, 0.0)
 	if tip_label:
-		tip_label.text = "💰 R$ %d (%d/%d)" % [_total_tips, _batches_sold, MAX_BATCHES]
+		tip_label.text = "💰 R$ %d (%d/%d) · fila %ds" % [_total_tips, _batches_sold, MAX_BATCHES, int(ceil(maxf(_fila_left, 0.0)))]
 	# Cook bar visible uniquement quand four allumé.
 	if cook_bar_root:
 		cook_bar_root.visible = _plate_in_oven
@@ -523,8 +570,10 @@ func _end_game() -> void:
 	if _ended:
 		return
 	_ended = true
-	var qualifies: bool = _batches_sold > 0 and _total_tips > 0
-	_set_status("Service terminé · %d fournées · R$ %d en tips" % [_batches_sold, _total_tips])
+	var qualifies: bool = final_qualifies(_batches_sold >= QUALIFY_BATCHES and _perfect_batches >= 1 \
+			and _fila_lost <= MAX_FILA_LOST)
+	_set_status("Service terminé · %d fournées (%d parfaites) · fila perdue %d× · R$ %d" \
+			% [_batches_sold, _perfect_batches, _fila_lost, _total_tips])
 	await get_tree().create_timer(2.4).timeout
 	EventBus.minigame_ended.emit("padaria", {"tips": _total_tips, "batches": _batches_sold, "qualifies": qualifies})
 	match_ended.emit(qualifies, _total_tips)

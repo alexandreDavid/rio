@@ -1,133 +1,138 @@
 class_name VolleyPlayer
-extends CharacterBody2D
+extends Node2D
 
-# Blobby Volley + frappe active :
-# - le contact automatique (BallSensor) n'est plus qu'une RÉCEPTION molle : la
-#   balle remonte côté joueur et dérive lentement vers le filet. Ne rien faire
-#   finit par donner une balle cadeau que l'IA punit dans les coins.
-# - la vraie attaque passe par try_hit() (bouton FRAPPER) : fenêtre de timing
-#   selon la distance balle → point de frappe au moment de l'appui, visée par
-#   l'axe gauche/droite tenu pendant la frappe. Frapper en l'air relève le
-#   point de contact → trajectoire naturellement plus tendue (smash).
+# Joueur de beach-volley : physique arcade codée à la main (pas de corps
+# physique) pour un jeu lisible et déterministe. `position` = les pieds, posés
+# sur le sable à y = 0 ; la balle rebondit sur le cercle `head_center()`.
+# VolleyMatch remplit input_axis / input_jump puis appelle step() à pas fixe.
 
-@export var ball: VolleyBall
-@export var speed: float = 200.0
-@export var jump_strength: float = 480.0
-@export var gravity: float = 1200.0
+# Zone de frappe calée sur la silhouette mesurée du sprite de profil (104 px de
+# haut, pieds à y=0) : la tête = cercle (centre à 79 px, rayon 19), le corps =
+# gélule fine du cou aux chevilles. La balle rebondit là où on la VOIT toucher.
+const RADIUS: float = 19.0
+const HEAD_Y: float = 79.0
+const BODY_TOP: float = 58.0
+const BODY_BOTTOM: float = 14.0
+const BODY_RADIUS: float = 14.0
+# Personnage pixel-art (même usine que le monde) : hauteur affichée.
+const CHAR_HEIGHT: float = 104.0
+const STEP_TIME: float = 0.14
+const SPEED: float = 270.0
+const JUMP_SPEED: float = 500.0
+const GRAVITY: float = 1500.0
+# Saut tenu = gravité réduite en montée : tap = petit bond, appui long = smash.
+const HOLD_GRAVITY: float = 0.6
+const PIXEL: float = 3.0
+
 @export var side_sign: int = -1
-@export var court_min_x: float = -250.0
-@export var court_max_x: float = -10.0
 
-# Fenêtres de timing : distance balle → point de frappe (px monde) à l'appui.
-const HIT_PERFECT_DIST: float = 30.0
-const HIT_GOOD_DIST: float = 60.0
-const HIT_SOFT_DIST: float = 95.0
-# Point de frappe : un peu au-dessus du centre du blob (les « bras »).
-const HIT_ORIGIN_OFFSET: Vector2 = Vector2(0, -26)
-# Frapper dans le vide verrouille la frappe : le spam ne remplace pas le timing.
-const HIT_LOCK: float = 0.35
-const BOUNCE_COOLDOWN: float = 0.30
+var vel: Vector2 = Vector2.ZERO
+var on_ground: bool = true
+var input_axis: float = 0.0
+var input_jump: bool = false
+var min_x: float = -410.0
+var max_x: float = -34.0
+# Une touche n'est comptée qu'une fois par contact (la balle peut frotter).
+var touch_cooldown: float = 0.0
 
-# Hauteur de passage au-dessus du filet selon la qualité (y monde ; haut du
-# filet = -110, balle r=8). Parfaite = rase le filet, molle = grosse cloche.
-const PASS_Y_PERFECT: float = -126.0
-const PASS_Y_GOOD: float = -165.0
-const PASS_Y_SOFT: float = -215.0
-# Cibles de visée dans le camp adverse (x monde, camp IA = 10..250).
-const TARGET_SHORT_X: float = 55.0
-const TARGET_CENTER_X: float = 140.0
-const TARGET_DEEP_X: float = 230.0
-
-# Axe posé par les boutons tactiles ◀ ▶ (VolleyMatch) ; le clavier reste prioritaire.
-var touch_axis: float = 0.0
-
-var _bounce_cooldown: float = 0.0
-var _hit_lock: float = 0.0
+var _sprite: Sprite2D = null
+var _shadow: Sprite2D = null
+var _squash: float = 0.0
+var _char_scale: float = 1.0
+var _step_t: float = 0.0
+# Apparence : vide = celle du joueur ; le rival reçoit un tirage aléatoire.
+var char_config: Dictionary = {}
 
 func _ready() -> void:
-	if ball == null:
-		ball = get_parent().get_node_or_null("Ball") as VolleyBall
-	var sensor: Area2D = get_node_or_null("BallSensor") as Area2D
-	if sensor:
-		sensor.body_entered.connect(_on_ball_entered)
+	_shadow = Sprite2D.new()
+	_shadow.texture = VolleyBall.ellipse_texture(18, 4, Color(0.25, 0.18, 0.08, 0.3))
+	_shadow.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	_shadow.scale = Vector2(PIXEL, PIXEL)
+	_shadow.z_index = -1
+	add_child(_shadow)
+	# Un vrai personnage de profil, tourné vers le filet (le rival en miroir).
+	var cfg: Dictionary = char_config
+	if cfg.is_empty():
+		cfg = CharacterSpriteFactory.config_from_indices(CharacterSpriteFactory.default_indices())
+	_sprite = Sprite2D.new()
+	_sprite.texture = CharacterSpriteFactory.build_sheet(cfg)
+	_sprite.region_enabled = true
+	_sprite.region_rect = _frame(0)
+	_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	_sprite.offset = Vector2(0.0, -float(CharacterSpriteFactory.CELL_H) * 0.5)
+	_sprite.flip_h = side_sign == 1
+	_char_scale = CHAR_HEIGHT / float(CharacterSpriteFactory.CELL_H)
+	_sprite.scale = Vector2(_char_scale, _char_scale)
+	add_child(_sprite)
 
-func _physics_process(delta: float) -> void:
-	_bounce_cooldown = maxf(0.0, _bounce_cooldown - delta)
-	_hit_lock = maxf(0.0, _hit_lock - delta)
-	velocity.x = move_axis() * speed
-	if not is_on_floor():
-		velocity.y += gravity * delta
-	else:
-		velocity.y = 0.0
-		if Input.is_action_just_pressed("jump"):
-			velocity.y = -jump_strength
-	move_and_slide()
-	global_position.x = clamp(global_position.x, court_min_x, court_max_x)
+func _frame(col: int) -> Rect2:
+	return Rect2(col * CharacterSpriteFactory.CELL_W, CharacterSpriteFactory.DIR_RIGHT * CharacterSpriteFactory.CELL_H,
+		CharacterSpriteFactory.CELL_W, CharacterSpriteFactory.CELL_H)
 
-# Axe de déplacement/visée : clavier (bonus dev) sinon boutons tactiles.
-func move_axis() -> float:
-	var axis: float = Input.get_axis("move_left", "move_right")
-	return axis if absf(axis) >= 0.05 else touch_axis
+func head_center() -> Vector2:
+	return position + Vector2(0.0, -HEAD_Y)
 
-# Appelé aussi par le bouton tactile SAUTER (BeachVolley.tscn).
-func try_jump() -> void:
-	if is_on_floor():
-		velocity.y = -jump_strength
+# Partie du corps la plus proche de `p` : [point d'ancrage, rayon] — la tête
+# (cercle) ou le corps (gélule verticale). Sert au rebond de la balle.
+func hit_shape(p: Vector2) -> Array:
+	var head: Vector2 = head_center()
+	var gap_head: float = p.distance_to(head) - RADIUS
+	var a: Vector2 = position + Vector2(0.0, -BODY_TOP)
+	var b: Vector2 = position + Vector2(0.0, -BODY_BOTTOM)
+	var q: Vector2 = Geometry2D.get_closest_point_to_segment(p, a, b)
+	var gap_body: float = p.distance_to(q) - BODY_RADIUS
+	return [head, RADIUS] if gap_head <= gap_body else [q, BODY_RADIUS]
 
-# Frappe active. Retourne la qualité (VolleyBall.QUALITY_*) ou -1 si raté.
-func try_hit() -> int:
-	if ball == null or ball.freeze:
-		return -1
-	if _hit_lock > 0.0:
-		return -1
-	var origin: Vector2 = global_position + HIT_ORIGIN_OFFSET
-	var dist: float = origin.distance_to(ball.global_position)
-	# Trop loin, ou balle déjà de l'autre côté du filet : fouetté dans le vide.
-	if dist > HIT_SOFT_DIST or ball.global_position.x > 20.0:
-		_hit_lock = HIT_LOCK
-		return -1
-	var quality: int = VolleyBall.QUALITY_SOFT
-	if dist <= HIT_PERFECT_DIST:
-		quality = VolleyBall.QUALITY_PERFECT
-	elif dist <= HIT_GOOD_DIST:
-		quality = VolleyBall.QUALITY_GOOD
-	var target_x: float
-	var pass_y: float
-	match quality:
-		VolleyBall.QUALITY_PERFECT:
-			target_x = _aimed_target_x()
-			pass_y = PASS_Y_PERFECT
-		VolleyBall.QUALITY_GOOD:
-			target_x = _aimed_target_x() + randf_range(-22.0, 22.0)
-			pass_y = PASS_Y_GOOD
-		_:
-			# Molle : cloche centrale sans contrôle de visée — cadeau pour l'IA.
-			target_x = randf_range(95.0, 150.0)
-			pass_y = PASS_Y_SOFT
-	ball.linear_velocity = ball.velocity_through(pass_y, Vector2(clampf(target_x, 30.0, 245.0), 0.0))
-	ball.last_hit_quality = quality
-	ball.hit_by.emit(0)
-	# La réception automatique ne doit pas doubler la frappe si la trajectoire
-	# repasse par le sensor.
-	_bounce_cooldown = BOUNCE_COOLDOWN
-	return quality
+func reset_at(x: float) -> void:
+	position = Vector2(x, 0.0)
+	vel = Vector2.ZERO
+	on_ground = true
+	input_axis = 0.0
+	input_jump = false
+	touch_cooldown = 0.0
 
-# Zone visée selon l'axe tenu à l'appui : ◀ amorti près du filet, ▶ long de
-# ligne au fond, neutre = centre.
-func _aimed_target_x() -> float:
-	var axis: float = move_axis()
-	if axis < -0.3:
-		return TARGET_SHORT_X
-	if axis > 0.3:
-		return TARGET_DEEP_X
-	return TARGET_CENTER_X
+func step(delta: float) -> void:
+	touch_cooldown = maxf(touch_cooldown - delta, 0.0)
+	vel.x = clampf(input_axis, -1.0, 1.0) * SPEED
+	# Saut tenu = rebond automatique à l'atterrissage, comme le genre le veut.
+	if on_ground and input_jump:
+		vel.y = -JUMP_SPEED
+		on_ground = false
+		_squash = -0.16
+	if not on_ground:
+		var g: float = GRAVITY
+		if input_jump and vel.y < 0.0:
+			g *= HOLD_GRAVITY
+		vel.y += g * delta
+		position.y += vel.y * delta
+		if position.y >= 0.0:
+			position.y = 0.0
+			vel.y = 0.0
+			on_ground = true
+			_squash = 0.18
+	var nx: float = clampf(position.x + vel.x * delta, min_x, max_x)
+	if not is_equal_approx(nx, position.x + vel.x * delta):
+		vel.x = 0.0
+	position.x = nx
 
-func _on_ball_entered(body: Node) -> void:
-	if body != ball or _bounce_cooldown > 0.0:
+# Petit écrasement quand la balle rebondit sur le blob.
+func bump() -> void:
+	_squash = 0.12
+
+func _process(delta: float) -> void:
+	if _sprite == null:
 		return
-	_bounce_cooldown = BOUNCE_COOLDOWN
-	# Réception : remonte la balle côté joueur, avec une dérive vers le filet
-	# (l'intention de course du blob module la direction).
-	ball.linear_velocity = Vector2(velocity.x * 0.3 - float(side_sign) * 45.0, -430.0)
-	ball.last_hit_quality = VolleyBall.QUALITY_SOFT
-	ball.hit_by.emit(0)
+	_squash = move_toward(_squash, 0.0, delta * 1.1)
+	_sprite.scale = Vector2(_char_scale * (1.0 + _squash * 0.5), _char_scale * (1.0 - _squash * 0.5))
+	# Pas de course au sol, pose fixe en l'air.
+	if on_ground and absf(vel.x) > 1.0:
+		_step_t += delta
+		_sprite.region_rect = _frame(1 + int(_step_t / STEP_TIME) % 2)
+	else:
+		_step_t = 0.0
+		_sprite.region_rect = _frame(0)
+	# L'ombre reste au sol et rétrécit avec la hauteur du saut.
+	_shadow.position.y = -position.y
+	var k: float = clampf(1.0 + position.y / 300.0, 0.45, 1.0)
+	_shadow.scale = Vector2(PIXEL * k, PIXEL)
+

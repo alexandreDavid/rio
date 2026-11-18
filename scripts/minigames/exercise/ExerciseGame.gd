@@ -1,5 +1,5 @@
 class_name ExerciseGame
-extends Node2D
+extends MinigameBase
 
 # Treino da academia — la forme avant la force, au standard volley/surf.
 # Fini le mash : chaque rep est un appui-relâché. TENIR fait monter la barre
@@ -58,11 +58,9 @@ func _ready() -> void:
 		action_btn.button_down.connect(_on_press)
 		action_btn.button_up.connect(_on_release)
 		action_btn.text = "💪 TENIR / LÂCHER"
-	var quit_btn: CanvasLayer = get_node_or_null("MinigameQuitButton")
-	if quit_btn and quit_btn.has_signal("quit_pressed"):
-		quit_btn.quit_pressed.connect(_end_game)
 	if barbell:
 		_barbell_base_y = barbell.position.y
+	_dress_gym()
 	_build_zone_overlay()
 	_next_rep()
 	_set_status("La forme avant la force : TIENS pour soulever, LÂCHE dans la zone verte.")
@@ -119,6 +117,59 @@ func _process(delta: float) -> void:
 		bar.value = _value
 	if barbell:
 		barbell.position.y = _barbell_base_y - _value * 1.2
+		# Les anilhas suivent la barre.
+		for side in ["BarbellLeft", "BarbellRight"]:
+			var plate: Control = get_node_or_null(side) as Control
+			if plate:
+				plate.position.y = barbell.position.y - 20.0
+		if _athlete:
+			# L'athlète « pousse » : léger écrasement quand la barre est haute.
+			var k: float = 1.0 - 0.04 * (_value / 100.0)
+			_athlete.scale.y = _athlete_scale * k
+
+var _athlete: Sprite2D = null
+var _athlete_scale: float = 1.0
+
+# Academia de bairro : parquet, miroir, espaldar — et le joueur en pixel-art
+# sous la barre (remplace le rectangle beige).
+func _dress_gym() -> void:
+	var body: CanvasItem = get_node_or_null("BodyPlaceholder") as CanvasItem
+	if body:
+		body.visible = false
+	var bg: CanvasItem = get_node_or_null("Background") as CanvasItem
+	if bg:
+		bg.z_index = -10
+	_add_rect(Rect2(-960, 120, 1920, 420), Color(0.42, 0.27, 0.16, 1), -5)
+	for i in 12:
+		_add_rect(Rect2(-960 + i * 160, 120, 2, 420), Color(0.33, 0.2, 0.12, 1), -4)
+	_add_rect(Rect2(-520, -420, 1040, 300), Color(0.55, 0.66, 0.72, 0.35), -5)
+	_add_rect(Rect2(-520, -424, 1040, 6), Color(0.85, 0.85, 0.82, 0.6), -4)
+	for i in 8:
+		_add_rect(Rect2(620, -380 + i * 60, 220, 6), Color(0.6, 0.45, 0.3, 1), -4)
+	_add_rect(Rect2(-850, -300, 180, 70), Color(0.95, 0.85, 0.2, 1), -4)
+	var sign: Label = Label.new()
+	sign.text = "ACADEMIA"
+	sign.position = Vector2(-850, -292)
+	sign.size = Vector2(180, 54)
+	sign.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	sign.add_theme_font_size_override("font_size", 33)
+	sign.add_theme_color_override("font_color", Color(0.1, 0.25, 0.15, 1))
+	sign.z_index = -3
+	add_child(sign)
+	_athlete = char_sprite(330.0)
+	_athlete.position = Vector2(0, 150)
+	_athlete.z_index = -1
+	_athlete_scale = _athlete.scale.y
+	add_child(_athlete)
+
+func _add_rect(r: Rect2, color: Color, z: int) -> void:
+	var c: ColorRect = ColorRect.new()
+	c.position = r.position
+	c.size = r.size
+	c.color = color
+	c.z_index = z
+	c.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(c)
 
 func _on_press() -> void:
 	if _ended or _resting:
@@ -138,21 +189,28 @@ func _resolve_rep(value: float) -> void:
 	var zone_w: float = float(s.zone_w)
 	if value < 0.0:
 		_gas -= GAS_FALHA
+		sfx("mg_miss")
+		pulse(0.6, 0.15)
 		_set_status("💢 Trop lourd — la charge t'écrase ! Contrôle, pas la force.")
 	elif absf(value - _zone_center) <= zone_w * 0.5:
 		if absf(value - _zone_center) <= zone_w * 0.2:
 			_reps += 1
 			_score += 3
 			_gas -= GAS_PERFEITO
+			sfx("mg_perfect")
+			pulse(0.35, 0.06)
 			_set_status("✨ PERFEITO — forme impeccable, o professor aprova !")
 		else:
 			_reps += 1
 			_score += 1
 			_gas -= GAS_BOA
+			sfx("mg_good")
 			_set_status("✔ Boa — ça compte, mas capricha na forma.")
 		_rep_in_set += 1
 	else:
 		_gas -= GAS_FALHA
+		sfx("mg_miss")
+		pulse(0.5, 0.12)
 		_set_status("✖ Falha — lâché hors de la zone. Respira, recommence.")
 	if _gas <= 0.0:
 		_set_status("😮‍💨 Sem gás ! La séance s'arrête là — hydrate-toi, guerreiro.")
@@ -198,12 +256,14 @@ func _end_game() -> void:
 	if _ended:
 		return
 	_ended = true
-	var qualifies: bool = _score >= QUALIFY_SCORE
+	var qualifies: bool = final_qualifies(_score >= QUALIFY_SCORE)
+	# Le motif de fin (à sec) reste lisible : il préfixe le bilan.
+	var why: String = "Sem gás ! " if _gas <= 0.0 else ""
 	if status_label:
 		if qualifies:
-			status_label.text = "Fin — %d reps, %d pts. Monstro ! (+1 Charisma)" % [_reps, _score]
+			status_label.text = why + "Fin — %d reps, %d pts. Monstro ! (+1 Charisma)" % [_reps, _score]
 		else:
-			status_label.text = "Fin — %d reps, %d pts (min. %d pts pour +Charisma). A forma vem com o tempo." \
+			status_label.text = why + "Fin — %d reps, %d pts (min. %d pts pour +Charisma). A forma vem com o tempo." \
 					% [_reps, _score, QUALIFY_SCORE]
 	await get_tree().create_timer(1.8).timeout
 	EventBus.minigame_ended.emit("exercise",

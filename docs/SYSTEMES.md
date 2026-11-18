@@ -3,7 +3,8 @@
 Architecture transversale : tout passe par `EventBus` (`scripts/core/EventBus.gd`).
 Deux patterns dominent : le **launcher additif** (prop monde `Interactable` →
 instancie la scène de mini-jeu, masque World+UI, écoute `match_ended`) et la
-**récompense en deux canaux** (launcher + autoload `ActivityRewards`).
+**récompense séparée** (argent au launcher, réputation/affinité/mestre à
+l'autoload `ActivityRewards`).
 
 ## 1. Joueur & déplacement (`scripts/player/PlayerController.gd`)
 
@@ -25,35 +26,67 @@ Corrigé le 2026-07-21 : bouton 🏃 Correr à bascule (`RunButton` +
 stamina sans progression sur toute la partie ; altinha lancée par un chemin
 spécial (`altinha_requested` → PlayerController) au lieu du pattern launcher.
 
-## 2. Mini-jeux (`scripts/minigames/`, 16 mécaniques réelles)
+## 2. Mini-jeux (`scripts/minigames/`, 18 scènes + kite)
 
 Tous émettent `minigame_started/ended(id, result)`. `ActivityRewards.gd` mappe
 l'id → axe de réputation + affinité NPC + flag `mestre_<id>` au 3e succès.
 Tips crédités par les launchers (`inv.add_money`).
 
-**Profonds** : Beach-volley (timing frappe Perfeito/Boa/Mole, saut, IA
-progressive, pari ×2, 1er à 5), Altinha (roda de 3, placement + fenêtre +
-visée + combo cap 20, parceiro quente = técnico +40, 3 chutes = fin, qualif
-≥ 400, jamais d'argent), Surf (séries lisibles, pic, fenêtre take-off,
-équilibre curseur, kick-out, 90 s, qualif ≥ 250), SUP Cagarras (courant à
-compenser, 4 îlots), Valet (410 l., restituer la voiture réclamée, tip à la
-rapidité), Padaria (531 l., assemblage + fenêtre de cuisson 4-8 s), Racha
-Atlântica (course 3 tours vs 3 IA, payout 600/200/60/0), DJ (4 lanes, combo
-×1→×3), Carnaval Samba (pattern fixe, ≥ 240 clôt `act4_carnaval_desfile`),
-Maracanã Torcida (réactif 5 commandes), Lagoa (contre-la-montre vélo + vent).
+**Socle commun `MinigameBase`** (2026-11-18, `scripts/minigames/MinigameBase.gd`,
+toutes les scènes en héritent) : bouton « ✕ Sair » posé d'office (≥ 44 pt,
+SafeArea, B manette / Échap ; les HUD du coin haut-droit s'écartent),
+abandon = `forfeited` → `final_qualifies()` ne qualifie jamais ; fonds pleine
+largeur étirés aux bords réels (plus de bandes grises en 19,5:9) ;
+`sfx(clé)` (SFX `mg_perfect/good/miss/hit/drop`, `checkpoint`, `splash`,
+`fish_bite`, `oven_ding`, `torcida_cheer`, pads `dj_*` / `samba_*`, synthétisés
+par `tools/audio/synth_audio.py`) et `pulse()` (vibration) ; `char_sprite()`
+= le joueur en pixel-art. Le bouton Action tactile émet appui ET relâché
+(`interact` restait coincé : Surf/Padaria/Valet/Treino/Pesca injouables au doigt).
 
-**Superficiels (1-2 boutons)** : Basket (jauge oscillante), Bike (scroller
-esquive 30 s). Fishing et Exercise ont été refondus au standard le
-2026-07-21 : Pesca da Colônia (lancer visé 3 bandes, ferrage lisible
-frémissements/FISGA avec Perfeito, combat à la tension et puxadas — 6
-lancers/120 s, qualif ≥ 45) et Treino da academia (appui-relâché dans la
-zone de forme, 3 séries à difficulté croissante, gás anti-mash — qualif
-≥ 24/45).
+**Profonds** : Beach-volley (volley de blobs, vue de côté : ◀ ▶ + saut, la
+balle rebondit sur la tête du joueur — l'angle dépend du point d'impact, légère aide vers l'avant —, smash en l'air
+au-dessus du filet, personnages pixel-art de profil, 3 touches par camp, service alterné, ombre du point de
+chute ; physique codée à la main, IA qui prédit la trajectoire ; 1er à 5,
+abandon = défaite),
+Altinha (roda de 3, placement + fenêtre + visée + combo cap 20, parceiro quente
+= técnico +40, 3 chutes = fin, qualif ≥ 400, jamais d'argent), Surf (séries
+lisibles, pic, fenêtre take-off, équilibre curseur, kick-out, 90 s, qualif
+≥ 250 ; surfeur sur la planche), **Kite** (même mer, autre geste : stick ↑
+borde l'aile, saut sur le front avec l'aile dans la zone verte — molle = pas
+de décollage, trop bordée = arrachée ; la puissance multiplie le saut), SUP
+Cagarras (2 tours de 4 îlots, courant qui tourne toutes les 5-8 s ; max
+120 R$), Valet (8 clients max, arrivées qui se resserrent 11→5 s, klaxon à
+l'entrée −10 R$, client réclamant non servi en 22 s = parti fâché ; qualif
+4 servis / ≤ 1 perdu), Padaria (assemblage + four qui sonne no ponto, fila qui
+s'impatiente 32→20 s ; qualif 3 fournées dont 1 parfaite, ≤ 1 fila perdue),
+Racha Atlântica (3 tours vs 3 IA, inertie + dérapage, hors bitume ×0,45,
+turbo, IA en trajectoire + élastique, compte à rebours, tour compté sur la
+ligne ; payout 220/100/40/0 pour 50 d'inscription), DJ (4 lanes qui sonnent,
+combo ×1→×3, tap à vide = combo cassé ; qualif ≥ 500, ~200-250 R$), Carnaval
+Samba (motif base/base/virada/breque, frappe hors temps pénalisée, qualif ≥ 480
+clôt `act4_carnaval_desfile`), Maracanã Torcida (5 ordres = 5 gestes au doigt :
+glisser ↑ ← → ↓, taper = OLA ; fenêtre 1,6→1,0 s ; qualif ≥ 170), Lagoa
+(course pseudo-3D vue de derrière façon F1 rétro autour de la Lagoa : route
+dessinée par segments, virages et bosses, force centrifuge, FREIO, hors piste
+×0,3, cyclistes à doubler, 2 tours, temps de départ 22 s + 13 s par checkpoint ;
+max 100 R$).
 
-### Récompenses (corrigées le 2026-07-21)
-- Les deux canaux sont plafonnés : launchers (`gain_capped` par source) et
-  `ActivityRewards` (`gain_capped`, cap = 3× la signature — le compteur
-  mestre continue au-delà).
+**Courts** : Basket (jauge qui accélère et zones qui rétrécissent au fil des
+10 tirs, 6 R$/pt, moitié si non qualifié), Bike (rue qui défile en 4 voies,
+rangées qui laissent toujours un passage, piétons, colis à ramasser — qualif
+≥ 5 entregas avec la commande intacte), Desembarque (les passagers sortent un par un
+et s'arrêtent devant toi ; plaque à pastilles de couleur ; « É ELE ! » ou laisser
+passer — appel tôt = Perfeito, mauvais appel −1 ; A manette = appeler ; qualif
+≥ 14), Pesca da
+Colônia (lancer visé 3 bandes, ferrage, combat à la tension — quai, pêcheur et
+morros de Niterói), Treino da academia (appui-relâché dans la zone de forme,
+gás anti-mash — l'athlète sous la barre), Milho (rush de service, navigable
+à la croix + A).
+
+### Récompenses (canal unique depuis le 2026-11-18)
+- La réputation ne passe plus que par `ActivityRewards` (`gain_capped`, cap =
+  3× la signature — le compteur mestre continue au-delà) ; les launchers ne
+  gèrent plus que l'argent et les objectifs de quête.
 - Exercise crédite CHARISMA (l'axe affiché) + affinité ramos.
 - Le kite a son identité : `SurfGame.minigame_id` (exporté, défaut `surf`),
   surchargé `kitesurf` par `KiteLauncher` — signature ActivityRewards propre,

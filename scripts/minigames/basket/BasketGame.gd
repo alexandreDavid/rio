@@ -1,5 +1,5 @@
 class_name BasketGame
-extends Node2D
+extends MinigameBase
 
 # Mini-jeu de basket de rue à l'Aterro do Flamengo. Le joueur effectue 10 tirs.
 # Pour chaque tir, un curseur oscille horizontalement sur une jauge de puissance.
@@ -13,11 +13,19 @@ const SHOTS_TOTAL: int = 10
 const QUALIFY_SCORE: int = 18  # ~6 swishes, ou un mix
 const POINTS_SWISH: int = 3
 const POINTS_RIM: int = 1
-const TIP_PER_POINT: int = 18  # 30 pts max → 540 R$ ; 18 pts (qualif) → 324 R$
+# Pelada de rua : on joue pour la gloire, la caixinha reste symbolique
+# (30 pts max → 180 R$). Non qualifié = moitié ; abandon = rien.
+const TIP_PER_POINT: int = 6
 const METER_WIDTH: float = 480.0
-const METER_PERIOD: float = 1.4  # secondes pour une oscillation A/R complète
-const SWISH_HALF_RANGE: float = 0.07  # ±7 % autour du centre
-const RIM_HALF_RANGE: float = 0.18    # ±18 % autour du centre
+const METER_CENTER_PX: float = 260.0
+# La série se durcit : le curseur accélère et les zones rétrécissent du 1er
+# au 10e tir (valeurs interpolées).
+const METER_PERIOD_START: float = 1.4  # secondes pour une oscillation A/R complète
+const METER_PERIOD_END: float = 0.85
+const SWISH_HALF_START: float = 0.075
+const SWISH_HALF_END: float = 0.045
+const RIM_HALF_START: float = 0.19
+const RIM_HALF_END: float = 0.12
 const FEED_DELAY: float = 0.9   # délai avant l'apparition du tir suivant
 const RESOLVE_DELAY: float = 0.6  # affichage du résultat avant feed
 
@@ -35,6 +43,8 @@ var _feed_until: float = 0.0
 
 @onready var meter_root: Control = $UI/Meter
 @onready var meter_cursor: ColorRect = $UI/Meter/Cursor
+@onready var rim_zone: ColorRect = $UI/Meter/RimZone
+@onready var swish_zone: ColorRect = $UI/Meter/SwishZone
 @onready var status_label: Label = $UI/Status
 @onready var score_label: Label = $UI/Score
 @onready var shots_label: Label = $UI/Shots
@@ -49,10 +59,8 @@ func _ready() -> void:
 	var action_btn: Button = get_node_or_null("UI/ActionButton") as Button
 	if action_btn:
 		action_btn.pressed.connect(_on_action_pressed)
-	var quit_btn: CanvasLayer = get_node_or_null("MinigameQuitButton")
-	if quit_btn and quit_btn.has_signal("quit_pressed"):
-		quit_btn.quit_pressed.connect(_end_game)
 	_status("Touche TIRER quand le curseur passe au centre vert")
+	_layout_zones()
 
 func _on_action_pressed() -> void:
 	if _state != State.READY:
@@ -77,40 +85,71 @@ func _process(delta: float) -> void:
 		_meter_t = 0.0
 		_show_ball(true)
 
+func _difficulty() -> float:
+	return clampf(float(_shot_index) / float(SHOTS_TOTAL - 1), 0.0, 1.0)
+
+func _period() -> float:
+	return lerpf(METER_PERIOD_START, METER_PERIOD_END, _difficulty())
+
+func _swish_half() -> float:
+	return lerpf(SWISH_HALF_START, SWISH_HALF_END, _difficulty())
+
+func _rim_half() -> float:
+	return lerpf(RIM_HALF_START, RIM_HALF_END, _difficulty())
+
+# Les zones dessinées suivent les fenêtres réelles du tir courant.
+func _layout_zones() -> void:
+	for pair in [[rim_zone, _rim_half()], [swish_zone, _swish_half()]]:
+		var z: ColorRect = pair[0]
+		if z:
+			var half: float = float(pair[1]) * METER_WIDTH
+			z.offset_left = METER_CENTER_PX - half
+			z.offset_right = METER_CENTER_PX + half
+
 func _update_cursor() -> void:
 	if meter_cursor == null:
 		return
 	# Oscillation triangulaire (0..1..0) — plus lisible qu'une sinusoïde pour le timing.
-	var phase: float = fmod(_meter_t / METER_PERIOD, 1.0)
+	var phase: float = fmod(_meter_t / _period(), 1.0)
 	var x: float = phase * 2.0 if phase < 0.5 else (1.0 - phase) * 2.0
 	meter_cursor.position.x = x * METER_WIDTH
 
 func _unhandled_input(event: InputEvent) -> void:
 	if _state != State.READY:
 		return
-	if not (event is InputEventKey) or not event.pressed or event.echo:
+	if event.is_echo():
 		return
-	if not Input.is_action_pressed("ui_accept"):
-		return
-	_resolve_shot()
+	# Clavier (Espace/Entrée/E) et manette (A = E via GamepadBridge).
+	if event.is_action_pressed("ui_accept") or event.is_action_pressed("interact") \
+			or event.is_action_pressed("jump"):
+		get_viewport().set_input_as_handled()
+		_resolve_shot()
 
 func _resolve_shot() -> void:
-	var phase: float = fmod(_meter_t / METER_PERIOD, 1.0)
+	var phase: float = fmod(_meter_t / _period(), 1.0)
 	var x: float = phase * 2.0 if phase < 0.5 else (1.0 - phase) * 2.0
 	# Distance au centre 0..0.5 (0 = parfait, 0.5 = bord).
 	var dist: float = abs(x - 0.5)
+	var swish_half: float = _swish_half()
+	var rim_half: float = _rim_half()
 	_shot_index += 1
-	if dist <= SWISH_HALF_RANGE:
+	if dist <= swish_half:
 		_score += POINTS_SWISH
 		_swishes += 1
 		_status("SWISH ! +3")
-	elif dist <= RIM_HALF_RANGE:
+		sfx("basket_swish")
+		sfx("mg_perfect")
+		pulse(0.4, 0.06)
+	elif dist <= rim_half:
 		_score += POINTS_RIM
 		_rims += 1
 		_status("Rim-in +1")
+		sfx("mg_hit")
 	else:
 		_airballs += 1
 		_status("Airball")
+		sfx("mg_miss")
+	_layout_zones()
 	_show_ball(false)
 	_state = State.RESOLVED
 	_resolve_until = Time.get_ticks_msec() / 1000.0 + RESOLVE_DELAY
@@ -131,9 +170,13 @@ func _status(text: String) -> void:
 		status_label.text = text
 
 func _end_game() -> void:
+	if _state == State.ENDED:
+		return
 	_state = State.ENDED
-	var qualifies: bool = _score >= QUALIFY_SCORE
-	var tips: int = _score * TIP_PER_POINT
+	var qualifies: bool = final_qualifies(_score >= QUALIFY_SCORE)
+	var tips: int = 0 if forfeited else _score * TIP_PER_POINT
+	if not qualifies:
+		tips /= 2
 	if qualifies:
 		_status("Vitória ! %d pts · R$ %d" % [_score, tips])
 	else:

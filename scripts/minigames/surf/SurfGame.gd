@@ -1,5 +1,5 @@
 class_name SurfGame
-extends Node2D
+extends MinigameBase
 
 # Mini-jeu de surf « lire les vagues ». Les vagues arrivent en séries depuis
 # l'horizon et grossissent en approchant : le joueur les lit à l'avance, se
@@ -134,6 +134,25 @@ var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
 # et les objectifs MINIJEU des quêtes filtrent sur cet id.
 @export var minigame_id: String = "surf"
 
+# --- Mode kite (Barra) : même mer, autre geste. Pas de rame : l'aile tire.
+# Stick ↑ borde l'aile (la puissance monte), relâché elle choque ; les rafales
+# la secouent. On SAUTE sur le front de vague, aile dans la zone verte :
+# trop molle = pas de décollage, trop bordée = l'aile t'arrache (wipeout).
+# Plus l'aile tire (dans le vert), plus le saut paie.
+const KITE_BAND_MIN: float = 0.62
+const KITE_BAND_MAX: float = 0.9
+const KITE_SHEET_RATE: float = 0.55   # montée/s stick ↑
+const KITE_EASE_RATE: float = 0.35    # retombée/s relâché
+const KITE_GUST: float = 0.22
+var _kite: bool = false
+var _kite_power: float = 0.4
+var _kite_gust: float = 0.0
+var _kite_gust_t: float = 0.0
+var _kite_node: Polygon2D = null
+var _kite_line: Line2D = null
+var _kite_gauge: ColorRect = null
+var _kite_fill: ColorRect = null
+
 func _ready() -> void:
 	EventBus.minigame_started.emit(minigame_id)
 	var cam: Camera2D = get_node_or_null("Camera2D")
@@ -144,18 +163,91 @@ func _ready() -> void:
 	if board:
 		board.pivot_offset = Vector2(BOARD_W * 0.5, BOARD_H * 0.5)
 		board.position = Vector2(ARENA_W * 0.5 - BOARD_W * 0.5, BOARD_LINE_Y - BOARD_H * 0.5)
+		# Le surfeur (le joueur, en pixel-art) debout sur la planche : il suit
+		# l'inclinaison et le clignotement du wipeout.
+		var rider: Sprite2D = char_sprite(104.0)
+		rider.position = Vector2(BOARD_W * 0.5, BOARD_H * 0.82)
+		board.add_child(rider)
 	if balance_bar:
 		balance_bar.visible = false
-	_set_status("Lis la série — place-toi sur le pic clair", Color(1, 0.95, 0.8))
+	_kite = minigame_id == "kitesurf"
+	if _kite:
+		_build_kite()
+		_set_status("Vento nordeste — borde l'aile et saute sur les vagues", Color(1, 0.95, 0.8))
+	else:
+		_set_status("Lis la série — place-toi sur le pic clair", Color(1, 0.95, 0.8))
 	if hint_label:
-		hint_label.text = "RAME quand le front touche la ligne blanche"
+		hint_label.text = _lineup_hint()
+	if _interact_button:
+		_interact_button.text = _lineup_verb()
 	_update_labels()
+
+func _lineup_hint() -> String:
+	if _kite:
+		return "Stick ↑ : border l'aile · SALTA sur le front, aile dans le vert"
+	return "RAME quand le front touche la ligne blanche"
+
+func _lineup_verb() -> String:
+	return "Salta !" if _kite else "Rame !"
+
+func _build_kite() -> void:
+	_kite_line = Line2D.new()
+	_kite_line.width = 2.0
+	_kite_line.default_color = Color(0.95, 0.95, 0.9, 0.8)
+	add_child(_kite_line)
+	_kite_node = Polygon2D.new()
+	_kite_node.polygon = PackedVector2Array([Vector2(-70, 10), Vector2(-40, -14), Vector2(0, -22), Vector2(40, -14), Vector2(70, 10), Vector2(0, -4)])
+	_kite_node.color = Color(0.95, 0.35, 0.3, 1)
+	add_child(_kite_node)
+	# Jauge de puissance (à gauche), zone verte = fenêtre de saut.
+	var ui: CanvasLayer = CanvasLayer.new()
+	ui.layer = 10
+	add_child(ui)
+	_kite_gauge = ColorRect.new()
+	_kite_gauge.color = Color(0.1, 0.12, 0.18, 0.85)
+	_kite_gauge.set_anchors_preset(Control.PRESET_CENTER_LEFT)
+	_kite_gauge.position = Vector2(48, -200)
+	_kite_gauge.size = Vector2(44, 400)
+	ui.add_child(_kite_gauge)
+	var band: ColorRect = ColorRect.new()
+	band.color = Color(0.35, 0.85, 0.45, 0.55)
+	band.position = Vector2(0, 400.0 * (1.0 - KITE_BAND_MAX))
+	band.size = Vector2(44, 400.0 * (KITE_BAND_MAX - KITE_BAND_MIN))
+	_kite_gauge.add_child(band)
+	_kite_fill = ColorRect.new()
+	_kite_fill.color = Color(1, 0.9, 0.35, 1)
+	_kite_fill.size = Vector2(44, 8)
+	_kite_gauge.add_child(_kite_fill)
+
+func _update_kite(delta: float) -> void:
+	_kite_gust_t -= delta
+	if _kite_gust_t <= 0.0:
+		_kite_gust_t = _rng.randf_range(1.2, 2.6)
+		_kite_gust = _rng.randf_range(-KITE_GUST, KITE_GUST)
+	var sheet: float = -Input.get_axis("move_forward", "move_back")
+	if sheet > 0.2:
+		_kite_power += KITE_SHEET_RATE * sheet * delta
+	else:
+		_kite_power -= KITE_EASE_RATE * delta
+	_kite_power = clampf(_kite_power + _kite_gust * delta, 0.0, 1.0)
+	if _kite_fill:
+		_kite_fill.position.y = 400.0 * (1.0 - _kite_power) - 4.0
+		var in_band: bool = _kite_power >= KITE_BAND_MIN and _kite_power <= KITE_BAND_MAX
+		_kite_fill.color = Color(0.5, 1, 0.55, 1) if in_band else (Color(1, 0.4, 0.35, 1) if _kite_power > KITE_BAND_MAX else Color(1, 0.9, 0.35, 1))
+	if board and _kite_node:
+		var anchor: Vector2 = board.position + Vector2(BOARD_W * 0.5, 0)
+		var kite_pos: Vector2 = anchor + Vector2(180.0 - 120.0 * _kite_power, -260.0 - 140.0 * _kite_power)
+		_kite_node.position = kite_pos
+		_kite_node.rotation = 0.25 - 0.4 * _kite_power
+		_kite_line.points = PackedVector2Array([anchor, kite_pos + Vector2(0, 6)])
 
 func _process(delta: float) -> void:
 	if _phase == Phase.ENDED:
 		return
 	_time_left -= delta
 	_interact_cd = maxf(0.0, _interact_cd - delta)
+	if _kite:
+		_update_kite(delta)
 	_move_waves(delta)
 	match _phase:
 		Phase.LINEUP:
@@ -321,6 +413,16 @@ func _try_takeoff() -> void:
 	if dx > best.peak_w * 0.5:
 		shoulder = true
 	var perfect: bool = absf(best_d) <= TAKEOFF_PERFECT
+	if _kite:
+		if _kite_power < KITE_BAND_MIN:
+			best.missed = true
+			best.node.modulate.a = 0.45
+			_set_status("Aile molle — pas de décollage. Borde !", Color(1, 0.8, 0.6))
+			sfx("mg_miss")
+			return
+		if _kite_power > KITE_BAND_MAX:
+			_start_wipeout("Rafale ! L'aile t'arrache de la planche")
+			return
 	_start_ride(best, perfect, shoulder)
 
 func _start_ride(w: Wave, perfect: bool, shoulder: bool) -> void:
@@ -333,6 +435,9 @@ func _start_ride(w: Wave, perfect: bool, shoulder: bool) -> void:
 	_ride_quality = float(t.quality) * (SHOULDER_QUALITY if shoulder else 1.0)
 	_ride_max = float(t.ride_max) * (SHOULDER_RIDE if shoulder else 1.0)
 	_takeoff_mult = PERFECT_MULT if perfect else 1.0
+	if _kite:
+		# Un saut bien bordé (haut de la zone verte) paie jusqu'à ×1,6 en plus.
+		_takeoff_mult *= 1.0 + 2.0 * (_kite_power - KITE_BAND_MIN)
 	_takeoff_x = board.position.x
 	_balance = 0.0
 	_drift_target = 0.0
@@ -342,9 +447,12 @@ func _start_ride(w: Wave, perfect: bool, shoulder: bool) -> void:
 	w.node.position.y = w.y
 	w.tag.visible = false
 	_update_wave_visual(w)
+	sfx("splash")
 	if perfect:
+		sfx("mg_perfect")
+		pulse(0.45, 0.08)
 		_perfect_takeoffs += 1
-		_set_status("TAKE-OFF PARFAIT ! ×%.1f" % PERFECT_MULT, Color(1, 0.95, 0.4))
+		_set_status(("SALTO PERFEITO ! ×%.1f" if _kite else "TAKE-OFF PARFAIT ! ×%.1f") % _takeoff_mult, Color(1, 0.95, 0.4))
 		if board:
 			board.modulate = Color(1.6, 1.6, 1.4)
 			var tw: Tween = create_tween()
@@ -352,7 +460,7 @@ func _start_ride(w: Wave, perfect: bool, shoulder: bool) -> void:
 	elif shoulder:
 		_set_status("Sur l'épaule… ride écourtée", Color(0.9, 0.85, 0.7))
 	else:
-		_set_status("Debout ! Tiens l'équilibre", Color(0.8, 1, 0.8))
+		_set_status("No ar ! Tiens la réception" if _kite else "Debout ! Tiens l'équilibre", Color(0.8, 1, 0.8))
 	if hint_label:
 		hint_label.text = "Joystick ←→ pour recentrer le curseur"
 	if balance_bar:
@@ -409,6 +517,11 @@ func _end_ride(bank_mult: float, wipeout: bool, msg: String) -> void:
 		board.rotation = 0.0
 	_set_status("%s  (+%d pts)" % [msg, int(pts)],
 		Color(1, 0.7, 0.6) if wipeout else Color(0.7, 1, 0.7))
+	if wipeout:
+		sfx("splash", 0.8)
+		pulse(0.7, 0.2)
+	else:
+		sfx("mg_good")
 	if _time_left <= 0.0:
 		_end_session()
 		return
@@ -425,6 +538,8 @@ func _start_wipeout(msg: String) -> void:
 	_phase = Phase.WIPEOUT
 	_stun_left = WIPEOUT_STUN
 	_interact_cd = 0.4
+	sfx("splash", 0.8)
+	pulse(0.7, 0.2)
 	_set_status(msg, Color(1, 0.6, 0.5))
 
 func _enter_lineup(msg: String) -> void:
@@ -433,9 +548,9 @@ func _enter_lineup(msg: String) -> void:
 	if msg != "":
 		_set_status(msg, Color(0.85, 0.95, 1))
 	if hint_label:
-		hint_label.text = "RAME quand le front touche la ligne blanche"
+		hint_label.text = _lineup_hint()
 	if _interact_button:
-		_interact_button.text = "Rame !"
+		_interact_button.text = _lineup_verb()
 
 # --- UI & fin de session ---
 
@@ -456,15 +571,18 @@ func _update_labels() -> void:
 	if timer_label:
 		timer_label.text = "%.0fs" % maxf(_time_left, 0.0)
 
+func quit_game() -> void:
+	_end_session()
+
 func _end_session() -> void:
 	if _phase == Phase.ENDED:
 		return
 	_phase = Phase.ENDED
-	var qualifies: bool = _score >= QUALIFY_SCORE
+	var qualifies: bool = final_qualifies(_score >= QUALIFY_SCORE)
 	if balance_bar:
 		balance_bar.visible = false
 	if qualifies:
-		_set_status("Session validée — %d pts ! Lucas approuve" % int(_score), Color(0.6, 1, 0.6))
+		_set_status("Session validée — %d pts ! %s" % [int(_score), "Lucas approuve" if minigame_id == "surf" else "A Barra te salue"], Color(0.6, 1, 0.6))
 	else:
 		_set_status("Fin de session — %d pts (il en faut %d)" % [int(_score), int(QUALIFY_SCORE)],
 			Color(1, 0.85, 0.7))

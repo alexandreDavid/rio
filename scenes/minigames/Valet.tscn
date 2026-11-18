@@ -207,7 +207,7 @@ offset_left = -520.0
 offset_top = -64.0
 offset_right = 520.0
 offset_bottom = -24.0
-text = "[E] Prendre · Garer · Restituer    [WASD/Flèches] Bouger"
+text = "Action : prendre · garer · restituer"
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 22
 theme_override_colors/font_color = Color(0.85, 0.85, 0.95, 1)
@@ -216,12 +216,14 @@ theme_override_colors/font_color = Color(0.85, 0.85, 0.95, 1)
 visible = false
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -64.0
-offset_top = 96.0
-offset_right = -24.0
-offset_bottom = 136.0
+offset_left = -376.0
+offset_top = 20.0
+offset_right = -256.0
+offset_bottom = 144.0
+theme_type_variation = &"TouchButton"
+focus_mode = 0
 text = "?"
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 44
 
 [node name="Tutorial" type="Control" parent="UI"]
 anchor_right = 1.0
@@ -258,7 +260,7 @@ theme_override_font_sizes/font_size = 30
 theme_override_colors/font_color = Color(1, 0.92, 0.55, 1)
 
 [node name="Goal" type="Label" parent="UI/Tutorial/Panel/Margin/Layout"]
-text = "Sers un maximum de clients en 120 secondes (jusqu'à 4). Plus tu es rapide à restituer une voiture demandée, plus le tip grimpe (12 à 40 R$)."
+text = "Sers jusqu'à 8 clients en 120 secondes. Qualifié : 4 clients servis, 1 seul parti fâché au plus."
 autowrap_mode = 3
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 18
@@ -267,47 +269,43 @@ theme_override_colors/font_color = Color(0.95, 0.92, 0.85, 1)
 [node name="Sep1" type="HSeparator" parent="UI/Tutorial/Panel/Margin/Layout"]
 
 [node name="Step1" type="Label" parent="UI/Tutorial/Panel/Margin/Layout"]
-text = "1. Une voiture arrive à l'entrée (zone jaune en haut).
-   Approche → [E] pour la prendre."
+text = "1. Une voiture arrive à l'entrée (en haut) : prends-la (Action)."
 autowrap_mode = 3
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 22
 theme_override_colors/font_color = Color(0.95, 0.92, 0.85, 1)
 
 [node name="Step2" type="Label" parent="UI/Tutorial/Panel/Margin/Layout"]
-text = "2. Va à une place libre (les places passent en vert quand tu portes une voiture).
-   [E] pour garer."
+text = "2. Gare-la sur une place verte (Action)."
 autowrap_mode = 3
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 22
 theme_override_colors/font_color = Color(0.95, 0.92, 0.85, 1)
 
 [node name="Step3" type="Label" parent="UI/Tutorial/Panel/Margin/Layout"]
-text = "3. Après quelques secondes, le client revient : la voiture pulse en rouge.
-   Cours la chercher → [E] pour la prendre."
+text = "3. Le client revient : sa voiture clignote. Ramène-la à l'entrée."
 autowrap_mode = 3
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 22
 theme_override_colors/font_color = Color(0.95, 0.92, 0.85, 1)
 
 [node name="Step4" type="Label" parent="UI/Tutorial/Panel/Margin/Layout"]
-text = "4. Ramène-la à l'entrée. La zone passe en vert et devient \"RESTITUER ICI\".
-   [E] pour la rendre. Tip versé selon le temps d'attente du client."
+text = "4. Plus tu es rapide, plus le tip grimpe. Trop lent : il repart fâché, sans tip."
 autowrap_mode = 3
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 22
 theme_override_colors/font_color = Color(0.95, 0.92, 0.85, 1)
 
 [node name="Sep2" type="HSeparator" parent="UI/Tutorial/Panel/Margin/Layout"]
 
 [node name="Tips" type="Label" parent="UI/Tutorial/Panel/Margin/Layout"]
-text = "Astuces : le label au-dessus de toi indique toujours ce que [E] fait.
-Tu peux gérer plusieurs voitures à la fois — gare-en une pendant qu'une autre attend.
-Contrôles : WASD ou Flèches pour bouger, E pour interagir."
+text = "Les voitures arrivent de plus en plus vite. Une voiture oubliée à l'entrée klaxonne."
 autowrap_mode = 3
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 18
 theme_override_colors/font_color = Color(0.75, 0.85, 0.95, 1)
 
 [node name="StartButton" type="Button" parent="UI/Tutorial/Panel/Margin/Layout"]
 text = "Commencer le service"
 size_flags_horizontal = 4
-theme_override_font_sizes/font_size = 22
+custom_minimum_size = Vector2(420, 124)
+theme_type_variation = &"TouchButton"
+theme_override_font_sizes/font_size = 33
 
 [node name="TouchControls" parent="." instance=ExtResource("2_touch")]

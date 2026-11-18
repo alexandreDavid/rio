@@ -1,8 +1,8 @@
 class_name BikeLauncher
 extends Node2D
 
-# Lance une livraison à vélo. Reward : R$ 50 + CIVIC +1 (source "bike_deliveries",
-# plafonnée à 5 — encourage plusieurs livraisons mais évite le grind infini).
+# Lance une livraison à vélo. Reward : R$ 50 ; réputation + affinité + mestre
+# via ActivityRewards (signature "bike").
 # La quête "bike_delivery" est optionnelle : si elle est active, on coche aussi
 # l'objectif "one_delivery" à la première livraison réussie.
 
@@ -49,7 +49,6 @@ func _on_match_ended(qualifies: bool, _integrity: int) -> void:
 			inv = GameManager.player.get_node_or_null("Inventory") as Inventory
 		if inv:
 			inv.add_money(DELIVERY_PAYOUT)
-		ReputationSystem.gain_capped(ReputationSystem.Axis.CIVIC, 1, "bike_deliveries", 5)
 		if QuestManager.is_active(QUEST_ID):
 			QuestManager.complete_objective(QUEST_ID, OBJECTIVE_ID)
 	if _active_match:

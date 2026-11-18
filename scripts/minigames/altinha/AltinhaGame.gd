@@ -1,5 +1,5 @@
 class_name AltinhaGame
-extends Node2D
+extends MinigameBase
 
 # Altinha — roda de 3 (joueur + 2 parceiros), sans les mains. Remplace la
 # version "monde ouvert" (scripts/world/AltinhaSession.gd, jugée pas assez
@@ -28,9 +28,8 @@ const PARTNER_LEFT_POS: Vector2 = Vector2(-150.0, -70.0)
 const PARTNER_RIGHT_POS: Vector2 = Vector2(150.0, -70.0)
 
 # --- Fenêtre de frappe : distance combinée (latéral + hauteur) entre le
-# point de contact idéal du joueur et la balle au moment du tap. Même langage
-# que VolleyPlayer.try_hit() — juste transposé à une balle qui simule sa
-# hauteur plutôt qu'un RigidBody. ~24px d'écart hauteur ≈ 0.12s de réaction
+# point de contact idéal du joueur et la balle au moment du tap (balle qui
+# simule sa hauteur). ~24px d'écart hauteur ≈ 0.12s de réaction
 # proche du sol (la balle y descend à une vitesse voisine de v0, 165-260 px/s).
 const CONTACT_HEIGHT: float = 30.0
 const HIT_PERFECT_DIST: float = 24.0
@@ -162,9 +161,6 @@ func _ready() -> void:
 	var hit_btn: Button = get_node_or_null("UI/HitButton") as Button
 	if hit_btn:
 		hit_btn.pressed.connect(_try_hit)
-	var quit_btn: CanvasLayer = get_node_or_null("MinigameQuitButton")
-	if quit_btn and quit_btn.has_signal("quit_pressed"):
-		quit_btn.quit_pressed.connect(_end_game)
 
 	var ui: CanvasLayer = get_node_or_null("UI") as CanvasLayer
 	if ui:
@@ -388,7 +384,10 @@ func _resolve_player_hit(quality: int) -> void:
 	_best_combo = maxi(_best_combo, _combo)
 
 	_show_quality_label(quality, gain)
+	sfx("mg_hit", 1.0 + 0.04 * float(mini(_combo, 10)))
 	if quality == QUALITY_PERFECT:
+		sfx("mg_perfect")
+		pulse(0.4, 0.06)
 		_start_shake(4.0, 0.12)
 		_flash_screen()
 	if touch_goal > 0 and _touches >= touch_goal:
@@ -458,6 +457,8 @@ func _register_drop(msg: String) -> void:
 	if status_label:
 		status_label.text = msg
 	_float_label(_ball.target(), "Caiu...", Color(0.9, 0.4, 0.35), 16)
+	sfx("mg_drop")
+	pulse(0.6, 0.15)
 	_start_shake(3.0, 0.15)
 	_update_labels()
 	if _drops >= MAX_DROPS:
@@ -474,7 +475,7 @@ func _end_game() -> void:
 		return
 	_ended = true
 	_phase = Phase.PAUSED
-	var qualifies: bool = _score >= QUALIFY_SCORE_THRESHOLD
+	var qualifies: bool = final_qualifies(_score >= QUALIFY_SCORE_THRESHOLD)
 	if status_label:
 		status_label.text = ""
 	if result_label:

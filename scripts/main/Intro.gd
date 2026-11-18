@@ -24,9 +24,26 @@ func _ready() -> void:
 		slot_buttons[i].pressed.connect(_on_slot_pressed.bind(slot))
 		reset_buttons[i].pressed.connect(_on_reset_pressed.bind(slot))
 	_style_title()
+	_add_arcade_button()
 	_refresh()
 	slot_buttons[clampi(Settings.current_slot - 1, 0, 2)].grab_focus()
 	_play_entrance()
+
+# Builds de debug seulement (dont l'export iOS de test) : accès direct aux
+# mini-jeux, pour les essayer sur téléphone sans jouer jusqu'à leur lieu.
+func _add_arcade_button() -> void:
+	if not OS.is_debug_build():
+		return
+	var b: Button = Button.new()
+	b.text = "🎮 Mini-jeux (test)"
+	b.theme_type_variation = &"TouchButton"
+	b.add_theme_font_size_override("font_size", 33)
+	b.focus_mode = Control.FOCUS_NONE
+	b.position = Vector2(24, 24)
+	b.size = Vector2(420, 120)
+	b.pressed.connect(func() -> void: get_tree().change_scene_to_file("res://tools/MinigamePicker.tscn"))
+	add_child(b)
+	SafeArea.apply(b)
 
 # Titre en police pixel, agrandi par multiples entiers (net sur tout écran).
 func _style_title() -> void:

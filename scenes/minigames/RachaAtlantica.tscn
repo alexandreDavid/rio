@@ -169,3 +169,4 @@ theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
 theme_override_constants/outline_size = 3
 
 [node name="TouchControls" parent="." instance=ExtResource("2_touch")]
+interact_label = "Turbo"

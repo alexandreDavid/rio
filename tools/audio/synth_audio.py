@@ -1171,6 +1171,110 @@ def sfx_chase_escaped(r):
 	return norm_peak(fade_tail(room(mix(parts, 1.1)), 0.1), -3)
 
 
+# ── Retour sensoriel des mini-jeux (courts, lisibles, jamais criards) ──
+
+def sfx_mg_perfect(r):
+	# Agogô aigu + petite cloche : le « Perfeito » doit claquer.
+	x = mix([(agogo(True), 0, 0.8), (chime(2349, 0.25), 0.03, 0.5), (tamborim(r), 0, 0.4)], 0.5)
+	return norm_peak(fade_tail(room(x, 0.6, 0.12)), -4)
+
+
+def sfx_mg_good(r):
+	return norm_peak(fade_tail(mix([(tamborim(r), 0, 0.8), (agogo(False), 0, 0.35)], 0.3)), -6)
+
+
+def sfx_mg_miss(r):
+	n = ns(0.28)
+	t = secs(n)
+	ph = sweep_phase(180 - 90 * t / t[-1])
+	y = np.tanh(2.0 * np.sin(ph)) * env_perc(n, 0.004, 0.12)
+	return norm_peak(fade_tail(y + 0.3 * lowpass(r.standard_normal(n), 600) * env_perc(n, 0.002, 0.05)), -7)
+
+
+def sfx_mg_hit(r):
+	# Contact de balle (pied, manchette) : conga sèche + claque.
+	x = mix([(conga(r, 170), 0, 0.9), (stick(r), 0, 0.4)], 0.25)
+	return norm_peak(fade_tail(x), -5)
+
+
+def sfx_mg_drop(r):
+	# Balle qui tombe dans le sable : sourd, étouffé.
+	n = ns(0.3)
+	thud = lowpass(r.standard_normal(n), 400) * env_perc(n, 0.003, 0.06)
+	return norm_peak(fade_tail(thud + 0.6 * kick808(70, 0.3)), -6)
+
+
+def sfx_checkpoint(r):
+	x = mix([(chime(1319, 0.3), 0, 0.6), (chime(1760, 0.35), 0.07, 0.6)], 0.5)
+	return norm_peak(fade_tail(x), -6)
+
+
+def sfx_splash(r):
+	n = ns(0.6)
+	t = secs(n)
+	wash = bandpass(r.standard_normal(n), 400, 5000) * np.exp(-t / 0.18) * np.clip(t / 0.01, 0, 1)
+	return norm_peak(fade_tail(wash + 0.4 * lowpass(r.standard_normal(n), 300) * env_perc(n, 0.005, 0.08)), -5)
+
+
+def sfx_fish_bite(r):
+	n = ns(0.18)
+	t = secs(n)
+	plop = np.sin(sweep_phase(300 + 900 * t / t[-1])) * np.sin(np.pi * t / t[-1])
+	return norm_peak(fade_tail(plop), -6)
+
+
+def sfx_oven_ding(r):
+	return norm_peak(fade_tail(bell(1760, 0.8, 1.0)), -6)
+
+
+def sfx_torcida_cheer(r):
+	n = ns(1.0)
+	t = secs(n)
+	crowd = bandpass(r.standard_normal(n), 300, 3500) * np.clip(t / 0.08, 0, 1) * np.exp(-t / 0.5)
+	parts = [(crowd, 0, 0.9), (surdo(r, 55, True), 0, 0.6)]
+	return norm_peak(fade_tail(mix(parts, 1.0), 0.15), -4)
+
+
+def sfx_dj_kick(r):
+	return norm_peak(fade_tail(kick808(52, 0.35)), -3)
+
+
+def sfx_dj_snare(r):
+	return norm_peak(fade_tail(mix([(clap(r), 0, 0.8), (caixa(r, 1.0, 0.14, 200), 0, 0.6)], 0.25)), -4)
+
+
+def sfx_dj_hat(r):
+	return norm_peak(fade_tail(highpass(shaker(r, 1.0, 0.06), 6000)), -8)
+
+
+def sfx_dj_synth(r):
+	n = ns(0.25)
+	t = secs(n)
+	f = mtof(69)
+	saw = sum(np.sin(k * 2 * np.pi * f * t) / k for k in range(1, 8))
+	return norm_peak(fade_tail(lowpass(saw, 2400) * env_perc(n, 0.004, 0.09)), -6)
+
+
+def sfx_samba_tamborim(r):
+	return norm_peak(fade_tail(tamborim(r)), -4)
+
+
+def sfx_samba_surdo(r):
+	return norm_peak(fade_tail(surdo(r, 55, True)), -3)
+
+
+def sfx_samba_cuica(r):
+	n = ns(0.3)
+	t = secs(n)
+	f = 520 + 380 * np.sin(np.pi * t / t[-1])
+	y = (np.sin(sweep_phase(f)) + 0.3 * np.sin(2 * sweep_phase(f))) * env_perc(n, 0.01, 0.12)
+	return norm_peak(fade_tail(y), -6)
+
+
+def sfx_samba_agogo(r):
+	return norm_peak(fade_tail(mix([(agogo(True), 0, 0.8), (agogo(False), 0.11, 0.6)], 0.5)), -5)
+
+
 # ───────────────────────────── catalogue ─────────────────────────────
 
 SAMBA_PROG = ["Am7", "Am7", "D9", "D9", "Gmaj7", "Cmaj7", "Bm7b5", "E7b9"]
@@ -1216,6 +1320,12 @@ SFX = {
 	"whistle": sfx_whistle, "basket_swish": sfx_basket_swish, "paddle": sfx_paddle,
 	"carnaval_drum": sfx_carnaval_drum, "ui_click": sfx_ui_click,
 	"chase_escaped": sfx_chase_escaped,
+	"mg_perfect": sfx_mg_perfect, "mg_good": sfx_mg_good, "mg_miss": sfx_mg_miss,
+	"mg_hit": sfx_mg_hit, "mg_drop": sfx_mg_drop, "checkpoint": sfx_checkpoint,
+	"splash": sfx_splash, "fish_bite": sfx_fish_bite, "oven_ding": sfx_oven_ding,
+	"torcida_cheer": sfx_torcida_cheer, "dj_kick": sfx_dj_kick, "dj_snare": sfx_dj_snare,
+	"dj_hat": sfx_dj_hat, "dj_synth": sfx_dj_synth, "samba_tamborim": sfx_samba_tamborim,
+	"samba_surdo": sfx_samba_surdo, "samba_cuica": sfx_samba_cuica, "samba_agogo": sfx_samba_agogo,
 }
 
 

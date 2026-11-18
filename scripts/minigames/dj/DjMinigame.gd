@@ -1,5 +1,5 @@
 class_name DjMinigame
-extends Node2D
+extends MinigameBase
 
 # Mini-jeu de rythme 4 lanes au sommet du Pão de Açúcar.
 # Des notes tombent du haut, le joueur doit les frapper pile sur la ligne cible
@@ -15,8 +15,8 @@ const TARGET_LINE_Y: float = 720.0
 const FALL_DIST: float = TARGET_LINE_Y - SPAWN_TOP_Y
 const FALL_SPEED: float = FALL_DIST / FALL_DURATION
 
-const PERFECT_WINDOW: float = 0.13  # secondes autour du target
-const GOOD_WINDOW: float = 0.28
+const PERFECT_WINDOW: float = 0.12  # secondes autour du target
+const GOOD_WINDOW: float = 0.22
 const MISS_GRACE: float = 0.15      # tolérance après target avant disparition
 
 const NOTE_W: float = 130.0
@@ -35,7 +35,10 @@ const LANE_COLORS: Array = [
 
 const POINTS_PERFECT: int = 14
 const POINTS_GOOD: int = 7
-const TIP_DIVISOR: float = 2.0  # tip = score / 2 (max ~30 notes × 14 / 2 ≈ 210 R$)
+# Combo jusqu'à ×3 : un set propre fait ~1500-2000 pts → 200-250 R$.
+const TIP_DIVISOR: float = 8.0
+# Qualifié = un set qui tient la piste (~35 notes justes avec un peu de combo).
+const QUALIFY_SCORE: int = 500
 
 var _time_left: float = DURATION
 var _ended: bool = false
@@ -79,11 +82,11 @@ func _ready() -> void:
 		if btn:
 			btn.text = LANE_LABELS[i]
 			btn.pivot_offset = btn.size * 0.5
+			# Sous sa lane, et réactif à l'appui (pas au relâché : c'est du rythme).
+			align_under_world_x(btn, LANE_X[i])
+			btn.add_theme_font_size_override("font_size", 33)
 			var lane_idx: int = i
-			btn.pressed.connect(func(): hit_lane(lane_idx))
-	var quit_btn: CanvasLayer = get_node_or_null("MinigameQuitButton")
-	if quit_btn and quit_btn.has_signal("quit_pressed"):
-		quit_btn.quit_pressed.connect(_end_game)
+			btn.button_down.connect(func(): hit_lane(lane_idx))
 	_rng.randomize()
 	_generate_pattern()
 
@@ -143,6 +146,7 @@ func _process(delta: float) -> void:
 			_combo = 0
 			node.modulate = Color(0.55, 0.25, 0.25, 0.5)
 			_set_status("MISS")
+			sfx("mg_miss")
 	_update_labels()
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -163,7 +167,19 @@ func hit_lane(lane: int) -> void:
 	_punch_lane_button(lane)
 	_hit_lane(lane)
 
+# Chaque pad sonne, même à vide : c'est le joueur qui fait la musique.
+const LANE_SFX: Array[String] = ["dj_kick", "dj_snare", "dj_hat", "dj_synth"]
+# Taper hors note casse le combo : le spam des 4 pads ne paie plus.
+const EMPTY_TAP_PENALTY: int = 4
+
+func _empty_tap() -> void:
+	_combo = 0
+	_score = maxi(_score - EMPTY_TAP_PENALTY, 0)
+	_set_status("CONTRATEMPO")
+	pulse(0.2, 0.05)
+
 func _hit_lane(lane: int) -> void:
+	sfx(LANE_SFX[lane])
 	var elapsed: float = DURATION - _time_left
 	var best_idx: int = -1
 	var best_dist: float = GOOD_WINDOW + 0.2
@@ -176,6 +192,7 @@ func _hit_lane(lane: int) -> void:
 			best_dist = dist
 			best_idx = i
 	if best_idx < 0:
+		_empty_tap()
 		return
 	var n = _notes[best_idx]
 	if best_dist <= PERFECT_WINDOW:
@@ -184,13 +201,17 @@ func _hit_lane(lane: int) -> void:
 		_perfects += 1
 		n.node.modulate = Color(0.4, 1.0, 0.4, 1)
 		_set_status("PERFECT x%d" % _combo)
+		sfx("mg_perfect")
+		pulse(0.35, 0.05)
 	elif best_dist <= GOOD_WINDOW:
 		_combo += 1
 		_score += int(round(POINTS_GOOD * _combo_mult()))
 		_goods += 1
 		n.node.modulate = Color(0.95, 0.85, 0.4, 1)
 		_set_status("GOOD x%d" % _combo)
+		sfx("mg_good")
 	else:
+		_empty_tap()
 		return
 	_max_combo = max(_max_combo, _combo)
 	n.hit = true
@@ -229,8 +250,9 @@ func _end_game() -> void:
 		return
 	_ended = true
 	var tips: int = int(round(_score / TIP_DIVISOR))
+	var qualifies: bool = final_qualifies(_score >= QUALIFY_SCORE)
 	if status_label:
 		status_label.text = "Fim do set ! combo max x%d · %d perfects · R$ %d en tips" % [_max_combo, _perfects, tips]
 	await get_tree().create_timer(2.5).timeout
-	EventBus.minigame_ended.emit("dj_paoacucar", {"score": _score, "tips": tips, "qualifies": tips > 0})
-	match_ended.emit(tips > 0, tips)
+	EventBus.minigame_ended.emit("dj_paoacucar", {"score": _score, "tips": tips, "qualifies": qualifies})
+	match_ended.emit(qualifies, tips)

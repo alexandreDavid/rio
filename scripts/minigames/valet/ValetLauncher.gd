@@ -48,7 +48,6 @@ func _on_match_ended(qualifies: bool, tips: int) -> void:
 		if inv:
 			inv.add_money(tips)
 	if qualifies:
-		ReputationSystem.gain_capped(ReputationSystem.Axis.TOURIST, 1, "valet_shifts", 5)
 		if QuestManager.is_active(QUEST_ID):
 			QuestManager.complete_objective(QUEST_ID, OBJECTIVE_ID)
 	if _active_match:

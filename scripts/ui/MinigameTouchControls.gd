@@ -14,11 +14,18 @@ func _ready() -> void:
 	if interact_button:
 		interact_button.visible = show_interact
 		interact_button.text = interact_label
-		interact_button.pressed.connect(_on_interact_pressed)
-		interact_button.button_down.connect(_on_interact_pressed)
+		interact_button.button_down.connect(_send_interact.bind(true))
+		interact_button.button_up.connect(_send_interact.bind(false))
 
-func _on_interact_pressed() -> void:
+# Appui ET relâché : sans le relâché, "interact" reste pressé pour toujours et
+# les mini-jeux qui lisent is_action_just_pressed ne voient plus aucun tap.
+func _send_interact(pressed: bool) -> void:
 	var ev: InputEventAction = InputEventAction.new()
 	ev.action = "interact"
-	ev.pressed = true
+	ev.pressed = pressed
 	Input.parse_input_event(ev)
+
+# Un bouton masqué ou retiré pendant l'appui n'émet jamais button_up.
+func _exit_tree() -> void:
+	if Input.is_action_pressed("interact"):
+		_send_interact(false)

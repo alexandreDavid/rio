@@ -1,8 +1,8 @@
 class_name SurfLauncher
 extends Node2D
 
-# Lance le mini-jeu de surf. Reward : +1 Touristes (axe TOURIST),
-# plafonné à 3 points via la source "surf".
+# Lance le mini-jeu de surf. Réputation + affinité + mestre : ActivityRewards
+# (signature "surf") ; le launcher ne gère que la quête de Lucas.
 
 @export var interactable: Interactable
 @export var match_scene: PackedScene
@@ -41,7 +41,6 @@ const LUCAS_OBJ_ID: String = "win_surf_session"
 
 func _on_match_ended(qualifies: bool, _time_survived: float) -> void:
 	if qualifies:
-		ReputationSystem.gain_capped(ReputationSystem.Axis.TOURIST, 1, "surf", 3)
 		# Quête Lucas (Arpoador) : la 1re session surf qualifiée coche l'objectif.
 		if QuestManager.is_active(LUCAS_QUEST_ID):
 			QuestManager.complete_objective(LUCAS_QUEST_ID, LUCAS_OBJ_ID)

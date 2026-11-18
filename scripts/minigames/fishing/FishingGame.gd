@@ -1,5 +1,5 @@
 class_name FishingGame
-extends Node2D
+extends MinigameBase
 
 # Pesca da Colônia — vraie pêche en 3 temps, au standard volley/surf :
 #   1. LANCER : jauge oscillante, 3 bandes d'eau (perto/meio/fundo) — plus
@@ -86,12 +86,10 @@ func _ready() -> void:
 	if action_btn:
 		action_btn.button_down.connect(_on_press)
 		action_btn.button_up.connect(_on_release)
-	var quit_btn: CanvasLayer = get_node_or_null("MinigameQuitButton")
-	if quit_btn and quit_btn.has_signal("quit_pressed"):
-		quit_btn.quit_pressed.connect(_end_game)
 	_build_cast_bands()
 	_build_fight_bars()
 	_build_bobber()
+	_dress_pier()
 	_update_score()
 	_enter_cast()
 
@@ -154,6 +152,62 @@ func _build_fight_bars() -> void:
 	_tension_bar.modulate = Color(0.95, 0.45, 0.4, 1)
 	_tension_bar.visible = false
 	$UI.add_child(_tension_bar)
+
+# Le décor : ciel et morros de Niterói à l'horizon, mer, quai de la Colônia
+# en bas, et le pêcheur (le joueur) avec sa canne — la ligne suit le bouchon.
+const ROD_TIP: Vector2 = Vector2(-20, -150)
+var _fishing_line: Line2D = null
+
+func _dress_pier() -> void:
+	var bg: CanvasItem = get_node_or_null("Background") as CanvasItem
+	if bg:
+		bg.z_index = -10
+	for n in ["RodShaft", "Line", "Hook"]:
+		var old: CanvasItem = get_node_or_null(n) as CanvasItem
+		if old:
+			old.visible = false
+	_deco(Rect2(-960, -540, 1920, 380), Color(0.98, 0.78, 0.55, 1), -9)
+	_deco(Rect2(-960, -300, 1920, 140), Color(0.95, 0.68, 0.5, 1), -9)
+	var morro: Polygon2D = Polygon2D.new()
+	morro.polygon = PackedVector2Array([Vector2(-960, -160), Vector2(-760, -230), Vector2(-620, -300), Vector2(-540, -250), Vector2(-380, -200), Vector2(-120, -175), Vector2(260, -190), Vector2(420, -245), Vector2(500, -215), Vector2(960, -170), Vector2(960, -160)])
+	morro.color = Color(0.36, 0.42, 0.5, 1)
+	morro.z_index = -8
+	add_child(morro)
+	_deco(Rect2(-960, -162, 1920, 4), Color(0.92, 0.95, 0.98, 0.7), -7)
+	# Quai en planches.
+	_deco(Rect2(-960, 150, 1920, 390), Color(0.5, 0.36, 0.24, 1), -3)
+	for i in 10:
+		_deco(Rect2(-960, 150 + i * 40, 1920, 3), Color(0.38, 0.27, 0.18, 1), -2)
+	_deco(Rect2(-960, 146, 1920, 8), Color(0.62, 0.47, 0.32, 1), -2)
+	var fisher: Sprite2D = char_sprite(260.0)
+	fisher.position = Vector2(-260, 420)
+	fisher.z_index = -1
+	add_child(fisher)
+	var rod: Line2D = Line2D.new()
+	rod.points = PackedVector2Array([Vector2(-235, 300), ROD_TIP])
+	rod.width = 6.0
+	rod.default_color = Color(0.4, 0.25, 0.14, 1)
+	add_child(rod)
+	_fishing_line = Line2D.new()
+	_fishing_line.width = 2.0
+	_fishing_line.default_color = Color(0.95, 0.95, 0.95, 0.8)
+	add_child(_fishing_line)
+
+func _deco(r: Rect2, color: Color, z: int) -> void:
+	var c: ColorRect = ColorRect.new()
+	c.position = r.position
+	c.size = r.size
+	c.color = color
+	c.z_index = z
+	c.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(c)
+
+func _update_line() -> void:
+	if _fishing_line == null or _bobber == null:
+		return
+	var end: Vector2 = _bobber.position + Vector2(7, 7) if _bobber.visible or _phase == Phase.FIGHT \
+			else ROD_TIP + Vector2(0, 120)
+	_fishing_line.points = PackedVector2Array([ROD_TIP, end])
 
 func _build_bobber() -> void:
 	_bobber = ColorRect.new()
@@ -224,6 +278,7 @@ func _enter_pause(text: String) -> void:
 func _process(delta: float) -> void:
 	if _ended:
 		return
+	_update_line()
 	_time_left -= delta
 	if _time_left <= 0.0 and _phase != Phase.FIGHT:
 		_end_game()
@@ -263,11 +318,15 @@ func _tick_wait(delta: float) -> void:
 			_nibbles_left -= 1
 			_event_timer = _rng.randf_range(0.8, 1.8)
 			_set_status("…le bouchon frémit. Pas encore. Segura a onda.")
+			sfx("fish_bite", 0.7)
+			pulse(0.15, 0.04)
 			_bobber.position.y = float(_band.y) + 6.0
 		else:
 			_strike_active = true
 			_strike_elapsed = 0.0
 			_set_status("‼ FISGA AGORA !")
+			sfx("fish_bite", 1.2)
+			pulse(0.8, 0.15)
 			_set_action_text("⚡ FERRER !")
 
 func _tick_fight(delta: float) -> void:
@@ -277,6 +336,7 @@ func _tick_fight(delta: float) -> void:
 		if _pull_active:
 			_pull_timer = float(_band.pull_len)
 			_set_status("⚠ PUXADA — lâche, laisse-le tirer !")
+			pulse(0.6, 0.25)
 		else:
 			_pull_timer = _rng.randf_range(float(_band.pull_every[0]), float(_band.pull_every[1]))
 			_set_status("Il fatigue — mouline !")
@@ -291,11 +351,15 @@ func _tick_fight(delta: float) -> void:
 	_progress_bar.value = _progress
 	_tension_bar.value = _tension
 	if _tension >= 100.0:
+		sfx("mg_miss")
+		pulse(0.8, 0.2)
 		_enter_pause("💥 LIGNE CASSÉE ! Le %s repart avec ton hameçon." % _band.species)
 	elif _progress >= 100.0:
 		var value: int = int(round(float(_band.value) * (1.5 if _perfeito else 1.0)))
 		_catches += 1
 		_score += value
+		sfx("splash")
+		sfx("mg_perfect" if _perfeito else "mg_good")
 		_enter_pause("🐟 %s au sec%s — +%d pts !"
 				% [_band.species, " (ferrage Perfeito ×1.5)" if _perfeito else "", value])
 
@@ -308,6 +372,7 @@ func _on_press() -> void:
 	match _phase:
 		Phase.CAST:
 			var idx: int = clampi(int(_cursor_pos * BANDS.size()), 0, BANDS.size() - 1)
+			sfx("splash", 1.4)
 			_enter_wait(idx)
 		Phase.WAIT:
 			if _strike_active:
@@ -315,6 +380,7 @@ func _on_press() -> void:
 				_strike_active = false
 				_enter_fight()
 			else:
+				sfx("mg_miss")
 				_enter_pause("Ferré dans le vide — le banc s'est enfui. Calma, pescador…")
 
 func _on_release() -> void:
@@ -348,7 +414,7 @@ func _end_game() -> void:
 	_ended = true
 	_phase = Phase.ENDED
 	var payout: int = _score
-	var qualifies: bool = _score >= QUALIFY_SCORE
+	var qualifies: bool = final_qualifies(_score >= QUALIFY_SCORE)
 	if status_label:
 		if qualifies:
 			status_label.text = "Fin — %d prises, %d pts. La colônia te respecte, pescador. (+R$ %d)" \

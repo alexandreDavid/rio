@@ -53,15 +53,13 @@ func _launch() -> void:
 	if _active_match.has_signal("match_ended"):
 		_active_match.match_ended.connect(_on_match_ended)
 
-func _on_match_ended(qualifies: bool, tips: int) -> void:
+func _on_match_ended(_qualifies: bool, tips: int) -> void:
 	if tips > 0:
 		var inv: Inventory = null
 		if GameManager.player:
 			inv = GameManager.player.get_node_or_null("Inventory") as Inventory
 		if inv:
 			inv.add_money(tips)
-	if qualifies:
-		ReputationSystem.gain_capped(ReputationSystem.Axis.STREET, 2, "racha_wins", 8)
 	if _active_match:
 		_active_match.queue_free()
 		_active_match = null

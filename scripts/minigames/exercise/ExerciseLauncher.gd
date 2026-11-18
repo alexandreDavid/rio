@@ -33,10 +33,7 @@ func _launch() -> void:
 	if _active_match.has_signal("match_ended"):
 		_active_match.match_ended.connect(_on_match_ended)
 
-func _on_match_ended(qualifies: bool, _reps: int) -> void:
-	if qualifies:
-		# Source "gym" plafonnée à 3 points de Charisma sur toute la partie.
-		ReputationSystem.gain_capped(ReputationSystem.Axis.CHARISMA, 1, "gym", 3)
+func _on_match_ended(_qualifies: bool, _reps: int) -> void:
 	if _active_match:
 		_active_match.queue_free()
 		_active_match = null

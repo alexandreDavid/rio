@@ -1,5 +1,5 @@
 class_name MilhoGame
-extends Node2D
+extends MinigameBase
 
 # Hora do rush — la carrocinha de Zé après l'acte 1. Le milho n'est plus une
 # tournée de 3 épis à 5 R$ : c'est un service sous pression où l'on gagne en
@@ -126,14 +126,13 @@ func _ready() -> void:
 	var cam: Camera2D = get_node_or_null("Camera2D")
 	if cam:
 		cam.make_current()
-	var quit_btn: CanvasLayer = get_node_or_null("MinigameQuitButton")
-	if quit_btn and quit_btn.has_signal("quit_pressed"):
-		quit_btn.quit_pressed.connect(_end_game)
 	for i in POT_SLOTS:
 		_pot.append({})
 	for i in QUEUE_SLOTS:
 		_queue.append({})
 	_build_ui()
+	add_to_group("gamepad_menu")
+	GamepadBridge.focus_first.call_deferred(self)
 	_set_status("Hora do rush ! Plonge les épis, sers NO PONTO, et retiens tes fregueses.")
 	_refresh_all()
 
@@ -199,7 +198,9 @@ func _button(pos: Vector2, size: Vector2, font: int) -> Button:
 	b.size = size
 	b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	b.add_theme_font_size_override("font_size", font)
-	b.focus_mode = Control.FOCUS_NONE
+	# Focusable : à la manette, la croix navigue entre panela, garnitures et
+	# clients, A sert (GamepadBridge.focus_first + groupe gamepad_menu).
+	b.focus_mode = Control.FOCUS_ALL
 	add_child(b)
 	return b
 
@@ -276,11 +277,13 @@ func _on_pot_pressed(i: int) -> void:
 		return
 	if _pot[i].is_empty():
 		_pot[i] = {"t": 0.0}
+		sfx("splash", 1.6)
 		return
 	if not _hand.is_empty():
 		_set_status("Tu as déjà un épi en main — sers-le ou jette-le.")
 		return
 	_hand = {"cook": cook_state(float(_pot[i].t)), "toppings": []}
+	sfx("item_pickup")
 	_pot[i] = {}
 	_refresh_all()
 
@@ -315,6 +318,9 @@ func _on_client_pressed(i: int) -> void:
 	var is_kid: bool = c.get("kind", "") == "gamin"
 	match g:
 		Grade.PERFEITO:
+			sfx("mg_perfect")
+			sfx("coin")
+			pulse(0.35, 0.06)
 			_score += 3
 			_perfeitos += 1
 			_served += 1
@@ -331,12 +337,15 @@ func _on_client_pressed(i: int) -> void:
 			else:
 				_set_status("✨ PERFEITO — no ponto ! (+R$ %d)" % gain)
 		Grade.BOA:
+			sfx("mg_good")
 			_score += 1
 			_served += 1
 			var paid: int = 0 if is_kid else PRICE
 			_cash += paid
 			_set_status("✔ Boa — bonne garniture, mais pas no ponto. (+R$ %d)" % paid)
 		_:
+			sfx("mg_miss")
+			pulse(0.4, 0.1)
 			_set_status("✖ Mole — « Isso não é o meu milho ! » %s repart sans payer." % c.name)
 	_refresh_all()
 
@@ -428,7 +437,7 @@ func _end_game() -> void:
 	if _ended:
 		return
 	_ended = true
-	var qualifies: bool = _score >= QUALIFY_SCORE
+	var qualifies: bool = final_qualifies(_score >= QUALIFY_SCORE)
 	if qualifies:
 		_set_status("Fim do rush — %d servis, %d Perfeitos, R$ %d. A carrocinha do Zé tá viva !" % [_served, _perfeitos, _cash])
 	else:

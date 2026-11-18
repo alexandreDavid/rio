@@ -1,5 +1,5 @@
 class_name RegataGame
-extends Node2D
+extends MinigameBase
 
 # Regata da Glória — un dériveur dans la baie, au standard volley/surf.
 # Le vent vient du nord (avec des rafales qui le font tourner). On ne remonte
@@ -97,9 +97,6 @@ func _ready() -> void:
 	var cam: Camera2D = get_node_or_null("Camera2D")
 	if cam:
 		cam.make_current()
-	var quit_btn: CanvasLayer = get_node_or_null("MinigameQuitButton")
-	if quit_btn and quit_btn.has_signal("quit_pressed"):
-		quit_btn.quit_pressed.connect(_end_game)
 	_hud = _label(Vector2(-900, -530), Vector2(1800, 50), 28)
 	_status = _label(Vector2(-900, 470), Vector2(1800, 56), 24)
 	_hold_button(Vector2(-940, 320), "◀ Bombordo", true)
@@ -186,6 +183,7 @@ func _update_boat(delta: float) -> void:
 		if _last_side != 0 and side != _last_side:
 			if _luff_time <= CLEAN_TACK_SEC:
 				_set_status("✨ Bordo limpo ! Virement propre, le bateau repart.")
+				sfx("mg_good")
 			else:
 				_set_status("Virement lent — tu as perdu ton erre face au vent.")
 		elif _luff_time > 2.5:
@@ -225,6 +223,8 @@ func _check_marks() -> void:
 		return
 	if _pos.distance_to(MARKS[_next_mark]) <= ROUND_RADIUS:
 		_next_mark += 1
+		sfx("checkpoint")
+		pulse(0.3, 0.06)
 		if _next_mark >= MARKS.size():
 			_finished_at = _time
 			_end_game()
@@ -293,7 +293,7 @@ func _end_game() -> void:
 	_ended = true
 	_turn_left = false
 	_turn_right = false
-	var qualifies: bool = _finished_at >= 0.0
+	var qualifies: bool = final_qualifies(_finished_at >= 0.0)
 	var beat_rival: bool = qualifies and (_rival_done_at < 0.0 or _finished_at < _rival_done_at)
 	if beat_rival:
 		_set_status("🏆 PERFEITO — arrivée en %ds, devant Bia ! A Glória é sua." % int(_finished_at))

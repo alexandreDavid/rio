@@ -1,5 +1,5 @@
 class_name CarnavalSamba
-extends Node2D
+extends MinigameBase
 
 # Mini-jeu rythmique du Carnaval (Sambódromo). 4 instruments — tamborim, surdo,
 # cuíca, agogô — sur 4 lanes. Pattern scripté en boucle samba (3-3-2 syncopé).
@@ -15,8 +15,8 @@ const TARGET_LINE_Y: float = 720.0
 const FALL_DIST: float = TARGET_LINE_Y - SPAWN_TOP_Y
 const FALL_SPEED: float = FALL_DIST / FALL_DURATION
 
-const PERFECT_WINDOW: float = 0.13
-const GOOD_WINDOW: float = 0.28
+const PERFECT_WINDOW: float = 0.12
+const GOOD_WINDOW: float = 0.22
 const MISS_GRACE: float = 0.15
 
 const NOTE_W: float = 130.0
@@ -35,8 +35,12 @@ const LANE_COLORS: Array = [
 
 const POINTS_PERFECT: int = 16
 const POINTS_GOOD: int = 8
-const QUALIFY_SCORE: int = 240   # ~15 perfects + 5 goods sur 90 s
-const TIP_DIVISOR: float = 1.5
+# ~moitié des ~85 notes justes (mix perfect/good) : un vrai desfile, pas un tap.
+const QUALIFY_SCORE: int = 480
+# La caixinha du bloco (≈ 150-250 R$ pour un bon desfile).
+const TIP_DIVISOR: float = 5.0
+# Deux temps de silence avant la 1re note (elle tombait déjà sur la ligne).
+const LEAD_IN: float = 2.0
 
 # Pattern samba sur 8 temps (2 mesures), scripté pour avoir une vibe carnaval.
 # Format : [offset_dans_le_pattern_en_secondes, lane].
@@ -59,6 +63,19 @@ const PATTERN: Array = [
 	[3.75, 0],  # tamborim de fin
 ]
 const PATTERN_DURATION: float = 4.0
+# Virada : la bateria accélère, doubles de tamborim et cuíca qui répond.
+const PATTERN_VIRADA: Array = [
+	[0.00, 1], [0.25, 0], [0.375, 0], [0.50, 0], [0.75, 2],
+	[1.00, 1], [1.25, 0], [1.375, 0], [1.50, 3], [1.75, 2],
+	[2.00, 1], [2.25, 0], [2.50, 3], [2.625, 3], [2.75, 2],
+	[3.00, 1], [3.25, 0], [3.375, 0], [3.50, 0], [3.75, 2],
+]
+# Breque : le mestre coupe, seuls les surdos et un agogô tiennent le temps.
+const PATTERN_BREQUE: Array = [
+	[0.00, 1], [1.00, 1], [1.50, 3], [2.00, 1], [3.00, 1], [3.50, 3], [3.75, 3],
+]
+# Mesures jouées en boucle : base, base, virada, breque.
+const CYCLE_ORDER: Array = [0, 0, 1, 2]
 
 var _time_left: float = DURATION
 var _ended: bool = false
@@ -68,7 +85,7 @@ var _goods: int = 0
 var _misses: int = 0
 var _notes: Array = []
 var _spawn_idx: int = 0
-var _next_pattern_t: float = 0.0
+var _next_pattern_t: float = LEAD_IN
 
 @onready var note_layer: Node2D = $NoteLayer
 @onready var status_label: Label = $UI/Status
@@ -91,11 +108,11 @@ func _ready() -> void:
 			# Affiche l'instrument de la lane (mobile : sinon le joueur devine).
 			btn.text = LANE_LABELS[i]
 			btn.pivot_offset = btn.size * 0.5
+			# Sous sa lane, et réactif à l'appui (pas au relâché : c'est du rythme).
+			align_under_world_x(btn, LANE_X[i])
+			btn.add_theme_font_size_override("font_size", 33)
 			var lane_idx: int = i
-			btn.pressed.connect(func(): hit_lane(lane_idx))
-	var quit_btn: CanvasLayer = get_node_or_null("MinigameQuitButton")
-	if quit_btn and quit_btn.has_signal("quit_pressed"):
-		quit_btn.quit_pressed.connect(_end_game)
+			btn.button_down.connect(func(): hit_lane(lane_idx))
 	_set_status("Suis le rythme du bloc — touche les boutons colorés")
 
 # Appelable depuis un bouton mobile.
@@ -133,14 +150,14 @@ func _spawn_due(elapsed: float) -> void:
 	# Génère les notes d'avance pour qu'elles atteignent la ligne cible au bon temps.
 	var lookahead: float = FALL_DURATION + 0.05
 	while _next_pattern_t < elapsed + lookahead and _next_pattern_t < DURATION:
-		var pattern_offset: float = fmod(_next_pattern_t, PATTERN_DURATION)
-		# Trouve les notes du pattern qui correspondent à cette tranche [t, t+0.05].
-		# Plus simple : on génère le pattern complet par cycle.
 		_spawn_pattern_cycle(_next_pattern_t)
 		_next_pattern_t += PATTERN_DURATION
 
 func _spawn_pattern_cycle(cycle_start: float) -> void:
-	for entry in PATTERN:
+	var cycle: int = int(round((cycle_start - LEAD_IN) / PATTERN_DURATION))
+	var which: int = int(CYCLE_ORDER[cycle % CYCLE_ORDER.size()])
+	var pattern: Array = [PATTERN, PATTERN_VIRADA, PATTERN_BREQUE][which]
+	for entry in pattern:
 		var beat_t: float = cycle_start + float(entry[0])
 		if beat_t >= DURATION:
 			continue
@@ -169,6 +186,7 @@ func _advance_notes(elapsed: float) -> void:
 		if time_to_target < -MISS_GRACE:
 			_misses += 1
 			_set_status("MISS")
+			sfx("mg_miss")
 			to_remove.append(n)
 	for n in to_remove:
 		if is_instance_valid(n.node):
@@ -188,7 +206,12 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	hit_lane(lane)  # passe par la version publique → animation punch
 
+# Chaque frappe sonne son instrument : la bateria, c'est toi.
+const LANE_SFX: Array[String] = ["samba_tamborim", "samba_surdo", "samba_cuica", "samba_agogo"]
+const EMPTY_TAP_PENALTY: int = 4
+
 func _resolve_lane_press(lane: int) -> void:
+	sfx(LANE_SFX[lane])
 	var elapsed: float = DURATION - _time_left
 	# Trouve la note la plus proche dans cette lane.
 	var best: Dictionary = {}
@@ -201,12 +224,18 @@ func _resolve_lane_press(lane: int) -> void:
 			best_delta = d
 			best = n
 	if best.is_empty() or best_delta > GOOD_WINDOW:
+		# Atravessar o samba : frappe hors temps, le bloc le sent.
+		_score = maxi(_score - EMPTY_TAP_PENALTY, 0)
+		_set_status("ATRAVESSOU")
+		pulse(0.2, 0.05)
 		return
 	best.hit = true
 	if best_delta <= PERFECT_WINDOW:
 		_score += POINTS_PERFECT
 		_perfects += 1
 		_set_status("PERFECT!")
+		sfx("mg_perfect")
+		pulse(0.35, 0.05)
 	else:
 		_score += POINTS_GOOD
 		_goods += 1
@@ -228,7 +257,7 @@ func _end_game() -> void:
 	if _ended:
 		return
 	_ended = true
-	var qualifies: bool = _score >= QUALIFY_SCORE
+	var qualifies: bool = final_qualifies(_score >= QUALIFY_SCORE)
 	var tips: int = int(round(_score / TIP_DIVISOR))
 	if status_label:
 		if qualifies:

@@ -136,9 +136,9 @@ theme_override_colors/font_color = Color(0.85, 0.92, 0.95, 0.55)
 
 [node name="Sign" type="Label" parent="Arena"]
 offset_left = 760.0
-offset_top = 30.0
+offset_top = 100.0
 offset_right = 1160.0
-offset_bottom = 80.0
+offset_bottom = 150.0
 text = "ILHAS CAGARRAS"
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 30
@@ -183,7 +183,7 @@ offset_left = -540.0
 offset_top = 24.0
 offset_right = 540.0
 offset_bottom = 72.0
-text = "Contourne les 4 îlots dans l'ordre. Le courant pousse vers l'ouest."
+text = "Deux tours des 4 îlots, puis retour au départ. Le courant tourne !"
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 22
 theme_override_colors/font_color = Color(1, 0.95, 0.8, 1)

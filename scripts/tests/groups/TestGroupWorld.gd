@@ -1007,14 +1007,15 @@ func _test_regata_desembarque() -> void:
 		if DesembarqueGame.matches(p.attrs, g._client):
 			target = p
 	if target.is_empty():
-		for i in 40:
+		# Défilé un par un : le client peut sortir en dernier de la file.
+		for i in 400:
 			g._process(0.1)
 			for p in g._passengers:
 				if DesembarqueGame.matches(p.attrs, g._client):
 					target = p
 			if not target.is_empty():
 				break
-	_assert(not target.is_empty(), "scène : le bon passager finit par sortir de la porte")
+	_assert(not target.is_empty(), "scène : le bon passager finit par sortir de la porte (défilé)")
 	if not target.is_empty():
 		g.tap_at(target.sprite.position)
 		_assert(g._score >= 2 and g._cash >= DesembarqueGame.FARE and g._round == 1, "toucher le bon passager : course payée, client suivant")

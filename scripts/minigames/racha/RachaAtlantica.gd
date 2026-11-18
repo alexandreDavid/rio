@@ -1,5 +1,5 @@
 class_name RachaAtlantica
-extends Node2D
+extends MinigameBase
 
 # Course de rue type "racha carioca" sur l'Avenida Atlântica. Circuit rectangulaire
 # fermé, 3 tours, joueur + 3 IA avec vitesses différenciées. Récompense scalée
@@ -12,8 +12,25 @@ const MAX_DURATION: float = 180.0        # 3 min max, sinon on coupe court
 const ARENA_W: float = 1920.0
 const ARENA_H: float = 1080.0
 
-const PLAYER_SPEED: float = 380.0
-const AI_SPEEDS: Array = [365.0, 340.0, 310.0]  # IA0 (rouge) tough, IA2 (verte) facile
+const PLAYER_SPEED: float = 400.0
+# Inertie : on accélère et on freine, la voiture glisse dans les virages.
+const PLAYER_ACCEL: float = 700.0
+const PLAYER_GRIP: float = 3.2          # retour de l'adhérence (1/s)
+# Turbo (bouton Action / A / E) : 1,4 s à +35 %, recharge 6 s.
+const TURBO_MULT: float = 1.35
+const TURBO_TIME: float = 1.4
+const TURBO_COOLDOWN: float = 6.0
+const AI_SPEEDS: Array = [392.0, 372.0, 350.0]  # IA0 (rouge) tough, IA2 (verte) facile
+# Hors bitume (canteiro central ou trottoir) tout le monde ralentit.
+const TRACK_OUTER: Rect2 = Rect2(200, 240, 1520, 600)
+const TRACK_INNER: Rect2 = Rect2(460, 400, 1000, 280)
+const OFFROAD_MULT: float = 0.45
+# Trajectoire de l'IA : les portes + les coins (évite de couper par l'herbe).
+const AI_WAYPOINTS: Array = [
+	Vector2(1100, 320), Vector2(1590, 330), Vector2(1600, 540), Vector2(1590, 750),
+	Vector2(1100, 760), Vector2(330, 750), Vector2(320, 540), Vector2(330, 330),
+]
+const COUNTDOWN: float = 3.0
 
 const CAR_RADIUS: float = 14.0
 const CHECKPOINT_RADIUS: float = 70.0
@@ -28,10 +45,11 @@ const CHECKPOINTS: Array = [
 	Vector2(320, 540),   # CP3 — left
 ]
 
+# Inscription 50 R$ : la vitória rapporte, sans faire du racha une planche à billets.
 const PAYOUTS: Dictionary = {
-	1: 600,
-	2: 200,
-	3: 60,
+	1: 220,
+	2: 100,
+	3: 40,
 	4: 0,
 }
 
@@ -39,6 +57,10 @@ const PAYOUTS: Dictionary = {
 var _racers: Array = []
 var _ended: bool = false
 var _time_elapsed: float = 0.0
+var _countdown: float = COUNTDOWN
+var _turbo_left: float = 0.0
+var _turbo_cd: float = 0.0
+var _last_beat: int = 4
 
 @onready var arena: Node2D = $Arena
 @onready var cp_markers: Node2D = $Arena/Checkpoints
@@ -56,15 +78,15 @@ func _ready() -> void:
 	_init_racers()
 	_render_checkpoints()
 	if status_label:
-		status_label.text = "Racha da Atlântica · 3 tours · clockwise"
+		status_label.text = "Racha da Atlântica · 3 tours · reste sur le bitume"
 	if prompt_label:
-		prompt_label.text = "Joystick : accélérer" if OS.has_feature("mobile") else "[WASD / Flèches] accélérer"
+		prompt_label.text = "Joystick : piloter · Turbo : coup de boost"
 
 func _init_racers() -> void:
-	# Spawn grille de départ : 4 cases derrière CP0, alignement horizontal.
-	var grid_y: float = 280.0
-	var grid_xs: Array = [1000.0, 1080.0, 1160.0, 1240.0]
-	# Joueur en case 2 (deuxième en partant de la gauche, position avantageuse)
+	# Grille derrière la ligne (CP0, x=1100), en quinconce sur 2 files ; on
+	# vise d'abord CP1 : la ligne n'est franchie qu'à la fin de chaque tour.
+	var grid: Array = [Vector2(1040, 300), Vector2(1000, 350), Vector2(950, 300), Vector2(910, 350)]
+	# Joueur en tête de grille : il doit défendre, pas remonter tout le peloton.
 	var configs: Array = [
 		{"name": "Sobrinho",    "color": Color(0.95, 0.85, 0.4, 1),  "is_player": true,  "speed": PLAYER_SPEED},
 		{"name": "Faísca",      "color": Color(0.85, 0.32, 0.25, 1), "is_player": false, "speed": AI_SPEEDS[0]},
@@ -73,11 +95,12 @@ func _init_racers() -> void:
 	]
 	for i in CARS_TOTAL:
 		var cfg: Dictionary = configs[i]
-		var pos: Vector2 = Vector2(grid_xs[i], grid_y)
+		var pos: Vector2 = grid[i]
 		_racers.append({
 			"pos": pos,
 			"vel": Vector2.ZERO,
-			"next_cp": 0,
+			"next_cp": 1,
+			"wp": 1,
 			"lap": 0,
 			"finished": false,
 			"finish_time": -1.0,
@@ -115,7 +138,17 @@ func _render_checkpoints() -> void:
 func _process(delta: float) -> void:
 	if _ended:
 		return
+	if _countdown > 0.0:
+		_tick_countdown(delta)
+		return
 	_time_elapsed += delta
+	_turbo_left = maxf(_turbo_left - delta, 0.0)
+	_turbo_cd = maxf(_turbo_cd - delta, 0.0)
+	if Input.is_action_just_pressed("interact") and _turbo_cd <= 0.0:
+		_turbo_left = TURBO_TIME
+		_turbo_cd = TURBO_COOLDOWN
+		sfx("whistle", 1.4)
+		pulse(0.5, 0.2)
 	if _time_elapsed >= MAX_DURATION:
 		_end_race(true)
 		return
@@ -125,6 +158,25 @@ func _process(delta: float) -> void:
 	# Si le joueur a fini ET toutes les positions sont déterminables, on termine.
 	if _all_finished() or _player_finished_and_others_settled():
 		_end_race(false)
+
+# 3, 2, 1… VAI ! — personne ne bouge avant le coup de sifflet.
+func _tick_countdown(delta: float) -> void:
+	_countdown -= delta
+	var beat: int = int(ceil(_countdown))
+	if beat != _last_beat:
+		_last_beat = beat
+		if beat > 0:
+			sfx("mg_good", 0.8)
+			if status_label:
+				status_label.text = str(beat)
+		else:
+			sfx("whistle")
+			pulse(0.4, 0.1)
+			if status_label:
+				status_label.text = "VAI !"
+
+func _on_track(p: Vector2) -> bool:
+	return TRACK_OUTER.has_point(p) and not TRACK_INNER.has_point(p)
 
 func _update_racers(delta: float) -> void:
 	for r in _racers:
@@ -147,7 +199,24 @@ func _update_player(r: Dictionary, delta: float) -> void:
 	)
 	if dir.length() > 1.0:
 		dir = dir.normalized()
-	r.pos += dir * r.speed * delta
+	var top: float = float(r.speed) * (TURBO_MULT if _turbo_left > 0.0 else 1.0)
+	if not _on_track(r.pos):
+		top *= OFFROAD_MULT
+	# Accélère vers la direction voulue ; l'adhérence ramène la vitesse dans
+	# l'axe (dérapage court dans les virages serrés).
+	var want: Vector2 = dir * top
+	var vel: Vector2 = r.vel
+	vel = vel.move_toward(want, PLAYER_ACCEL * delta)
+	vel = vel.lerp(want.normalized() * vel.length() if want.length() > 1.0 else vel, clampf(PLAYER_GRIP * delta, 0.0, 1.0))
+	r.vel = vel
+	r.pos += vel * delta
+	# Mureta : on rebondit sur le bord extérieur (petite perte de vitesse).
+	var wall: Rect2 = TRACK_OUTER.grow(60.0)
+	if not wall.has_point(r.pos):
+		r.pos = r.pos.clamp(wall.position, wall.end)
+		r.vel = -r.vel * 0.3
+		sfx("mg_drop")
+		pulse(0.5, 0.12)
 
 func _update_ai(r: Dictionary, delta: float) -> void:
 	# Vers le prochain checkpoint avec un peu de jitter (sinon trajectoires
@@ -156,11 +225,20 @@ func _update_ai(r: Dictionary, delta: float) -> void:
 	if r.ai_jitter_timer <= 0.0:
 		r.ai_jitter_timer = 0.5 + randf() * 0.4
 		r.ai_jitter = Vector2(randf_range(-0.25, 0.25), randf_range(-0.25, 0.25))
-	var target: Vector2 = CHECKPOINTS[r.next_cp]
+	var target: Vector2 = AI_WAYPOINTS[r.wp]
+	if r.pos.distance_to(target) < 90.0:
+		r.wp = (int(r.wp) + 1) % AI_WAYPOINTS.size()
+		target = AI_WAYPOINTS[r.wp]
 	var dir: Vector2 = (target - r.pos).normalized() + r.ai_jitter
 	if dir.length() > 1.0:
 		dir = dir.normalized()
-	r.pos += dir * r.speed * delta
+	# Élastique : derrière le joueur on pousse un peu, loin devant on lève le pied.
+	var gap: int = _progress_score(r) - _progress_score(_racers[0])
+	var rubber: float = 1.08 if gap < 0 else (0.94 if gap > 1 else 1.0)
+	var speed: float = float(r.speed) * rubber
+	if not _on_track(r.pos):
+		speed *= OFFROAD_MULT
+	r.pos += dir * speed * delta
 
 func _check_checkpoints() -> void:
 	for r in _racers:
@@ -169,15 +247,20 @@ func _check_checkpoints() -> void:
 		var target: Vector2 = CHECKPOINTS[r.next_cp]
 		if r.pos.distance_to(target) > CHECKPOINT_RADIUS:
 			continue
-		# Avance d'un checkpoint. CP0 atteint en provenance de CP3 = tour bouclé.
-		r.next_cp += 1
-		if r.next_cp >= CHECKPOINTS.size():
-			r.next_cp = 0
+		# Tour bouclé quand on repasse la ligne (CP0) après CP3.
+		if r.next_cp == 0:
 			r.lap += 1
+			r.next_cp = 1
+			if r.is_player:
+				sfx("mg_good")
 			if r.lap >= LAPS_REQUIRED:
 				r.finished = true
 				r.finish_time = _time_elapsed
 				r.final_position = _next_finish_position()
+		else:
+			r.next_cp = (int(r.next_cp) + 1) % CHECKPOINTS.size()
+			if r.is_player:
+				sfx("checkpoint")
 
 func _next_finish_position() -> int:
 	var count: int = 0
@@ -228,19 +311,28 @@ func _update_labels() -> void:
 # Position en course basée sur la progression (lap * 4 + next_cp), à comparer
 # avec les autres. Plus haut = meilleure position.
 func _compute_live_position(target: Dictionary) -> int:
-	var target_score: int = _progress_score(target)
+	var target_value: float = _progress_value(target)
 	var ahead: int = 0
 	for r in _racers:
 		if r == target:
 			continue
-		if _progress_score(r) > target_score:
+		if _progress_value(r) > target_value:
 			ahead += 1
 	return ahead + 1
 
+# Progression fine : rang de porte, puis proximité de la porte visée.
+func _progress_value(r: Dictionary) -> float:
+	var gate_pos: Vector2 = CHECKPOINTS[int(r.next_cp)]
+	return float(_progress_score(r)) * 10000.0 - (r.pos as Vector2).distance_to(gate_pos)
+
 func _progress_score(r: Dictionary) -> int:
-	# Une lap complète = 4 cp. On y ajoute next_cp pour départager les
-	# coureurs dans le même tour.
-	return r.lap * CHECKPOINTS.size() + r.next_cp
+	# Une lap complète = 4 portes (next_cp 1,2,3 puis 0 = ligne). On y ajoute
+	# la distance à la porte visée pour départager deux voitures au même rang.
+	var gate: int = int(r.next_cp) if int(r.next_cp) > 0 else CHECKPOINTS.size()
+	return int(r.lap) * CHECKPOINTS.size() + gate
+
+func quit_game() -> void:
+	_end_race(true)
 
 func _end_race(timeout: bool) -> void:
 	if _ended:
@@ -256,10 +348,13 @@ func _end_race(timeout: bool) -> void:
 	var pos: int = player.final_position
 	if pos < 1:
 		pos = _compute_live_position(player)
-	var tip: int = int(PAYOUTS.get(pos, 0))
-	var qualifies: bool = pos <= 2  # podium = qualifié (gagne le mini-jeu)
+	# Abandon = aucune prime, même en tête au moment de partir.
+	var tip: int = 0 if forfeited else int(PAYOUTS.get(pos, 0))
+	var qualifies: bool = final_qualifies(pos <= 2)  # podium = qualifié (gagne le mini-jeu)
 	if status_label:
-		if timeout:
+		if forfeited:
+			status_label.text = "Abandon · R$ 0"
+		elif timeout:
 			status_label.text = "Temps écoulé · Position %d · R$ %d" % [pos, tip]
 		elif pos == 1:
 			status_label.text = "VITORIA ! · %.1fs · R$ %d" % [player.finish_time, tip]

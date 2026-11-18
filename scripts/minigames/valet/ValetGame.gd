@@ -1,15 +1,20 @@
 class_name ValetGame
-extends Node2D
+extends MinigameBase
 
 # Mini-jeu valet du Copa Palace.
 # Cycle : voiture arrive à l'entrée → garer dans une place libre → patience client →
 # voiture réclamée (clignote) → ramener à l'entrée. Tip selon vitesse de réponse.
-# Tolérant : vitesse haute, portées larges, surlignage des cibles, labels contextuels.
+# Pression : les voitures arrivent à leur rythme (de plus en plus serré), un
+# client qui attend trop à l'entrée klaxonne (tip rogné), et une voiture
+# réclamée non rendue à temps = client parti furieux, sans tip.
 
 signal match_ended(qualifies: bool, tips: int)
 
 const DURATION: float = 120.0
-const MAX_CUSTOMERS: int = 4
+const MAX_CUSTOMERS: int = 8
+# Qualifié = au moins 4 clients rendus, au plus 1 parti fâché.
+const QUALIFY_SERVED: int = 4
+const MAX_LOST_TO_QUALIFY: int = 1
 
 const ARENA_W: float = 1920.0
 const ARENA_H: float = 1080.0
@@ -44,15 +49,25 @@ const CAR_COLORS: Array = [
 
 const TIP_BASE: int = 12
 const TIP_MAX: int = 40
-const PATIENCE: float = 16.0
+# Temps garé avant que le client redemande sa voiture (tiré au hasard).
+const PATIENCE_MIN: float = 10.0
+const PATIENCE_MAX: float = 18.0
+# Au-delà, le client réclamant repart fâché (tip 0, client perdu).
 const RESPONSE_WINDOW: float = 22.0
-const SPAWN_DELAY_AFTER_RETURN: float = 1.0
+# Une voiture laissée à l'entrée au-delà de ce délai klaxonne (−10 R$ de tip).
+const HONK_AFTER: float = 9.0
+const HONK_PENALTY: int = 10
+# Intervalle d'arrivée : de 11 s en début de service à 5 s à la fin.
+const SPAWN_INTERVAL_START: float = 11.0
+const SPAWN_INTERVAL_END: float = 5.0
+const MAX_WAITING_AT_ENTRANCE: int = 2
 const SPAWN_DELAY_INITIAL: float = 0.5
 
 enum CarStatus { ARRIVING, CARRIED, PARKED, REQUESTED, DELIVERED }
 
 var _time_left: float = DURATION
 var _customers_served: int = 0
+var _lost: int = 0
 var _total_tips: int = 0
 var _ended: bool = false
 var _total_spawned: int = 0
@@ -96,7 +111,9 @@ func _ready() -> void:
 	if help_button:
 		help_button.pressed.connect(_open_tutorial)
 	if tutorial_root:
+		tutorial_root.add_to_group("gamepad_menu")
 		tutorial_root.visible = true
+		GamepadBridge.focus_first.call_deferred(tutorial_root)
 	if help_button:
 		help_button.visible = false
 	if touch_controls:
@@ -116,7 +133,7 @@ func _process(delta: float) -> void:
 		return
 	_time_left -= delta
 	_spawn_cooldown = max(0.0, _spawn_cooldown - delta)
-	if _time_left <= 0.0 or _customers_served >= MAX_CUSTOMERS:
+	if _time_left <= 0.0 or _customers_served + _lost >= MAX_CUSTOMERS:
 		_end_game()
 		return
 	_update_player(delta)
@@ -138,6 +155,7 @@ func _open_tutorial() -> void:
 	_tutorial_visible = true
 	if tutorial_root:
 		tutorial_root.visible = true
+		GamepadBridge.focus_first.call_deferred(tutorial_root)
 	if help_button:
 		help_button.visible = false
 	if touch_controls:
@@ -251,13 +269,34 @@ func _deliver(c: Dictionary) -> void:
 	var waited: float = elapsed - float(c.requested_at)
 	var ratio: float = clamp(1.0 - waited / RESPONSE_WINDOW, 0.0, 1.0)
 	var tip: int = int(round(TIP_BASE + (TIP_MAX - TIP_BASE) * ratio))
+	if c.get("honked", false):
+		tip = maxi(tip - HONK_PENALTY, 0)
 	_total_tips += tip
+	sfx("coin")
+	if ratio >= 0.6:
+		sfx("mg_perfect")
+		pulse(0.35, 0.06)
 	_customers_served += 1
 	c.status = CarStatus.DELIVERED
 	(c.node as ColorRect).queue_free()
 	_carried_idx = -1
-	_spawn_cooldown = SPAWN_DELAY_AFTER_RETURN
 	_set_status("+R$ %d tip ! (%d/%d clients)" % [tip, _customers_served, MAX_CUSTOMERS])
+
+# Client réclamant laissé trop longtemps : il part (à pied, furieux), la
+# voiture reste au garage de l'hôtel — plus rien à gagner sur ce client.
+func _lose_customer(c: Dictionary) -> void:
+	_lost += 1
+	var idx: int = _cars.find(c)
+	if idx == _carried_idx:
+		_carried_idx = -1
+	if int(c.slot_idx) >= 0:
+		_occupied_slots.erase(int(c.slot_idx))
+	c.status = CarStatus.DELIVERED
+	c.requested_pending = false
+	(c.node as ColorRect).queue_free()
+	sfx("mg_miss")
+	pulse(0.6, 0.2)
+	_set_status("😤 « Esquece ! » Un client est parti sans sa voiture (%d perdu%s)." % [_lost, "s" if _lost > 1 else ""])
 
 # --- Cycle clients ---
 
@@ -265,19 +304,34 @@ func _update_cars() -> void:
 	var elapsed: float = DURATION - _time_left
 	for c in _cars:
 		if c.status == CarStatus.PARKED:
-			if elapsed - float(c.parked_at) >= PATIENCE:
+			if elapsed - float(c.parked_at) >= float(c.patience):
 				c.status = CarStatus.REQUESTED
 				c.requested_pending = true
 				c.requested_at = elapsed
+				sfx("prompt_chime")
+				_set_status("Un client redemande sa voiture — elle clignote !")
+		elif c.status == CarStatus.ARRIVING and not c.honked:
+			if elapsed - float(c.arrived_at) >= HONK_AFTER:
+				c.honked = true
+				sfx("mg_miss", 1.3)
+				pulse(0.3, 0.1)
+				_set_status("📯 Fom-fom ! Une voiture s'impatiente à l'entrée.")
+	for c in _cars.duplicate():
+		if c.requested_pending and c.status != CarStatus.DELIVERED \
+				and elapsed - float(c.requested_at) >= RESPONSE_WINDOW:
+			_lose_customer(c)
 
 func _maybe_spawn_next() -> void:
 	if _spawn_cooldown > 0.0:
 		return
 	if _total_spawned >= MAX_CUSTOMERS:
 		return
+	var waiting: int = 0
 	for c in _cars:
 		if c.status == CarStatus.ARRIVING:
-			return
+			waiting += 1
+	if waiting >= MAX_WAITING_AT_ENTRANCE:
+		return
 	if _occupied_slots.size() >= SLOTS.size():
 		return  # Les places sont pleines : on attend que le joueur restitue.
 	_spawn_arriving_car()
@@ -303,8 +357,15 @@ func _spawn_arriving_car() -> void:
 		"parked_at": 0.0,
 		"requested_at": 0.0,
 		"requested_pending": false,
+		"arrived_at": DURATION - _time_left,
+		"patience": randf_range(PATIENCE_MIN, PATIENCE_MAX),
+		"honked": false,
 	})
 	_total_spawned += 1
+	# Le rythme se resserre au fil du service.
+	var progress: float = clampf(1.0 - _time_left / DURATION, 0.0, 1.0)
+	_spawn_cooldown = lerpf(SPAWN_INTERVAL_START, SPAWN_INTERVAL_END, progress)
+	sfx("prompt_chime", 0.8)
 	_set_status("Nouvelle voiture à l'entrée !")
 
 # --- Affordances visuelles ---
@@ -328,8 +389,8 @@ func _update_visuals() -> void:
 		if c.status == CarStatus.DELIVERED:
 			continue
 		if c.requested_pending:
-			var pulse: float = 1.1 + 0.4 * sin(t * 6.0)
-			(c.node as ColorRect).modulate = Color(pulse, pulse * 0.85, pulse * 0.85, 1.0)
+			var glow: float = 1.1 + 0.4 * sin(t * 6.0)
+			(c.node as ColorRect).modulate = Color(glow, glow * 0.85, glow * 0.85, 1.0)
 		else:
 			(c.node as ColorRect).modulate = Color(1, 1, 1, 1)
 	_refresh_drop_zone_visual()
@@ -402,8 +463,8 @@ func _end_game() -> void:
 	if _ended:
 		return
 	_ended = true
-	var qualifies: bool = _customers_served > 0
-	_set_status("Service terminé · %d clients · R$ %d en tips" % [_customers_served, _total_tips])
+	var qualifies: bool = final_qualifies(_customers_served >= QUALIFY_SERVED and _lost <= MAX_LOST_TO_QUALIFY)
+	_set_status("Service terminé · %d clients · %d partis fâchés · R$ %d en tips" % [_customers_served, _lost, _total_tips])
 	await get_tree().create_timer(2.4).timeout
 	EventBus.minigame_ended.emit("valet", {"tips": _total_tips, "served": _customers_served, "qualifies": qualifies})
 	match_ended.emit(qualifies, _total_tips)

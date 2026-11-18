@@ -77,6 +77,25 @@ const SFX_PATHS: Dictionary = {
 	"step_wood":       "res://assets/audio/sfx/step_wood.ogg",
 	"ui_click":        "res://assets/audio/sfx/ui_click.ogg",
 	"chase_escaped":   "res://assets/audio/sfx/chase_escaped.ogg",
+	# Retour en cours de mini-jeu (MinigameBase.sfx)
+	"mg_perfect":      "res://assets/audio/sfx/mg_perfect.ogg",
+	"mg_good":         "res://assets/audio/sfx/mg_good.ogg",
+	"mg_miss":         "res://assets/audio/sfx/mg_miss.ogg",
+	"mg_hit":          "res://assets/audio/sfx/mg_hit.ogg",
+	"mg_drop":         "res://assets/audio/sfx/mg_drop.ogg",
+	"checkpoint":      "res://assets/audio/sfx/checkpoint.ogg",
+	"splash":          "res://assets/audio/sfx/splash.ogg",
+	"fish_bite":       "res://assets/audio/sfx/fish_bite.ogg",
+	"oven_ding":       "res://assets/audio/sfx/oven_ding.ogg",
+	"torcida_cheer":   "res://assets/audio/sfx/torcida_cheer.ogg",
+	"dj_kick":         "res://assets/audio/sfx/dj_kick.ogg",
+	"dj_snare":        "res://assets/audio/sfx/dj_snare.ogg",
+	"dj_hat":          "res://assets/audio/sfx/dj_hat.ogg",
+	"dj_synth":        "res://assets/audio/sfx/dj_synth.ogg",
+	"samba_tamborim":  "res://assets/audio/sfx/samba_tamborim.ogg",
+	"samba_surdo":     "res://assets/audio/sfx/samba_surdo.ogg",
+	"samba_cuica":     "res://assets/audio/sfx/samba_cuica.ogg",
+	"samba_agogo":     "res://assets/audio/sfx/samba_agogo.ogg",
 }
 
 # Baisse de la musique pendant un mini-jeu ou une poursuite : les SFX du jeu
@@ -120,7 +139,8 @@ func _ready() -> void:
 	_music_b = _make_player(-80.0)
 	_ambient_a = _make_player(-80.0)
 	_ambient_b = _make_player(-80.0)
-	for i in 6:
+	# 10 voix : les jeux de rythme superposent frappe, retour et fin de note.
+	for i in 10:
 		_sfx_pool.append(_make_player(sfx_volume_db))
 
 	# Préchargement SFX (silencieux si fichier absent)

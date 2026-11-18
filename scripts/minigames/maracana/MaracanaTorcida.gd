@@ -1,5 +1,5 @@
 class_name MaracanaTorcida
-extends Node2D
+extends MinigameBase
 
 # Mini-jeu réactif au stade Maracanã. Un prompt apparaît au centre (GOOOL!, OLA!,
 # BRAÇO ESQUERDO, etc.). Le joueur doit appuyer sur la touche correspondante
@@ -11,19 +11,26 @@ signal match_ended(qualifies: bool, tips: int)
 const DURATION: float = 60.0
 const EVENT_MIN_GAP: float = 1.4
 const EVENT_MAX_GAP: float = 2.4
-const REACTION_WINDOW: float = 1.6
-const PERFECT_WINDOW: float = 0.55
+# La torcida s'emballe : la fenêtre se resserre de 1,6 s à 1,0 s sur le match.
+const REACTION_WINDOW_START: float = 1.6
+const REACTION_WINDOW_END: float = 1.0
+const PERFECT_WINDOW_START: float = 0.55
+const PERFECT_WINDOW_END: float = 0.4
+# Qualifié = ~2/3 des ordres suivis proprement.
+const QUALIFY_SCORE: int = 170
+# Geste : au-delà de ce déplacement (px écran), c'est un balayage, sinon un tap.
+const SWIPE_MIN: float = 60.0
 const POINTS_PERFECT: int = 14
 const POINTS_GOOD: int = 7
-const TIP_DIVISOR: float = 2.0
+const TIP_DIVISOR: float = 2.5
 
 # Commandes possibles. Chaque entrée : action Godot, libellé, couleur.
 const COMMANDS: Array = [
-	{"action": "ui_up",     "label": "GOOOL!",            "color": Color(0.55, 0.95, 0.55, 1)},
-	{"action": "ui_left",   "label": "BRAÇO ESQUERDO ←",  "color": Color(0.95, 0.85, 0.4, 1)},
+	{"action": "ui_up",     "label": "↑ GOOOL!",          "color": Color(0.55, 0.95, 0.55, 1)},
+	{"action": "ui_left",   "label": "← BRAÇO ESQUERDO",  "color": Color(0.95, 0.85, 0.4, 1)},
 	{"action": "ui_right",  "label": "BRAÇO DIREITO →",   "color": Color(0.95, 0.85, 0.4, 1)},
-	{"action": "ui_down",   "label": "VAMOS!",            "color": Color(0.4, 0.65, 0.95, 1)},
-	{"action": "ui_accept", "label": "OLA!",              "color": Color(0.95, 0.55, 0.85, 1)},
+	{"action": "ui_down",   "label": "↓ VAMOS!",          "color": Color(0.4, 0.65, 0.95, 1)},
+	{"action": "ui_accept", "label": "• OLA! (tape)",     "color": Color(0.95, 0.55, 0.85, 1)},
 ]
 
 enum State { WAITING, PROMPTING }
@@ -39,6 +46,17 @@ var _state: int = State.WAITING
 var _state_until: float = 0.4  # 1ère prompt après ~0.4 s
 var _current_idx: int = -1
 var _current_spawn: float = 0.0
+var _touch_start: Vector2 = Vector2.ZERO
+var _touch_down: bool = false
+
+func _progress() -> float:
+	return clampf(1.0 - _time_left / DURATION, 0.0, 1.0)
+
+func _reaction_window() -> float:
+	return lerpf(REACTION_WINDOW_START, REACTION_WINDOW_END, _progress())
+
+func _perfect_window() -> float:
+	return lerpf(PERFECT_WINDOW_START, PERFECT_WINDOW_END, _progress())
 
 @onready var prompt_label: Label = $UI/PromptLabel
 @onready var prompt_bar: ColorRect = $UI/PromptBar/Fill
@@ -54,23 +72,15 @@ func _ready() -> void:
 	var cam: Camera2D = get_node_or_null("Camera2D")
 	if cam:
 		cam.make_current()
-	# Bouton tactile unique : reflète l'ordre courant. Tape = équivalent à la
-	# bonne touche (sur mobile, discriminer 5 touches n'a pas de sens).
+	# Au doigt, chaque ordre a son geste (balayer ↑ ← → ↓, taper = OLA) : le
+	# bouton n'affiche plus que l'ordre, il ne répond plus à tout.
 	if action_button:
-		action_button.pressed.connect(_on_action_pressed)
-	var quit_btn: CanvasLayer = get_node_or_null("MinigameQuitButton")
-	if quit_btn and quit_btn.has_signal("quit_pressed"):
-		quit_btn.quit_pressed.connect(_end_game)
+		action_button.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		action_button.focus_mode = Control.FOCUS_NONE
 	_clear_prompt()
 	if status_label:
 		status_label.text = "Suis les ordres de la torcida !"
 
-# Tap mobile sur le gros bouton = comme si la bonne touche du prompt courant
-# avait été pressée. Hors PROMPTING, no-op.
-func _on_action_pressed() -> void:
-	if _ended or _state != State.PROMPTING or _current_idx < 0:
-		return
-	_score_correct_press()
 
 func _process(delta: float) -> void:
 	if _ended:
@@ -91,12 +101,13 @@ func _state_transition(elapsed: float) -> void:
 		_current_idx = randi() % COMMANDS.size()
 		_current_spawn = elapsed
 		_state = State.PROMPTING
-		_state_until = elapsed + REACTION_WINDOW
+		_state_until = elapsed + _reaction_window()
 		_show_prompt(COMMANDS[_current_idx])
 	else:
 		# PROMPTING timeout sans réponse → miss.
 		_misses += 1
 		_set_status("MISS")
+		sfx("mg_miss")
 		_to_waiting(elapsed)
 
 func _to_waiting(elapsed: float) -> void:
@@ -105,7 +116,44 @@ func _to_waiting(elapsed: float) -> void:
 	_current_idx = -1
 	_clear_prompt()
 
+# Gestes : glisser ↑ GOOOL, ← / → braços, ↓ VAMOS, taper OLA (index COMMANDS).
+func _gesture_index(delta: Vector2) -> int:
+	if delta.length() < SWIPE_MIN:
+		return 4
+	if absf(delta.x) > absf(delta.y):
+		return 1 if delta.x < 0.0 else 2
+	return 0 if delta.y < 0.0 else 3
+
+func _answer(idx: int) -> void:
+	if _ended or _state != State.PROMPTING or _current_idx < 0:
+		return
+	if idx == _current_idx:
+		_score_correct_press()
+		return
+	_misses += 1
+	_set_status("ERROU O GESTO")
+	sfx("mg_miss")
+	_to_waiting(DURATION - _time_left)
+
 func _unhandled_input(event: InputEvent) -> void:
+	# Doigt (ou souris réelle ; on ignore la souris émulée depuis le tactile).
+	var pointer_pressed: int = -1  # -1 rien, 1 appui, 0 relâché
+	var pos: Vector2 = Vector2.ZERO
+	if event is InputEventScreenTouch:
+		pointer_pressed = 1 if event.pressed else 0
+		pos = event.position
+	elif event is InputEventMouseButton and event.device != InputEvent.DEVICE_ID_EMULATION \
+			and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
+		pointer_pressed = 1 if event.pressed else 0
+		pos = event.position
+	if pointer_pressed == 1:
+		_touch_down = true
+		_touch_start = pos
+		return
+	if pointer_pressed == 0 and _touch_down:
+		_touch_down = false
+		_answer(_gesture_index(pos - _touch_start))
+		return
 	if _ended or _state != State.PROMPTING or _current_idx < 0:
 		return
 	if not (event is InputEventKey) or not event.pressed or event.echo:
@@ -116,13 +164,17 @@ func _unhandled_input(event: InputEvent) -> void:
 		if Input.is_action_pressed(COMMANDS[i].action):
 			pressed_idx = i
 			break
+	# A manette (= E) fait la OLA, comme Espace.
+	if pressed_idx < 0 and event.is_action_pressed("interact"):
+		pressed_idx = 4
 	if pressed_idx < 0:
 		return
 	if pressed_idx != _current_idx:
-		# Mauvaise touche → miss (clavier seulement ; le bouton mobile est unique).
+		# Mauvaise touche → miss.
 		var elapsed: float = DURATION - _time_left
 		_misses += 1
 		_set_status("MAUVAISE TOUCHE")
+		sfx("mg_miss")
 		_to_waiting(elapsed)
 		return
 	_score_correct_press()
@@ -132,14 +184,17 @@ func _unhandled_input(event: InputEvent) -> void:
 func _score_correct_press() -> void:
 	var elapsed: float = DURATION - _time_left
 	var time_since: float = elapsed - _current_spawn
-	if time_since <= PERFECT_WINDOW:
+	if time_since <= _perfect_window():
 		_score += POINTS_PERFECT
 		_perfects += 1
 		_set_status("PERFECT!")
+		sfx("torcida_cheer")
+		pulse(0.4, 0.08)
 	else:
 		_score += POINTS_GOOD
 		_goods += 1
 		_set_status("GOOD")
+		sfx("mg_good")
 	_to_waiting(elapsed)
 
 func _show_prompt(cmd: Dictionary) -> void:
@@ -166,12 +221,13 @@ func _update_prompt_bar(elapsed: float) -> void:
 	if _state != State.PROMPTING or prompt_bar == null:
 		return
 	# Barre qui se vide au fur et à mesure de la fenêtre de réaction.
-	var time_left_in_window: float = (_current_spawn + REACTION_WINDOW) - elapsed
-	var ratio: float = clamp(time_left_in_window / REACTION_WINDOW, 0.0, 1.0)
+	var window: float = _state_until - _current_spawn
+	var time_left_in_window: float = _state_until - elapsed
+	var ratio: float = clamp(time_left_in_window / maxf(window, 0.01), 0.0, 1.0)
 	prompt_bar.size.x = 360.0 * ratio
 	# Couleur : verte si encore dans la fenêtre PERFECT, jaune sinon.
 	var time_since: float = elapsed - _current_spawn
-	if time_since <= PERFECT_WINDOW:
+	if time_since <= _perfect_window():
 		prompt_bar.color = Color(0.55, 0.95, 0.55, 1)
 	else:
 		prompt_bar.color = Color(0.95, 0.85, 0.4, 1)
@@ -193,8 +249,9 @@ func _end_game() -> void:
 		return
 	_ended = true
 	var tips: int = int(round(_score / TIP_DIVISOR))
+	var qualifies: bool = final_qualifies(_score >= QUALIFY_SCORE)
 	if status_label:
 		status_label.text = "Fim do jogo · %d perfects · R$ %d em pourboires" % [_perfects, tips]
 	await get_tree().create_timer(2.4).timeout
-	EventBus.minigame_ended.emit("maracana_torcida", {"score": _score, "tips": tips, "qualifies": tips > 0})
-	match_ended.emit(tips > 0, tips)
+	EventBus.minigame_ended.emit("maracana_torcida", {"score": _score, "tips": tips, "qualifies": qualifies})
+	match_ended.emit(qualifies, tips)
