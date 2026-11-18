@@ -24,6 +24,11 @@ func _ready() -> void:
 	CampaignManager.set_flag("act1_started")
 	CampaignManager.set_flag("intro_bump_seen")
 	QuestManager.accept("act1_heritage")
+	# Les flags arrivent après les _ready : les NPCs conditionnels (Seu João…)
+	# réévaluent leur présence, comme au chargement d'une sauvegarde.
+	for n in main.find_children("*", "Node2D", true, false):
+		if n.has_method("_apply_visibility"):
+			n.call("_apply_visibility")
 	var player: Node2D = GameManager.player as Node2D
 	if player == null:
 		push_error("[ScreenshotMain] pas de joueur")
