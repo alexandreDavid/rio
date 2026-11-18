@@ -7,7 +7,6 @@
 [node name="Padre" instance=ExtResource("1_npc")]
 script = ExtResource("3_script")
 data = ExtResource("2_data")
-modulate = Color(0.3, 0.3, 0.35, 1)
 
 [node name="Sprite2D" parent="."]
 region_rect = Rect2(0, 768, 256, 256)

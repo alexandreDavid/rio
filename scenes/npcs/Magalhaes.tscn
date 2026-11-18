@@ -7,4 +7,3 @@
 [node name="Magalhaes" instance=ExtResource("1_npc")]
 script = ExtResource("3_script")
 data = ExtResource("2_data")
-modulate = Color(0.65, 0.55, 0.45, 1)

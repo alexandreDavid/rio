@@ -7,7 +7,6 @@
 [node name="Concierge" instance=ExtResource("1_npc")]
 script = ExtResource("3_script")
 data = ExtResource("2_data")
-modulate = Color(0.7, 0.7, 0.8, 1)
 
 [node name="Sprite2D" parent="."]
 region_rect = Rect2(75, 280, 156, 199)

@@ -11,4 +11,3 @@ data = ExtResource("2_data")
 [node name="Sprite2D" parent="."]
 region_rect = Rect2(512, 0, 256, 256)
 scale = Vector2(0.22, 0.22)
-modulate = Color(0.7, 0.78, 0.95, 1)
