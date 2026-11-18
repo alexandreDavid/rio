@@ -18,7 +18,7 @@ const SPACE_ADVANCE: int = 3
 
 # Capitales, chiffres, ponctuation : 7 rangées, ligne de base = dernière rangée.
 const CAPS: Dictionary = {
-	"A": [".###.", "#...#", "#...#", "#####", "#...#", "#...#", "#...#"],
+	"A": ["..#..", ".#.#.", "#...#", "#...#", "#####", "#...#", "#...#"],
 	"B": ["####.", "#...#", "#...#", "####.", "#...#", "#...#", "####."],
 	"C": [".###.", "#...#", "#....", "#....", "#....", "#...#", ".###."],
 	"D": ["####.", "#...#", "#...#", "#...#", "#...#", "#...#", "####."],
@@ -45,7 +45,7 @@ const CAPS: Dictionary = {
 	"Y": ["#...#", "#...#", ".#.#.", "..#..", "..#..", "..#..", "..#.."],
 	"Z": ["#####", "....#", "...#.", "..#..", ".#...", "#....", "#####"],
 	"0": [".###.", "#...#", "#..##", "#.#.#", "##..#", "#...#", ".###."],
-	"1": ["..#..", ".##..", "..#..", "..#..", "..#..", "..#..", ".###."],
+	"1": [".#.", "##.", ".#.", ".#.", ".#.", ".#.", "###"],
 	"2": [".###.", "#...#", "....#", "...#.", "..#..", ".#...", "#####"],
 	"3": ["#####", "...#.", "..#..", "...#.", "....#", "#...#", ".###."],
 	"4": ["...#.", "..##.", ".#.#.", "#..#.", "#####", "...#.", "...#."],
@@ -175,6 +175,32 @@ static func font(scale: int = 1, outlined: bool = false) -> FontFile:
 	if not _fonts.has(key):
 		_fonts[key] = _build(scale, outlined)
 	return _fonts[key]
+
+
+# Police de TOUTE l'interface : les mêmes glyphes en vectoriel (RioPixel.ttf,
+# produit par tools/build_pixel_ttf.py), donc utilisable à n'importe quelle
+# taille — nette aux multiples de 11, lissée entre deux. L'ancienne police du
+# thème reste en secours (symboles non dessinés), la police système pour les emojis.
+const UI_FONT_PATH: String = "res://assets/fonts/RioPixel.ttf"
+static var _ui_font: FontFile = null
+
+
+static func ui_font() -> FontFile:
+	if _ui_font != null:
+		return _ui_font
+	var f: FontFile = load(UI_FONT_PATH) as FontFile
+	if f == null:
+		return null
+	f.antialiasing = TextServer.FONT_ANTIALIASING_GRAY
+	f.hinting = TextServer.HINTING_NONE
+	f.subpixel_positioning = TextServer.SUBPIXEL_POSITIONING_DISABLED
+	f.allow_system_fallback = true
+	var fallback: Font = ThemeDB.fallback_font
+	if fallback != null and fallback != f:
+		var arr: Array[Font] = [fallback]
+		f.fallbacks = arr
+	_ui_font = f
+	return f
 
 
 # Largeur native d'un texte (sans contour) : pour choisir une échelle entière

@@ -104,8 +104,17 @@ func _ready() -> void:
 	_setup_chrono_label()
 	_init_abilities()
 	_setup_button_feedback()
+	UIFit.watch_modals.call_deferred(get_tree(), _on_modal_changed)
 	# Fondu doux à chaque changement de district (masque la téléportation).
 	DistrictManager.district_changed.connect(_on_district_fade)
+
+# 📱 et 📸 s'effacent quand un panneau plein écran est ouvert (ils passaient
+# par-dessus son bouton de fermeture).
+func _on_modal_changed() -> void:
+	var open: bool = UIFit.modal_open(get_tree())
+	for b in [menu_button, photo_button]:
+		if b != null:
+			b.visible = not open
 
 # Petit retour tactile : les boutons HUD s'enfoncent légèrement au toucher.
 func _setup_button_feedback() -> void:

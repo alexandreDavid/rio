@@ -40,6 +40,24 @@ static func apply(root: Window = null) -> void:
 	var base: Theme = ThemeDB.get_default_theme()
 	if base != null:
 		base.merge_with(build())
+		# La police pixel devient celle de toute l'interface (années 90).
+		var ui: FontFile = PixelFont.ui_font()
+		if ui != null:
+			base.default_font = ui
+			for key in ["normal_font", "bold_font", "italics_font", "bold_italics_font", "mono_font"]:
+				base.set_font(key, "RichTextLabel", ui)
+	# Les cadres arrondis posés localement (StyleBoxFlat) passent au cadre pixel,
+	# pour tout Control qui entre dans l'arbre — menus, téléphone, mini-jeux.
+	var tree: SceneTree = Engine.get_main_loop() as SceneTree
+	if tree != null:
+		pixelize(tree.root)
+		UIFit.touch_floor_all(tree.root)
+		tree.node_added.connect(func(n: Node) -> void:
+			if n is Control:
+				_pixelize_one.call_deferred(n)
+			# Tout bouton reçoit la taille minimale d'un doigt (44 pt).
+			if n is BaseButton:
+				UIFit.touch_floor.call_deferred(n))
 	if root != null:
 		root.theme = build()
 
@@ -105,6 +123,52 @@ static func build() -> Theme:
 	t.set_color("font_pressed_color", "PixelButton", Color.WHITE)
 	_theme = t
 	return t
+
+
+const _BOX_SLOTS: Array[StringName] = [&"panel", &"normal", &"hover", &"pressed", &"disabled", &"focus", &"background", &"fill"]
+
+
+# Remplace, sous `root`, chaque StyleBoxFlat arrondi ou bordé par le cadre
+# pixel équivalent (même fond, liseré = sa bordure ou le fond éclairci).
+static func pixelize(root: Node) -> void:
+	if root is Control:
+		_pixelize_one(root)
+	for child in root.get_children():
+		pixelize(child)
+
+
+static func _pixelize_one(c: Control) -> void:
+	if not is_instance_valid(c):
+		return
+	for slot in _BOX_SLOTS:
+		if not c.has_theme_stylebox_override(slot):
+			continue
+		var flat: StyleBoxFlat = c.get_theme_stylebox(slot) as StyleBoxFlat
+		if flat == null:
+			continue
+		var box: StyleBox = pixel_box_from(flat)
+		if box != null:
+			c.add_theme_stylebox_override(slot, box)
+
+
+# Null si la boîte est déjà « carrée » (ni arrondi ni bordure) ou invisible.
+static func pixel_box_from(flat: StyleBoxFlat) -> StyleBox:
+	var radius: int = flat.corner_radius_top_left
+	var border: int = flat.border_width_left
+	# Arrondi d'un seul côté (bandeau collé à un cadre) : il redevient plat.
+	if radius != flat.corner_radius_bottom_right and border <= 0:
+		var plain: StyleBoxFlat = flat.duplicate() as StyleBoxFlat
+		plain.set_corner_radius_all(0)
+		return plain
+	if (radius <= 0 and border <= 0) or (flat.bg_color.a <= 0.01 and border <= 0):
+		return null
+	var fill: Color = flat.bg_color
+	var edge: Color = flat.border_color if border > 0 else fill.lightened(0.3)
+	edge.a = maxf(edge.a, fill.a)
+	var box: StyleBoxTexture = thin_box(edge, fill) if radius <= 6 and border <= 2 else frame_box(edge, fill)
+	for side in [SIDE_LEFT, SIDE_TOP, SIDE_RIGHT, SIDE_BOTTOM]:
+		box.set_content_margin(side, maxf(flat.get_content_margin(side), box.get_texture_margin(side) * 0.5))
+	return box
 
 
 # Cadre 9-slice : 12×12 natifs (marges de 3), agrandi ×3 (NEAREST, aucune

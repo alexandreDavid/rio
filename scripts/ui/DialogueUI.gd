@@ -14,7 +14,9 @@ var _indicator_tween: Tween = null
 const TEXT_SIZE: int = 30
 const SPEAKER_SIZE: int = 26
 const CHOICE_SIZE: int = 28
-const CHOICE_H: int = 68
+const CHOICE_H: int = 68          # plancher ; relevé à la taille d'un doigt (44 pt)
+const TEXT_BLOCK_H: float = 190.0  # nom + 3 lignes de réplique
+const PANEL_TOP_DEFAULT: float = 0.42
 const CHOICE_GAP: int = 8
 # Didascalies (*il pose sa louche*) : en italique atténué, pour qu'on
 # distingue d'un coup d'œil le geste de la parole.
@@ -89,7 +91,7 @@ func _on_choices_presented(choices: Array) -> void:
 	for i in choices.size():
 		var btn: Button = Button.new()
 		btn.text = str(choices[i])
-		btn.custom_minimum_size = Vector2(0, CHOICE_H)
+		btn.custom_minimum_size = Vector2(0, _choice_h())
 		btn.focus_mode = Control.FOCUS_ALL
 		btn.add_theme_font_size_override("font_size", CHOICE_SIZE)
 		btn.pressed.connect(_on_choice_pressed.bind(i))
@@ -106,11 +108,20 @@ func _on_choices_presented(choices: Array) -> void:
 # La zone de choix épouse le nombre de boutons : le texte récupère la place
 # (avant : 300 px réservés même pour un seul « Continuer »).
 func _layout_for(n: int) -> void:
-	var h: float = float(n * CHOICE_H + maxi(n - 1, 0) * CHOICE_GAP)
+	var h: float = float(n) * _choice_h() + float(maxi(n - 1, 0) * CHOICE_GAP)
+	# Beaucoup de choix : le panneau monte pour que chacun garde sa hauteur de
+	# doigt ET que la réplique reste lisible.
+	if panel:
+		var need: float = TEXT_BLOCK_H + h + 44.0
+		var top: float = panel.anchor_bottom - need / maxf(size.y, 1.0)
+		panel.anchor_top = clampf(top, 0.04, PANEL_TOP_DEFAULT)
 	if choices_container:
 		choices_container.offset_top = -(h + 16.0)
 	if text_label:
 		text_label.offset_bottom = -(h + 28.0)
+
+func _choice_h() -> float:
+	return maxf(float(CHOICE_H), ceilf(UIFit.touch_min_px(get_viewport())))
 
 # Échappe le BBCode du texte brut puis met les didascalies en italique atténué.
 func format_line(text: String) -> String:

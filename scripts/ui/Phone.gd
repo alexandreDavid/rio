@@ -92,13 +92,14 @@ const DESIGN_SIZE: Vector2 = Vector2(360, 660)
 const FILL_RATIO: Vector2 = Vector2(0.92, 0.94)
 const FONT_FLOOR: int = 12
 const STATUS_H: float = 26.0
-const HEADER_H: float = 44.0
+const HEADER_H: float = 78.0   # un doigt (44 pt) une fois le téléphone agrandi
+const HEADER_BTN: float = 78.0
 const SUB_H: float = 20.0
 const BOTTOM_H: float = 26.0
 const SIDE_MARGIN: float = 16.0
-const TAB_H: float = 40.0
+const TAB_H: float = 78.0
 const HOME_COLUMNS: int = 2
-const APP_TILE: Vector2 = Vector2(156, 156)
+const APP_TILE: Vector2 = Vector2(156, 150)
 const APP_GAP: int = 14
 
 # Accueil : ordre et libellé des tuiles. Les autres boutons de la grille
@@ -863,6 +864,9 @@ func _build_photo_row(fname: String) -> Control:
 	var info: VBoxContainer = VBoxContainer.new()
 	info.add_theme_constant_override("separation", 2)
 	info.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	# Sans ça la colonne fait 0 px de large : les légendes (mises à la ligne
+	# par _wrap_buttons) s'écrivaient une lettre par ligne.
+	info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var name_label: Label = Label.new()
 	name_label.text = fname
 	name_label.add_theme_font_size_override("font_size", 12)
@@ -1196,14 +1200,14 @@ func _apply_layout() -> void:
 		if b == null:
 			continue
 		b.add_theme_font_size_override("font_size", 24)
-		b.custom_minimum_size = Vector2(48, HEADER_H)
+		b.custom_minimum_size = Vector2(HEADER_BTN, HEADER_H)
 	back_button.set_anchors_preset(Control.PRESET_TOP_LEFT)
 	back_button.offset_left = 6.0
-	back_button.offset_right = 54.0
+	back_button.offset_right = 6.0 + HEADER_BTN
 	back_button.offset_top = STATUS_H + 6.0
 	back_button.offset_bottom = STATUS_H + 6.0 + HEADER_H
 	close_button.set_anchors_preset(Control.PRESET_TOP_RIGHT)
-	close_button.offset_left = -54.0
+	close_button.offset_left = -6.0 - HEADER_BTN
 	close_button.offset_right = -6.0
 	close_button.offset_top = STATUS_H + 6.0
 	close_button.offset_bottom = STATUS_H + 6.0 + HEADER_H
@@ -1217,9 +1221,10 @@ func _apply_layout() -> void:
 func _layout_home() -> void:
 	var title: Label = home_screen.get_node_or_null("Title")
 	var sub: Label = home_screen.get_node_or_null("Subtitle")
+	# Plus de titre : la première rangée est le bandeau des Notícias, à gauche
+	# du bouton de fermeture (les six apps tiennent dessous sans défilement).
 	if title:
-		_fill_width(title, 0.0, HEADER_H * 0.6, 0.0)
-		title.add_theme_font_size_override("font_size", 18)
+		title.visible = false
 	if sub:
 		sub.visible = false
 	# Bandeau des Notícias à la place du sous-titre : la dernière manchette,
@@ -1234,9 +1239,10 @@ func _layout_home() -> void:
 	_news_ticker.add_theme_color_override("font_color", Color(0.75, 0.75, 0.8, 1))
 	_news_ticker.pressed.connect(func(): _show_screen("noticias"))
 	home_screen.add_child(_news_ticker)
-	_fill_width(_news_ticker, HEADER_H * 0.6, HEADER_H * 0.6 + 50.0, 0.0)
+	_fill_width(_news_ticker, 0.0, HEADER_H, 0.0)
+	_news_ticker.offset_right = -(HEADER_BTN - SIDE_MARGIN + 10.0)
 	var scroll: ScrollContainer = home_screen.get_node("AppsScroll")
-	_fill_rest(scroll, HEADER_H * 0.6 + 56.0)
+	_fill_rest(scroll, HEADER_H + 6.0)
 	var grid: GridContainer = scroll.get_node("Apps")
 	var shown: Dictionary = {}
 	for i in HOME_TILES.size():
@@ -1296,7 +1302,7 @@ func _layout_app_screen(screen: Control) -> void:
 			continue
 		var l: Label = child
 		if l.name == "Header":
-			_fill_width(l, 0.0, HEADER_H, 40.0)
+			_fill_width(l, 0.0, HEADER_H, HEADER_BTN - SIDE_MARGIN + 10.0)
 			l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 			l.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 			l.vertical_alignment = VERTICAL_ALIGNMENT_CENTER

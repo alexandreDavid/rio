@@ -94,7 +94,7 @@ void fragment() {
 	}
 	vec2 px;
 	if (crisp) {
-		if (mirror > 0 && fract(sin(dot(cell_id, vec2(12.9898, 78.233))) * 43758.5453) > 0.5) {
+		if (mirror > 0 && fract(sin(dot(mod(cell_id, 16.0), vec2(12.9898, 78.233))) * 43758.5453) > 0.5) {
 			t.x = 1.0 - t.x;
 		}
 		vec2 texel = floor(t * reg.zw);
@@ -326,8 +326,13 @@ static func painted_sprite(tex: Texture2D, size: Vector2, anim: Dictionary = {})
 	mat.shader = _tile_shader_res()
 	mat.set_shader_parameter("crisp", true)
 	mat.set_shader_parameter("region", Vector4(0.0, 0.0, frame_w, float(tex.get_height())))
-	mat.set_shader_parameter("cell", Vector2(frame_w, float(tex.get_height())) * float(GroundPainter.DENSITY))
-	mat.set_shader_parameter("origin", anim.get("origin", Vector2.ZERO))
+	var cell: Vector2 = Vector2(frame_w, float(tex.get_height())) * float(GroundPainter.DENSITY)
+	mat.set_shader_parameter("cell", cell)
+	# L'origine monde ne compte que modulo 16 cellules (période du hachage du
+	# miroir) : on la borne côté CPU. Les quartiers vivent à -36 000 px et plus ;
+	# un GPU mobile en demi-précision y perdrait la grille des texels.
+	var o: Vector2 = anim.get("origin", Vector2.ZERO)
+	mat.set_shader_parameter("origin", Vector2(fposmod(o.x, cell.x * 16.0), fposmod(o.y, cell.y * 16.0)))
 	mat.set_shader_parameter("mirror", 1 if anim.get("mirror", false) else 0)
 	mat.set_shader_parameter("frames", frames)
 	mat.set_shader_parameter("fps", float(anim.get("fps", 1.0)))

@@ -22,7 +22,78 @@ static func fit(c: Control, fill: Vector2 = Vector2(0.92, 0.9)) -> float:
 	if not c.has_meta(META):
 		c.set_meta(META, fill)
 		c.get_viewport().size_changed.connect(func() -> void: fit(c, c.get_meta(META)))
+	touch_floor_all(c)
 	return k
+
+
+# --- cibles tactiles ------------------------------------------------------
+
+const TOUCH_PT: float = 44.0          # plancher d'Apple pour un doigt
+const PHONE_PT_H: float = 402.0       # hauteur d'un iPhone en paysage, en points
+const TOUCH_FREE: StringName = &"touch_free"   # méta : bouton exempté
+
+
+# 44 pt en unités du canevas. Sur téléphone, d'après l'écran réel ; sur
+# ordinateur on suppose un iPhone (une seule mise en page, celle de la cible).
+static func touch_min_px(vp: Viewport) -> float:
+	var pt_h: float = PHONE_PT_H
+	if OS.has_feature("mobile"):
+		var k: float = maxf(DisplayServer.screen_get_scale(), 1.0)
+		pt_h = clampf(float(DisplayServer.window_get_size().y) / k, 320.0, 1100.0)
+	return TOUCH_PT * vp.get_visible_rect().size.y / pt_h
+
+
+# Donne à un bouton la taille minimale d'un doigt, dans SON repère (un bouton
+# dans un panneau agrandi par fit() a besoin de moins d'unités locales).
+static func touch_floor(b: BaseButton) -> void:
+	if not is_instance_valid(b) or not b.is_inside_tree() or b.has_meta(TOUCH_FREE):
+		return
+	var s: Vector2 = b.get_global_transform_with_canvas().get_scale()
+	var px: float = touch_min_px(b.get_viewport())
+	var want: Vector2 = Vector2(ceilf(px / maxf(s.x, 0.01)), ceilf(px / maxf(s.y, 0.01)))
+	var cur: Vector2 = b.custom_minimum_size
+	if cur.x < want.x or cur.y < want.y:
+		b.custom_minimum_size = Vector2(maxf(cur.x, want.x), maxf(cur.y, want.y))
+
+
+# Panneaux plein écran de Main : tant que l'un est ouvert, les commandes du
+# monde (joystick, ✋, 🏃, 📱, 📸, badge du Diário) s'effacent — elles
+# passaient par-dessus et se chevauchaient avec les boutons du panneau.
+const MODALS: Array[StringName] = [
+	&"Phone", &"JournalUI", &"MissionBoardUI", &"TaxiUI", &"Tutorial",
+	&"CreditsScreen", &"CharacterCreator", &"EndingScreen", &"EpilogueScreen", &"ActCard",
+]
+
+
+static func modal_open(tree: SceneTree) -> bool:
+	var main: Node = tree.current_scene
+	if main == null:
+		return false
+	for id in MODALS:
+		var n: CanvasLayer = main.get_node_or_null(NodePath(id)) as CanvasLayer
+		if n != null and n.visible:
+			return true
+	return false
+
+
+# Prévient `on_change` à chaque ouverture/fermeture d'un panneau (signal et
+# pas sondage : la plupart des panneaux mettent l'arbre en pause).
+static func watch_modals(tree: SceneTree, on_change: Callable) -> void:
+	var main: Node = tree.current_scene
+	if main == null:
+		return
+	for id in MODALS:
+		var n: CanvasLayer = main.get_node_or_null(NodePath(id)) as CanvasLayer
+		if n != null:
+			n.visibility_changed.connect(on_change)
+	on_change.call()
+
+
+static func touch_floor_all(root: Node) -> void:
+	if root is BaseButton:
+		touch_floor(root)
+	for child in root.get_children():
+		touch_floor_all(child)
 
 
 # Plancher de police dans le repère de `root`, déduit de son échelle.

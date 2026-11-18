@@ -48,13 +48,13 @@ theme_override_styles/panel = SubResource("PanelStyle")
 offset_left = 16.0
 offset_top = 16.0
 offset_right = 1264.0
-offset_bottom = 56.0
+offset_bottom = 112.0
 theme_override_styles/panel = SubResource("HeaderStyle")
 
 [node name="Title" type="Label" parent="Root/Panel/Header"]
 offset_left = 16.0
-offset_right = 320.0
-offset_bottom = 40.0
+offset_right = 420.0
+offset_bottom = 96.0
 text = "Diário Narrativo"
 vertical_alignment = 1
 theme_override_font_sizes/font_size = 22
@@ -63,9 +63,9 @@ theme_override_colors/font_color = Color(0.18, 0.14, 0.1, 1)
 [node name="Counter" type="Label" parent="Root/Panel/Header"]
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -120.0
-offset_right = 120.0
-offset_bottom = 40.0
+offset_left = -160.0
+offset_right = 160.0
+offset_bottom = 96.0
 text = "0 / 0 entradas"
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -75,16 +75,16 @@ theme_override_colors/font_color = Color(0.18, 0.14, 0.1, 1)
 [node name="Close" type="Button" parent="Root/Panel/Header"]
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -64.0
-offset_right = -8.0
+offset_left = -104.0
+offset_right = -4.0
 offset_top = 2.0
-offset_bottom = 38.0
+offset_bottom = 94.0
 text = "✕"
 theme_override_font_sizes/font_size = 13
 
 [node name="HBox" type="HBoxContainer" parent="Root/Panel"]
 offset_left = 16.0
-offset_top = 72.0
+offset_top = 128.0
 offset_right = 1264.0
 offset_bottom = 744.0
 theme_override_constants/separation = 16

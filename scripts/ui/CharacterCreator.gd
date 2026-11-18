@@ -23,6 +23,7 @@ var _value_labels: Dictionary = {}
 func _ready() -> void:
 	visible = false
 	_build_rows()
+	UIFit.keep_floor($Panel, int(UIFit.MIN_SCREEN_FONT))
 	if random_btn:
 		random_btn.pressed.connect(_on_random)
 	if confirm_btn:

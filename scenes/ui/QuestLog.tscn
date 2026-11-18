@@ -6,19 +6,19 @@
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -340.0
-offset_top = 104.0
+offset_top = 142.0
 offset_right = -16.0
-offset_bottom = 480.0
+offset_bottom = 600.0
 mouse_filter = 2
 script = ExtResource("1_log")
 
 [node name="Badge" type="Button" parent="."]
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -168.0
+offset_left = -244.0
 offset_top = 0.0
 offset_right = 0.0
-offset_bottom = 72.0
+offset_bottom = 118.0
 theme_type_variation = &"PixelButton"
 text = "Quêtes 0"
 tooltip_text = "Diário de missões"
@@ -27,7 +27,7 @@ tooltip_text = "Diário de missões"
 visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = 80.0
+offset_top = 126.0
 mouse_filter = 2
 
 [node name="HeaderBg" type="Control" parent="Panel"]

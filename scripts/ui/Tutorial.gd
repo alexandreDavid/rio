@@ -56,6 +56,13 @@ func _ready() -> void:
 	prev_btn.pressed.connect(_prev)
 	next_btn.pressed.connect(_next)
 	skip_btn.pressed.connect(_close)
+	if panel:
+		panel.offset_left = -520.0
+		panel.offset_right = 520.0
+		panel.offset_top = -400.0
+		panel.offset_bottom = 400.0
+		body_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		UIFit.keep_floor(panel, int(UIFit.MIN_SCREEN_FONT))
 
 func open() -> void:
 	_current = 0

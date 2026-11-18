@@ -11,6 +11,19 @@ extends CanvasLayer
 
 func _ready() -> void:
 	visible = false
+	# Douze destinations à hauteur de doigt ne tiennent pas : la liste défile.
+	var scroll: ScrollContainer = ScrollContainer.new()
+	scroll.name = "Scroll"
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	var layout: Node = dest_layout.get_parent()
+	var at: int = dest_layout.get_index()
+	layout.remove_child(dest_layout)
+	layout.add_child(scroll)
+	layout.move_child(scroll, at)
+	scroll.add_child(dest_layout)
+	dest_layout.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	UIFit.keep_floor(panel, int(UIFit.MIN_SCREEN_FONT))
 	if close_button:
 		close_button.pressed.connect(close)
 	# Si l'argent change pendant que l'UI est ouverte, on rafraîchit le statut.

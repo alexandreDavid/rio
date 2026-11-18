@@ -88,12 +88,12 @@ theme_override_font_sizes/font_size = 28
 [node name="MenuButton" type="Button" parent="."]
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -88.0
+offset_left = -134.0
 offset_top = 16.0
 offset_right = -16.0
-offset_bottom = 88.0
+offset_bottom = 134.0
 text = "📱"
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 52
 tooltip_text = "Téléphone (P)"
 
 [node name="PhotoButton" type="Button" parent="."]
@@ -101,12 +101,12 @@ anchor_left = 1.0
 anchor_top = 0.0
 anchor_right = 1.0
 anchor_bottom = 0.0
-offset_left = -168.0
+offset_left = -260.0
 offset_top = 16.0
-offset_right = -96.0
-offset_bottom = 88.0
+offset_right = -142.0
+offset_bottom = 134.0
 text = "📸"
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 52
 tooltip_text = "Photo (F)"
 
 [node name="ToastStack" type="VBoxContainer" parent="."]

@@ -23,6 +23,7 @@ var _pinned: bool = false       # ouvert par le joueur : reste ouvert
 var _auto_timer: SceneTreeTimer = null
 
 func _ready() -> void:
+	SafeArea.place(self, Vector4(1, 0, 1, 0), Vector4(-340, 142, -16, 600))
 	SafeArea.apply(self)
 	EventBus.quest_accepted.connect(_on_quest_event)
 	EventBus.quest_updated.connect(_on_quest_updated)
@@ -30,7 +31,17 @@ func _ready() -> void:
 	EventBus.quest_failed.connect(_on_quest_event)
 	if badge:
 		badge.pressed.connect(toggle)
+	UIFit.watch_modals.call_deferred(get_tree(), _on_modal_changed)
+	EventBus.dialogue_started.connect(func(_id: String) -> void: _set_covered(true))
+	EventBus.dialogue_ended.connect(func(_id: String) -> void: _set_covered(UIFit.modal_open(get_tree())))
 	_redraw()
+
+# Sous un panneau plein écran ou une boîte de dialogue, le journal s'efface.
+func _on_modal_changed() -> void:
+	_set_covered(UIFit.modal_open(get_tree()))
+
+func _set_covered(covered: bool) -> void:
+	visible = not covered
 
 func is_open() -> bool:
 	return panel != null and panel.visible

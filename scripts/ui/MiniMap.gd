@@ -39,6 +39,7 @@ var _world_node: Node = null
 var _last_district: String = "copacabana"
 
 func _ready() -> void:
+	SafeArea.place(self, Vector4(0, 0, 0, 0), Vector4(24, 72, 248, 176))
 	SafeArea.apply(self)
 	_setup_strips()
 	_make_poi_dots()

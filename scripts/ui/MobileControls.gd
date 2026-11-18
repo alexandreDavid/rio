@@ -13,6 +13,7 @@ const SAND_CHECK_INTERVAL: float = 0.25
 
 var _sand_check_accum: float = 0.0
 var _hidden_by_context: bool = false  # dialogue ou mini-jeu en cours
+var _hidden_by_modal: bool = false    # téléphone, Diário, Missões… ouvert
 
 func _ready() -> void:
 	if interact_button:
@@ -32,6 +33,7 @@ func _ready() -> void:
 	SafeArea.apply(self)
 	# À la manette, les commandes tactiles s'effacent (et reviennent au doigt).
 	Gamepad.mode_changed.connect(_on_input_mode_changed)
+	UIFit.watch_modals.call_deferred(get_tree(), _on_modal_changed)
 
 func _on_run_toggled(pressed: bool) -> void:
 	if joystick:
@@ -58,14 +60,27 @@ func _process(delta: float) -> void:
 	if altinha_button:
 		altinha_button.visible = _altinha_available()
 
+func _on_modal_changed() -> void:
+	_hidden_by_modal = UIFit.modal_open(get_tree())
+	if _hidden_by_modal:
+		_release_run()
+	_sync_visible()
+
+func _sync_visible() -> void:
+	visible = not GamepadBridge.active and not _hidden_by_context and not _hidden_by_modal
+
 func _altinha_available() -> bool:
 	return BeachZone.altinha_here()
 
+# Appui + relâché aussitôt : le monde réagit à l'événement, et l'action ne
+# doit pas rester coincée (le tap lance souvent un mini-jeu qui masque ce
+# bouton — son button_up n'arriverait jamais).
 func _on_interact_pressed() -> void:
-	var ev: InputEventAction = InputEventAction.new()
-	ev.action = "interact"
-	ev.pressed = true
-	Input.parse_input_event(ev)
+	for pressed in [true, false]:
+		var ev: InputEventAction = InputEventAction.new()
+		ev.action = "interact"
+		ev.pressed = pressed
+		Input.parse_input_event(ev)
 
 func _on_dialogue_started(_npc_id: String) -> void:
 	_release_run()
@@ -74,7 +89,7 @@ func _on_dialogue_started(_npc_id: String) -> void:
 
 func _on_dialogue_ended(_npc_id: String) -> void:
 	_hidden_by_context = false
-	visible = not GamepadBridge.active
+	_sync_visible()
 
 func _on_minigame_started(_minigame_id: String) -> void:
 	_release_run()
@@ -83,9 +98,9 @@ func _on_minigame_started(_minigame_id: String) -> void:
 
 func _on_minigame_ended(_minigame_id: String, _result: Dictionary) -> void:
 	_hidden_by_context = false
-	visible = not GamepadBridge.active
+	_sync_visible()
 
 func _on_input_mode_changed(gamepad: bool) -> void:
 	if gamepad:
 		_release_run()
-	visible = not gamepad and not _hidden_by_context
+	_sync_visible()
