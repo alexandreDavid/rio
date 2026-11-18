@@ -221,13 +221,62 @@ func switch_to_slot(new_slot: int) -> void:
 	if has_save():
 		load_game()
 
+# Anciennes positions des quartiers dans le monde (avant écartement) : sert à
+# reloger le joueur d'une sauvegarde antérieure, qui ne stocke qu'une position
+# monde. Un joueur loin de son quartier (intérieur posé ailleurs) n'est pas touché.
+const _LEGACY_DISTRICT_OFFSETS: Dictionary = {
+	"CorcovadoDistrict": Vector2(-3500, -2900),
+	"MaracanaDistrict": Vector2(-6500, -2900),
+	"PaoAcucarDistrict": Vector2(-7500, -2900),
+	"SantosDumontDistrict": Vector2(-8500, -2900),
+	"SambodromoDistrict": Vector2(-10500, -2900),
+	"BotafogoFlamengoDistrict": Vector2(-13800, -6000),
+	"FavelaDoMorroDistrict": Vector2(-15000, -2900),
+	"BarraDaTijucaDistrict": Vector2(-16500, -2900),
+	"NiteroiDistrict": Vector2(-20500, -2900),
+	"ForteDeCopacabanaDistrict": Vector2(-23000, -2900),
+	"MarinaDaGloriaDistrict": Vector2(-26000, -2900),
+}
+const _DISTRICT_REACH: float = 4500.0
+
+func _current_district_node() -> Node2D:
+	var id: String = DistrictManager.current()
+	if id == "copacabana":
+		return null
+	return DistrictManager._find_district_node(id) as Node2D
+
+func _district_node_near(pos: Vector2) -> Node2D:
+	var node: Node2D = _current_district_node()
+	if node != null and pos.distance_to(node.global_position) <= _DISTRICT_REACH:
+		return node
+	return null
+
+func _restore_position(world: Vector2, local: Array) -> Vector2:
+	var node: Node2D = _current_district_node()
+	if node == null:
+		return world
+	if local.size() == 2:
+		return node.global_position + Vector2(local[0], local[1])
+	var legacy: Vector2 = _LEGACY_DISTRICT_OFFSETS.get(String(node.name), node.global_position)
+	if world.distance_to(legacy) <= _DISTRICT_REACH:
+		return node.global_position + (world - legacy)
+	return world
+
 func _serialize_player() -> Dictionary:
 	var p: Node = GameManager.player
 	if p == null or not (p is Node2D):
 		return {}
 	var inv: Node = p.get_node_or_null("Inventory")
+	var pos: Vector2 = (p as Node2D).global_position
+	var out_local: Array = []
+	var dnode: Node2D = _district_node_near(pos)
+	if dnode != null:
+		out_local = [pos.x - dnode.global_position.x, pos.y - dnode.global_position.y]
 	return {
-		"position": [p.global_position.x, p.global_position.y],
+		"position": [pos.x, pos.y],
+		# Position relative au quartier courant : survit à un déplacement des
+		# quartiers dans le monde (ils ont été écartés le 2026-11-17).
+		"position_local": out_local,
 		"inventory": inv.serialize() if inv and inv.has_method("serialize") else {},
 		"appearance": GameManager.player_appearance.duplicate(true),
 	}
@@ -245,7 +294,7 @@ func _deserialize_player(data: Dictionary) -> void:
 		return
 	if data.has("position"):
 		var arr: Array = data["position"]
-		p.global_position = Vector2(arr[0], arr[1])
+		p.global_position = _restore_position(Vector2(arr[0], arr[1]), data.get("position_local", []))
 	var inv: Node = p.get_node_or_null("Inventory")
 	if inv and inv.has_method("deserialize"):
 		inv.deserialize(data.get("inventory", {}))

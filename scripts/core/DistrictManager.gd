@@ -112,7 +112,7 @@ const WALK_ENTRIES: Dictionary = {
 	"botafogo_flamengo": {
 		"copacabana": Vector2(0, 250),                  # sortie nord du Túnel Novo — nord de ExitToCopa (365)
 		"pao_acucar": Vector2(880, 30),                 # retour du bondinho au sud-est, près de la borne
-		"zona_sul": Vector2(700, 250),                  # depuis Lagoa/Ipanema — nord de ExitToZonaSul (top y=312), 62 px clear
+		"zona_sul": Vector2(730, 250),                  # depuis Lagoa/Ipanema — dans la rue qui monte au col, nord de ExitToZonaSul (top y=312)
 	},
 	"favela_morro": {
 		"copacabana": Vector2(0, 150),    # arrivée depuis le bas — nord de ExitToCopa (250) à 70 px
@@ -219,14 +219,26 @@ func travel_to(district_id: String) -> bool:
 # d'origine si défini dans WALK_ENTRIES, sinon spawn par défaut. Si le joueur
 # est sur un véhicule (vehicle != null), le véhicule traverse aussi — le
 # joueur reste monté à l'arrivée.
-func walk_to(district_id: String, vehicle: Node = null) -> bool:
+# Arrivées par passage nommé (DistrictExit.entry_key) : prioritaires sur
+# WALK_ENTRIES quand la sortie empruntée porte la clé. Mêmes conventions
+# (monde pour Copacabana, local sinon ; hors des zones de sortie retour).
+const WALK_ENTRY_VARIANTS: Dictionary = {
+	"copacabana": {
+		"botafogo_flamengo": {"velho": Vector2(1100, -100)},   # sud de ExitToBotafogoVelho (-210)
+	},
+	"botafogo_flamengo": {
+		"copacabana": {"velho": Vector2(-1090, 250)},          # devant la bouche du Túnel Velho, nord de la sortie (333)
+	},
+}
+
+func walk_to(district_id: String, vehicle: Node = null, entry_key: String = "") -> bool:
 	if not DISTRICTS.has(district_id):
 		push_warning("[DistrictManager] district inconnu : %s" % district_id)
 		return false
 	if district_id == _current:
 		return false
 	var from_id: String = _current
-	var target: Vector2 = _walk_target(district_id, from_id)
+	var target: Vector2 = _walk_target(district_id, from_id, entry_key)
 	# On téléporte le joueur dans tous les cas. Si véhicule, on téléporte aussi
 	# le véhicule à la même position — la _physics_process du Rideable replacera
 	# le joueur sur la selle au tick suivant.
@@ -284,11 +296,12 @@ var _pending_target_district: String = ""
 func _pending_district_for_reset() -> String:
 	return _pending_target_district if _pending_target_district != "" else _current
 
-func _walk_target(district_id: String, from_id: String) -> Vector2:
-	# 1. Entrée custom (selon district d'origine)
+func _walk_target(district_id: String, from_id: String, entry_key: String = "") -> Vector2:
+	# 1. Entrée custom (selon district d'origine, et passage emprunté s'il est nommé)
 	var per_district: Dictionary = WALK_ENTRIES.get(district_id, {})
-	if per_district.has(from_id):
-		var local: Vector2 = per_district[from_id]
+	var variants: Dictionary = WALK_ENTRY_VARIANTS.get(district_id, {}).get(from_id, {})
+	if per_district.has(from_id) or variants.has(entry_key):
+		var local: Vector2 = variants[entry_key] if variants.has(entry_key) else per_district[from_id]
 		# Si Copacabana : la position est en world space direct.
 		if district_id == "copacabana":
 			return local

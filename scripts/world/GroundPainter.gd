@@ -281,3 +281,193 @@ static func foam(sea_color: Color, seed: int = 1) -> ImageTexture:
 	var tex: ImageTexture = ImageTexture.create_from_image(img)
 	_cache[key] = tex
 	return tex
+
+
+# ---------------------------------------------------------------------------
+# Mornes (chantier Botafogo, 2026-11-17) : la mata qui couvre les collines de
+# Rio et les dômes de granit (Pão de Açúcar, Morro da Urca), peints à la
+# densité du jeu à la place des rectangles empilés.
+# ---------------------------------------------------------------------------
+
+const FOREST_TILE: int = 32
+const FOREST_COLOR: Color = Color(0.22, 0.42, 0.27)
+
+
+# Mata vue de haut : cimes rondes serrées, éclairées en haut à gauche.
+static func forest(color: Color, seed: int = 1) -> ImageTexture:
+	var key: String = "forest_%s_%d" % [color.to_html(false), seed]
+	if _cache.has(key):
+		return _cache[key]
+	var n: int = FOREST_TILE
+	var img: Image = Image.create(n, n, false, Image.FORMAT_RGBA8)
+	var dark: Color = color.darkened(0.38)
+	var shade: Color = color.darkened(0.16)
+	var light: Color = color.lightened(0.14)
+	var lighter: Color = color.lightened(0.28)
+	img.fill(dark)
+	var rng: RandomNumberGenerator = RandomNumberGenerator.new()
+	rng.seed = seed
+	# Grille 4×4 décalée : chaque cime déborde sur ses voisines, sans trou.
+	for gy in 4:
+		for gx in 4:
+			var cx: int = gx * 8 + (4 if gy % 2 == 1 else 0) + rng.randi_range(-1, 1)
+			var cy: int = gy * 8 + rng.randi_range(-1, 1)
+			var rad: int = rng.randi_range(4, 5)
+			for dy in range(-rad, rad + 1):
+				for dx in range(-rad, rad + 1):
+					var d2: int = dx * dx + dy * dy
+					if d2 > rad * rad:
+						continue
+					var c: Color = color
+					if d2 >= (rad - 1) * (rad - 1) and (dx + dy) > 1:
+						c = shade
+					elif dx + dy < -rad + 1:
+						c = light
+					img.set_pixel(posmod(cx + dx, n), posmod(cy + dy, n), c)
+			img.set_pixel(posmod(cx - 2, n), posmod(cy - 2, n), lighter)
+			img.set_pixel(posmod(cx - 1, n), posmod(cy - 3, n), lighter)
+	var tex: ImageTexture = ImageTexture.create_from_image(img)
+	_cache[key] = tex
+	return tex
+
+
+# Dôme de granit vu de la baie : silhouette bombée, face claire à gauche,
+# fissures verticales, jupe de mata au pied, contour sombre d'un pixel.
+# `w`/`h` en pixels natifs ; à afficher ×DENSITY en NEAREST.
+static func dome(w: int, h: int, rock: Color, veg: Color = FOREST_COLOR, seed: int = 1) -> ImageTexture:
+	var key: String = "dome_%d_%d_%s_%s_%d" % [w, h, rock.to_html(false), veg.to_html(false), seed]
+	if _cache.has(key):
+		return _cache[key]
+	var img: Image = Image.create(w, h, false, Image.FORMAT_RGBA8)
+	img.fill(Color(0, 0, 0, 0))
+	var rng: RandomNumberGenerator = RandomNumberGenerator.new()
+	rng.seed = seed
+	var rock_light: Color = rock.lightened(0.16)
+	var rock_shade: Color = rock.darkened(0.2)
+	var rock_dark: Color = rock.darkened(0.42)
+	var veg_light: Color = veg.lightened(0.14)
+	var veg_shade: Color = veg.darkened(0.2)
+	var veg_dark: Color = veg.darkened(0.42)
+	var cx: float = float(w) * 0.5
+	var tree_base: float = float(h) * 0.6
+	# Ligne de mata : ondulée, plus haute sur les flancs que sur la face.
+	var tree_y: PackedInt32Array = PackedInt32Array()
+	tree_y.resize(w)
+	for x in w:
+		var u: float = absf((float(x) + 0.5 - cx) / cx)
+		tree_y[x] = int(tree_base - u * u * float(h) * 0.16 + sin(float(x) * 0.55 + float(seed)) * 1.6 + float(rng.randi_range(-1, 1)))
+	for y in h:
+		var t: float = clampf((float(y) + 0.5) / (float(h) * 0.82), 0.0, 1.0)
+		var hw: float = cx * pow(sin(t * PI * 0.5), 0.55)
+		var x0: int = int(ceil(cx - hw))
+		var x1: int = int(floor(cx + hw)) - 1
+		for x in range(maxi(x0, 0), mini(x1, w - 1) + 1):
+			var u2: float = (float(x) + 0.5 - cx) / maxf(hw, 1.0)
+			var c: Color
+			if y >= tree_y[x]:
+				c = veg_light if u2 < -0.45 else (veg if u2 < 0.3 else veg_shade)
+				var roll: float = rng.randf()
+				if roll < 0.10:
+					c = veg_dark
+				elif roll < 0.18:
+					c = veg_light
+			else:
+				c = rock_light if (u2 < -0.4 or y < 2) else (rock if u2 < 0.3 else rock_shade)
+				if rng.randf() < 0.04:
+					c = rock_shade if u2 < 0.3 else rock_dark
+			img.set_pixel(x, y, c)
+	# Fissures : coulures sombres verticales dans la roche.
+	for i in maxi(3, w / 9):
+		var fx: int = rng.randi_range(int(cx * 0.45), int(cx * 1.6))
+		var fy: int = rng.randi_range(int(h * 0.12), int(h * 0.4))
+		for k in rng.randi_range(5, 11):
+			var yy: int = fy + k
+			if fx < w and yy < h and yy < tree_y[fx] and img.get_pixel(fx, yy).a > 0.0:
+				img.set_pixel(fx, yy, rock_shade if k % 4 != 3 else rock_dark)
+	# Contour : tout pixel plein au bord de la silhouette.
+	var src: Image = img.duplicate()
+	for y in h:
+		for x in w:
+			if src.get_pixel(x, y).a == 0.0:
+				continue
+			var edge: bool = x == 0 or x == w - 1 or y == 0
+			if not edge:
+				edge = src.get_pixel(x - 1, y).a == 0.0 or src.get_pixel(x + 1, y).a == 0.0 or src.get_pixel(x, y - 1).a == 0.0
+			if edge:
+				img.set_pixel(x, y, veg_dark if y >= tree_y[x] else rock_dark)
+	var tex: ImageTexture = ImageTexture.create_from_image(img)
+	_cache[key] = tex
+	return tex
+
+
+# Affleurement rocheux vu de haut (pedra do Arpoador, promontoire du Forte) :
+# masse aux bords irréguliers, facettes claires en haut à gauche, fissures,
+# liseré sombre au pied. `w`/`h` en pixels natifs, à afficher ×DENSITY.
+static func outcrop(w: int, h: int, color: Color, seed: int = 1) -> ImageTexture:
+	var key: String = "outcrop_%d_%d_%s_%d" % [w, h, color.to_html(false), seed]
+	if _cache.has(key):
+		return _cache[key]
+	var img: Image = Image.create(w, h, false, Image.FORMAT_RGBA8)
+	img.fill(Color(0, 0, 0, 0))
+	var rng: RandomNumberGenerator = RandomNumberGenerator.new()
+	rng.seed = seed
+	var light: Color = color.lightened(0.16)
+	var lighter: Color = color.lightened(0.3)
+	var shade: Color = color.darkened(0.18)
+	var dark: Color = color.darkened(0.42)
+	var p1: float = rng.randf() * TAU
+	var p2: float = rng.randf() * TAU
+	var p3: float = rng.randf() * TAU
+	for y in h:
+		for x in w:
+			var u: float = (float(x) + 0.5) / float(w) * 2.0 - 1.0
+			var v: float = (float(y) + 0.5) / float(h) * 2.0 - 1.0
+			var ang: float = atan2(v, u)
+			# Bord : superellipse (masse trapue) rognée par trois ondes.
+			var rim: float = 1.0 - 0.07 * sin(ang * 3.0 + p1) - 0.05 * sin(ang * 7.0 + p2) - 0.03 * sin(ang * 13.0 + p3)
+			var d: float = pow(pow(absf(u), 3.2) + pow(absf(v), 3.2), 1.0 / 3.2)
+			if d > rim * 0.97:
+				continue
+			var c: Color = color
+			var slope: float = u + v
+			if slope < -0.55:
+				c = light
+			elif slope > 0.7:
+				c = shade
+			img.set_pixel(x, y, c)
+	# Facettes : plaques de 2 à 6 pixels, claires ou sombres.
+	for i in (w * h) / 22:
+		var fx: int = rng.randi_range(0, w - 1)
+		var fy: int = rng.randi_range(0, h - 1)
+		var fc: Color = [light, light, shade, lighter][rng.randi() % 4]
+		for k in rng.randi_range(2, 6):
+			var px: int = fx + k
+			if px < w and img.get_pixel(px, fy).a > 0.0:
+				img.set_pixel(px, fy, fc)
+				if k % 2 == 0 and fy + 1 < h and img.get_pixel(px, fy + 1).a > 0.0:
+					img.set_pixel(px, fy + 1, shade)
+	# Fissures : traits sombres en escalier.
+	for i in maxi(3, (w + h) / 14):
+		var cx: int = rng.randi_range(2, w - 3)
+		var cy: int = rng.randi_range(2, h - 3)
+		for k in rng.randi_range(4, 10):
+			if cx >= 0 and cx < w and cy >= 0 and cy < h and img.get_pixel(cx, cy).a > 0.0:
+				img.set_pixel(cx, cy, dark if k % 3 == 0 else shade)
+			cy += 1
+			cx += rng.randi_range(-1, 1)
+	# Contour, plus épais au pied (ombre portée de la masse).
+	var src: Image = img.duplicate()
+	for y in h:
+		for x in w:
+			if src.get_pixel(x, y).a == 0.0:
+				continue
+			var edge: bool = x == 0 or y == 0 or x == w - 1 or y == h - 1
+			if not edge:
+				edge = src.get_pixel(x - 1, y).a == 0.0 or src.get_pixel(x + 1, y).a == 0.0 or src.get_pixel(x, y - 1).a == 0.0 or src.get_pixel(x, y + 1).a == 0.0
+			if edge:
+				img.set_pixel(x, y, dark)
+			elif y + 2 < h and src.get_pixel(x, y + 2).a == 0.0:
+				img.set_pixel(x, y, shade)
+	var tex: ImageTexture = ImageTexture.create_from_image(img)
+	_cache[key] = tex
+	return tex

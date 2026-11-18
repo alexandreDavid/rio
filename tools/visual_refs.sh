@@ -8,7 +8,7 @@ set -u
 cd "$(dirname "$0")/.."
 GODOT_BIN="${GODOT_BIN:-$HOME/Downloads/Godot.app/Contents/MacOS/Godot}"
 DIR=tools/visual_refs
-VIEWS="1000:110:1,1550:40:1,-15000:-3400:1,-900:150:1,7200:-2950:1,1550:40:2"
+VIEWS="1000:110:1,1550:40:1,-36000:-6500:1,-900:150:1,7200:-2950:1,1550:40:2"
 NAMES=(copa_calcadao copa_palace favela zona_sul maison copa_palace_soir)
 SAVEDIR="$HOME/Library/Application Support/Godot/app_userdata/Rio — Copacabana"
 STASH="$(mktemp -d)"

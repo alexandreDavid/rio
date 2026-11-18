@@ -28,6 +28,7 @@ func _ready() -> void:
 	# Drift décoratif (mouettes, bateaux, kite) hérité d'AmbientDrifter.
 	super._ready()
 	_spawn_interiors()
+	_spawn_north_morro()
 	_spawn_sand()
 	_spawn_sea()
 	_spawn_sea_foam()
@@ -97,6 +98,20 @@ func _spawn_tile_strip(container_name: String, y_top: float, y_bot: float, tile_
 			s.scale = scale
 			s.position = Vector2(Cfg.MAP_LEFT + col * Cfg.GROUND_TILE_SIZE + Cfg.GROUND_TILE_SIZE * 0.5, y_top + row * Cfg.GROUND_TILE_SIZE + Cfg.GROUND_TILE_SIZE * 0.5)
 			container.add_child(s)
+
+# Les morros derrière Copacabana : une nappe de mata peinte au nord de la
+# deuxième rangée d'immeubles, juste devant le ciel (z -9). La favela, les
+# bouches de tunnel et l'église s'adossent à la colline au lieu de flotter
+# dans le bleu ; la caméra ne monte jamais assez pour voir le haut de la nappe.
+func _spawn_north_morro() -> void:
+	var container: Node2D = Node2D.new()
+	container.name = "NorthMorro"
+	container.z_index = -9
+	add_child(container)
+	var pos: Vector2 = Vector2(Cfg.MAP_LEFT - 44.0, -900.0)
+	var s: Sprite2D = DistrictDresser.painted_sprite(GroundPainter.forest(GroundPainter.FOREST_COLOR, 3), Vector2(Cfg.MAP_TOTAL_W + 44.0, 900.0 - 128.0), {"origin": pos, "mirror": true})
+	s.position = pos
+	container.add_child(s)
 
 func _spawn_sand() -> void:
 	# Sable peint (GroundPainter), une seule nappe jusqu'au rivage le plus
@@ -1373,29 +1388,11 @@ func _spawn_forte() -> void:
 	rock_shape.shape = rock_rect
 	rock_body.add_child(rock_shape)
 	container.add_child(rock_body)
-	# Promontoire rocheux qui s'avance dans la mer (au-delà du rivage de la baie)
-	var rock: ColorRect = ColorRect.new()
-	rock.offset_left = -290.0
-	rock.offset_top = 140.0
-	rock.offset_right = -40.0
-	rock.offset_bottom = 470.0
-	rock.color = Color(0.45, 0.42, 0.45, 1)
+	# Promontoire rocheux qui s'avance dans la mer (au-delà du rivage de la
+	# baie) : affleurement peint, plus de bloc gris.
+	var rock: Sprite2D = DistrictDresser.rock_sprite(Rect2(-296, 124, 262, 352), Color(0.47, 0.44, 0.45, 1), 7)
+	rock.name = "ForteRock"
 	container.add_child(rock)
-	var rock_top: ColorRect = ColorRect.new()
-	rock_top.offset_left = -270.0
-	rock_top.offset_top = 130.0
-	rock_top.offset_right = -70.0
-	rock_top.offset_bottom = 145.0
-	rock_top.color = Color(0.35, 0.32, 0.36, 1)
-	container.add_child(rock_top)
-	# Vegetation au sommet
-	var veg: ColorRect = ColorRect.new()
-	veg.offset_left = -250.0
-	veg.offset_top = 124.0
-	veg.offset_right = -90.0
-	veg.offset_bottom = 132.0
-	veg.color = Color(0.32, 0.55, 0.32, 0.85)
-	container.add_child(veg)
 	# Mur du fort (blanc, ouvert vers la mer)
 	var fort_wall: ColorRect = ColorRect.new()
 	fort_wall.offset_left = -240.0
@@ -2253,20 +2250,24 @@ func _spawn_arpoador_seam() -> void:
 	pedra_shape.shape = pedra_rect
 	pedra.add_child(pedra_shape)
 	container.add_child(pedra)
-	# Rochers visibles (nord et sud du sentier).
-	for r in [
-		{"rect": Rect2(-336, -60, 90, 120), "c": Color(0.42, 0.40, 0.38, 1)},
-		{"rect": Rect2(-322, -16, 66, 76), "c": Color(0.50, 0.47, 0.44, 1)},
-		{"rect": Rect2(-340, 142, 78, 290), "c": Color(0.44, 0.42, 0.40, 1)},
-		{"rect": Rect2(-326, 170, 52, 220), "c": Color(0.52, 0.49, 0.46, 1)},
-	]:
-		var rock: ColorRect = ColorRect.new()
-		rock.offset_left = r.rect.position.x
-		rock.offset_top = r.rect.position.y
-		rock.offset_right = r.rect.position.x + r.rect.size.x
-		rock.offset_bottom = r.rect.position.y + r.rect.size.y
-		rock.color = r.c
-		container.add_child(rock)
+	# Crête boisée au nord (le morro qui sépare Ipanema de Copacabana) : elle
+	# recouvre la jointure des deux trames de rues, qui ne se raccordent pas.
+	var ridge: ColorRect = ColorRect.new()
+	ridge.name = "SeamRidge"
+	ridge.position = Vector2(-344, -620)
+	ridge.size = Vector2(110, 560)
+	ridge.color = GroundPainter.FOREST_COLOR
+	ridge.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	ridge.z_index = 1
+	ridge.add_child(DistrictDresser.painted_sprite(GroundPainter.forest(GroundPainter.FOREST_COLOR, 2), ridge.size, {"origin": ridge.position, "mirror": true}))
+	container.add_child(ridge)
+	# Rochers peints de part et d'autre du sentier.
+	var rock_n: Sprite2D = DistrictDresser.rock_sprite(Rect2(-346, -70, 112, 134), Color(0.46, 0.44, 0.42, 1), 3)
+	rock_n.name = "SeamRockNorth"
+	container.add_child(rock_n)
+	var rock_s: Sprite2D = DistrictDresser.rock_sprite(Rect2(-350, 138, 96, 300), Color(0.48, 0.46, 0.44, 1), 5)
+	rock_s.name = "SeamRockSouth"
+	container.add_child(rock_s)
 	# Le sentier (sable tassé entre les rochers).
 	var path_rect: ColorRect = ColorRect.new()
 	path_rect.offset_left = -340.0
@@ -2276,4 +2277,4 @@ func _spawn_arpoador_seam() -> void:
 	path_rect.color = Color(0.88, 0.8, 0.62, 1)
 	path_rect.z_index = -4
 	container.add_child(path_rect)
-	_spawn_sign(container, Vector2(-290, -380), "PEDRA DO ARPOADOR", Color(0.85, 0.82, 0.75, 1), 12)
+	_spawn_sign(container, Vector2(-302, 230), "PEDRA DO ARPOADOR", Color(0.85, 0.82, 0.75, 1), 12)

@@ -29,6 +29,12 @@ extends RefCounted
 #                    sprite de l'atlas ancré au pied, dessiné au-dessus des sols.
 #                    La couleur du rectangle choisit la toile du parasol ; les
 #                    deux palmiers de l'atlas alternent.
+#   ground_forest  → mata peinte (cimes vues de haut) dans la couleur de la
+#                    dalle : collines qui ferment un quartier
+#   prop_morro     → le rectangle est la boîte englobante d'un dôme de granit
+#                    (couleur = la roche) : remplacé par GroundPainter.dome
+#   prop_rock      → le rectangle est la boîte englobante d'un affleurement
+#                    rocheux (couleur = la roche) : GroundPainter.outcrop
 #   prop_towel     → serviette à plat, centrée sur le rectangle, au même rang de
 #                    dessin (c'est du sol, pas un volume).
 # L'écume (peinte, animée) est posée automatiquement sur chaque couture
@@ -46,7 +52,7 @@ const FOAM_FPS: float = 2.0   # 4 frames ping-pong → une vague toutes les 2 s
 const SEAM_TOLERANCE: float = 12.0
 const MIN_SEAM_LEN: float = 32.0
 const BACKDROP_MARGIN: float = 1400.0
-const GROUND_GROUPS: Array = ["ground_sand", "ground_sea", "ground_road", "ground_calcadao", "ground_sidewalk", "ground_grass", "ground_plaza", "ground_dirt", "ground_stairs"]
+const GROUND_GROUPS: Array = ["ground_forest", "ground_sand", "ground_sea", "ground_road", "ground_calcadao", "ground_sidewalk", "ground_grass", "ground_plaza", "ground_dirt", "ground_stairs"]
 # Contraste du grain recoloré : 1 = contraste brut de la tuile, 0 = aplat. Le pavé
 # a des joints marqués (on l'adoucit), le sable est très doux (on l'amplifie).
 const PLAZA_GRAIN: float = 0.65
@@ -141,6 +147,16 @@ static func dress(root: Node) -> void:
 			_replace_with_prop(cr, Cfg.BEACH_CART_REGION, clampf(cr.size.y * 1.8, 60.0, 90.0))
 		elif cr.is_in_group("prop_towel"):
 			_replace_with_towel(cr)
+		elif cr.is_in_group("prop_morro"):
+			_replace_with_morro(cr)
+		elif cr.is_in_group("prop_rock"):
+			var parent: Node = cr.get_parent()
+			var rs: Sprite2D = rock_sprite(Rect2(cr.position, cr.size), cr.color, int(absf(cr.position.x + cr.position.y)) % 97 + 1)
+			rs.name = cr.name + "Sprite"
+			rs.z_index = cr.z_index
+			parent.add_child(rs)
+			parent.move_child(rs, cr.get_index() + 1)
+			cr.visible = false
 	for cr in rects:
 		if cr.is_in_group("district_backdrop"):
 			_expand_backdrop(cr, rects)
@@ -157,6 +173,13 @@ static func style_world_labels(root: Node) -> void:
 		var label: Label = l as Label
 		if label != null and not label.has_theme_font_override("font"):
 			PixelFont.style_world_label(label)
+
+
+static func _is_ground(c: Node) -> bool:
+	for g in GROUND_GROUPS:
+		if c.is_in_group(g):
+			return true
+	return false
 
 
 static func _collect_color_rects(node: Node, out: Array[ColorRect]) -> void:
@@ -228,6 +251,9 @@ static func _overlay_tiles(cr: ColorRect, group: String) -> void:
 	# escaliers (rendu B, docs/VISUEL_ETUDE_2026-10-08.md).
 	var seed: int = int(absf(cr.position.x * 7.0 + cr.position.y * 13.0)) % 977 + 1
 	match group:
+		"ground_forest":
+			cr.add_child(painted_sprite(GroundPainter.forest(cr.color, seed % 5 + 1), cr.size, {"origin": cr.global_position, "mirror": true}))
+			return
 		"ground_sand":
 			cr.add_child(painted_sprite(GroundPainter.sand(Cfg.SAND_COLOR), cr.size, {"origin": cr.global_position, "mirror": true}))
 			return
@@ -434,6 +460,8 @@ static func _dress_building(cr: ColorRect, rects: Array[ColorRect]) -> void:
 		var c: Control = child as Control
 		if c.name.begins_with("Roof") or c.name == "Shadow":
 			continue
+		if _is_ground(c):
+			continue  # une dalle de sol qui frôle la façade reste du sol
 		if mine.intersects(c.get_global_rect()):
 			c.z_index = maxi(c.z_index, 1)
 
@@ -459,6 +487,40 @@ static func _replace_with_prop(cr: ColorRect, region: Rect2, target_h: float) ->
 	# même logique qu'à Copa où les props sont posés après les sols.
 	parent.move_child(s, parent.get_child_count() - 1)
 	cr.visible = false
+
+
+# Dôme de granit peint (Pão de Açúcar, Morro da Urca) : le rect est la boîte
+# englobante, sa couleur celle de la roche. Origine en haut du rect : un
+# morne est un fond, il se trie derrière tout ce qui vit à son pied.
+static func _replace_with_morro(cr: ColorRect) -> void:
+	var parent: Node = cr.get_parent()
+	if parent == null:
+		return
+	var d: int = GroundPainter.DENSITY
+	var s: Sprite2D = Sprite2D.new()
+	s.name = cr.name + "Sprite"
+	s.texture = GroundPainter.dome(int(cr.size.x) / d, int(cr.size.y) / d, cr.color, GroundPainter.FOREST_COLOR, int(absf(cr.position.x)) % 97 + 1)
+	s.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	s.centered = false
+	s.scale = Vector2(d, d)
+	s.position = cr.position
+	s.z_index = cr.z_index
+	parent.add_child(s)
+	parent.move_child(s, cr.get_index() + 1)
+	cr.visible = false
+
+
+# Affleurement rocheux peint couvrant `rect` (coordonnées du parent), origine
+# en haut à gauche comme le rect qu'il remplace. Partagé avec Copa (Arpoador).
+static func rock_sprite(rect: Rect2, color: Color, seed: int = 1) -> Sprite2D:
+	var d: int = GroundPainter.DENSITY
+	var s: Sprite2D = Sprite2D.new()
+	s.texture = GroundPainter.outcrop(maxi(4, int(rect.size.x) / d), maxi(4, int(rect.size.y) / d), color, seed)
+	s.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	s.centered = false
+	s.scale = Vector2(d, d)
+	s.position = rect.position
+	return s
 
 
 static func _replace_with_towel(cr: ColorRect) -> void:

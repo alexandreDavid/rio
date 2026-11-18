@@ -15,6 +15,10 @@ extends Area2D
 # Copa ↔ Arpoador) — pas de téléport, on bascule juste le référentiel
 # (DistrictManager.seam_to). Le joueur et son véhicule continuent leur route.
 @export var seamless: bool = false
+# Plusieurs passages relient parfois les deux mêmes quartiers (Túnel Novo et
+# Túnel Velho entre Copa et Botafogo) : la clé choisit l'arrivée associée dans
+# DistrictManager.WALK_ENTRY_VARIANTS, pour ressortir par où l'on est entré.
+@export var entry_key: String = ""
 @export var require_quest_completed: String = ""
 @export_multiline var block_message: String = ""
 # Si vrai : quand la sortie est verrouillée, la mère de Pedrinho rattrape le
@@ -60,10 +64,10 @@ func _on_body_entered(body: Node) -> void:
 		DistrictManager.seam_to(target_district)
 		return
 	if is_player:
-		DistrictManager.walk_to(target_district)
+		DistrictManager.walk_to(target_district, null, entry_key)
 		return
 	# Joueur sur un véhicule : le véhicule traverse aussi — on reste monté.
-	DistrictManager.walk_to(target_district, body)
+	DistrictManager.walk_to(target_district, body, entry_key)
 
 func _on_body_exited(body: Node) -> void:
 	if body.is_in_group("player") or (body is Rideable and (body as Rideable).is_ridden()):

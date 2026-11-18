@@ -1675,19 +1675,19 @@ position = Vector2(1130, 130)
 position = Vector2(1700, 30)
 
 [node name="CorcovadoDistrict" parent="." instance=ExtResource("46_corcovado")]
-position = Vector2(-3500, -2900)
+position = Vector2(-6000, -6000)
 
 [node name="MaracanaDistrict" parent="." instance=ExtResource("49_maracana")]
-position = Vector2(-6500, -2900)
+position = Vector2(-11000, -6000)
 
 [node name="PaoAcucarDistrict" parent="." instance=ExtResource("50_paoacucar")]
-position = Vector2(-7500, -2900)
+position = Vector2(-16000, -6000)
 
 [node name="SantosDumontDistrict" parent="." instance=ExtResource("51_santos")]
-position = Vector2(-8500, -2900)
+position = Vector2(-21000, -6000)
 
 [node name="SambodromoDistrict" parent="." instance=ExtResource("53_sambodromo")]
-position = Vector2(-10500, -2900)
+position = Vector2(-26000, -6000)
 
 [node name="Bike" parent="." instance=ExtResource("54_bike")]
 position = Vector2(1450, 100)
@@ -1727,11 +1727,11 @@ position = Vector2(-1240, 20)
 [node name="ExitToZonaSul" parent="." instance=ExtResource("58_exit")]
 position = Vector2(-420, 100)
 target_district = "zona_sul"
-label_text = "← ARPOADOR / IPANEMA (pela pedra)"
+label_text = "← IPANEMA"
 seamless = true
 
 [node name="BotafogoFlamengoDistrict" parent="." instance=ExtResource("59_botafogo")]
-position = Vector2(-13800, -6000)
+position = Vector2(-31000, -6000)
 
 [node name="ExitToBotafogoNovo" parent="." instance=ExtResource("58_exit")]
 position = Vector2(2150, -210)
@@ -1742,21 +1742,22 @@ label_text = "↑ TÚNEL NOVO → BOTAFOGO"
 position = Vector2(1100, -210)
 target_district = "botafogo_flamengo"
 label_text = "↑ TÚNEL VELHO → BOTAFOGO"
+entry_key = "velho"
 
 [node name="FavelaDoMorroDistrict" parent="." instance=ExtResource("60_favela")]
-position = Vector2(-15000, -2900)
+position = Vector2(-36000, -6000)
 
 [node name="BarraDaTijucaDistrict" parent="." instance=ExtResource("64_barra")]
-position = Vector2(-16500, -2900)
+position = Vector2(-41000, -6000)
 
 [node name="NiteroiDistrict" parent="." instance=ExtResource("65_niteroi")]
-position = Vector2(-20500, -2900)
+position = Vector2(-46000, -6000)
 
 [node name="ForteDeCopacabanaDistrict" parent="." instance=ExtResource("67_forte")]
-position = Vector2(-23000, -2900)
+position = Vector2(-51000, -6000)
 
 [node name="MarinaDaGloriaDistrict" parent="." instance=ExtResource("68_marina")]
-position = Vector2(-26000, -2900)
+position = Vector2(-56000, -6000)
 
 [node name="ExitToFavela" parent="." instance=ExtResource("58_exit")]
 position = Vector2(200, -210)

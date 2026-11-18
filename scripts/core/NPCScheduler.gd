@@ -30,10 +30,10 @@ const DEFAULT_SCHEDULE: Dictionary = {
 	# Pas de règle ici pour ne pas le téléporter sur le calçadão au démarrage.
 	"miguel": [
 		# Acte 2 : Miguel s'installe DANS le district FavelaDoMorro (instancié à
-		# (-15000, -2900)). Position locale (50, 100) → global = (-14950, -2800).
+		# (-36000, -6000)). Position locale (50, 100) → global = (-35950, -5900).
 		# Évite que Miguel reste dans la zone du trigger ExitToFavela à Copa
 		# (-258..-162 sur l'axe Y) qui le rendrait inatteignable.
-		{"act": 2, "pos": Vector2(-14950, -2800)},
+		{"act": 2, "pos": Vector2(-35950, -5900)},
 		{"pos": Vector2(866, 96)},  # Acte 1 : Av. Atlântica
 	],
 	# tito vit dans FavelaDoMorro.tscn — pas de règle ici pour ne pas le téléporter
