@@ -23,6 +23,10 @@ const SWIPE_MIN: float = 60.0
 const POINTS_PERFECT: int = 14
 const POINTS_GOOD: int = 7
 const TIP_DIVISOR: float = 2.5
+const BAR_W: float = 480.0
+const TEAM_FLAGS: Array[String] = ["flamengo", "vasco", "fluminense", "botafogo"]
+const STADIUM_SCRIPT: Script = preload("res://scripts/minigames/maracana/MaracanaStadium.gd")
+const ICON_SCRIPT: Script = preload("res://scripts/minigames/maracana/MaracanaGestureIcon.gd")
 
 # Commandes possibles. Chaque entrée : action Godot, libellé, couleur.
 const COMMANDS: Array = [
@@ -48,6 +52,12 @@ var _current_idx: int = -1
 var _current_spawn: float = 0.0
 var _touch_start: Vector2 = Vector2.ZERO
 var _touch_down: bool = false
+# Captures hors partie : nom d'un time (ou « 1 ») = la torcida suit les ordres
+# toute seule, pour voir poses, ola et fumigènes.
+var preview_autoplay: String = ""
+var _preview_at: float = -1.0
+var _stadium: Node2D
+var _icon: Control
 
 func _progress() -> float:
 	return clampf(1.0 - _time_left / DURATION, 0.0, 1.0)
@@ -72,6 +82,7 @@ func _ready() -> void:
 	var cam: Camera2D = get_node_or_null("Camera2D")
 	if cam:
 		cam.make_current()
+	_build_stadium()
 	# Au doigt, chaque ordre a son geste (balayer ↑ ← → ↓, taper = OLA) : le
 	# bouton n'affiche plus que l'ordre, il ne répond plus à tout.
 	if action_button:
@@ -94,6 +105,39 @@ func _process(delta: float) -> void:
 		_state_transition(elapsed)
 	_update_prompt_bar(elapsed)
 	_update_labels()
+	if preview_autoplay != "" and _state == State.PROMPTING and _preview_at < 0.0:
+		_preview_at = elapsed + randf_range(0.2, 0.9)
+	if _preview_at >= 0.0 and elapsed >= _preview_at:
+		_preview_at = -1.0
+		_answer(_current_idx)
+
+# Le time de coração du joueur colore la torcida (rubro-negro par défaut).
+func _team_id() -> String:
+	if TEAM_FLAGS.has(preview_autoplay):
+		return preview_autoplay
+	var cm: Node = get_node_or_null("/root/CampaignManager")
+	if cm and cm.has_method("has_flag"):
+		for t in TEAM_FLAGS:
+			if cm.call("has_flag", "time_" + t):
+				return t
+	return "flamengo"
+
+func _build_stadium() -> void:
+	_stadium = STADIUM_SCRIPT.new()
+	_stadium.call("setup", _team_id())
+	add_child(_stadium)
+	move_child(_stadium, 0)
+	_icon = ICON_SCRIPT.new()
+	_icon.visible = false
+	var ui: Node = get_node_or_null("UI")
+	if ui:
+		ui.add_child(_icon)
+		_icon.anchor_left = 0.5
+		_icon.anchor_right = 0.5
+		_icon.offset_left = -144.0
+		_icon.offset_right = 144.0
+		_icon.offset_top = 150.0
+		_icon.offset_bottom = 438.0
 
 func _state_transition(elapsed: float) -> void:
 	if _state == State.WAITING:
@@ -108,6 +152,7 @@ func _state_transition(elapsed: float) -> void:
 		_misses += 1
 		_set_status("MISS")
 		sfx("mg_miss")
+		_stadium_miss()
 		_to_waiting(elapsed)
 
 func _to_waiting(elapsed: float) -> void:
@@ -133,6 +178,7 @@ func _answer(idx: int) -> void:
 	_misses += 1
 	_set_status("ERROU O GESTO")
 	sfx("mg_miss")
+	_stadium_miss()
 	_to_waiting(DURATION - _time_left)
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -175,6 +221,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		_misses += 1
 		_set_status("MAUVAISE TOUCHE")
 		sfx("mg_miss")
+		_stadium_miss()
 		_to_waiting(elapsed)
 		return
 	_score_correct_press()
@@ -184,6 +231,8 @@ func _unhandled_input(event: InputEvent) -> void:
 func _score_correct_press() -> void:
 	var elapsed: float = DURATION - _time_left
 	var time_since: float = elapsed - _current_spawn
+	if _stadium:
+		_stadium.call("react", _current_idx, time_since <= _perfect_window())
 	if time_since <= _perfect_window():
 		_score += POINTS_PERFECT
 		_perfects += 1
@@ -197,7 +246,13 @@ func _score_correct_press() -> void:
 		sfx("mg_good")
 	_to_waiting(elapsed)
 
+func _stadium_miss() -> void:
+	if _stadium:
+		_stadium.call("miss")
+
 func _show_prompt(cmd: Dictionary) -> void:
+	if _icon:
+		_icon.call("show_cmd", _current_idx, cmd.color)
 	if prompt_label:
 		prompt_label.text = cmd.label
 		prompt_label.modulate = cmd.color
@@ -206,10 +261,10 @@ func _show_prompt(cmd: Dictionary) -> void:
 		prompt_bar_root.visible = true
 	if action_button:
 		action_button.text = cmd.label
-		action_button.modulate = cmd.color
-		action_button.visible = true
 
 func _clear_prompt() -> void:
+	if _icon:
+		_icon.visible = false
 	if prompt_label:
 		prompt_label.visible = false
 	if prompt_bar_root:
@@ -224,13 +279,21 @@ func _update_prompt_bar(elapsed: float) -> void:
 	var window: float = _state_until - _current_spawn
 	var time_left_in_window: float = _state_until - elapsed
 	var ratio: float = clamp(time_left_in_window / maxf(window, 0.01), 0.0, 1.0)
-	prompt_bar.size.x = 360.0 * ratio
+	prompt_bar.size.x = BAR_W * ratio
 	# Couleur : verte si encore dans la fenêtre PERFECT, jaune sinon.
 	var time_since: float = elapsed - _current_spawn
-	if time_since <= _perfect_window():
+	var in_perfect: bool = time_since <= _perfect_window()
+	if in_perfect:
 		prompt_bar.color = Color(0.55, 0.95, 0.55, 1)
 	else:
 		prompt_bar.color = Color(0.95, 0.85, 0.4, 1)
+	if _icon:
+		_icon.set("ratio", ratio)
+		_icon.set("perfect", in_perfect)
+	# Repère de la fin du PERFECT sur la barre.
+	var mark: Control = prompt_bar_root.get_node_or_null("PerfectMark") as Control
+	if mark:
+		mark.position.x = BAR_W * (1.0 - _perfect_window() / maxf(window, 0.01)) - 4.0
 
 func _set_status(text: String) -> void:
 	if status_label:

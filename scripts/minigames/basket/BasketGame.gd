@@ -29,7 +29,10 @@ const RIM_HALF_END: float = 0.12
 const FEED_DELAY: float = 0.9   # délai avant l'apparition du tir suivant
 const RESOLVE_DELAY: float = 0.6  # affichage du résultat avant feed
 
+const BasketArt := preload("res://scripts/minigames/basket/BasketArt.gd")
+
 enum State { READY, RESOLVED, ENDED }
+enum Shot { SWISH, RIM, AIRBALL }
 
 var _shot_index: int = 0
 var _score: int = 0
@@ -40,6 +43,7 @@ var _state: int = State.READY
 var _meter_t: float = 0.0
 var _resolve_until: float = 0.0
 var _feed_until: float = 0.0
+var _art: BasketArt = null
 
 @onready var meter_root: Control = $UI/Meter
 @onready var meter_cursor: ColorRect = $UI/Meter/Cursor
@@ -60,6 +64,10 @@ func _ready() -> void:
 	if action_btn:
 		action_btn.pressed.connect(_on_action_pressed)
 	_status("Touche TIRER quand le curseur passe au centre vert")
+	# Décor, joueur, panier et ballon : tout le rendu vit dans BasketArt.
+	_art = BasketArt.new()
+	add_child(_art)
+	_art.build(self)
 	_layout_zones()
 
 func _on_action_pressed() -> void:
@@ -68,6 +76,8 @@ func _on_action_pressed() -> void:
 	_resolve_shot()
 
 func _process(delta: float) -> void:
+	if _art:
+		_art.tick(delta, _state == State.READY and ball != null and ball.visible)
 	if _state == State.ENDED:
 		return
 	var now: float = Time.get_ticks_msec() / 1000.0
@@ -133,7 +143,9 @@ func _resolve_shot() -> void:
 	var swish_half: float = _swish_half()
 	var rim_half: float = _rim_half()
 	_shot_index += 1
+	var outcome: int = Shot.AIRBALL
 	if dist <= swish_half:
+		outcome = Shot.SWISH
 		_score += POINTS_SWISH
 		_swishes += 1
 		_status("SWISH ! +3")
@@ -141,6 +153,7 @@ func _resolve_shot() -> void:
 		sfx("mg_perfect")
 		pulse(0.4, 0.06)
 	elif dist <= rim_half:
+		outcome = Shot.RIM
 		_score += POINTS_RIM
 		_rims += 1
 		_status("Rim-in +1")
@@ -151,6 +164,8 @@ func _resolve_shot() -> void:
 		sfx("mg_miss")
 	_layout_zones()
 	_show_ball(false)
+	if _art:
+		_art.shoot(outcome)
 	_state = State.RESOLVED
 	_resolve_until = Time.get_ticks_msec() / 1000.0 + RESOLVE_DELAY
 	_update_labels()

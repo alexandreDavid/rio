@@ -46,6 +46,22 @@ const CHECKPOINTS: Array = [
 ]
 
 # Inscription 50 R$ : la vitória rapporte, sans faire du racha une planche à billets.
+# Rendu : décor peint (RachaPainter), voitures en 16 caps pré-rendus.
+const Painter := preload("res://scripts/minigames/racha/RachaPainter.gd")
+const GRID: Array = [Vector2(1040, 300), Vector2(1000, 350), Vector2(950, 300), Vector2(910, 350)]
+const LAMPS: Array = [
+	Vector2(-300, 540), Vector2(40, 540), Vector2(590, 540), Vector2(960, 540), Vector2(1330, 540),
+	Vector2(1880, 540), Vector2(2220, 540), Vector2(-200, 150), Vector2(290, 150), Vector2(770, 150),
+	Vector2(1250, 150), Vector2(1730, 150), Vector2(2150, 150), Vector2(60, 945), Vector2(560, 945),
+	Vector2(1360, 945), Vector2(1860, 945),
+]
+const PALMS: Array = [
+	Vector2(760, 650), Vector2(1160, 650), Vector2(-120, 650), Vector2(2080, 650),
+	Vector2(-420, 985), Vector2(-40, 985), Vector2(1980, 985), Vector2(2300, 985),
+]
+# Sens de passage à chaque porte (horaire) : le chevron le montre.
+const CP_ANGLES: Array = [0.0, PI * 0.5, PI, PI * 1.5]
+
 const PAYOUTS: Dictionary = {
 	1: 220,
 	2: 100,
@@ -61,6 +77,14 @@ var _countdown: float = COUNTDOWN
 var _turbo_left: float = 0.0
 var _turbo_cd: float = 0.0
 var _last_beat: int = 4
+var _anim_t: float = 0.0
+var _fans: Array[Sprite2D] = []
+var _fan_t: float = 0.0
+var _sea: Sprite2D = null
+var _sea_frames: Array = []
+var _glints: Array[ColorRect] = []
+var _marker: Sprite2D = null
+var _flag: Sprite2D = null
 
 @onready var arena: Node2D = $Arena
 @onready var cp_markers: Node2D = $Arena/Checkpoints
@@ -75,6 +99,7 @@ func _ready() -> void:
 	var cam: Camera2D = get_node_or_null("Camera2D")
 	if cam:
 		cam.make_current()
+	_build_scenery()
 	_init_racers()
 	_render_checkpoints()
 	if status_label:
@@ -85,7 +110,7 @@ func _ready() -> void:
 func _init_racers() -> void:
 	# Grille derrière la ligne (CP0, x=1100), en quinconce sur 2 files ; on
 	# vise d'abord CP1 : la ligne n'est franchie qu'à la fin de chaque tour.
-	var grid: Array = [Vector2(1040, 300), Vector2(1000, 350), Vector2(950, 300), Vector2(910, 350)]
+	var grid: Array = GRID
 	# Joueur en tête de grille : il doit défendre, pas remonter tout le peloton.
 	var configs: Array = [
 		{"name": "Sobrinho",    "color": Color(0.95, 0.85, 0.4, 1),  "is_player": true,  "speed": PLAYER_SPEED},
@@ -110,32 +135,195 @@ func _init_racers() -> void:
 			"is_player": cfg.is_player,
 			"speed": cfg.speed,
 			"sprite": _spawn_car_sprite(pos, cfg.color),
+			"heading": 0.0,
+			"fx_t": 0.0,
 			"ai_jitter": Vector2.ZERO,
 			"ai_jitter_timer": 0.0,
 		})
 
-func _spawn_car_sprite(pos: Vector2, color: Color) -> ColorRect:
-	var rect: ColorRect = ColorRect.new()
-	rect.size = Vector2(28, 16)
-	rect.position = pos - Vector2(14, 8)
-	rect.color = color
-	arena.add_child(rect)
-	return rect
+# Voiture pixel-art : carrosserie de la couleur du coureur, bande contrastée.
+func _spawn_car_sprite(pos: Vector2, color: Color) -> Sprite2D:
+	var stripe: Color = Color(0.12, 0.11, 0.14) if color.get_luminance() > 0.6 else Color(0.96, 0.94, 0.88)
+	var spr: Sprite2D = Sprite2D.new()
+	spr.texture = Painter.car_strip(color, stripe)
+	spr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	spr.region_enabled = true
+	spr.region_rect = Rect2(0, 0, Painter.CAR_F, Painter.CAR_F)
+	spr.scale = Vector2(Painter.N, Painter.N)
+	spr.z_index = 5
+	spr.position = _snap(pos)
+	arena.add_child(spr)
+	return spr
+
+# Le monde est peint à 3 px par pixel natif : les sprites restent sur la grille.
+func _snap(p: Vector2) -> Vector2:
+	return (p / float(Painter.N)).round() * float(Painter.N)
+
+# Avenue au coucher du soleil, mer animée, palmiers, public derrière les grades.
+func _build_scenery() -> void:
+	var bg: Sprite2D = Sprite2D.new()
+	bg.name = "Backdrop"
+	bg.texture = Painter.backdrop(TRACK_OUTER, TRACK_INNER, CHECKPOINTS[0].x, GRID, LAMPS)
+	bg.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	bg.centered = false
+	bg.position = Painter.ORIGIN
+	bg.scale = Vector2(Painter.N, Painter.N)
+	bg.z_index = -10
+	arena.add_child(bg)
+	_sea_frames = Painter.sea_frames()
+	_sea = Sprite2D.new()
+	_sea.texture = _sea_frames[0]
+	_sea.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	_sea.texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
+	_sea.centered = false
+	_sea.region_enabled = true
+	_sea.region_rect = Rect2(0, 0, Painter.W, 110)
+	_sea.position = Vector2(Painter.ORIGIN.x, Painter.SEA_Y)
+	_sea.scale = Vector2(Painter.N, Painter.N)
+	_sea.z_index = -10
+	arena.add_child(_sea)
+	# Reflet du couchant sur l'eau, sous le soleil.
+	for i in 9:
+		var g: ColorRect = ColorRect.new()
+		g.size = Vector2(3 * (2 + i % 4), 3)
+		g.position = _snap(Vector2(-110.0 + randf_range(-60.0, 60.0) - g.size.x * 0.5, Painter.SEA_Y + 9.0 + i * 9.0))
+		g.color = Color(1.0, 0.80, 0.52) if i % 3 else Color(1.0, 0.94, 0.75)
+		g.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		g.z_index = -9
+		arena.add_child(g)
+		_glints.append(g)
+	for p in PALMS:
+		var pos: Vector2 = p
+		var palm: Sprite2D = PropSprites.spawn(arena, PropSprites.palm_region_at(pos), pos, PropSprites.palm_height_at(pos))
+		palm.z_index = -2
+	_spawn_fans()
+	_marker = Sprite2D.new()
+	_marker.texture = Painter.marker()
+	_marker.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	_marker.scale = Vector2(Painter.N, Painter.N)
+	_marker.z_index = 7
+	arena.add_child(_marker)
+	var title: Label = get_node_or_null("Arena/Title")
+	if title:
+		title.z_index = 10
+
+func _spawn_fans() -> void:
+	# Nord : face à la piste (rangée DIR_DOWN), au pied des immeubles.
+	var xs: Array = [230, 340, 470, 590, 720, 830, 1000, 1210, 1330, 1460, 1580, 1700]
+	for i in xs.size():
+		_add_fan(Vector2(float(xs[i]) + randf_range(-12.0, 12.0), 162.0), CharacterSpriteFactory.DIR_DOWN, 300 + i)
+	# Côté plage : de dos, sur le calçadão.
+	for i in 6:
+		_add_fan(Vector2(300.0 + i * 260.0 + randf_range(-20.0, 20.0), 1000.0), CharacterSpriteFactory.DIR_UP, 400 + i)
+	# Le bandeirinha, au droit de la ligne.
+	var starter: Sprite2D = _add_fan(Vector2(CHECKPOINTS[0].x, 162.0), CharacterSpriteFactory.DIR_DOWN, 77)
+	_flag = Sprite2D.new()
+	_flag.texture = Painter.flag()
+	_flag.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	_flag.region_enabled = true
+	_flag.region_rect = Rect2(0, 0, 12, 16)
+	_flag.centered = false
+	_flag.position = Vector2(12, -84)
+	_flag.scale = Vector2(Painter.N, Painter.N)
+	starter.add_child(_flag)
+
+func _add_fan(feet: Vector2, row: int, seed_value: int) -> Sprite2D:
+	var fan: Sprite2D = char_sprite(96.0, CharacterSpriteFactory.random_config(seed_value))
+	fan.region_rect.position.y = row * CharacterSpriteFactory.CELL_H
+	fan.position = _snap(feet)
+	fan.z_index = -1
+	fan.set_meta("feet_y", fan.position.y)
+	arena.add_child(fan)
+	_fans.append(fan)
+	return fan
 
 func _render_checkpoints() -> void:
 	if cp_markers == null:
 		return
 	for child in cp_markers.get_children():
 		child.queue_free()
+	cp_markers.z_index = 1
 	for i in range(CHECKPOINTS.size()):
 		var cp: Vector2 = CHECKPOINTS[i]
-		var dot: ColorRect = ColorRect.new()
-		dot.size = Vector2(56, 56)
-		dot.position = cp - Vector2(28, 28)
-		dot.color = Color(0.95, 0.85, 0.4, 0.5)
-		cp_markers.add_child(dot)
+		var chev: Sprite2D = Sprite2D.new()
+		chev.texture = Painter.chevron()
+		chev.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		chev.scale = Vector2(Painter.N, Painter.N)
+		chev.rotation = CP_ANGLES[i]
+		chev.position = _snap(cp)
+		cp_markers.add_child(chev)
+
+# Décor vivant : public qui saute, mer, reflets, flèche du joueur, porte visée.
+func _animate(delta: float) -> void:
+	_anim_t += delta
+	_fan_t -= delta
+	if _fan_t <= 0.0:
+		_fan_t = 0.16
+		for k in 3:
+			var fan: Sprite2D = _fans[randi() % _fans.size()]
+			var col: int = randi() % 3
+			fan.region_rect.position.x = col * CharacterSpriteFactory.CELL_W
+			fan.position.y = float(fan.get_meta("feet_y")) - (6.0 if col > 0 and randf() < 0.5 else 0.0)
+	if _sea and _sea_frames.size() > 1:
+		_sea.texture = _sea_frames[int(_anim_t * 2.0) % _sea_frames.size()]
+		_sea.region_rect.position.x = float(int(_anim_t * 4.0) % 64)
+	for i in _glints.size():
+		_glints[i].visible = int(_anim_t * 3.0 + i * 1.7) % 3 != 0
+	if _flag:
+		var waving: bool = _countdown > 0.0 or _ended
+		_flag.region_rect.position.x = 12.0 * float(int(_anim_t * (8.0 if waving else 3.0)) % 2)
+	# Le « VAI ! » s'efface : le centre de l'écran reste à la course.
+	if not _ended and _countdown <= 0.0 and _time_elapsed > 1.2 and status_label and status_label.text == "VAI !":
+		status_label.text = ""
+	if _racers.is_empty():
+		return
+	var player: Dictionary = _racers[0]
+	if _marker:
+		var sprite: Sprite2D = player.sprite
+		_marker.position = sprite.position + Vector2(0, -48.0 - (3.0 if int(_anim_t * 4.0) % 2 == 0 else 0.0))
+	if cp_markers:
+		var markers: Array = cp_markers.get_children()
+		for i in markers.size():
+			var chev: Sprite2D = markers[i]
+			if i == int(player.next_cp) and not player.finished:
+				var on: bool = int(_anim_t * 4.0) % 2 == 0
+				chev.modulate = Color(1.0, 0.86, 0.3, 1.0 if on else 0.7)
+			else:
+				chev.modulate = Color(1, 1, 1, 0.22)
+
+# Petite bouffée de pixels (turbo, poussière hors bitume), qui s'éteint seule.
+func _puff(pos: Vector2, color: Color) -> void:
+	var r: ColorRect = ColorRect.new()
+	r.size = Vector2(6, 6)
+	r.position = _snap(pos + Vector2(randf_range(-6.0, 6.0), randf_range(-6.0, 6.0)))
+	r.color = color
+	r.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	r.z_index = 4
+	arena.add_child(r)
+	var tw: Tween = r.create_tween()
+	tw.tween_property(r, "modulate:a", 0.0, 0.4)
+	tw.tween_callback(r.queue_free)
+
+func _car_fx(r: Dictionary, moved: Vector2, delta: float) -> void:
+	var speed: float = moved.length() / maxf(delta, 0.0001)
+	if speed > 20.0:
+		r.heading = lerp_angle(float(r.heading), moved.angle(), clampf(14.0 * delta, 0.0, 1.0))
+	var frame: int = posmod(int(roundf(float(r.heading) / (TAU / Painter.CAR_DIRS))), Painter.CAR_DIRS)
+	var sprite: Sprite2D = r.sprite
+	sprite.region_rect = Rect2(frame * Painter.CAR_F, 0, Painter.CAR_F, Painter.CAR_F)
+	r.fx_t = float(r.fx_t) - delta
+	if r.fx_t > 0.0 or speed < 60.0:
+		return
+	var back: Vector2 = r.pos - Vector2.from_angle(float(r.heading)) * 34.0
+	if r.is_player and _turbo_left > 0.0:
+		r.fx_t = 0.035
+		_puff(back, Color(1.0, 0.62, 0.18) if randf() < 0.5 else Color(1.0, 0.92, 0.5))
+	elif not _on_track(r.pos):
+		r.fx_t = 0.08
+		_puff(back, Color(0.86, 0.78, 0.66, 0.8))
 
 func _process(delta: float) -> void:
+	_animate(delta)
 	if _ended:
 		return
 	if _countdown > 0.0:
@@ -182,15 +370,17 @@ func _update_racers(delta: float) -> void:
 	for r in _racers:
 		if r.finished:
 			continue
+		var before: Vector2 = r.pos
 		if r.is_player:
 			_update_player(r, delta)
 		else:
 			_update_ai(r, delta)
 		r.pos.x = clamp(r.pos.x, CAR_RADIUS, ARENA_W - CAR_RADIUS)
 		r.pos.y = clamp(r.pos.y, CAR_RADIUS, ARENA_H - CAR_RADIUS)
-		var sprite: ColorRect = r.sprite
+		var sprite: Sprite2D = r.sprite
 		if sprite:
-			sprite.position = r.pos - Vector2(14, 8)
+			sprite.position = _snap(r.pos)
+			_car_fx(r, r.pos - before, delta)
 
 func _update_player(r: Dictionary, delta: float) -> void:
 	var dir: Vector2 = Vector2(
