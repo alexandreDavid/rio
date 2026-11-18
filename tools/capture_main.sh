@@ -9,6 +9,6 @@ SAVEDIR="$HOME/Library/Application Support/Godot/app_userdata/Rio — Copacabana
 STASH="$(mktemp -d)"
 restore() { rm -f "$SAVEDIR"/savegame_slot[123].json; cp -p "$STASH"/* "$SAVEDIR"/ 2>/dev/null || true; rm -rf "$STASH"; }
 trap restore EXIT
-cp -p "$SAVEDIR"/savegame_slot[123].json "$STASH"/ 2>/dev/null || true
+cp -p "$SAVEDIR"/savegame_slot[123].json "$SAVEDIR"/settings.cfg "$STASH"/ 2>/dev/null || true
 rm -f "$SAVEDIR"/savegame_slot[123].json
 SHOT_WAIT_MS="${3:-4000}" "$GODOT_BIN" --path . tools/ScreenshotMain.tscn -- "$1" "$2" 2>&1 | grep -E "saved|SCRIPT ERROR"

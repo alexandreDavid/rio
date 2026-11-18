@@ -44,7 +44,7 @@ restore_saves() {
 	rm -rf "$STASH"
 }
 trap restore_saves EXIT
-cp -p "$SAVEDIR"/savegame_slot[123].json "$SAVEDIR"/ng_plus.json "$STASH"/ 2>/dev/null || true
+cp -p "$SAVEDIR"/savegame_slot[123].json "$SAVEDIR"/ng_plus.json "$SAVEDIR"/settings.cfg "$STASH"/ 2>/dev/null || true
 rm -f "$SAVEDIR"/savegame_slot[123].json
 
 # Suite d'intégration (assertions abstraites) + pilotes « réels » qui chargent la

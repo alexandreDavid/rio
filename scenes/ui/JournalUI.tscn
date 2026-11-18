@@ -75,11 +75,11 @@ theme_override_colors/font_color = Color(0.18, 0.14, 0.1, 1)
 [node name="Close" type="Button" parent="Root/Panel/Header"]
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -80.0
+offset_left = -64.0
 offset_right = -8.0
-offset_top = 4.0
-offset_bottom = 36.0
-text = "Fechar (J)"
+offset_top = 2.0
+offset_bottom = 38.0
+text = "✕"
 theme_override_font_sizes/font_size = 13
 
 [node name="HBox" type="HBoxContainer" parent="Root/Panel"]

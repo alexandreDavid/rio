@@ -176,6 +176,12 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("interact"):
 		if _current_interactable:
 			_current_interactable.interact(self)
+	# Espace (Ⓧ à la manette) lance la roda sur le sable : sans ça, l'altinha
+	# n'existait qu'au bouton ⚽ tactile, masqué à la manette.
+	elif event is InputEventKey and event.pressed and not event.echo \
+			and (event as InputEventKey).physical_keycode == KEY_SPACE \
+			and is_physics_processing() and BeachZone.altinha_here():
+		EventBus.altinha_requested.emit()
 
 # Rendu via CharacterSpriteFactory : feuille 3×3 (lignes DOWN/UP/RIGHT, LEFT
 # en miroir ; colonnes idle/stepL/stepR), cellule 16×24. Personnalisable via

@@ -37,6 +37,8 @@ func run() -> void:
 	_test_regata_desembarque()
 	_test_lisibilite_ui()
 	await _test_gamepad_bridge()
+	_test_context_tips()
+	await _test_phone_readable()
 	_test_audio_assets()
 
 
@@ -759,8 +761,7 @@ func _test_random_events_multi_district() -> void:
 	_assert("recado_caxias" in flag_ids, "payoff avec flag : présent")
 	CampaignManager.flags.clear()
 	# 5. Bouton altinha : bandes de plage valides.
-	var mc: Script = load("res://scripts/ui/MobileControls.gd")
-	var bands: Dictionary = mc.BEACH_BANDS
+	var bands: Dictionary = BeachZone.BEACH_BANDS
 	for did in bands:
 		_assert(DistrictManager.DISTRICTS.has(did), "BEACH_BANDS : district valide (%s)" % did)
 		var b: Dictionary = bands[did]
@@ -1381,9 +1382,9 @@ func _test_intro_ngplus_bondinho() -> void:
 		if nxt == null:
 			break
 		k = String(nxt)
-	_assert(chain == ["game_intro_open", "game_intro_disparu", "game_intro_time", "game_intro_controles"],
-		"intro : 4 écrans, sans le sermon des voies (%s)" % str(chain))
-	_assert(total_chars <= 1000, "intro : ≤ 1 000 caractères avant le premier pas (%d)" % total_chars)
+	_assert(chain == ["game_intro_open", "game_intro_time"],
+		"intro : 2 écrans, le reste en astuces contextuelles (%s)" % str(chain))
+	_assert(total_chars <= 550, "intro : ≤ 550 caractères avant le premier pas (%d)" % total_chars)
 	# F9
 	_assert(not GameManager.ng_plus_requested, "fixture : pas de NG+ demandé")
 	var saved_count: int = CampaignManager.ng_plus_count
@@ -1585,6 +1586,88 @@ func _test_quest_log_folded() -> void:
 
 # Manette (Switch / Steam Deck / iPad) : le pont traduit les boutons en touches
 # que le jeu lit déjà, et passe en ui_accept/ui_cancel dans un menu.
+# Astuces contextuelles : remplacent le guide de 6 pages qui pausait le jeu.
+func _test_context_tips() -> void:
+	_section("Astuces contextuelles")
+	_assert(not ('call_deferred("open")' in (load("res://scripts/ui/Tutorial.gd") as GDScript).source_code),
+		"le guide ne s'ouvre plus tout seul au 1er lancement")
+	var main: Node = (load("res://scenes/main/Main.tscn") as PackedScene).instantiate()
+	_assert(main.get_node_or_null("ContextTips") is ContextTips, "Main : nœud ContextTips présent")
+	for id in ContextTips.TIPS:
+		var tip: Dictionary = ContextTips.TIPS[id]
+		for mode in ["touch", "pad", "keys"]:
+			var t: String = ContextTips.text_for(id, mode)
+			_assert(t != "", "astuce %s : texte %s" % [id, mode])
+			_assert(t.split("\n").size() <= 2, "astuce %s (%s) : 2 lignes max" % [id, mode])
+			for line in t.split("\n"):
+				_assert(line.length() <= 52, "astuce %s (%s) : ligne courte (%d)" % [id, mode, line.length()])
+		_assert(not ("[E]" in ContextTips.text_for(id, "touch")), "astuce %s : jamais de touche clavier au doigt" % id)
+		var target: String = String(tip.get("target", ""))
+		_assert(target == "" or main.get_node_or_null(target) is Control, "astuce %s : cible %s trouvée" % [id, target])
+	main.free()
+	# File, dédoublonnage et mémoire « déjà vue ».
+	var saved: PackedStringArray = Settings.tips_seen.duplicate()
+	Settings.tips_seen = PackedStringArray()
+	var tips: ContextTips = ContextTips.new()
+	add_child(tips)
+	tips.request("objectif")
+	tips.request("objectif")
+	tips.request("inconnue")
+	_assert(tips._queue.size() == 1 and tips._queue[0] == "objectif", "file : une seule entrée, id inconnu ignoré")
+	tips._show(tips._queue.pop_front())
+	_assert(tips.current() == "objectif" and tips._bubble.visible, "astuce affichée")
+	tips._hide(false)
+	_assert(tips._queue.front() == "objectif" and not Settings.has_seen_tip("objectif"), "interrompue tôt : revient en tête de file")
+	tips._show(tips._queue.pop_front())
+	tips._hide(true)
+	_assert(Settings.has_seen_tip("objectif"), "lue : marquée vue")
+	tips.request("objectif")
+	_assert(tips._queue.is_empty(), "déjà vue : ne revient plus")
+	tips._in_dialogue = true
+	_assert(tips._busy(), "dialogue en cours : pas d'astuce")
+	tips.queue_free()
+	Settings.tips_seen = saved
+
+# Téléphone : dessiné pour un petit écran portrait, il s'affichait en ~4 pt
+# sur iPhone. Il doit remplir l'écran et aucun texte ne descend sous ~25 px.
+func _test_phone_readable() -> void:
+	_section("Téléphone lisible sur iPhone")
+	var phone: CanvasLayer = (load("res://scenes/ui/Phone.tscn") as PackedScene).instantiate()
+	add_child(phone)
+	await get_tree().process_frame
+	var frame: Control = phone.get_node("Frame")
+	var view: Vector2 = frame.get_viewport_rect().size
+	var shown: Vector2 = frame.size * frame.scale
+	_assert(shown.x >= view.x * 0.8 or shown.y >= view.y * 0.8, "le téléphone occupe l'écran (%s sur %s)" % [str(shown), str(view)])
+	var grid: GridContainer = phone.get_node("Frame/Screens/Home/AppsScroll/Apps")
+	var tiles: Array[String] = []
+	for app in grid.get_children():
+		if (app as Control).visible:
+			tiles.append(String(app.name))
+	_assert(tiles == ["Diario", "Missions", "Mapa", "Stats", "Photos", "Ajustes"], "accueil : 6 apps dans l'ordre (%s)" % ", ".join(tiles))
+	var apps_scroll: Control = grid.get_parent()
+	_assert(grid.get_combined_minimum_size().y <= apps_scroll.size.y + 1.0, "les apps tiennent à l'écran, sans défiler (%.0f ≤ %.0f)" % [grid.get_combined_minimum_size().y, apps_scroll.size.y])
+	phone._show_screen("stats")
+	var tabs: Control = phone.get_node("Frame/Tabs")
+	_assert(tabs.visible and tabs.get_child_count() == 2, "Eu : onglets Saúde | Conquistas")
+	phone._show_screen("mapa")
+	_assert(not tabs.visible, "Mapa : pas d'onglets")
+	var map_ids: Array = []
+	for region in phone.MAPA_REGIONS:
+		map_ids.append_array(region.ids)
+	for id in DistrictManager.available_destinations():
+		_assert(id in map_ids, "Mapa : le táxi mène aussi à %s" % id)
+	for screen in ["home", "stats", "ajustes", "cronica", "mapa", "taxi", "conquistas", "noticias"]:
+		phone._show_screen(screen)
+		await get_tree().process_frame
+		var smallest: float = 999.0
+		for n in frame.find_children("*", "Control", true, false):
+			if (n is Label or n is Button) and (n as Control).is_visible_in_tree() and (n as Control).get("text") != "":
+				smallest = minf(smallest, (n as Control).get_theme_font_size("font_size") * frame.scale.x)
+		_assert(smallest >= 24.0, "%s : plus petit texte %.0f px à l'écran (≥ 24)" % [screen, smallest])
+	phone.queue_free()
+	get_tree().paused = false
+
 func _test_gamepad_bridge() -> void:
 	_section("Manette — pont boutons → touches, menus, indications")
 	var pad: Node = get_tree().root.get_node_or_null("Gamepad")

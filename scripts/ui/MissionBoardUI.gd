@@ -16,6 +16,13 @@ func _ready() -> void:
 	if close_button:
 		close_button.pressed.connect(close)
 	DynamicMissionManager.missions_changed.connect(_refresh)
+	# Petit panneau dessiné pour le bureau : agrandi à l'écran, texte lisible
+	# sur iPhone (UIFit) ; recalé une fois le texte agrandi.
+	var fit_panel: Control = $Root/Panel
+	fit_panel.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	fit_panel.grow_vertical = Control.GROW_DIRECTION_BOTH
+	UIFit.keep_floor(fit_panel, UIFit.design_floor(UIFit.fit(fit_panel)))
+	(func() -> void: UIFit.fit(fit_panel)).call_deferred()
 	DynamicMissionManager.mission_progressed.connect(_on_progress)
 	DynamicMissionManager.mission_completed.connect(_on_completed)
 	# Câble les boutons "Accepter" de chaque carte.

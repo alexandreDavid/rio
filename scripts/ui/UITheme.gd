@@ -74,6 +74,15 @@ static func build() -> Theme:
 	# Barres.
 	t.set_stylebox("background", "ProgressBar", thin_box(Color(0.32, 0.34, 0.4, 1), Color(0.06, 0.07, 0.1, 0.9)))
 	t.set_stylebox("fill", "ProgressBar", thin_box(INK, GOLD))
+	# Curseurs (volumes) : la piste vide doit se voir, pas seulement la partie pleine.
+	var track: StyleBoxTexture = thin_box(Color(0.32, 0.34, 0.4, 1), Color(0.06, 0.07, 0.1, 0.9))
+	var filled: StyleBoxTexture = thin_box(GOLD, GOLD)
+	for sb in [track, filled]:
+		sb.content_margin_top = 4.0
+		sb.content_margin_bottom = 4.0
+	t.set_stylebox("slider", "HSlider", track)
+	t.set_stylebox("grabber_area", "HSlider", filled)
+	t.set_stylebox("grabber_area_highlight", "HSlider", filled)
 	# Étiquette « pastille » (prompt d'interaction, badges).
 	t.add_type("Pastille")
 	t.set_type_variation("Pastille", "Label")

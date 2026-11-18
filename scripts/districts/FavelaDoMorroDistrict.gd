@@ -7,3 +7,6 @@ extends Node2D
 
 func _ready() -> void:
 	DistrictDresser.dress(self)
+	# Comme District.gd : sans tri en Y, tout le morro se dessinait d'un bloc
+	# et recouvrait le joueur dès qu'il montait au-dessus de l'origine.
+	WorldFx.enable_y_sort(self)

@@ -12,16 +12,11 @@ const KNOTS: Dictionary = {
 	# --- OUVERTURE — joué une fois en début de partie, par-dessus le décor ---
 	# (HouseInterior visible en fond, dialogue overlay). MainBoot fire la chaîne
 	# via CutsceneRunner sur nouvelle partie tant que `narrative_intro_seen`
-	# n'est pas posé. Chaque page chaîne sur la suivante via `next`.
+	# n'est pas posé. Deux écrans seulement : le reste (marcher, parler, le
+	# téléphone…) s'apprend par les astuces contextuelles, en jouant.
 	"game_intro_open": {
 		"speaker": "Narrateur",
-		"text": "Ce matin, tu te réveilles avec un sentiment étrange.\n\nLe studio du Morro est trop silencieux. Le lit de tio Zé est froid, la porte entrouverte. Dehors, Rio s'éveille déjà — un coq, une radio lointaine, la rumeur de Copacabana en contrebas.\n\nTu ne sais pas encore pourquoi. Mais quelque chose, aujourd'hui, ne tourne pas rond.",
-		"choices": ["Continuer"],
-		"on_choose": {"0": {"next": "game_intro_disparu"}},
-	},
-	"game_intro_disparu": {
-		"speaker": "Narrateur",
-		"text": "Zé — ton oncle, le frère de ta mère, ton parrain, ton problème — a disparu.\n\nIl te laisse sa carrocinha de milho, la maison du Morro où tu vis avec mãe et vovó… et une dette de cinquante mille reais au consortium. Le Carnaval est dans un mois.\n\nDans la cuisine, mãe fait chauffer la moqueca. Seu João monte l'escalier.",
+		"text": "Ce matin, le Morro est trop silencieux. Le lit de Zé est froid, la porte entrouverte.\n\nZé — ton oncle, le frère de ta mère, ton parrain, ton problème — a disparu. Il te laisse sa carrocinha de milho… et cinquante mille reais de dette au consortium. Le Carnaval est dans un mois.\n\nSeu João monte l'escalier.",
 		"choices": ["Continuer"],
 		"on_choose": {"0": {"next": "game_intro_time"}},
 	},
@@ -29,19 +24,14 @@ const KNOTS: Dictionary = {
 	# via le placeholder {time} (substitué par DialogueBridge) et les flags time_*.
 	"game_intro_time": {
 		"speaker": "Narrateur",
-		"text": "Une dernière chose — et ici, c'est pas un détail.\n\nÀ Rio, on te demandera ton time de coração avant ton nom de famille. Zé était Mengão jusqu'à la moelle, mais toi, tu choisis ton camp.",
+		"text": "À Rio, on te demande ton time de coração avant ton nom de famille. Zé était Mengão jusqu'à la moelle — mais toi ?",
 		"choices": ["Flamengo, óbvio ❤️🖤", "Vasco da Gama ⚪⚫", "Fluminense 💚❤️", "Botafogo ⭐"],
 		"on_choose": {
-			"0": {"set_flag": "time_flamengo", "next": "game_intro_controles"},
-			"1": {"set_flag": "time_vasco", "next": "game_intro_controles"},
-			"2": {"set_flag": "time_fluminense", "next": "game_intro_controles"},
-			"3": {"set_flag": "time_botafogo", "next": "game_intro_controles"},
+			"0": {"set_flag": "time_flamengo"},
+			"1": {"set_flag": "time_vasco"},
+			"2": {"set_flag": "time_fluminense"},
+			"3": {"set_flag": "time_botafogo"},
 		},
-	},
-	"game_intro_controles": {
-		"speaker": "Narrateur",
-		"text": "Joystick à gauche pour marcher, bouton ✋ à droite pour parler, prendre, acheter. Le reste, la rue te l'apprendra.\n\nBoa sorte, parceiro.",
-		"choices": ["C'est parti"],
 	},
 	# --- META : Run+ (joueur a déjà bouclé une voie au moins une fois) ---
 	"seu_joao_ng_plus_intro": {

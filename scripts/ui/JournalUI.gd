@@ -25,6 +25,15 @@ func _ready() -> void:
 		close_button.pressed.connect(_close)
 	NarrativeJournal.entry_unlocked.connect(_on_entry_unlocked)
 	_select_first_unlocked_category()
+	# Petit panneau dessiné pour le bureau : agrandi à l'écran, texte lisible
+	# sur iPhone (UIFit) ; recalé une fois le texte agrandi.
+	var fit_panel: Control = $Root/Panel
+	fit_panel.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	fit_panel.grow_vertical = Control.GROW_DIRECTION_BOTH
+	UIFit.keep_floor(fit_panel, UIFit.design_floor(UIFit.fit(fit_panel)))
+	(func() -> void: UIFit.fit(fit_panel)).call_deferred()
+	for sc in fit_panel.find_children("*", "ScrollContainer", true, false):
+		(sc as ScrollContainer).horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 
 func _input(event: InputEvent) -> void:
 	if not (event is InputEventKey) or not event.pressed or event.echo:
@@ -74,6 +83,8 @@ func _refresh_categories() -> void:
 		btn.text = cat.label if is_resumo else "%s  (%d)" % [cat.label, count]
 		btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		btn.flat = true
+		# Titres d'acte longs : à la ligne plutôt que coupés net.
+		btn.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		btn.add_theme_font_size_override("font_size", 14)
 		if cat.id == _current_category:
 			btn.add_theme_color_override("font_color", Color(0.95, 0.85, 0.4, 1))
@@ -121,6 +132,8 @@ func _refresh_entries() -> void:
 		btn.text = entry.title
 		btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		btn.flat = true
+		# Titres d'acte longs : à la ligne plutôt que coupés net.
+		btn.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		btn.add_theme_font_size_override("font_size", 14)
 		if entry.knot == _current_knot:
 			btn.add_theme_color_override("font_color", Color(0.95, 0.85, 0.4, 1))

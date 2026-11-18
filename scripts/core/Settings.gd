@@ -14,6 +14,8 @@ var ambient_volume: float = 0.55
 # Vrai après dismiss du tutoriel d'accueil. Persiste globalement (pas par save)
 # pour qu'un retour de Nouvelle Partie ne le re-déclenche pas inutilement.
 var tutorial_seen: bool = false
+# Astuces contextuelles déjà montrées (ContextTips) : globales, comme le guide.
+var tips_seen: PackedStringArray = PackedStringArray()
 # Slot de save courant (1..3). Persiste globalement pour que la session
 # suivante reprenne sur le même emplacement.
 var current_slot: int = 1
@@ -35,6 +37,10 @@ func load_settings() -> void:
 	sfx_volume = clampf(float(cfg.get_value("volumes", "sfx", sfx_volume)), 0.0, 1.0)
 	ambient_volume = clampf(float(cfg.get_value("volumes", "ambient", ambient_volume)), 0.0, 1.0)
 	tutorial_seen = bool(cfg.get_value("ui", "tutorial_seen", tutorial_seen))
+	tips_seen = PackedStringArray(cfg.get_value("ui", "tips_seen", tips_seen))
+	# Joueur d'avant les astuces : il a lu le guide, on ne lui réapprend rien.
+	if tutorial_seen and not cfg.has_section_key("ui", "tips_seen"):
+		tips_seen = PackedStringArray(ContextTips.TIPS.keys())
 	current_slot = clampi(int(cfg.get_value("save", "current_slot", current_slot)), 1, 3)
 	last_seen_cronica = int(cfg.get_value("phone", "last_seen_cronica", last_seen_cronica))
 	last_seen_conquistas = int(cfg.get_value("phone", "last_seen_conquistas", last_seen_conquistas))
@@ -47,6 +53,7 @@ func save_settings() -> void:
 	cfg.set_value("volumes", "sfx", sfx_volume)
 	cfg.set_value("volumes", "ambient", ambient_volume)
 	cfg.set_value("ui", "tutorial_seen", tutorial_seen)
+	cfg.set_value("ui", "tips_seen", tips_seen)
 	cfg.set_value("save", "current_slot", current_slot)
 	cfg.set_value("phone", "last_seen_cronica", last_seen_cronica)
 	cfg.set_value("phone", "last_seen_conquistas", last_seen_conquistas)
@@ -70,6 +77,19 @@ func set_ambient(v: float) -> void:
 
 func mark_tutorial_seen() -> void:
 	tutorial_seen = true
+	save_settings()
+
+func has_seen_tip(id: String) -> bool:
+	return tips_seen.has(id)
+
+func mark_tip_seen(id: String) -> void:
+	if tips_seen.has(id):
+		return
+	tips_seen.append(id)
+	save_settings()
+
+func reset_tips() -> void:
+	tips_seen = PackedStringArray()
 	save_settings()
 
 func set_current_slot(slot: int) -> void:

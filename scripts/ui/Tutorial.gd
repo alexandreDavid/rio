@@ -1,7 +1,8 @@
 extends CanvasLayer
 
-# Tutoriel d'accueil paginé. S'ouvre une seule fois au premier lancement
-# (Settings.tutorial_seen). Réouvrable depuis l'app Ajustes via open().
+# Guide paginé, consultable depuis l'app Ajustes via open(). Il ne s'ouvre
+# plus seul : le joueur neuf apprend par les astuces contextuelles
+# (ContextTips), au moment où chaque geste sert.
 
 const PAGES: Array = [
 	{
@@ -55,9 +56,6 @@ func _ready() -> void:
 	prev_btn.pressed.connect(_prev)
 	next_btn.pressed.connect(_next)
 	skip_btn.pressed.connect(_close)
-	# Auto-ouvre au premier lancement (pas de save existante + jamais vu).
-	if not Settings.tutorial_seen and not SaveSystem.has_save():
-		call_deferred("open")
 
 func open() -> void:
 	_current = 0

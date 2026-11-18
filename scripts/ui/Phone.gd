@@ -1,9 +1,10 @@
 extends CanvasLayer
 
 # Téléphone mobile — overlay style smartphone qui remplace le menu simple
-# du HUD. Plusieurs apps : Taxi (commande à distance), Saúde (stats /
-# réputation / argent / dette), Journal et Missões (placeholders ouvrant
-# les UIs existantes).
+# du HUD. Six apps à l'accueil (retour design 2026-11-17 : « trop de choses ») :
+# Diário (Crônica + accès aux Memórias), Missões, Mapa (le táxi s'y commande),
+# Eu (Saúde | Conquistas en onglets), Fotos, Ajustes. Les Notícias défilent en
+# bandeau sur l'accueil. Les écrans Táxi / Notícias restent (raccourcis, tests).
 
 # App Notícias extraite : la donnée vit dans NewsFeed (préchargé par chemin, même
 # pattern que DialogueBridge avec ses *Dialogues.gd).
@@ -82,6 +83,45 @@ const REP_AXIS_COLORS: Dictionary = {
 
 const PHOTOS_DIR: String = "user://photos"
 
+# Mise en page : le téléphone est dessiné debout dans un repère de 360×660
+# (retour design 2026-11-18 : « je préfère un téléphone vertical ») puis
+# agrandi sur toute la hauteur de l'écran (~×1,5 sur un canevas 1080p). Le
+# plancher de police en découle (UIFit.design_floor → ~17, soit ~25 px réels,
+# la taille minimale lisible sur iPhone).
+const DESIGN_SIZE: Vector2 = Vector2(360, 660)
+const FILL_RATIO: Vector2 = Vector2(0.92, 0.94)
+const FONT_FLOOR: int = 12
+const STATUS_H: float = 26.0
+const HEADER_H: float = 44.0
+const SUB_H: float = 20.0
+const BOTTOM_H: float = 26.0
+const SIDE_MARGIN: float = 16.0
+const TAB_H: float = 40.0
+const HOME_COLUMNS: int = 2
+const APP_TILE: Vector2 = Vector2(156, 156)
+const APP_GAP: int = 14
+
+# Accueil : ordre et libellé des tuiles. Les autres boutons de la grille
+# (Taxi, Cronica, Noticias, Conquistas) sont cachés : leurs écrans vivent
+# derrière ces six-là.
+const HOME_TILES: Array = [
+	["Diario", "📔\nDiário"],
+	["Missions", "📋\nMissões"],
+	["Mapa", "🗺\nMapa"],
+	["Stats", "❤\nEu"],
+	["Photos", "📸\nFotos"],
+	["Ajustes", "⚙\nAjustes"],
+]
+
+# Onglets : écrans frères présentés sous une même app (bandeau du haut).
+const TAB_GROUPS: Array = [
+	[["stats", "Saúde"], ["conquistas", "Conquistas"]],
+]
+const TAB_APP_TITLE: String = "❤ Eu"
+
+var _tabs: HBoxContainer = null
+var _news_ticker: Button = null
+
 # Badges rouges sur les icônes du home — créés en code pour éviter de toucher
 # la scène. Mis à jour à chaque ouverture de l'écran home.
 var _badges: Dictionary = {}
@@ -89,6 +129,14 @@ var _badges: Dictionary = {}
 func _ready() -> void:
 	visible = false
 	add_to_group("gamepad_menu")
+	_apply_layout()
+	var k: float = UIFit.fit(frame, FILL_RATIO)
+	# Rows reconstruites en direct (argent, réputation…) comprises.
+	UIFit.keep_floor(frame, maxi(FONT_FLOOR, UIFit.design_floor(k)))
+	# Toucher hors du téléphone le range, comme on le poserait.
+	backdrop.gui_input.connect(func(ev: InputEvent) -> void:
+		if (ev is InputEventMouseButton or ev is InputEventScreenTouch) and ev.is_pressed():
+			close())
 	# Wire app icons.
 	if app_taxi:
 		app_taxi.pressed.connect(func(): _show_screen("taxi"))
@@ -97,7 +145,7 @@ func _ready() -> void:
 	if app_journal:
 		app_journal.pressed.connect(_open_journal)
 	if app_diario:
-		app_diario.pressed.connect(_open_journal)
+		app_diario.pressed.connect(func(): _show_screen("cronica"))
 	if app_missions:
 		app_missions.pressed.connect(_open_missions)
 	if app_cronica:
@@ -211,7 +259,8 @@ func _unhandled_input(event: InputEvent) -> void:
 func _setup_app_badges() -> void:
 	# Crée un Label rouge attaché en haut-droite de chaque app sujette à
 	# notification. Caché par défaut, _refresh_badges décide quand l'afficher.
-	for pair in [["cronica", app_cronica], ["conquistas", app_conquistas], ["photos", app_photos]]:
+	# Badges portés par les tuiles visibles : Diário (memórias), Eu (conquistas).
+	for pair in [["cronica", app_diario], ["conquistas", app_stats], ["photos", app_photos]]:
 		var app_id: String = pair[0]
 		var btn: Button = pair[1]
 		if btn == null:
@@ -278,6 +327,7 @@ func _show_screen(name: String) -> void:
 		mapa_screen.visible = (name == "mapa")
 	if back_button:
 		back_button.visible = (name != "home")
+	_refresh_tabs(name)
 	if name == "taxi":
 		_refresh_taxi()
 	elif name == "stats":
@@ -303,6 +353,9 @@ func _show_screen(name: String) -> void:
 		Settings.mark_seen("photos", _list_photo_files().size())
 	elif name == "home":
 		_refresh_badges()
+		_refresh_news_ticker()
+	if name != "home":
+		_wrap_buttons(_screen_node(name))
 
 # ------------------------------------------------------------------
 # Taxi app
@@ -347,6 +400,9 @@ func _update_taxi_status() -> void:
 func _on_money_changed(_amount: int) -> void:
 	if visible and taxi_screen.visible:
 		_update_taxi_status()
+	if visible and mapa_screen.visible:
+		_refresh_mapa()
+		_wrap_buttons(mapa_screen)
 	if visible and stats_screen.visible:
 		_refresh_stats()
 
@@ -451,7 +507,9 @@ func _add_act_tracker() -> void:
 	bar.max_value = float(threshold)
 	bar.value = float(min(paid, threshold))
 	bar.show_percentage = false
-	bar.custom_minimum_size = Vector2(180, 12)
+	bar.custom_minimum_size = Vector2(0, 14)
+	bar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	bar.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	bar.modulate = Color(0.95, 0.85, 0.4) if paid >= threshold else Color(0.95, 0.55, 0.45)
 	pct_bar.add_child(bar)
 	var val: Label = Label.new()
@@ -488,13 +546,18 @@ func _add_stat_label(prefix: String, value: String, color: Color) -> void:
 	var row: HBoxContainer = HBoxContainer.new()
 	var l1: Label = Label.new()
 	l1.text = prefix
-	l1.custom_minimum_size = Vector2(160, 0)
+	l1.custom_minimum_size = Vector2(150, 0)
 	l1.add_theme_color_override("font_color", Color(0.92, 0.92, 0.95, 1))
 	row.add_child(l1)
 	var l2: Label = Label.new()
 	l2.text = value
 	l2.add_theme_color_override("font_color", color)
+	l2.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	l2.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	row.add_child(l2)
+	# Sans libellé (ligne d'aide), le texte prend toute la largeur.
+	if prefix == "":
+		l1.visible = false
 	stats_box.add_child(row)
 
 func _add_rep_row(axis_name: String, value: int) -> void:
@@ -502,19 +565,21 @@ func _add_rep_row(axis_name: String, value: int) -> void:
 	row.add_theme_constant_override("separation", 8)
 	var name_label: Label = Label.new()
 	name_label.text = REP_AXIS_LABELS.get(axis_name, axis_name)
-	name_label.custom_minimum_size = Vector2(80, 0)
+	name_label.custom_minimum_size = Vector2(100, 0)
 	row.add_child(name_label)
 	var bar: ProgressBar = ProgressBar.new()
 	bar.min_value = -100.0
 	bar.max_value = 100.0
 	bar.value = float(value)
 	bar.show_percentage = false
-	bar.custom_minimum_size = Vector2(120, 14)
+	bar.custom_minimum_size = Vector2(0, 14)
+	bar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	bar.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	bar.modulate = REP_AXIS_COLORS.get(axis_name, Color.WHITE)
 	row.add_child(bar)
 	var val_label: Label = Label.new()
 	val_label.text = str(value)
-	val_label.custom_minimum_size = Vector2(36, 0)
+	val_label.custom_minimum_size = Vector2(44, 0)
 	val_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	row.add_child(val_label)
 	stats_box.add_child(row)
@@ -591,6 +656,7 @@ func _refresh_cronica() -> void:
 	main_lines.sort_custom(_cronica_sort)
 	side_lines.sort_custom(_cronica_sort)
 
+	_add_memorias_button()
 	_add_cronica_resumo()
 	if not main_lines.is_empty():
 		_add_cronica_section("HISTÓRIA", Color(1.0, 0.9, 0.55, 1))
@@ -629,6 +695,15 @@ func _cronica_sort(a: Dictionary, b: Dictionary) -> bool:
 	if ai != bi:
 		return ai < bi
 	return (a.quest as Quest).display_name < (b.quest as Quest).display_name
+
+# Le codex narratif (JournalUI) s'ouvre depuis le Diário du téléphone.
+func _add_memorias_button() -> void:
+	var b: Button = Button.new()
+	b.text = "📖 Memórias — tout ce qu'on t'a raconté (%d)" % NarrativeJournal.unlocked_count()
+	b.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	b.custom_minimum_size = Vector2(0, 44)
+	b.pressed.connect(_open_journal)
+	cronica_box.add_child(b)
 
 # « Onde estou » en tête de la Crônica : la situation en quelques phrases
 # (qui est qui, la dette, ce qu'on attend de toi). Généré par NarrativeJournal.
@@ -770,7 +845,7 @@ func _list_photo_files() -> Array[String]:
 
 func _build_photo_row(fname: String) -> Control:
 	var row: Button = Button.new()
-	row.custom_minimum_size = Vector2(360, THUMB_H + 12)
+	row.custom_minimum_size = Vector2(0, THUMB_H + 12)
 	row.flat = true
 	row.pressed.connect(func(): _open_photo_viewer(fname))
 	var hbox: HBoxContainer = HBoxContainer.new()
@@ -847,8 +922,8 @@ func _refresh_noticias() -> void:
 # Districts groupés par région géographique pour l'app Mapa.
 const MAPA_REGIONS: Array = [
 	{"label": "🌄 Norte", "ids": ["sambodromo", "maracana", "corcovado"]},
-	{"label": "🌅 Leste (baía + bondinho)", "ids": ["niteroi", "pao_acucar", "santos_dumont", "aterro_flamengo", "botafogo_flamengo"]},
-	{"label": "🏙 Centro", "ids": ["favela_morro", "copacabana"]},
+	{"label": "🌅 Leste (baía + bondinho)", "ids": ["niteroi", "pao_acucar", "santos_dumont", "marina_gloria", "aterro_flamengo", "botafogo_flamengo"]},
+	{"label": "🏙 Centro", "ids": ["favela_morro", "copacabana", "forte"]},
 	{"label": "🏖 Sul + Oeste", "ids": ["zona_sul", "barra_tijuca"]},
 ]
 
@@ -859,7 +934,7 @@ func _refresh_mapa() -> void:
 		child.queue_free()
 	var current_id: String = DistrictManager.current()
 	if mapa_here_label:
-		mapa_here_label.text = "Vous êtes ici : %s" % DistrictManager.get_label(current_id)
+		_set_mapa_status("💰 R$ %d en poche" % _get_money(), Color(0.95, 0.92, 0.85, 1))
 	for region in MAPA_REGIONS:
 		var header: Label = Label.new()
 		header.text = String(region.label)
@@ -880,20 +955,20 @@ func _build_mapa_row(district_id: String, current_id: String) -> Control:
 	var taxi_ok: bool = info.get("taxi_available", true)
 	var is_current: bool = (district_id == current_id)
 	var btn: Button = Button.new()
-	btn.custom_minimum_size = Vector2(360, 38)
+	btn.custom_minimum_size = Vector2(0, 44)
 	btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	btn.add_theme_font_size_override("font_size", 12)
-	var prefix: String = "📍 " if is_current else "  "
+	# Le lieu, puis le prix sur sa propre ligne (écran étroit).
 	var suffix: String
 	if is_current:
-		suffix = "  · ici"
+		suffix = "📍 tu es ici"
 	elif not taxi_ok:
-		suffix = "  · bondinho seulement"
+		suffix = "bondinho seulement"
 	elif fare > 0:
-		suffix = "  · R$ %d" % fare
+		suffix = "🚕 R$ %d" % fare
 	else:
-		suffix = ""
-	btn.text = "%s%s%s" % [prefix, label, suffix]
+		suffix = "🚕 grátis"
+	btn.text = "%s\n%s" % [label, suffix]
 	btn.disabled = is_current or not taxi_ok
 	if is_current:
 		btn.add_theme_color_override("font_color", Color(0.95, 0.85, 0.4))
@@ -906,6 +981,16 @@ func _build_mapa_row(district_id: String, current_id: String) -> Control:
 func _on_mapa_pressed(district_id: String) -> void:
 	if DistrictManager.travel_to(district_id):
 		close()
+	elif DistrictManager.travel_lock_reason() != "":
+		_set_mapa_status(DistrictManager.travel_lock_reason(), Color(0.95, 0.6, 0.4, 1))
+	else:
+		_set_mapa_status("Pas assez : R$ %d pour %s" % [DistrictManager.get_fare(district_id),
+				DistrictManager.get_label(district_id)], Color(0.95, 0.4, 0.4, 1))
+
+func _set_mapa_status(text: String, color: Color) -> void:
+	if mapa_here_label:
+		mapa_here_label.text = text
+		mapa_here_label.add_theme_color_override("font_color", color)
 
 func _refresh_conquistas() -> void:
 	if conquistas_box == null:
@@ -1027,6 +1112,8 @@ func _replay_tutorial() -> void:
 	if t and t.has_method("open"):
 		close()
 		t.open()
+	# « Revoir le guide » rejoue aussi les astuces au fil du jeu.
+	Settings.reset_tips()
 
 func _show_credits() -> void:
 	var c: Node = get_tree().current_scene.get_node_or_null("CreditsScreen")
@@ -1080,3 +1167,265 @@ func _build_news_row(item: Dictionary) -> Control:
 	headline.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	vbox.add_child(headline)
 	return card
+
+
+# ------------------------------------------------------------------
+# Mise en page (paysage, agrandi pour l'écran)
+# ------------------------------------------------------------------
+
+# La scène a des largeurs en dur : on recale tout en ancres dans le repère.
+func _apply_layout() -> void:
+	frame.set_anchors_preset(Control.PRESET_CENTER)
+	frame.offset_left = -DESIGN_SIZE.x * 0.5
+	frame.offset_right = DESIGN_SIZE.x * 0.5
+	frame.offset_top = -DESIGN_SIZE.y * 0.5
+	frame.offset_bottom = DESIGN_SIZE.y * 0.5
+	var bar: Control = frame.get_node_or_null("StatusBar")
+	if bar:
+		_fill_width(bar, 6.0, 6.0 + STATUS_H - 6.0, 6.0)
+	var screens: Control = frame.get_node("Screens")
+	screens.offset_left = SIDE_MARGIN
+	screens.offset_right = -SIDE_MARGIN
+	screens.offset_top = STATUS_H + 6.0
+	screens.offset_bottom = -BOTTOM_H
+	_layout_home()
+	for screen in screens.get_children():
+		if screen != home_screen:
+			_layout_app_screen(screen as Control)
+	for b in [back_button, close_button]:
+		if b == null:
+			continue
+		b.add_theme_font_size_override("font_size", 24)
+		b.custom_minimum_size = Vector2(48, HEADER_H)
+	back_button.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	back_button.offset_left = 6.0
+	back_button.offset_right = 54.0
+	back_button.offset_top = STATUS_H + 6.0
+	back_button.offset_bottom = STATUS_H + 6.0 + HEADER_H
+	close_button.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+	close_button.offset_left = -54.0
+	close_button.offset_right = -6.0
+	close_button.offset_top = STATUS_H + 6.0
+	close_button.offset_bottom = STATUS_H + 6.0 + HEADER_H
+	_build_tabs()
+	var ind: Control = frame.get_node_or_null("HomeIndicator")
+	if ind:
+		ind.offset_top = -14.0
+		ind.offset_bottom = -10.0
+
+
+func _layout_home() -> void:
+	var title: Label = home_screen.get_node_or_null("Title")
+	var sub: Label = home_screen.get_node_or_null("Subtitle")
+	if title:
+		_fill_width(title, 0.0, HEADER_H * 0.6, 0.0)
+		title.add_theme_font_size_override("font_size", 18)
+	if sub:
+		sub.visible = false
+	# Bandeau des Notícias à la place du sous-titre : la dernière manchette,
+	# un toucher ouvre le fil complet.
+	_news_ticker = Button.new()
+	_news_ticker.name = "NewsTicker"
+	_news_ticker.flat = true
+	_news_ticker.alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_news_ticker.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_news_ticker.clip_text = true
+	_news_ticker.add_theme_font_size_override("font_size", 14)
+	_news_ticker.add_theme_color_override("font_color", Color(0.75, 0.75, 0.8, 1))
+	_news_ticker.pressed.connect(func(): _show_screen("noticias"))
+	home_screen.add_child(_news_ticker)
+	_fill_width(_news_ticker, HEADER_H * 0.6, HEADER_H * 0.6 + 50.0, 0.0)
+	var scroll: ScrollContainer = home_screen.get_node("AppsScroll")
+	_fill_rest(scroll, HEADER_H * 0.6 + 56.0)
+	var grid: GridContainer = scroll.get_node("Apps")
+	var shown: Dictionary = {}
+	for i in HOME_TILES.size():
+		var tile: Button = grid.get_node_or_null(String(HOME_TILES[i][0])) as Button
+		if tile == null:
+			continue
+		tile.text = String(HOME_TILES[i][1])
+		grid.move_child(tile, i)
+		shown[tile] = true
+	for app in grid.get_children():
+		(app as Control).visible = shown.has(app)
+	grid.columns = HOME_COLUMNS
+	grid.custom_minimum_size = Vector2.ZERO
+	grid.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	grid.add_theme_constant_override("h_separation", APP_GAP)
+	grid.add_theme_constant_override("v_separation", APP_GAP)
+	for app in grid.get_children():
+		if app is Button:
+			_dress_app_tile(app as Button)
+
+
+# Icône d'app : l'emoji en grand au-dessus du nom (un Button n'a qu'une
+# taille de police pour tout son texte).
+func _dress_app_tile(b: Button) -> void:
+	b.custom_minimum_size = APP_TILE
+	var parts: PackedStringArray = b.text.split("\n")
+	if parts.size() < 2:
+		b.add_theme_font_size_override("font_size", 22)
+		return
+	var ink: Color = b.get_theme_color("font_color")
+	b.text = ""
+	var col: VBoxContainer = VBoxContainer.new()
+	col.name = "Tile"
+	col.set_anchors_preset(Control.PRESET_FULL_RECT)
+	col.alignment = BoxContainer.ALIGNMENT_CENTER
+	col.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	col.add_theme_constant_override("separation", 2)
+	for i in 2:
+		var l: Label = Label.new()
+		l.text = parts[i]
+		l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		l.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		l.add_theme_font_size_override("font_size", 56 if i == 0 else 22)
+		l.add_theme_color_override("font_color", ink)
+		col.add_child(l)
+	b.add_child(col)
+	b.move_child(col, 0)
+
+
+# Titre en bandeau, sous-titre éventuel, puis la liste qui prend le reste.
+func _layout_app_screen(screen: Control) -> void:
+	# Écran à onglets : la rangée d'onglets se glisse sous le titre.
+	var tab_shift: float = TAB_H + 4.0 if _in_tab_group(String(screen.name).to_lower()) else 0.0
+	var top: float = HEADER_H + tab_shift
+	for child in screen.get_children():
+		if not (child is Label):
+			continue
+		var l: Label = child
+		if l.name == "Header":
+			_fill_width(l, 0.0, HEADER_H, 40.0)
+			l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			l.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+			l.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+			l.add_theme_font_size_override("font_size", 20)
+		elif l.name == "Empty":
+			_fill_width(l, top + 60.0, top + 160.0, 0.0)
+			l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		else:
+			var sub_top: float = HEADER_H + tab_shift
+			_fill_width(l, sub_top, sub_top + SUB_H + 4.0, 0.0)
+			l.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+			top = sub_top + SUB_H + 8.0
+	var scroll: ScrollContainer = screen.get_node_or_null("Scroll")
+	if scroll == null:
+		return
+	_fill_rest(scroll, top + 4.0)
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	var box: Control = scroll.get_node_or_null("Box")
+	if box:
+		box.custom_minimum_size = Vector2.ZERO
+		box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+
+
+func _fill_width(c: Control, top: float, bottom: float, margin: float) -> void:
+	c.anchor_left = 0.0
+	c.anchor_right = 1.0
+	c.anchor_top = 0.0
+	c.anchor_bottom = 0.0
+	c.offset_left = margin
+	c.offset_right = -margin
+	c.offset_top = top
+	c.offset_bottom = bottom
+
+
+func _fill_rest(c: Control, top: float) -> void:
+	c.anchor_left = 0.0
+	c.anchor_right = 1.0
+	c.anchor_top = 0.0
+	c.anchor_bottom = 1.0
+	c.offset_left = 0.0
+	c.offset_right = 0.0
+	c.offset_top = top
+	c.offset_bottom = 0.0
+
+
+# ------------------------------------------------------------------
+# Onglets (écrans regroupés sous une app) et bandeau Notícias
+# ------------------------------------------------------------------
+
+func _build_tabs() -> void:
+	_tabs = HBoxContainer.new()
+	_tabs.name = "Tabs"
+	_tabs.alignment = BoxContainer.ALIGNMENT_CENTER
+	_tabs.add_theme_constant_override("separation", 10)
+	_tabs.visible = false
+	frame.add_child(_tabs)
+	var y: float = STATUS_H + 6.0 + HEADER_H
+	_fill_width(_tabs, y, y + TAB_H, SIDE_MARGIN)
+	# Les écrans d'un groupe portent le titre de l'app (l'onglet nomme l'écran).
+	for group in TAB_GROUPS:
+		for tab in group:
+			var screen: Control = _screen_node(String(tab[0]))
+			var header: Label = screen.get_node_or_null("Header") if screen else null
+			if header:
+				header.text = TAB_APP_TITLE
+
+func _in_tab_group(screen_name: String) -> bool:
+	for g in TAB_GROUPS:
+		for tab in g:
+			if String(tab[0]) == screen_name:
+				return true
+	return false
+
+func _screen_node(screen_name: String) -> Control:
+	match screen_name:
+		"stats": return stats_screen
+		"conquistas": return conquistas_screen
+		"cronica": return cronica_screen
+		"mapa": return mapa_screen
+		"noticias": return noticias_screen
+		"taxi": return taxi_screen
+		"photos": return photos_screen
+		"ajustes": return ajustes_screen
+	return null
+
+func _refresh_tabs(screen_name: String) -> void:
+	if _tabs == null:
+		return
+	for child in _tabs.get_children():
+		_tabs.remove_child(child)
+		child.queue_free()
+	var group: Array = []
+	for g in TAB_GROUPS:
+		for tab in g:
+			if String(tab[0]) == screen_name:
+				group = g
+	_tabs.visible = not group.is_empty()
+	for tab in group:
+		var id: String = String(tab[0])
+		var b: Button = Button.new()
+		b.text = String(tab[1])
+		b.toggle_mode = true
+		b.button_pressed = (id == screen_name)
+		b.custom_minimum_size = Vector2(0, TAB_H)
+		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		b.add_theme_font_size_override("font_size", 18)
+		if id != screen_name:
+			# Différé : l'onglet pressé est reconstruit par _show_screen.
+			b.pressed.connect(func(): _show_screen.call_deferred(id))
+		_tabs.add_child(b)
+
+func _refresh_news_ticker() -> void:
+	if _news_ticker == null:
+		return
+	var items: Array = NewsFeed.build_items()
+	var head: String = String(items[0].get("text", "")) if not items.is_empty() else "Nada de novo na orla"
+	_news_ticker.text = "📰 " + head
+
+# Écran étroit : les libellés longs (quartiers, slots, memórias) passent à la
+# ligne au lieu de pousser le bouton hors de l'écran.
+func _wrap_buttons(screen: Control) -> void:
+	if screen == null:
+		return
+	for b in screen.find_children("*", "Button", true, false):
+		var btn: Button = b
+		btn.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		btn.custom_minimum_size.x = 0.0
+	# Lignes de texte empilées (indications, légendes) : à la ligne aussi.
+	for l in screen.find_children("*", "Label", true, false):
+		var lbl: Label = l
+		if lbl.get_parent() is VBoxContainer and lbl.autowrap_mode == TextServer.AUTOWRAP_OFF:
+			lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART

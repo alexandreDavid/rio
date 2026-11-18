@@ -299,7 +299,7 @@ func _load_ng_plus_meta() -> void:
 
 func _play_intro_cutscene() -> void:
 	# Ouverture narrative jouée PAR-DESSUS le décor (HouseInterior en fond) :
-	# enchaîne 4 répliques du « Narrateur » via CutsceneRunner — gèle le joueur
+	# enchaîne 2 répliques du « Narrateur » via CutsceneRunner — gèle le joueur
 	# le temps qu'il lise, puis libère. Le bump Seu João reste séparé : il se
 	# déclenche à la 1re sortie de la maison (cf. IntroSeuJoaoBump).
 	await get_tree().process_frame
