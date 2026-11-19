@@ -10,3 +10,6 @@ func _ready() -> void:
 	# Comme District.gd : sans tri en Y, tout le morro se dessinait d'un bloc
 	# et recouvrait le joueur dès qu'il montait au-dessus de l'origine.
 	WorldFx.enable_y_sort(self)
+	# Les étiquettes restent lisibles par-dessus les maisons empilées.
+	for l in find_children("*", "Label", true, false):
+		(l as Label).z_index = 3

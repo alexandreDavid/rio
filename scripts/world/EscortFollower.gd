@@ -49,6 +49,7 @@ func _build_sprite() -> void:
 	spr.scale = Vector2(s, s)
 	spr.position = Vector2(0, -target_height * 0.5)
 	add_child(spr)
+	WorldFx.sort_feet_sprite_like_bodies(self, spr)
 
 func _process(delta: float) -> void:
 	var active: bool = follow_flag != "" and CampaignManager.has_flag(follow_flag) \

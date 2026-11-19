@@ -12,6 +12,7 @@
 [ext_resource type="Script" path="res://scripts/world/TitoApprocheTrigger.gd" id="12_titotrig"]
 [ext_resource type="Script" path="res://scripts/districts/FavelaDoMorroDistrict.gd" id="90_district"]
 
+[ext_resource type="Texture2D" path="res://assets/sprites/props/pixellab/kombi.png" id="90_kombi"]
 [sub_resource type="RectangleShape2D" id="WallH"]
 size = Vector2(820, 16)
 
@@ -35,7 +36,7 @@ offset_left = -400.0
 offset_top = -1300.0
 offset_right = 400.0
 offset_bottom = 280.0
-color = Color(0.55, 0.42, 0.32, 1)
+color = Color(0.22, 0.42, 0.27, 1)
 z_index = -10
 
 [node name="VautourA" type="ColorRect" parent="." unique_id=535277899 groups=["drift_west"]]
@@ -74,16 +75,16 @@ offset_bottom = -1252.0
 color = Color(0.85, 0.85, 0.85, 0.4)
 
 [node name="Sky" type="ColorRect" parent="." unique_id=2044537898]
-offset_left = -400.0
+offset_left = -1800.0
 offset_top = -1300.0
-offset_right = 400.0
+offset_right = 1800.0
 offset_bottom = -1100.0
 color = Color(0.92, 0.62, 0.35, 1)
 
 [node name="SkyHorizon" type="ColorRect" parent="." unique_id=724219180]
-offset_left = -400.0
+offset_left = -1800.0
 offset_top = -1130.0
-offset_right = 400.0
+offset_right = 1800.0
 offset_bottom = -1100.0
 color = Color(0.95, 0.78, 0.42, 1)
 
@@ -190,32 +191,18 @@ offset_right = 208.0
 offset_bottom = -1080.0
 color = Color(0.6, 0.5, 0.4, 1)
 
-[node name="MorroTopTreeA" type="ColorRect" parent="." unique_id=264924316]
-offset_left = -300.0
-offset_top = -1040.0
-offset_right = -292.0
-offset_bottom = -1010.0
-color = Color(0.32, 0.22, 0.18, 1)
-
-[node name="MorroTopTreeATop" type="ColorRect" parent="." unique_id=1461145579]
+[node name="MorroTopTreeATop" type="ColorRect" parent="." unique_id=1461145579 groups=["prop_palm"]]
 offset_left = -316.0
 offset_top = -1058.0
 offset_right = -276.0
-offset_bottom = -1040.0
+offset_bottom = -1010.0
 color = Color(0.28, 0.45, 0.28, 1)
 
-[node name="MorroTopTreeB" type="ColorRect" parent="." unique_id=1847254889]
-offset_left = 320.0
-offset_top = -1030.0
-offset_right = 326.0
-offset_bottom = -1010.0
-color = Color(0.32, 0.22, 0.18, 1)
-
-[node name="MorroTopTreeBTop" type="ColorRect" parent="." unique_id=177347939]
+[node name="MorroTopTreeBTop" type="ColorRect" parent="." unique_id=177347939 groups=["prop_palm"]]
 offset_left = 308.0
 offset_top = -1048.0
 offset_right = 338.0
-offset_bottom = -1030.0
+offset_bottom = -1010.0
 color = Color(0.28, 0.45, 0.28, 1)
 
 [node name="ZoneLabelTop" type="Label" parent="." unique_id=1769900681]
@@ -257,61 +244,33 @@ offset_right = 400.0
 offset_bottom = 4.0
 color = Color(0.45, 0.35, 0.26, 0.6)
 
-[node name="VegetationLeft" type="ColorRect" parent="." unique_id=1272303451 groups=["ground_grass"]]
+[node name="VegetationLeft" type="ColorRect" parent="." unique_id=1272303451 groups=["ground_forest"]]
+offset_left = -1800.0
+offset_top = -1100.0
+offset_right = -400.0
+offset_bottom = 900.0
+color = Color(0.22, 0.42, 0.27, 1)
+
+[node name="VegetationRight" type="ColorRect" parent="." unique_id=1015973336 groups=["ground_forest"]]
+offset_left = 400.0
+offset_top = -1100.0
+offset_right = 1800.0
+offset_bottom = 900.0
+color = Color(0.22, 0.42, 0.27, 1)
+
+[node name="ForestBottomL" type="ColorRect" parent="." groups=["ground_forest"]]
 offset_left = -400.0
-offset_top = -1000.0
-offset_right = -340.0
-offset_bottom = 200.0
-color = Color(0.32, 0.5, 0.32, 1)
+offset_top = 200.0
+offset_right = -32.0
+offset_bottom = 900.0
+color = Color(0.22, 0.42, 0.27, 1)
 
-[node name="VegetationRight" type="ColorRect" parent="." unique_id=1015973336 groups=["ground_grass"]]
-offset_left = 340.0
-offset_top = -1000.0
+[node name="ForestBottomR" type="ColorRect" parent="." groups=["ground_forest"]]
+offset_left = 32.0
+offset_top = 200.0
 offset_right = 400.0
-offset_bottom = 200.0
-color = Color(0.32, 0.5, 0.32, 1)
-
-[node name="VegetationLeftDetailA" type="ColorRect" parent="." unique_id=490624438]
-offset_left = -380.0
-offset_top = -800.0
-offset_right = -360.0
-offset_bottom = -780.0
-color = Color(0.28, 0.45, 0.28, 1)
-
-[node name="VegetationLeftDetailB" type="ColorRect" parent="." unique_id=790010919]
-offset_left = -380.0
-offset_top = -400.0
-offset_right = -360.0
-offset_bottom = -380.0
-color = Color(0.28, 0.45, 0.28, 1)
-
-[node name="VegetationLeftDetailC" type="ColorRect" parent="." unique_id=323789562]
-offset_left = -380.0
-offset_top = -100.0
-offset_right = -360.0
-offset_bottom = -80.0
-color = Color(0.28, 0.45, 0.28, 1)
-
-[node name="VegetationRightDetailA" type="ColorRect" parent="." unique_id=1248333318]
-offset_left = 360.0
-offset_top = -700.0
-offset_right = 380.0
-offset_bottom = -680.0
-color = Color(0.28, 0.45, 0.28, 1)
-
-[node name="VegetationRightDetailB" type="ColorRect" parent="." unique_id=645494595]
-offset_left = 360.0
-offset_top = -300.0
-offset_right = 380.0
-offset_bottom = -280.0
-color = Color(0.28, 0.45, 0.28, 1)
-
-[node name="VegetationRightDetailC" type="ColorRect" parent="." unique_id=1186684774]
-offset_left = 360.0
-offset_top = 50.0
-offset_right = 380.0
-offset_bottom = 70.0
-color = Color(0.28, 0.45, 0.28, 1)
+offset_bottom = 900.0
+color = Color(0.22, 0.42, 0.27, 1)
 
 [node name="StairsCenter" type="ColorRect" parent="." unique_id=40839512 groups=["ground_stairs"]]
 offset_left = -28.0
@@ -1017,7 +976,7 @@ offset_right = -130.0
 offset_bottom = 30.0
 color = Color(0.32, 0.18, 0.12, 1)
 
-[node name="House_30_R" type="ColorRect" parent="HousesLower" unique_id=32088430]
+[node name="House_30_R" type="ColorRect" parent="HousesLower" unique_id=32088430 groups=["building_favela"]]
 offset_left = 100.0
 offset_right = 220.0
 offset_bottom = 100.0
@@ -1034,27 +993,6 @@ offset_left = 140.0
 offset_top = 30.0
 offset_right = 170.0
 offset_bottom = 60.0
-color = Color(0.32, 0.55, 0.78, 0.85)
-
-[node name="House_140_L" type="ColorRect" parent="HousesLower" unique_id=302972979 groups=["building_favela"]]
-offset_left = -240.0
-offset_top = 80.0
-offset_right = -120.0
-offset_bottom = 180.0
-color = Color(0.85, 0.78, 0.62, 1)
-
-[node name="House_140_L_Roof" type="ColorRect" parent="HousesLower" unique_id=1402670658]
-offset_left = -250.0
-offset_top = 68.0
-offset_right = -110.0
-offset_bottom = 80.0
-color = Color(0.42, 0.32, 0.22, 1)
-
-[node name="House_140_L_Window" type="ColorRect" parent="HousesLower" unique_id=905710940]
-offset_left = -200.0
-offset_top = 110.0
-offset_right = -170.0
-offset_bottom = 140.0
 color = Color(0.32, 0.55, 0.78, 0.85)
 
 [node name="PowerLine_n900" type="ColorRect" parent="." unique_id=356015414]
@@ -1098,46 +1036,6 @@ offset_top = -130.0
 offset_right = 200.0
 offset_bottom = -128.0
 color = Color(0.18, 0.14, 0.12, 0.85)
-
-[node name="WaterTankUpper" type="ColorRect" parent="." unique_id=914552025]
-offset_left = 230.0
-offset_top = -880.0
-offset_right = 260.0
-offset_bottom = -850.0
-color = Color(0.42, 0.62, 0.78, 1)
-
-[node name="WaterTankMid" type="ColorRect" parent="." unique_id=242892634]
-offset_left = -310.0
-offset_top = -700.0
-offset_right = -280.0
-offset_bottom = -670.0
-color = Color(0.42, 0.62, 0.78, 1)
-
-[node name="WaterTankLower" type="ColorRect" parent="." unique_id=686932252]
-offset_left = 240.0
-offset_top = -160.0
-offset_right = 270.0
-offset_bottom = -130.0
-color = Color(0.42, 0.62, 0.78, 1)
-
-[node name="ExitSign" type="Label" parent="." unique_id=939327462]
-offset_left = -120.0
-offset_top = 240.0
-offset_right = 120.0
-offset_bottom = 264.0
-theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
-theme_override_constants/outline_size = 4
-theme_override_font_sizes/font_size = 14
-text = "↓ COPACABANA"
-horizontal_alignment = 1
-
-[node name="ExitSignArrow" type="ColorRect" parent="." unique_id=1162794072]
-offset_left = -8.0
-offset_top = 268.0
-offset_right = 8.0
-offset_bottom = 280.0
-color = Color(0.95, 0.85, 0.4, 0.7)
 
 [node name="Walls" type="Node2D" parent="." unique_id=1246406217]
 
@@ -2101,144 +1999,18 @@ offset_right = 230.0
 offset_bottom = -360.0
 color = Color(0.14, 0.11, 0.10, 0.75)
 
-[node name="CaixaDaguaA" type="ColorRect" parent="."]
-offset_left = -290.0
-offset_top = -908.0
-offset_right = -262.0
-offset_bottom = -876.0
-color = Color(0.38, 0.58, 0.76, 1)
-
-[node name="CaixaDaguaALid" type="ColorRect" parent="."]
-offset_left = -293.0
-offset_top = -912.0
-offset_right = -259.0
-offset_bottom = -908.0
-color = Color(0.28, 0.44, 0.60, 1)
-
-[node name="CaixaDaguaB" type="ColorRect" parent="."]
-offset_left = 192.0
-offset_top = -620.0
-offset_right = 220.0
-offset_bottom = -588.0
-color = Color(0.38, 0.58, 0.76, 1)
-
-[node name="CaixaDaguaBLid" type="ColorRect" parent="."]
-offset_left = 189.0
-offset_top = -624.0
-offset_right = 223.0
-offset_bottom = -620.0
-color = Color(0.28, 0.44, 0.60, 1)
-
-[node name="CaixaDaguaC" type="ColorRect" parent="."]
-offset_left = -300.0
-offset_top = -410.0
-offset_right = -272.0
-offset_bottom = -378.0
-color = Color(0.38, 0.58, 0.76, 1)
-
-[node name="CaixaDaguaCLid" type="ColorRect" parent="."]
-offset_left = -303.0
-offset_top = -414.0
-offset_right = -269.0
-offset_bottom = -410.0
-color = Color(0.28, 0.44, 0.60, 1)
-
-[node name="LajeA" type="ColorRect" parent="."]
-offset_left = 90.0
-offset_top = -488.0
-offset_right = 250.0
-offset_bottom = -484.0
-color = Color(0.68, 0.60, 0.50, 1)
-
-[node name="LajeCadeiraA1" type="ColorRect" parent="."]
-offset_left = 100.0
-offset_top = -498.0
-offset_right = 110.0
-offset_bottom = -488.0
-color = Color(0.78, 0.32, 0.22, 1)
-
-[node name="LajeCadeiraA2" type="ColorRect" parent="."]
-offset_left = 120.0
-offset_top = -498.0
-offset_right = 130.0
-offset_bottom = -488.0
-color = Color(0.78, 0.42, 0.22, 1)
-
-[node name="LajeMesaA" type="ColorRect" parent="."]
-offset_left = 108.0
-offset_top = -500.0
-offset_right = 132.0
-offset_bottom = -498.0
-color = Color(0.55, 0.45, 0.35, 1)
-
-[node name="LajeB" type="ColorRect" parent="."]
-offset_left = -260.0
-offset_top = -302.0
-offset_right = -120.0
-offset_bottom = -298.0
-color = Color(0.68, 0.60, 0.50, 1)
-
-[node name="LajeBCadeiraB1" type="ColorRect" parent="."]
-offset_left = -248.0
-offset_top = -312.0
-offset_right = -238.0
-offset_bottom = -302.0
-color = Color(0.55, 0.72, 0.55, 1)
-
-[node name="LajeBCadeiraB2" type="ColorRect" parent="."]
-offset_left = -230.0
-offset_top = -312.0
-offset_right = -220.0
-offset_bottom = -302.0
-color = Color(0.55, 0.72, 0.55, 1)
-
-[node name="KombiBody" type="ColorRect" parent="."]
-offset_left = 110.0
-offset_top = 90.0
-offset_right = 200.0
-offset_bottom = 138.0
-color = Color(0.92, 0.85, 0.32, 1)
-
-[node name="KombiRoof" type="ColorRect" parent="."]
-offset_left = 116.0
-offset_top = 76.0
-offset_right = 194.0
-offset_bottom = 90.0
-color = Color(0.75, 0.70, 0.28, 1)
-
-[node name="KombiWindowF" type="ColorRect" parent="."]
-offset_left = 182.0
-offset_top = 80.0
-offset_right = 196.0
-offset_bottom = 92.0
-color = Color(0.55, 0.72, 0.85, 0.80)
-
-[node name="KombiWindowR" type="ColorRect" parent="."]
-offset_left = 120.0
-offset_top = 80.0
-offset_right = 134.0
-offset_bottom = 92.0
-color = Color(0.55, 0.72, 0.85, 0.80)
-
-[node name="KombiWheelF" type="ColorRect" parent="."]
-offset_left = 176.0
-offset_top = 134.0
-offset_right = 192.0
-offset_bottom = 142.0
-color = Color(0.18, 0.16, 0.14, 1)
-
-[node name="KombiWheelR" type="ColorRect" parent="."]
-offset_left = 118.0
-offset_top = 134.0
-offset_right = 134.0
-offset_bottom = 142.0
-color = Color(0.18, 0.16, 0.14, 1)
+[node name="Kombi" type="Sprite2D" parent="."]
+position = Vector2(160, 168)
+scale = Vector2(3, 3)
+texture = ExtResource("90_kombi")
+offset = Vector2(0, -16)
+texture_filter = 1
 
 [node name="KombiLabel" type="Label" parent="."]
 offset_left = 112.0
-offset_top = 148.0
-offset_right = 200.0
-offset_bottom = 162.0
+offset_top = 172.0
+offset_right = 208.0
+offset_bottom = 186.0
 theme_override_colors/font_color = Color(0.78, 0.68, 0.28, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.80)
 theme_override_constants/outline_size = 3

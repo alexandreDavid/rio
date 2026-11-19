@@ -45,22 +45,26 @@ static func paint_relief(parent: Node, insert_at: int, rect: Rect2, color: Color
 	if opts.get("painter", true) and FacadePainter.native_size(rect.size).x >= 6 \
 			and FacadePainter.native_size(rect.size).y >= 8:
 		var style: String = String(opts.get("style", "copa"))
-		var tex: ImageTexture = FacadePainter.build(rect.size, color, {
+		var p_opts: Dictionary = {
 			"style": style, "seed": seed, "door": opts.get("door", true),
 			"door_left": opts.get("door_left", false), "shop": opts.get("shop", false),
-			"windows": opts.get("windows", true), "balconies": opts.get("balconies", true)})
+			"windows": opts.get("windows", true), "balconies": opts.get("balconies", true)}
+		if opts.has("door_x"):
+			p_opts["door_x"] = opts["door_x"]
+		var tex: ImageTexture = FacadePainter.build(rect.size, color, p_opts)
+		var margin: Vector2i = FacadePainter.margins(rect.size, p_opts)
 		var spr: Sprite2D = Sprite2D.new()
 		spr.name = "Facade"
 		spr.texture = tex
 		spr.centered = false
 		spr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		spr.scale = Vector2(FacadePainter.DENSITY, FacadePainter.DENSITY)
-		var painted: Vector2 = Vector2(tex.get_size()) * FacadePainter.DENSITY
+		var painted: Vector2 = Vector2(FacadePainter.native_size(rect.size)) * FacadePainter.DENSITY
 		# Origine au BAS de la façade (tri en Y : un personnage dont les pieds
 		# sont plus bas passe devant), dessin décalé vers le haut via offset.
 		var off: Vector2 = ((rect.size - painted) * 0.5).floor()
 		spr.position = Vector2(rect.position.x + off.x, rect.end.y - off.y)
-		spr.offset = Vector2(0, -tex.get_size().y)
+		spr.offset = Vector2(-margin.x, -tex.get_size().y)
 		parent.add_child(spr)
 		parent.move_child(spr, idx)
 		idx += 1
@@ -68,10 +72,7 @@ static func paint_relief(parent: Node, insert_at: int, rect: Rect2, color: Color
 		# par DayLighting) — rendu D.
 		var night: Sprite2D = Sprite2D.new()
 		night.name = "FacadeNight"
-		night.texture = FacadePainter.build_night(rect.size, color, {
-			"style": style, "seed": seed, "door": opts.get("door", true),
-			"door_left": opts.get("door_left", false), "shop": opts.get("shop", false),
-			"windows": opts.get("windows", true), "balconies": opts.get("balconies", true)})
+		night.texture = FacadePainter.build_night(rect.size, color, p_opts)
 		night.centered = false
 		night.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		night.scale = spr.scale
@@ -82,6 +83,8 @@ static func paint_relief(parent: Node, insert_at: int, rect: Rect2, color: Color
 		parent.add_child(night)
 		parent.move_child(night, idx)
 		idx += 1
+		if style == "favela":
+			return  # le toit (laje, caixa d'água, linge) est dans l'image peinte
 		var roof_offset_p: float = float(opts.get("roof_offset", 0.0))
 		if opts.get("roof_band", true):
 			# Toit plat vu du dessus (faux 3/4) : dalle béton claire + arête sombre.

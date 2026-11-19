@@ -1233,7 +1233,7 @@ variants = [{
 }]
 
 [node name="PressExposeSpot" parent="." instance=ExtResource("16_reactive")]
-position = Vector2(560, 100)
+position = Vector2(545, 100)
 npc_id = "journaliste"
 prompt = "Le journaliste anti-corruption"
 character_seed = 90206
@@ -1509,7 +1509,7 @@ position = Vector2(2000, 5000)
 position = Vector2(330, -35)
 
 [node name="Yara" parent="." instance=ExtResource("7_yara")]
-position = Vector2(-90, 85)
+position = Vector2(-48, 85)
 
 [node name="FishingSpot" parent="." instance=ExtResource("8_fish")]
 position = Vector2(470, -40)
@@ -1675,7 +1675,7 @@ variants = [{
 }]
 
 [node name="NiteroiPlumeFournisseurSpot" parent="." instance=ExtResource("16_reactive")]
-position = Vector2(-500, 100)
+position = Vector2(-440, 100)
 npc_id = "niteroi_plumes_fornecedor"
 prompt = "Parler à Tomé (fournisseur)"
 character_seed = 80406

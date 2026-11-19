@@ -55,3 +55,14 @@ static func enable_y_sort(root: Node) -> void:
 		if n is CharacterBody2D:
 			continue
 		(n as Node2D).y_sort_enabled = true
+
+
+# Perso posé « origine aux pieds » (spots de dialogue, suiveurs) : les corps
+# (NPC, joueur) se trient par le centre de leur sprite, ~21 px au-dessus des
+# pieds. Le nœud trie ses enfants avec le monde et son sprite prend la même
+# hauteur de tri ; le dessin ne bouge pas (compensé par l'offset).
+static func sort_feet_sprite_like_bodies(owner: Node2D, spr: Sprite2D) -> void:
+	owner.y_sort_enabled = true
+	var drawn_y: float = spr.position.y
+	spr.position.y = -PropSprites.WORLD_SORT_LIFT
+	spr.offset.y += (drawn_y - spr.position.y) / spr.scale.y

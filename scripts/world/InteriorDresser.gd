@@ -25,6 +25,11 @@ const FLOOR_KINDS: Dictionary = {
 }
 
 
+# Intérieurs dont les meubles sont peints par FurniturePainter (les autres
+# gardent le relief générique tant que leurs rects n'ont pas été revus).
+const FURNISHED: Array = ["HouseInterior"]
+
+
 static func is_interior(node: Node) -> bool:
 	return node != null and node.scene_file_path.begins_with(INTERIORS_DIR)
 
@@ -41,6 +46,9 @@ static func dress(root: Node) -> void:
 		return
 	root.set_meta("interior_dressed", true)
 	var kind: String = floor_kind(root)
+	var furnished: bool = false
+	for key in FURNISHED:
+		furnished = furnished or root.scene_file_path.contains(key)
 	var floor: ColorRect = find_floor(root)
 	var rects: Array[ColorRect] = []
 	_collect(root, rects)
@@ -49,9 +57,10 @@ static func dress(root: Node) -> void:
 	for cr in rects:
 		if cr == floor or cr.has_meta("dressing"):
 			continue
-		if cr.size.x < MIN_RECT or cr.size.y < MIN_RECT:
+		if cr.size.x < MIN_RECT or cr.size.y < MIN_RECT or not cr.visible:
 			continue
-		_relief(cr)
+		if not (furnished and _furnish(cr)):
+			_relief(cr)
 	for l in root.find_children("*", "Label", true, false):
 		var label: Label = l as Label
 		if label != null and not label.has_theme_font_override("font"):
@@ -145,6 +154,41 @@ static func _relief(cr: ColorRect) -> void:
 	_rect(cr, "OutlineB", Vector2(0, h - LINE), Vector2(w, LINE), dark)
 	_rect(cr, "OutlineL", Vector2.ZERO, Vector2(LINE, h), dark)
 	_rect(cr, "OutlineR", Vector2(w - LINE, 0), Vector2(LINE, h), dark)
+
+
+# Meuble peint (FurniturePainter) : le rect dont le nom — ou celui de son
+# corps parent — désigne un genre connu devient un sprite ; l'aplat s'efface
+# (self_modulate) et les détails en rects posés dedans (oreiller, plaque…)
+# sont masqués. Faux si le rect n'est pas un meuble connu.
+static func _furnish(cr: ColorRect) -> bool:
+	var parent: Node = cr.get_parent()
+	var kind: String = FurniturePainter.kind_for(String(cr.name))
+	var grouped: bool = false
+	if kind == "" and parent != null:
+		kind = FurniturePainter.kind_for(String(parent.name))
+		grouped = kind != ""
+	if kind == "":
+		return false
+	if grouped:
+		# Seul le plus grand rect du corps porte le meuble.
+		for sib in parent.get_children():
+			if sib is ColorRect and sib != cr and not sib.has_meta("dressing"):
+				if (sib as ColorRect).size.x * (sib as ColorRect).size.y > cr.size.x * cr.size.y:
+					return true
+				(sib as ColorRect).visible = false
+	if kind != "rug" and kind != "tv" and kind != "altar":
+		var shadow: ColorRect = _rect(cr, "Shadow", Vector2(LINE, LINE), cr.size, Color(0, 0, 0, 0.28))
+		shadow.show_behind_parent = true
+	var spr: Sprite2D = Sprite2D.new()
+	spr.name = "Furniture"
+	spr.set_meta("dressing", true)
+	spr.texture = FurniturePainter.build(kind, cr.size, cr.color, int(absf(cr.position.x + cr.position.y)) % 97 + 1)
+	spr.centered = false
+	spr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	spr.scale = Vector2(FurniturePainter.DENSITY, FurniturePainter.DENSITY)
+	cr.add_child(spr)
+	cr.self_modulate.a = 0.0
+	return true
 
 
 static func _is_wood(cr: ColorRect) -> bool:

@@ -442,11 +442,27 @@ static func _dress_building(cr: ColorRect, rects: Array[ColorRect]) -> void:
 	# sauf ceux qui portent un enfant (enseigne avec Label).
 	var opts: Dictionary = {"windows": true, "door": true, "seed": seed, "door_left": (seed % 2) == 0,
 		"style": "favela" if favela else "copa", "shop": (not favela) and (seed % 4) == 0}
-	if favela:
-		# La scène dessine déjà des toits de 10 px : pas de bande, décor par-dessus.
+	if favela and String(cr.name).begins_with("Capela"):
+		opts["style"] = "igreja"
 		opts["roof_band"] = false
-		opts["roof_offset"] = 10.0
-		opts["roof_kind"] = seed % 4
+	elif favela:
+		# Le peintre porte le toit (laje, fibrocimento, tuile) : les bandes de
+		# toit en aplat de la scène (« <Maison>_Roof ») s'effacent.
+		var stem: String = String(cr.name).trim_suffix("Wall")
+		for other in rects:
+			var on: String = String(other.name)
+			if other != cr and other.get_parent() == parent and on.begins_with(stem) and on.contains("Roof"):
+				other.visible = false
+	# Une vraie porte (BuildingDoor) au pied de la façade : la porte peinte
+	# se cale dessus plutôt que d'être tirée au sort.
+	var scene_root: Node = cr.owner if cr.owner != null else parent
+	for d in scene_root.find_children("*", "Node2D", true, false):
+		if not ("destination" in d):
+			continue
+		var gp: Vector2 = (d as Node2D).global_position
+		if gp.x > mine.position.x and gp.x < mine.end.x and absf(gp.y - mine.end.y) < 40.0:
+			opts["door_x"] = int((gp.x - mine.position.x) / float(FacadePainter.DENSITY))
+			break
 	if not bare:
 		for other in rects:
 			if other == cr or other.get_parent() != parent or other.get_index() < cr.get_index():
@@ -483,7 +499,7 @@ static func _replace_with_prop(cr: ColorRect, region: Rect2, target_h: float) ->
 	if parent == null:
 		return
 	var r: Rect2 = cr.get_global_rect()
-	var s: Sprite2D = PropSprites.spawn(parent, region, Vector2.ZERO, target_h)
+	var s: Sprite2D = PropSprites.spawn(parent, region, Vector2.ZERO, target_h, PropSprites.WORLD_SORT_LIFT)
 	s.name = cr.name + "Sprite"
 	s.z_index = cr.z_index
 	s.global_position = Vector2(r.get_center().x, r.end.y) + s.position

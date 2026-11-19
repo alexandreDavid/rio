@@ -19,6 +19,15 @@ size = Vector2(60, 32)
 [sub_resource type="RectangleShape2D" id="NightTriggerShape"]
 size = Vector2(180, 100)
 
+[sub_resource type="RectangleShape2D" id="FridgeShape"]
+size = Vector2(22, 26)
+
+[sub_resource type="RectangleShape2D" id="TVShape"]
+size = Vector2(42, 18)
+
+[sub_resource type="RectangleShape2D" id="AltarShape"]
+size = Vector2(28, 16)
+
 [node name="HouseInterior" type="Node2D"]
 
 [node name="Floor" type="ColorRect" parent="."]
@@ -35,50 +44,15 @@ offset_right = 80.0
 offset_bottom = 40.0
 color = Color(0.55, 0.25, 0.25, 0.8)
 
-[node name="MemorialFrame" type="ColorRect" parent="."]
-offset_left = 110.0
-offset_top = -85.0
-offset_right = 160.0
-offset_bottom = -25.0
-color = Color(0.42, 0.28, 0.18, 1)
-
-[node name="MemorialPhoto" type="ColorRect" parent="."]
-offset_left = 116.0
-offset_top = -78.0
-offset_right = 154.0
-offset_bottom = -38.0
-color = Color(0.85, 0.78, 0.62, 1)
-
-[node name="MemorialFace" type="ColorRect" parent="."]
-offset_left = 124.0
-offset_top = -66.0
-offset_right = 146.0
-offset_bottom = -48.0
-color = Color(0.55, 0.42, 0.32, 1)
-
 [node name="MemorialLabel" type="Label" parent="."]
-offset_left = 110.0
-offset_top = -22.0
-offset_right = 160.0
-offset_bottom = -8.0
+offset_left = 116.0
+offset_top = -46.0
+offset_right = 178.0
+offset_bottom = -34.0
 text = "tio Zé †"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 9
+theme_override_font_sizes/font_size = 6
 theme_override_colors/font_color = Color(0.55, 0.4, 0.32, 1)
-
-[node name="CandleBase" type="ColorRect" parent="."]
-offset_left = 130.0
-offset_top = -8.0
-offset_right = 140.0
-offset_bottom = 4.0
-color = Color(0.95, 0.85, 0.62, 1)
-
-[node name="CandleFlame" type="ColorRect" parent="."]
-offset_left = 133.0
-offset_top = -14.0
-offset_right = 137.0
-offset_bottom = -8.0
-color = Color(0.95, 0.55, 0.18, 1)
 
 [node name="KitchenCounter" type="StaticBody2D" parent="."]
 position = Vector2(-130, -85)
@@ -139,6 +113,45 @@ offset_top = -16.0
 offset_right = 30.0
 offset_bottom = 16.0
 color = Color(0.45, 0.28, 0.18, 1)
+
+[node name="Fridge" type="StaticBody2D" parent="."]
+position = Vector2(-84, -84)
+
+[node name="Shape" type="CollisionShape2D" parent="Fridge"]
+shape = SubResource("FridgeShape")
+
+[node name="Rect" type="ColorRect" parent="Fridge"]
+offset_left = -11.0
+offset_top = -25.0
+offset_right = 10.0
+offset_bottom = 14.0
+color = Color(0.94, 0.93, 0.89, 1)
+
+[node name="TVRack" type="StaticBody2D" parent="."]
+position = Vector2(-10, -84)
+
+[node name="Shape" type="CollisionShape2D" parent="TVRack"]
+shape = SubResource("TVShape")
+
+[node name="Rect" type="ColorRect" parent="TVRack"]
+offset_left = -21.0
+offset_top = -22.0
+offset_right = 21.0
+offset_bottom = 11.0
+color = Color(0.5, 0.33, 0.2, 1)
+
+[node name="Altar" type="StaticBody2D" parent="."]
+position = Vector2(159, -10)
+
+[node name="Shape" type="CollisionShape2D" parent="Altar"]
+shape = SubResource("AltarShape")
+
+[node name="Rect" type="ColorRect" parent="Altar"]
+offset_left = -15.0
+offset_top = -22.0
+offset_right = 15.0
+offset_bottom = 8.0
+color = Color(0.5, 0.33, 0.2, 1)
 
 [node name="Walls" type="Node2D" parent="."]
 
@@ -215,7 +228,7 @@ offset_right = 32.0
 offset_bottom = -22.0
 text = "↓ Sortir"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 11
+theme_override_font_sizes/font_size = 6
 theme_override_colors/font_color = Color(0.95, 0.85, 0.4, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
 theme_override_constants/outline_size = 3

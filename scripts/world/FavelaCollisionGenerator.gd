@@ -23,7 +23,7 @@ const HOUSE_BOUNDS: Array[Rect2] = [
 	Rect2(80, -150, 120, 100),     # House_100_R
 	Rect2(-260, -80, 150, 110),    # PadariaWall
 	Rect2(100, 0, 120, 100),       # House_30_R
-	Rect2(-240, 80, 120, 100),     # House_140_L
+	Rect2(114, 136, 92, 30),       # Kombi
 ]
 
 func _ready() -> void:

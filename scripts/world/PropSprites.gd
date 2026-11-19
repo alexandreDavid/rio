@@ -57,15 +57,25 @@ static func _harden_alpha(img: Image) -> void:
 				img.set_pixel(x, y, Color(c.r, c.g, c.b, 1.0))
 
 
+# Les personnages du monde (NPC.tscn, Player.tscn) ont leur origine au centre
+# du sprite de 48 px, pieds ~22 px plus bas : le tri en Y les compare donc par
+# « pieds − 22 ». Un prop du monde remonte son point de tri d'autant (multiple
+# de la densité : le dessin reste sur la grille de pixels), sinon un perso qui
+# passe juste devant un palmier est dessiné derrière.
+const WORLD_SORT_LIFT: float = 21.0
+
+
 # Sprite ancré par la base : pos.y = le pied du prop (Sprite2D est centré par défaut).
-static func spawn(parent: Node, region: Rect2, pos: Vector2, target_height: float) -> Sprite2D:
+# `sort_lift` remonte l'origine (point de tri) sans bouger le dessin.
+static func spawn(parent: Node, region: Rect2, pos: Vector2, target_height: float, sort_lift: float = 0.0) -> Sprite2D:
 	var s: Sprite2D = Sprite2D.new()
 	s.texture = resampled(region, target_height)
 	s.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	s.scale = Vector2(PIXEL_DENSITY, PIXEL_DENSITY)
-	# Origine du nœud = le pied (tri en Y correct) ; le dessin est décalé vers le haut.
-	s.position = pos
-	s.offset = Vector2(0, -s.texture.get_height() * 0.5)
+	# Origine du nœud = le pied (tri en Y) ; le dessin est décalé vers le haut.
+	# offset est en pixels de texture (le sprite est mis à l'échelle ×DENSITY).
+	s.position = pos - Vector2(0, sort_lift)
+	s.offset = Vector2(0, -s.texture.get_height() * 0.5 + sort_lift / float(PIXEL_DENSITY))
 	if PALM_REGIONS.has(region):
 		s.material = WorldFx.sway_material(pos)
 	parent.add_child(s)

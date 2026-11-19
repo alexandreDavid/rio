@@ -98,9 +98,11 @@ const CICLOVIA_TOP: float = 48.0
 const CICLOVIA_BOT: float = 64.0
 const CICLOVIA_COLOR: Color = Color(0.72, 0.34, 0.27, 1)
 
-# Quiosques décoratifs du calçadão (xs choisis pour éviter lampadaires,
-# Quiosque do Zé à x=500 et le valet du Palace à x~1820).
-const QUIOSQUE_XS: Array = [350.0, 780.0, 1250.0, 1750.0, 2060.0]
+# Quiosques décoratifs du calçadão (xs choisis pour éviter lampadaires (tous
+# les 280 px depuis 260), Quiosque do Zé à x=500, le MissionBoard (1108..1152),
+# les PNJ postés — Policier 1200, gari des Cendres 1240, le groupe du Palace
+# 1700..1860 — et le valet). Les palmiers et parasols s'en écartent seuls.
+const QUIOSQUE_XS: Array = [350.0, 780.0, 990.0, 2010.0, 2120.0]
 
 const FAVELA_COLORS: Array = [
 	Color(0.88, 0.35, 0.32, 1),  # rouge brique

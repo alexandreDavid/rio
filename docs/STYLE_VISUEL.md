@@ -61,6 +61,19 @@ est dessiné ou rééchantillonné respecte cette grille.
    arête claire haut-gauche, ombre portée à 1 natif. Tout ce qui est
    ajouté est enfant du rect habillé.
 
+12. **Maisons du morro** : `FacadePainter` style `favela` peint le toit vu du
+   dessus (laje avec caixa d'água et linge, fibrocimento lesté, ou tuile) qui
+   déborde de 4 natifs au-dessus de l'empreinte, puis le mur : enduit dans la
+   couleur de la maison ou brique apparente entre piliers, un étage ≈ 16
+   natifs (à l'échelle des personnages). Ne plus poser de toit, de caixa
+   d'água ni de fenêtre en ColorRect dans une scène : les `<Maison>_Roof`
+   existants sont masqués par l'habilleur.
+13. **Meubles** : `FurniturePainter` (lit, cuisine, frigo, télé, autel, table,
+   tapis) remplace le rect dont le nom — ou celui du corps parent — figure
+   dans `KINDS`, pour les intérieurs listés dans `InteriorDresser.FURNISHED`.
+   Props générés par PixelLab : `assets/sprites/props/pixellab/`, canevas à
+   la densité du monde (affichés ×3 NEAREST, origine au pied).
+
 ## Vérifier
 - `tools/visual_refs.sh` : 6 vues de référence (Copa jour/soir, favela, Zona
   Sul, maison) comparées pixel à pixel ; `--update` après un changement
@@ -68,5 +81,6 @@ est dessiné ou rééchantillonné respecte cette grille.
 - `tools/capture_main.sh <prefix> "x:y:zoom,…"` pour toute autre vue du jeu
   complet (sauvegardes du joueur mises à l'abri) ; `tools/preview_character_factory.gd`
   pour les personnages, `tools/preview_pixel_font.gd` pour la police,
-  `tools/preview_ui_theme.gd` pour les cadres et boutons du thème.
+  `tools/preview_ui_theme.gd` pour les cadres et boutons du thème,
+  `tools/preview_facades.gd` pour une planche de maisons du morro.
 - On ne livre jamais un changement d'art sans l'avoir regardé.

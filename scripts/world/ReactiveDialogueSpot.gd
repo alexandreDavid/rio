@@ -100,6 +100,7 @@ func _spawn_character_sprite() -> void:
 	# Pieds ~ à l'origine du spot (le sprite est centré sur la cellule).
 	spr.position = Vector2(0, -24.0)
 	add_child(spr)
+	WorldFx.sort_feet_sprite_like_bodies(self, spr)
 
 func _on_interacted(_by: Node) -> void:
 	var variant: Dictionary = _pick_variant()
