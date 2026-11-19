@@ -2,7 +2,7 @@ extends Node
 
 # Outil dev : captures du JEU complet (Main.tscn : monde + HUD + bandeau +
 # contrôles tactiles), nouvelle partie, joueur téléporté à des positions
-# monde. Usage : godot --path . tools/ScreenshotMain.tscn -- <prefix> "x:y[:phase],..."
+# monde. Usage : godot --path . tools/ScreenshotMain.tscn -- <prefix> "x:y[:phase],@Noeud[:phase],..."
 # (phase 0/1/2 = matin/après-midi/soir pour voir DayLighting).
 
 func _ready() -> void:
@@ -41,9 +41,19 @@ func _ready() -> void:
 	var idx: int = 0
 	for c in args[1].split(","):
 		var parts: PackedStringArray = c.split(":")
-		player.global_position = Vector2(float(parts[0]), float(parts[1]))
-		if parts.size() >= 3:
-			TimeOfDay.current_phase = int(parts[2])
+		var phase_idx: int = 2
+		if parts[0].begins_with("@"):
+			# « @NomDuNoeud[:phase] » : le joueur se pose à côté de ce nœud du monde.
+			var target: Node2D = main.find_child(parts[0].substr(1), true, false) as Node2D
+			if target == null:
+				push_error("[ScreenshotMain] nœud introuvable : %s" % parts[0])
+				continue
+			player.global_position = target.global_position + Vector2(30, 8)
+			phase_idx = 1
+		else:
+			player.global_position = Vector2(float(parts[0]), float(parts[1]))
+		if parts.size() > phase_idx:
+			TimeOfDay.current_phase = int(parts[phase_idx])
 			EventBus.time_of_day_changed.emit(TimeOfDay.current_phase)
 		var cam: Camera2D = player.get_node_or_null("Camera2D")
 		if cam:
