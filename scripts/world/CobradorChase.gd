@@ -32,6 +32,11 @@ const DEFAULTS: Dictionary = {
 	"broke_text": "✋ « Sem grana ? Da próxima vez... » Le quartier a vu la scène.",
 	"escaped_text": "💨 Semeou o cobrador ! O bairro viu.",
 	"chrono_label": "Semeia o cobrador !",
+	# Clémence (0 = aucune) : après ce nombre de captures d'affilée par le
+	# même poursuivant, il repart déjà entamé. Pour les poursuites qui barrent
+	# la trame (A8, Niterói) — jamais bloquant, comme Juca qui cède.
+	"mercy_after": 0,
+	"mercy_text": "😮‍💨 Il a déjà couru après toi — il souffle avant même de partir.",
 }
 
 const CATCH_DIST: float = 26.0
@@ -59,6 +64,24 @@ static func adjusted_config(cfg: Dictionary, street_value: int) -> Dictionary:
 	out["tire_after_sec"] = base_tire * STREET_TIRE_FACTOR
 	return out
 
+# Poursuivant entamé : plus lent, fatigue et abandon plus tôt — pure, testable.
+const MERCY_SPEED_FACTOR: float = 0.92
+const MERCY_TIRE_FACTOR: float = 0.6
+const MERCY_GIVE_UP_FACTOR: float = 0.75
+
+static func mercy_config(cfg: Dictionary, caught_streak: int) -> Dictionary:
+	var after: int = int(cfg.get("mercy_after", DEFAULTS["mercy_after"]))
+	if after <= 0 or caught_streak < after:
+		return cfg
+	var out: Dictionary = cfg.duplicate()
+	out["speed_start"] = float(out.get("speed_start", DEFAULTS["speed_start"])) * MERCY_SPEED_FACTOR
+	out["tire_after_sec"] = float(out.get("tire_after_sec", DEFAULTS["tire_after_sec"])) * MERCY_TIRE_FACTOR
+	out["give_up_sec"] = float(out.get("give_up_sec", DEFAULTS["give_up_sec"])) * MERCY_GIVE_UP_FACTOR
+	return out
+
+# Captures d'affilée par poursuivant (remis à zéro dès qu'on le sème).
+static var _caught_streak: Dictionary = {}
+
 var _elapsed: float = 0.0
 var _done: bool = false
 var _sprite: Sprite2D = null
@@ -76,7 +99,12 @@ static func spawn(cfg: Dictionary = {}) -> CobradorChase:
 		return null
 	var chase: CobradorChase = CobradorChase.new()
 	var street: int = ReputationSystem.get_value(ReputationSystem.Axis.STREET)
-	chase.config = adjusted_config(cfg, street)
+	var streak: int = int(_caught_streak.get(String(cfg.get("chaser_id", DEFAULTS["chaser_id"])), 0))
+	var eased: Dictionary = mercy_config(cfg, streak)
+	chase.config = adjusted_config(eased, street)
+	if not is_same(eased, cfg):
+		EventBus.notification_requested.emit(
+			String(cfg.get("mercy_text", DEFAULTS["mercy_text"])), Color(0.55, 0.85, 0.6, 1))
 	if street >= STREET_COVER_THRESHOLD:
 		EventBus.notification_requested.emit(
 			"🤝 Le morro te couvre — la rue se referme derrière toi.",
@@ -206,6 +234,12 @@ func _finish(escaped: bool, emit_signal_end: bool = true) -> void:
 	if _done:
 		return
 	_done = true
+	if emit_signal_end:
+		var id: String = String(_cfg("chaser_id"))
+		if escaped:
+			_caught_streak.erase(id)
+		else:
+			_caught_streak[id] = int(_caught_streak.get(id, 0)) + 1
 	EventBus.chrono_cleared.emit(_chrono_source())
 	if emit_signal_end:
 		EventBus.chase_ended.emit(String(_cfg("chaser_id")), escaped)

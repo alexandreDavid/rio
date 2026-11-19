@@ -853,6 +853,19 @@ func _test_reputation_affinity_effects() -> void:
 	_assert(float(covered.give_up_sec) < 40.0 and float(covered.tire_after_sec) < 20.0,
 		"STREET haut : le poursuivant abandonne plus tôt et fatigue plus vite")
 	_assert(float(base.give_up_sec) == 40.0, "adjusted_config ne mute pas la config d'origine")
+	# 4 bis. Clémence : après N captures d'affilée, le poursuivant repart entamé
+	#    (A8 à Niterói, perdue ~130 fois de suite par le bot le 2026-11-19).
+	var hard: Dictionary = {"mercy_after": 2, "speed_start": 132.0, "tire_after_sec": 26.0, "give_up_sec": 45.0}
+	_assert(is_same(CobradorChase.mercy_config(hard, 1), hard), "1 capture : poursuite inchangée")
+	var eased: Dictionary = CobradorChase.mercy_config(hard, 2)
+	_assert(float(eased.speed_start) < 132.0 and float(eased.tire_after_sec) < 26.0 and float(eased.give_up_sec) < 45.0,
+		"2 captures d'affilée : poursuivant plus lent, fatigue et abandon plus tôt")
+	_assert(float(hard.speed_start) == 132.0, "mercy_config ne mute pas la config d'origine")
+	_assert(is_same(CobradorChase.mercy_config({"speed_start": 132.0}, 9), CobradorChase.mercy_config({"speed_start": 132.0}, 0)) == false
+		and float(CobradorChase.mercy_config({"speed_start": 132.0}, 9).speed_start) == 132.0,
+		"sans mercy_after : jamais de clémence (cobrador, autres PM)")
+	var nit: String = FileAccess.get_file_as_string("res://scenes/districts/Niteroi.tscn")
+	_assert(nit.count('"chaser_id": "pm_baia", "mercy_after": 2') == 4, "les 4 poursuites pm_baia de Niterói portent la clémence")
 	# 5. La PM laisse passer ses alliés (racket du calçadão).
 	_assert(not PMPatrol.waves_through(PMPatrol.POLICE_PASS_THRESHOLD - 1),
 		"POLICE bas : le racket s'applique")

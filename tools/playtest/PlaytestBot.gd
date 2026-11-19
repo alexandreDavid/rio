@@ -607,7 +607,22 @@ func _flee(chaser: Node2D) -> void:
 	var away: Vector2 = (_player.global_position - chaser.global_position).normalized()
 	if away.length() < 0.1:
 		away = Vector2.RIGHT
-	var target: Vector2 = _player.global_position + away * 320.0
+	# Tout droit d'abord ; si le point visé tombe dans un mur ou hors carte, on
+	# oblique de plus en plus plutôt que de rester planté (A8, Niterói : le bot
+	# s'arrêtait au premier obstacle et se faisait cueillir à l'arrêt).
+	_ensure_nav()
+	var me: Vector2 = _player.global_position
+	var target: Vector2 = me + away * 320.0
+	var found: bool = false
+	for deg in [0.0, 25.0, -25.0, 50.0, -50.0, 80.0, -80.0, 110.0, -110.0]:
+		for d in [320.0, 200.0, 120.0]:
+			var cand: Vector2 = me + away.rotated(deg_to_rad(deg)) * d
+			if _nav.is_free(NavScript.cell_of(cand)) and not _nav.path(me, cand).is_empty():
+				target = cand
+				found = true
+				break
+		if found:
+			break
 	await _walk_to(target, 24.0, 1.5, true)
 
 

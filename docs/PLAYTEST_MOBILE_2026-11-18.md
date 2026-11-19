@@ -25,7 +25,7 @@ qui a été joué, sur quoi, ce qui a été trouvé et corrigé, et ce qui reste
 | Voie Polícia | bureau accéléré | acte 5 à 116 min |
 | Voie Prefeito | bureau accéléré | acte 5 à 127 min |
 | Voie Consórcio | bureau accéléré | acte 5 à 115 min |
-| Voie Tráfico | bureau accéléré | **non bouclée** (voir « Reste ») |
+| Voie Tráfico | bureau accéléré | acte 5 à 151 min (2026-11-19, voir plus bas) |
 | Titre → nouvelle partie → intro → joystick → action → téléphone | Android émulé, vrais touchers | OK |
 | Les 19 mini-jeux (menu « Mini-jeux (test) ») : lancement, toucher, Sair | Android émulé, vrais touchers | 19/19, 0 plantage, 0 erreur |
 
@@ -64,20 +64,19 @@ spot porteur. Suite complète : 4 656 assertions, 0 échec, audit OK.
 
 ## Constats non corrigés
 
-- **Voie Tráfico validée jusqu'à A7, pas A8** (suite du 2026-11-19, quatre
-  runs bureau). La « poche » de l'ouest de Copa était réelle : le mur ouest
-  coupait le sentier de l'Arpoador (corrigé, audit des coutures ajouté). Deux
-  autres causes trouvées ensuite : Dom Nilton ne laissait plus verser la dette
-  dès qu'une de ses quêtes annexes était active (14 800 R$ en poche, acte 2
-  sans issue — corrigé : ses quatre rappels proposent le versement) ; et le
-  bot ne complétait pas l'objectif MINIJEU d'A6 (limite du bot, corrigée).
-  Résultat : acte 3 à 19 min, acte 4 à 51 min, A1–A7 bouclées. **Reste A8** :
-  la poursuite `pm_baia` de Niterói (la plus dure du jeu : 132 px/s, fatigue à
-  26 s, abandon à 45 s) est perdue ~130 fois de suite par le bot, qui fuit en
-  ligne droite et se fait prendre en 6 à 17 s. En ligne droite elle demande
-  ~3 400 px de champ avant la fatigue du PM ; le quai en offre 1 900 à l'ouest
-  du spot. Elle n'est gagnable qu'en mettant un obstacle entre soi et le PM :
-  à jouer à la main, au tactile, avant de conclure.
+- **Voie Tráfico bouclée le 2026-11-19** (bureau accéléré, six runs) : acte 5
+  à 151 min, dette soldée, A1–A9 complétées, règne entamé. Quatre causes
+  successives : (1) la « poche » de l'ouest de Copa était réelle — le mur
+  ouest coupait le sentier de l'Arpoador (corrigé, audit des coutures) ;
+  (2) Dom Nilton ne laissait plus verser la dette dès qu'une de ses quêtes
+  annexes était active (14 800 R$ en poche, acte 2 sans issue — ses quatre
+  rappels proposent maintenant le versement) ; (3) limites du bot : fin de
+  mini-jeu sans id (A6) et fuite qui s'arrêtait net au premier obstacle ;
+  (4) la poursuite `pm_baia` d'A8 (la plus dure du jeu : 132 px/s, fatigue à
+  26 s, abandon à 45 s) reçoit une clémence — après deux captures d'affilée
+  le PM repart entamé (`mercy_after`, `CobradorChase.mercy_config`). Même
+  ainsi le bot ne la sème qu'au 7ᵉ essai : **à jouer à la main, au tactile**,
+  pour juger si le réglage de base est juste.
 - **Écran large (20:9)** : dans la maison, l'intérieur voisin est visible au
   bord gauche ; dans la favela, le bord du quartier (bande d'herbe, vide brun).
 - **Petits textes sur téléphone** : consignes et bulles de plusieurs mini-jeux
