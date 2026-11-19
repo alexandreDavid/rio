@@ -17,7 +17,9 @@ const FRAME_MARGIN: float = 84.0
 const TOP_MARGIN: float = 170.0
 const ARROW_SIZE: float = 26.0
 const RING_RADIUS: float = 26.0
-const LABEL_FONT_SIZE: int = 16
+# 22 = police pixel à ×2 (nette). À 16 en police lisse, la pastille était
+# illisible sur l'iPhone (vu au simulateur le 2026-11-20).
+const LABEL_FONT_SIZE: int = 22
 const ARRIVED_DIST: float = 70.0
 # Vitesse du fondu (≈ 0.17 s pour apparaître/disparaître).
 const FADE_SPEED: float = 6.0
@@ -33,7 +35,9 @@ var _live: Dictionary = {}
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_font = ThemeDB.fallback_font
+	_font = PixelFont.ui_font()
+	if _font == null:
+		_font = ThemeDB.fallback_font
 
 func _process(delta: float) -> void:
 	_t += delta
