@@ -134,6 +134,10 @@ func _ready() -> void:
 		tutorial_button.pressed.connect(_close_tutorial)
 	if help_button:
 		help_button.pressed.connect(_open_tutorial)
+		# Fond sombre : la pastille translucide se perdait sur le décor peint.
+		var help_box: StyleBoxTexture = UITheme.pastille_box(UITheme.CREAM, Color(0.08, 0.09, 0.12, 0.82))
+		help_button.add_theme_stylebox_override("normal", help_box)
+		help_button.add_theme_stylebox_override("hover", help_box)
 	if tutorial_root:
 		tutorial_root.add_to_group("gamepad_menu")
 		tutorial_root.visible = true

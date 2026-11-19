@@ -205,7 +205,7 @@ func _advance_notes(elapsed: float) -> void:
 		# Note ratée si elle dépasse la fenêtre de grâce.
 		if time_to_target < -MISS_GRACE:
 			_misses += 1
-			_set_status("MISS")
+			_set_status("")
 			_art.call("miss", n.lane)
 			sfx("mg_miss")
 			to_remove.append(n)
@@ -247,7 +247,7 @@ func _resolve_lane_press(lane: int) -> void:
 	if best.is_empty() or best_delta > GOOD_WINDOW:
 		# Atravessar o samba : frappe hors temps, le bloc le sent.
 		_score = maxi(_score - EMPTY_TAP_PENALTY, 0)
-		_set_status("ATRAVESSOU")
+		_set_status("")
 		_art.call("off_beat", lane)
 		pulse(0.2, 0.05)
 		return
@@ -255,14 +255,14 @@ func _resolve_lane_press(lane: int) -> void:
 	if best_delta <= PERFECT_WINDOW:
 		_score += POINTS_PERFECT
 		_perfects += 1
-		_set_status("PERFECT!")
+		_set_status("")
 		_art.call("hit", lane, true)
 		sfx("mg_perfect")
 		pulse(0.35, 0.05)
 	else:
 		_score += POINTS_GOOD
 		_goods += 1
-		_set_status("GOOD")
+		_set_status("")
 		_art.call("hit", lane, false)
 
 # Rendu seul : la note suit sa piste qui se resserre vers le fond.

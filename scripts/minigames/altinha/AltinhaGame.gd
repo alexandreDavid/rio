@@ -214,7 +214,7 @@ func _process(delta: float) -> void:
 		var grounded_now: bool = _ball.advance(delta)
 		if grounded_now:
 			if _phase == Phase.TO_PLAYER:
-				_register_drop("A bola caiu na areia...")
+				_register_drop("A bola caiu na laje..." if setting == "laje" else "A bola caiu na areia...")
 			else:
 				_on_partner_arrival()
 
