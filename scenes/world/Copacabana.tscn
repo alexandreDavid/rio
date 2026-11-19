@@ -1,4 +1,4 @@
-[gd_scene load_steps=71 format=3]
+[gd_scene load_steps=73 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/npcs/DonaIrene.tscn" id="37_irene"]
 [ext_resource type="PackedScene" path="res://scenes/npcs/BarPatrao.tscn" id="38_patrao"]
@@ -74,6 +74,12 @@ size = Vector2(2440, 16)
 
 [sub_resource type="RectangleShape2D" id="WallV"]
 size = Vector2(16, 992)
+
+[sub_resource type="RectangleShape2D" id="WallVNorth"]
+size = Vector2(16, 436)
+
+[sub_resource type="RectangleShape2D" id="WallVSouth"]
+size = Vector2(16, 476)
 
 [node name="Copacabana" type="Node2D"]
 script = ExtResource("9_gen")
@@ -217,10 +223,16 @@ position = Vector2(1200, 416)
 shape = SubResource("WallH")
 
 [node name="Left" type="StaticBody2D" parent="EdgeWalls"]
-position = Vector2(-8, 120)
+position = Vector2(-8, -158)
 
 [node name="Shape" type="CollisionShape2D" parent="EdgeWalls/Left"]
-shape = SubResource("WallV")
+shape = SubResource("WallVNorth")
+
+[node name="LeftSouth" type="StaticBody2D" parent="EdgeWalls"]
+position = Vector2(-8, 378)
+
+[node name="Shape" type="CollisionShape2D" parent="EdgeWalls/LeftSouth"]
+shape = SubResource("WallVSouth")
 
 [node name="Right" type="StaticBody2D" parent="EdgeWalls"]
 position = Vector2(2408, 120)
@@ -1565,41 +1577,6 @@ variants = [{
 "text": "*assise sur le sable, t-shirt délavé, coco à la main* Quarante ans que je viens ici, mon fils. Le sable change, le vendeur de coco non. *aspire à la paille* C'est ça la vraie Copacabana — pas les hôtels, pas les touristes.",
 "choices": ["Belo, dona"]
 }]
-
-[node name="RenatoShadow" type="ColorRect" parent="."]
-offset_left = 1729.0
-offset_top = 114.0
-offset_right = 1741.0
-offset_bottom = 117.0
-color = Color(0, 0, 0, 0.32)
-
-[node name="RenatoBody" type="ColorRect" parent="."]
-offset_left = 1731.0
-offset_top = 103.0
-offset_right = 1739.0
-offset_bottom = 115.0
-color = Color(0.78, 0.18, 0.18, 1)
-
-[node name="RenatoBodyButtons" type="ColorRect" parent="."]
-offset_left = 1734.0
-offset_top = 106.0
-offset_right = 1736.0
-offset_bottom = 113.0
-color = Color(0.95, 0.85, 0.32, 1)
-
-[node name="RenatoHead" type="ColorRect" parent="."]
-offset_left = 1732.0
-offset_top = 97.0
-offset_right = 1738.0
-offset_bottom = 103.0
-color = Color(0.55, 0.42, 0.32, 1)
-
-[node name="RenatoCap" type="ColorRect" parent="."]
-offset_left = 1731.0
-offset_top = 94.0
-offset_right = 1739.0
-offset_bottom = 97.0
-color = Color(0.42, 0.12, 0.12, 1)
 
 [node name="RenatoSpot" parent="." instance=ExtResource("62_reactive")]
 position = Vector2(1735, 105)

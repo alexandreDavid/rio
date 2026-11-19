@@ -59,13 +59,14 @@ func _ready() -> void:
 
 	var unreachable_count: int = _audit_interactables()
 	var teleport_ko: int = _audit_teleports()
+	var seam_ko: int = _audit_seams()
 	if OS.get_environment("RIO_AUDIT_OUT") != "":
 		_dump_images()
-	var failures: int = unreachable_count + teleport_ko + _leaks.size() + _blocked_seeds.size()
+	var failures: int = unreachable_count + teleport_ko + seam_ko + _leaks.size() + _blocked_seeds.size()
 	if failures == 0:
 		print("== AUDIT ACCESSIBILITÉ : OK (%d interactifs, %d régions)" % [_interactable_total, _owner_cells.size()])
 	else:
-		print("== AUDIT ACCESSIBILITÉ : %d PROBLÈME(S) — %d injoignable(s), %d téléport(s) KO, %d fuite(s), %d seed(s) bloqué(s)" % [failures, unreachable_count, teleport_ko, _leaks.size(), _blocked_seeds.size()])
+		print("== AUDIT ACCESSIBILITÉ : %d PROBLÈME(S) — %d injoignable(s), %d téléport(s) KO, %d couture(s) KO, %d fuite(s), %d seed(s) bloqué(s)" % [failures, unreachable_count, teleport_ko, seam_ko, _leaks.size(), _blocked_seeds.size()])
 	get_tree().quit(0 if failures == 0 else 1)
 
 
@@ -538,6 +539,56 @@ func _district_id_of(owner: Node) -> String:
 		if DistrictManager.DISTRICTS[id].get("node_name", "") == owner.name:
 			return id
 	return "copacabana"
+
+
+# Coutures (sorties seamless) : chaque région est propagée dans ses propres
+# bornes et s'arrête sur les cellules d'une autre, donc un mur sur la jointure
+# passerait inaperçu (2026-11-19 : le mur ouest de Copa coupait le sentier de
+# l'Arpoador, retour d'Ipanema impossible). Ici, depuis chaque sortie couture,
+# propagation libre jusqu'au sol atteint du quartier qu'elle annonce.
+func _audit_seams() -> int:
+	var ko: int = 0
+	var n: int = 0
+	for e in _world.find_children("*", "Area2D", true, false):
+		if not (e is DistrictExit and (e as DistrictExit).seamless):
+			continue
+		var ex: DistrictExit = e
+		n += 1
+		var target_name: String = "Copacabana"
+		if ex.target_district != "copacabana":
+			target_name = str(DistrictManager.DISTRICTS.get(ex.target_district, {}).get("node_name", ""))
+		var r: Rect2 = _area_rect(ex)
+		if not _walk_to_region(r, target_name, r.grow(1200.0)):
+			ko += 1
+			print("COUTURE KO | %s (%s) ne débouche pas à pied sur %s" % [ex.name, _district_id_of(_owner_of(ex)), target_name])
+	print("== COUTURES : %d sortie(s), %d KO" % [n, ko])
+	return ko
+
+
+func _walk_to_region(from: Rect2, region_name: String, bounds: Rect2) -> bool:
+	var queue: Array[Vector2i] = []
+	var seen: Dictionary = {}
+	var c0: Vector2i = _cell_of(from.position)
+	var c1: Vector2i = _cell_of(from.end)
+	for cx in range(c0.x, c1.x + 1):
+		for cy in range(c0.y, c1.y + 1):
+			var c: Vector2i = Vector2i(cx, cy)
+			if _walkable(c):
+				queue.append(c)
+				seen[c] = true
+	var head: int = 0
+	while head < queue.size():
+		var c: Vector2i = queue[head]
+		head += 1
+		if _visited.get(c, "") == region_name:
+			return true
+		for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+			var nb: Vector2i = c + d
+			if seen.has(nb) or not bounds.has_point(_center_of(nb)) or not _walkable(nb):
+				continue
+			seen[nb] = true
+			queue.append(nb)
+	return false
 
 
 func _audit_teleports() -> int:

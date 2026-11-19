@@ -72,6 +72,7 @@ func _ready() -> void:
 	_spawn_human_cost()
 	_spawn_reinado()
 	_spawn_arpoador_seam()
+	_clear_props_from_characters()
 	# Intérieurs (ceux du générateur comme ceux posés dans la scène) habillés
 	# (rendu H), puis étiquettes du monde en police pixel (rendu G).
 	InteriorDresser.dress_all_under(self)
@@ -315,9 +316,78 @@ func _spawn_beach_props() -> void:
 			_spawn_prop_sprite(container, Cfg.PALM_TREE_REGION, Vector2(palm_x, 180.0), rng.randf_range(95.0, 120.0))
 		palm_x += rng.randf_range(200.0, 260.0)
 
+# Un palmier ou un parasol ne cache jamais un perso posté derrière lui (les
+# couronnes, plantées sur le sable, montent jusqu'au calçadão) : le prop glisse
+# de côté. Les persos devant restent devant grâce au tri en Y.
+func _clear_props_from_characters() -> void:
+	var props: Node = get_node_or_null("BeachProps")
+	if props == null:
+		return
+	var feet: Array[Vector2] = []
+	for n in find_children("*", "Node2D", true, false):
+		if n.is_in_group("npc"):
+			feet.append((n as Node2D).global_position + Vector2(0, PropSprites.WORLD_SORT_LIFT))
+		elif n.get_node_or_null("CharSprite") != null:  # spots : origine aux pieds
+			feet.append((n as Node2D).global_position)
+	# Les quiosques et le MissionBoard du calçadão non plus : des « pieds »
+	# tous les 16 px le long du bas de leur emprise dessinée.
+	var fixtures: Array[Node] = []
+	var kiosks: Node = get_node_or_null("Quiosques")
+	if kiosks != null:
+		fixtures.append_array(kiosks.get_children())
+	var board: Node = get_node_or_null("MissionBoard")
+	if board != null:
+		fixtures.append(board)
+	for f in fixtures:
+		var bb: Rect2 = Rect2()
+		for part in f.get_children():
+			if part is ColorRect:
+				var r: Rect2 = (part as ColorRect).get_global_rect()
+				bb = r if bb.size == Vector2.ZERO else bb.merge(r)
+		var fx: float = bb.position.x
+		while bb.size.x > 0.0 and fx <= bb.end.x:
+			feet.append(Vector2(fx, bb.end.y))
+			fx += 16.0
+	for c in props.get_children():
+		var s: Sprite2D = c as Sprite2D
+		if s == null:
+			continue
+		var first: Vector2 = _prop_blocker(s, feet)
+		if first == Vector2.INF:
+			continue
+		# Glisse dans un sens jusqu'à être libre, sinon essaie l'autre sens
+		# (sans aller-retour entre deux persos voisins).
+		var start_x: float = s.position.x
+		var dir: float = 1.0 if s.global_position.x >= first.x else -1.0
+		var cleared: bool = false
+		for side in [dir, -dir]:
+			s.position.x = start_x
+			for step in 24:
+				s.position.x += 12.0 * side
+				if _prop_blocker(s, feet) == Vector2.INF:
+					cleared = true
+					break
+			if cleared:
+				break
+		if not cleared:
+			s.position.x = start_x
+
+# Pieds du premier perso que le prop recouvre en passant devant lui (ou dont il
+# occupe la place), Vector2.INF sinon.
+static func _prop_blocker(s: Sprite2D, feet: Array[Vector2]) -> Vector2:
+	var r: Rect2 = s.get_global_transform() * s.get_rect()
+	var base_y: float = s.global_position.y + PropSprites.WORLD_SORT_LIFT
+	for f in feet:
+		var body: Rect2 = Rect2(f - Vector2(10, 46), Vector2(20, 46))
+		var behind: bool = f.y < base_y and r.intersects(body)
+		var on_foot: bool = absf(f.y - base_y) <= 6.0 and absf(f.x - s.global_position.x) < 18.0
+		if behind or on_foot:
+			return f
+	return Vector2.INF
+
 func _spawn_prop_sprite(parent: Node, region: Rect2, pos: Vector2, target_height: float) -> void:
 	# Ancrage par la base — helper partagé avec DistrictDresser (cf. PropSprites).
-	PropSprites.spawn(parent, region, pos, target_height)
+	PropSprites.spawn(parent, region, pos, target_height, PropSprites.WORLD_SORT_LIFT)
 
 func _spawn_interiors() -> void:
 	_shop_spawn = _instantiate_interior(Cfg.SHOP_INT_SCENE, Cfg.INT_SHOP_POS)
@@ -1175,6 +1245,12 @@ func _spawn_quiosques() -> void:
 			coco.color = Color(0.45, 0.62, 0.30, 1)
 			kiosk.add_child(coco)
 		_spawn_sign(kiosk, Vector2(-22.0, -40.0), menus[i % menus.size()], Color(0.25, 0.2, 0.15, 1), 7)
+		# Point de tri remonté comme les props (PropSprites.WORLD_SORT_LIFT) :
+		# un perso qui passe devant le comptoir est dessiné devant.
+		kiosk.position.y -= PropSprites.WORLD_SORT_LIFT
+		for part in kiosk.get_children():
+			if part is Control:
+				(part as Control).position.y += PropSprites.WORLD_SORT_LIFT
 
 # Entrées de métro (décor) sur le bord nord de Nossa Senhora — Cantagalo,
 # Siqueira Campos et Cardeal Arcoverde, les trois vraies stations de Copa.
@@ -2230,13 +2306,14 @@ func _spawn_arpoador_seam() -> void:
 	var container: Node2D = Node2D.new()
 	container.name = "ArpoadorSeam"
 	add_child(container)
-	# Promontoire nord : bloque la couture au-dessus du calçadão.
+	# Promontoire nord : bloque la couture au-dessus du calçadão, jusqu'au mur
+	# ouest de Copa (EdgeWalls/Left, percé au niveau du sentier y 60..140).
 	var north: StaticBody2D = StaticBody2D.new()
 	north.name = "SeamNorthBlock"
-	north.position = Vector2(-290, -270)
+	north.position = Vector2(-179, -270)
 	var north_shape: CollisionShape2D = CollisionShape2D.new()
 	var north_rect: RectangleShape2D = RectangleShape2D.new()
-	north_rect.size = Vector2(104, 660)
+	north_rect.size = Vector2(326, 660)
 	north_shape.shape = north_rect
 	north.add_child(north_shape)
 	container.add_child(north)

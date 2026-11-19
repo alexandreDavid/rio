@@ -350,12 +350,13 @@ func _test_arpoador_seam() -> void:
 		exit_zs = zs.get_node_or_null("ExitToCopa")
 	_assert(exit_zs != null and bool(exit_zs.get("seamless")),
 		"ZonaSul/ExitToCopa en mode couture")
-	# 3. Couloir libre : la bande monde y≈100-130 se traverse de Copa (-160)
+	# 3. Couloir libre : la bande monde y≈100-130 se traverse de Copa (x=40,
+	#    par le mur ouest EdgeWalls/Left percé au sentier, x=-8)
 	#    jusqu'au sable d'Ipanema (-520) sans corps statique.
 	var space: PhysicsDirectSpaceState2D = get_viewport().world_2d.direct_space_state
 	var probe: RectangleShape2D = RectangleShape2D.new()
 	probe.size = Vector2(24, 24)
-	for x in [-160.0, -230.0, -290.0, -330.0, -400.0, -520.0]:
+	for x in [40.0, -8.0, -160.0, -230.0, -290.0, -330.0, -400.0, -520.0]:
 		var params: PhysicsShapeQueryParameters2D = PhysicsShapeQueryParameters2D.new()
 		params.shape = probe
 		params.transform = Transform2D(0.0, Vector2(x, 104.0))
