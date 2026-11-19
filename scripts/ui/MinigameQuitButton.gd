@@ -14,6 +14,11 @@ func _ready() -> void:
 	if button:
 		button.pressed.connect(_on_pressed)
 		button.focus_mode = Control.FOCUS_NONE
+		# Les décors peints sont chargés : la pastille translucide du thème
+		# s'y perdait. Fond sombre presque opaque, bord crème.
+		var box: StyleBoxTexture = UITheme.pastille_box(UITheme.CREAM, Color(0.08, 0.09, 0.12, 0.82))
+		button.add_theme_stylebox_override("normal", box)
+		button.add_theme_stylebox_override("hover", box)
 		SafeArea.apply(button)
 
 func _input(event: InputEvent) -> void:

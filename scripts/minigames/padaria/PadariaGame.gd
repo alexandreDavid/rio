@@ -13,6 +13,8 @@ extends MinigameBase
 
 signal match_ended(qualifies: bool, tips: int)
 
+const ART := preload("res://scripts/minigames/padaria/PadariaArt.gd")
+
 const DURATION: float = 100.0
 const MAX_BATCHES: int = 5
 
@@ -115,6 +117,10 @@ var _plate_cook_time: float = 0.0
 const COOK_BAR_WIDTH: float = 360.0
 
 var _tutorial_visible: bool = true
+var _art: ART = null
+# Captures hors jeu uniquement (outil de capture) : "play" saute le tutoriel ;
+# "carry" / "oven" / "burn" posent en plus une situation à photographier.
+var preview: String = ""
 
 func _ready() -> void:
 	EventBus.minigame_started.emit("padaria")
@@ -125,6 +131,7 @@ func _ready() -> void:
 	if prompt_label:
 		prompt_label.text = "Joystick : bouger · Bouton Action : prendre / déposer / vendre"
 	_position_perfect_markers()
+	_build_art()
 	_refresh_plate_visuals()
 	_refresh_oven_smoke()
 	if tutorial_button:
@@ -139,6 +146,76 @@ func _ready() -> void:
 		help_button.visible = false  # caché tant que le tuto est ouvert
 	if touch_controls:
 		touch_controls.visible = false
+	if preview != "":
+		_apply_preview.call_deferred()
+
+func _build_art() -> void:
+	_art = ART.new()
+	arena.add_child(_art)
+	_art.build({
+		"player": player_node, "plate": plate_root, "counter_hl": counter_highlight,
+		"stations": {"flour": flour_bin, "water": water_tap, "queijo": queijo_box, "basket": basket, "trash": trash},
+	})
+	for n in ["FlourLabel", "WaterLabel", "QueijoLabel", "CounterLabel", "OvenLabel", "BasketLabel", "TrashLabel"]:
+		var l: Label = arena.get_node_or_null(n) as Label
+		if l:
+			PixelFont.style_world_label(l)
+	if context_label:
+		PixelFont.style_world_label(context_label)
+	_illustrate_tutorial()
+
+# Rangée d'icônes peintes en tête du tutoriel : la recette en images.
+func _illustrate_tutorial() -> void:
+	var layout: Node = get_node_or_null("UI/Tutorial/Panel/Margin/Layout")
+	if layout == null:
+		return
+	var row: HBoxContainer = HBoxContainer.new()
+	row.alignment = BoxContainer.ALIGNMENT_CENTER
+	row.add_theme_constant_override("separation", 10)
+	var imgs: Array[Image] = [ART.paint_flour(), ART.paint_water(), ART.paint_queijo(),
+		ART.paint_tray(7, 0), ART.paint_oven(), ART.paint_tray(7, 2), ART.paint_basket()]
+	for i in imgs.size():
+		if i == 3 or i == 4 or i == 5 or i == 6:
+			var arrow: Label = Label.new()
+			arrow.text = "→"
+			arrow.add_theme_font_size_override("font_size", 33)
+			arrow.add_theme_color_override("font_color", Color(1, 0.86, 0.4))
+			row.add_child(arrow)
+		var tr: TextureRect = TextureRect.new()
+		tr.texture = ImageTexture.create_from_image(imgs[i])
+		tr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		tr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		tr.custom_minimum_size = Vector2(150, 120)
+		row.add_child(tr)
+	layout.add_child(row)
+	layout.move_child(row, 2)
+
+func _apply_preview() -> void:
+	_close_tutorial()
+	match preview:
+		"carry":
+			_plate_ingredients = {"flour": true, "water": true, "queijo": false}
+			_carry = "queijo"
+			_player_pos = Vector2(900, 420)
+		"oven", "burn":
+			_plate_ingredients = {"flour": true, "water": true, "queijo": true}
+			_plate_in_oven = true
+			_plate_status = "BAKING"
+			_plate_cook_time = 5.0 if preview == "oven" else 9.0
+			if plate_root:
+				plate_root.position = OVEN_INSIDE
+			_player_pos = Vector2(820, 640)
+			_fila_left = 6.0
+		"sell":
+			_plate_ingredients = {"flour": true, "water": true, "queijo": true}
+			_plate_status = "CARRIED"
+			_plate_cook_time = 6.0
+			_carry = "plate_baked"
+			_player_pos = Vector2(1500, 920)
+			_fila_left = 5.0
+			get_tree().create_timer(1.0).timeout.connect(_act_at_basket)
+	_refresh_plate_visuals()
 
 func _position_perfect_markers() -> void:
 	if cook_perfect_marker_a:
@@ -152,6 +229,8 @@ var _fila_lost: int = 0
 var _perfect_batches: int = 0
 
 func _process(delta: float) -> void:
+	if _art:
+		_art.tick(delta, _art_state())
 	if _ended:
 		return
 	# Tutoriel ouvert : la session est gelée, le timer ne défile pas, le joueur ne bouge pas.
@@ -180,6 +259,15 @@ func _update_fila(delta: float) -> void:
 		sfx("mg_miss")
 		pulse(0.5, 0.15)
 		_set_status("😤 Une freguesa a abandonné la fila (%d)." % _fila_lost)
+
+func _art_state() -> Dictionary:
+	return {
+		"pos": _player_pos, "carry": _carry, "ingredients": _plate_ingredients,
+		"in_oven": _plate_in_oven, "cook": _plate_cook_time,
+		"perfect_min": COOK_PERFECT_MIN, "perfect_max": COOK_PERFECT_MAX, "burn": COOK_BURN,
+		"fila_left": _fila_left, "fila_patience": _fila_patience,
+		"tips": _total_tips, "lost": _fila_lost,
+	}
 
 func _close_tutorial() -> void:
 	_tutorial_visible = false
@@ -442,11 +530,12 @@ func _update_visuals() -> void:
 func _highlight_station(node: ColorRect, active: bool, base: Color) -> void:
 	if node == null:
 		return
+	# Pulsation douce : les sprites peints saturent au-delà (la flèche fait le reste).
 	if active:
-		var glow: float = 1.15 + 0.15 * sin(Time.get_ticks_msec() / 150.0)
+		var glow: float = 1.04 + 0.08 * sin(Time.get_ticks_msec() / 150.0)
 		node.modulate = Color(glow, glow, glow, 1)
 	else:
-		node.modulate = Color(0.85, 0.85, 0.85, 1)
+		node.modulate = Color(0.8, 0.8, 0.8, 1)
 
 func _tint_plate_for_cooking() -> void:
 	# Calcule un facteur de cuisson 0..1.5 selon le temps passé au four (ou final).

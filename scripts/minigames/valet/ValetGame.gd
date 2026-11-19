@@ -10,6 +10,8 @@ extends MinigameBase
 
 signal match_ended(qualifies: bool, tips: int)
 
+const ValetArt := preload("res://scripts/minigames/valet/ValetArt.gd")
+
 const DURATION: float = 120.0
 const MAX_CUSTOMERS: int = 8
 # Qualifié = au moins 4 clients rendus, au plus 1 parti fâché.
@@ -65,6 +67,23 @@ const SPAWN_DELAY_INITIAL: float = 0.5
 
 enum CarStatus { ARRIVING, CARRIED, PARKED, REQUESTED, DELIVERED }
 
+# Rendu : places des clients au bord du trottoir, de part et d'autre du tapis
+# rouge et des voitures en dépose.
+const PORCH_SPOTS: Array[float] = [815.0, 1105.0, 745.0, 1175.0, 675.0, 1245.0]
+const PORCH_Y: float = 196.0
+const ELEGANT_SHIRTS: Array[Color] = [
+	Color(0.96, 0.95, 0.91), Color(0.18, 0.18, 0.24), Color(0.20, 0.26, 0.48),
+	Color(0.86, 0.78, 0.60), Color(0.78, 0.36, 0.48), Color(0.62, 0.14, 0.18),
+]
+const ELEGANT_PANTS: Array[Color] = [
+	Color(0.16, 0.16, 0.20), Color(0.92, 0.90, 0.84), Color(0.22, 0.24, 0.36),
+]
+
+# Capture hors partie : "play" saute le tutoriel, "busy" met en plus le service
+# en route (voitures garées, une réclamée, une qui klaxonne), "carry" y ajoute
+# la voiture réclamée en main. Sans effet en jeu.
+var preview: String = ""
+
 var _time_left: float = DURATION
 var _customers_served: int = 0
 var _lost: int = 0
@@ -95,6 +114,10 @@ var _slot_highlights: Array = []  # Array[ColorRect] indexée comme SLOTS
 @onready var touch_controls: CanvasLayer = get_node_or_null("TouchControls")
 
 var _tutorial_visible: bool = true
+var _valet_sprite: Sprite2D = null
+var _walk_t: float = 0.0
+var _facing_left: bool = false
+var _spots_taken: Dictionary = {}  # index de PORCH_SPOTS → car dict
 
 func _ready() -> void:
 	EventBus.minigame_started.emit("valet")
@@ -102,6 +125,7 @@ func _ready() -> void:
 	if cam:
 		cam.make_current()
 	_collect_slot_highlights()
+	_dress()
 	_set_status("Bem-vindo ao Copa. Le service ouvre.")
 	if prompt_label:
 		prompt_label.text = "Joystick : bouger · Bouton Action : prendre / garer / restituer"
@@ -118,6 +142,14 @@ func _ready() -> void:
 		help_button.visible = false
 	if touch_controls:
 		touch_controls.visible = false
+	if preview != "":
+		_close_tutorial()
+		if preview == "busy" or preview == "carry":
+			_stage_preview()
+		if preview == "carry":
+			_player_pos = SLOTS[2]
+			_action_pickup()
+			_player_pos = Vector2(1000.0, 500.0)
 
 func _collect_slot_highlights() -> void:
 	if arena == null:
@@ -174,6 +206,7 @@ func _update_player(delta: float) -> void:
 	_player_pos.y = clamp(_player_pos.y, PLAYER_RADIUS, ARENA_H - PLAYER_RADIUS)
 	if player_node:
 		player_node.position = _player_pos - Vector2(PLAYER_RADIUS, PLAYER_RADIUS)
+	_animate_valet(dir, delta)
 	if _carried_idx >= 0:
 		var car: ColorRect = _cars[_carried_idx].node as ColorRect
 		car.position = _player_pos - Vector2(CAR_W * 0.5, CAR_H * 0.5)
@@ -216,6 +249,9 @@ func _action_pickup() -> void:
 	# mais c'est requested_pending qui décide si la voiture est livrable.
 	c.status = CarStatus.CARRIED
 	_carried_idx = best_idx
+	(c.node as ColorRect).z_index = 2
+	if prev == CarStatus.ARRIVING:
+		_release_client(c)  # il a confié ses clés, il entre à l'hôtel
 	if prev == CarStatus.PARKED or prev == CarStatus.REQUESTED:
 		if c.slot_idx >= 0:
 			_occupied_slots.erase(c.slot_idx)
@@ -260,6 +296,7 @@ func _action_drop() -> void:
 	c.status = CarStatus.PARKED
 	c.slot_idx = best_slot
 	c.parked_at = DURATION - _time_left
+	(c.node as ColorRect).z_index = 0
 	_occupied_slots[best_slot] = _carried_idx
 	_carried_idx = -1
 	_set_status("Place %d occupée. Continue le service." % (best_slot + 1))
@@ -279,6 +316,7 @@ func _deliver(c: Dictionary) -> void:
 	_customers_served += 1
 	c.status = CarStatus.DELIVERED
 	(c.node as ColorRect).queue_free()
+	_release_client(c)
 	_carried_idx = -1
 	_set_status("+R$ %d tip ! (%d/%d clients)" % [tip, _customers_served, MAX_CUSTOMERS])
 
@@ -294,6 +332,7 @@ func _lose_customer(c: Dictionary) -> void:
 	c.status = CarStatus.DELIVERED
 	c.requested_pending = false
 	(c.node as ColorRect).queue_free()
+	_release_client(c)
 	sfx("mg_miss")
 	pulse(0.6, 0.2)
 	_set_status("😤 « Esquece ! » Un client est parti sans sa voiture (%d perdu%s)." % [_lost, "s" if _lost > 1 else ""])
@@ -308,6 +347,7 @@ func _update_cars() -> void:
 				c.status = CarStatus.REQUESTED
 				c.requested_pending = true
 				c.requested_at = elapsed
+				_seat_client(c, true)
 				sfx("prompt_chime")
 				_set_status("Un client redemande sa voiture — elle clignote !")
 		elif c.status == CarStatus.ARRIVING and not c.honked:
@@ -340,6 +380,8 @@ func _spawn_arriving_car() -> void:
 	var car: ColorRect = ColorRect.new()
 	car.size = Vector2(CAR_W, CAR_H)
 	car.color = CAR_COLORS[_total_spawned % CAR_COLORS.size()]
+	var art_color: Color = ValetArt.LUX_COLORS[_total_spawned % ValetArt.LUX_COLORS.size()]
+	_dress_car(car, art_color, ValetArt.LUX_KINDS[_total_spawned % ValetArt.LUX_KINDS.size()])
 	# Léger offset horizontal selon le numéro pour que les voitures suivantes
 	# ne se superposent pas aux précédentes en attente.
 	var ox: float = -60.0 + 60.0 * (_total_spawned % 3)
@@ -360,7 +402,11 @@ func _spawn_arriving_car() -> void:
 		"arrived_at": DURATION - _time_left,
 		"patience": randf_range(PATIENCE_MIN, PATIENCE_MAX),
 		"honked": false,
+		"art_color": art_color,
+		"client": null,
+		"spot": -1,
 	})
+	_seat_client(_cars[_cars.size() - 1], false)
 	_total_spawned += 1
 	# Le rythme se resserre au fil du service.
 	var progress: float = clampf(1.0 - _time_left / DURATION, 0.0, 1.0)
@@ -377,22 +423,35 @@ func _update_visuals() -> void:
 		var rect: ColorRect = _slot_highlights[i]
 		if rect == null:
 			continue
-		if _occupied_slots.has(i):
-			rect.color = Color(0.4, 0.4, 0.45, 0.35)
-		elif carrying:
-			rect.color = Color(0.55, 0.95, 0.55, 0.55)
+		var t0: float = Time.get_ticks_msec() / 1000.0
+		if _occupied_slots.has(i) or not carrying:
+			rect.color = Color(0, 0, 0, 0)
 		else:
-			rect.color = Color(0.55, 0.55, 0.6, 0.4)
-	# Voitures réclamées : pulsation rouge claire (incluant celles portées par le joueur).
+			rect.color = Color(0.45, 0.95, 0.45, 0.22 + 0.10 * sin(t0 * 5.0))
+	# Voitures réclamées : pulsation, warnings orange et bulle « ! » (y compris portées).
 	var t: float = Time.get_ticks_msec() / 1000.0
+	var blink: bool = fmod(t, 0.5) < 0.25
 	for c in _cars:
 		if c.status == CarStatus.DELIVERED:
 			continue
+		var node: ColorRect = c.node
+		var hz: Node2D = node.get_node_or_null("Hazard") as Node2D
+		var badge: Node2D = node.get_node_or_null("Badge") as Node2D
+		var honk: Node2D = node.get_node_or_null("Honk") as Node2D
 		if c.requested_pending:
-			var glow: float = 1.1 + 0.4 * sin(t * 6.0)
-			(c.node as ColorRect).modulate = Color(glow, glow * 0.85, glow * 0.85, 1.0)
+			var glow: float = 1.1 + 0.3 * sin(t * 6.0)
+			node.modulate = Color(glow, glow * 0.9, glow * 0.85, 1.0)
 		else:
-			(c.node as ColorRect).modulate = Color(1, 1, 1, 1)
+			node.modulate = Color(1, 1, 1, 1)
+		if hz:
+			hz.visible = c.requested_pending and blink
+		if badge:
+			# En main, l'étiquette de contexte prend le relais au-dessus du capot.
+			badge.visible = c.requested_pending and c.status != CarStatus.CARRIED
+			badge.position.y = -30.0 - (6.0 if fmod(t, 0.6) < 0.3 else 0.0)
+		if honk:
+			honk.visible = c.status == CarStatus.ARRIVING and c.honked and fmod(t, 0.8) < 0.45
+	_update_clients(t)
 	_refresh_drop_zone_visual()
 	_refresh_context_label()
 
@@ -403,11 +462,14 @@ func _refresh_drop_zone_visual() -> void:
 	if _carried_idx >= 0:
 		carrying_requested = _cars[_carried_idx].requested_pending
 	if carrying_requested:
-		drop_zone_rect.color = Color(0.55, 0.95, 0.55, 0.55)
+		var t: float = Time.get_ticks_msec() / 1000.0
+		drop_zone_rect.color = Color(0.45, 0.95, 0.45, 0.26 + 0.10 * sin(t * 5.0))
 		drop_zone_label.text = "RESTITUER ICI"
+		drop_zone_label.add_theme_color_override("font_color", Color(0.62, 1.0, 0.58))
 	else:
-		drop_zone_rect.color = Color(0.85, 0.78, 0.45, 0.5)
-		drop_zone_label.text = "ENTRÉE — clients arrivent ici"
+		drop_zone_rect.color = Color(0, 0, 0, 0)
+		drop_zone_label.text = "ENTRÉE · VALET"
+		drop_zone_label.add_theme_color_override("font_color", Color(1.0, 0.86, 0.32))
 
 func _refresh_context_label() -> void:
 	if context_label == null:
@@ -457,7 +519,7 @@ func _update_labels() -> void:
 	if timer_label:
 		timer_label.text = "%.1fs" % max(_time_left, 0.0)
 	if tip_label:
-		tip_label.text = "💰 R$ %d (%d/%d)" % [_total_tips, _customers_served, MAX_CUSTOMERS]
+		tip_label.text = "R$ %d · %d/%d" % [_total_tips, _customers_served, MAX_CUSTOMERS]
 
 func _end_game() -> void:
 	if _ended:
@@ -468,3 +530,244 @@ func _end_game() -> void:
 	await get_tree().create_timer(2.4).timeout
 	EventBus.minigame_ended.emit("valet", {"tips": _total_tips, "served": _customers_served, "qualifies": qualifies})
 	match_ended.emit(qualifies, _total_tips)
+
+# --- Habillage (rendu seul : la logique reste sur les ColorRect) ---
+
+func _dress() -> void:
+	if arena == null:
+		return
+	var floor_rect: ColorRect = arena.get_node_or_null("Floor") as ColorRect
+	if floor_rect:
+		floor_rect.color = ValetArt.ASPHALT
+	var court: Sprite2D = ValetArt.backdrop()
+	arena.add_child(court)
+	arena.move_child(court, 1 if floor_rect else 0)
+	for i in range(_slot_highlights.size()):
+		var rect: ColorRect = _slot_highlights[i]
+		if rect:
+			rect.color = Color(0, 0, 0, 0)
+	if player_node:
+		player_node.color = Color(0, 0, 0, 0)
+		player_node.z_index = 4
+		_valet_sprite = char_sprite(96.0, {
+			"skin": CharacterSpriteFactory.PALETTE_SKIN[2],
+			"hair_color": CharacterSpriteFactory.PALETTE_HAIR_COLOR[0],
+			"hair_style": "short",
+			"shirt_color": Color(0.80, 0.13, 0.15),   # gilet rouge du voiturier
+			"shirt_pattern": "pocket",
+			"pants_color": Color(0.14, 0.14, 0.18),
+			"hat_style": "none",
+			"hat_color": Color(0.14, 0.14, 0.18),
+		})
+		_valet_sprite.position = Vector2(PLAYER_RADIUS, PLAYER_RADIUS + 36.0)
+		player_node.add_child(_valet_sprite)
+		player_node.move_child(_valet_sprite, 0)
+	_dress_tutorial()
+
+func _dress_car(car: ColorRect, art_color: Color, kind: int) -> void:
+	car.color = Color(0, 0, 0, 0)
+	var art: Sprite2D = Sprite2D.new()
+	art.name = "Art"
+	art.texture = ValetArt.car(art_color, kind)
+	art.centered = false
+	art.scale = Vector2(ValetArt.N, ValetArt.N)
+	art.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	car.add_child(art)
+	var hz: Sprite2D = Sprite2D.new()
+	hz.name = "Hazard"
+	hz.texture = ValetArt.hazard()
+	hz.centered = false
+	hz.scale = art.scale
+	hz.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	hz.visible = false
+	car.add_child(hz)
+	var badge: Sprite2D = Sprite2D.new()
+	badge.name = "Badge"
+	badge.texture = ValetArt.alert_badge()
+	badge.scale = art.scale
+	badge.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	badge.position = Vector2(CAR_W * 0.5, -30.0)
+	badge.z_index = 6
+	badge.visible = false
+	car.add_child(badge)
+	var honk: Node2D = Node2D.new()
+	honk.name = "Honk"
+	honk.visible = false
+	honk.z_index = 6
+	for side in [-1, 1]:
+		var w: Sprite2D = Sprite2D.new()
+		w.texture = ValetArt.honk_waves()
+		w.scale = art.scale
+		w.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		w.flip_h = side < 0
+		w.position = Vector2(CAR_W * 0.5 + side * (CAR_W * 0.5 + 12.0), 12.0)
+		honk.add_child(w)
+	car.add_child(honk)
+
+func _elegant_config(seed_value: int) -> Dictionary:
+	var cfg: Dictionary = CharacterSpriteFactory.random_config(seed_value)
+	var rng: RandomNumberGenerator = RandomNumberGenerator.new()
+	rng.seed = seed_value
+	cfg["shirt_color"] = ELEGANT_SHIRTS[rng.randi() % ELEGANT_SHIRTS.size()]
+	cfg["pants_color"] = ELEGANT_PANTS[rng.randi() % ELEGANT_PANTS.size()]
+	cfg["shirt_pattern"] = "solid" if rng.randf() < 0.7 else "pocket"
+	cfg["hat_style"] = "fedora" if rng.randf() < 0.3 else "none"
+	cfg["hat_color"] = Color(0.92, 0.85, 0.55) if rng.randf() < 0.5 else Color(0.18, 0.18, 0.22)
+	return cfg
+
+# Le client attend sur le porche : à l'arrivée (il confie ses clés) ou quand
+# il redemande sa voiture (ticket à la couleur de la voiture).
+func _seat_client(c: Dictionary, wants_car: bool) -> void:
+	if arena == null:
+		return
+	var spot: int = -1
+	for i in range(PORCH_SPOTS.size()):
+		if not _spots_taken.has(i):
+			spot = i
+			break
+	if spot < 0:
+		return
+	_spots_taken[spot] = c
+	c.spot = spot
+	var client: Node2D = c.client as Node2D
+	if client == null or not is_instance_valid(client):
+		client = Node2D.new()
+		client.z_index = 3
+		var body: Sprite2D = char_sprite(96.0, _elegant_config(7919 * (_cars.find(c) + 3)))
+		body.name = "Body"
+		client.add_child(body)
+		var ticket: Sprite2D = Sprite2D.new()
+		ticket.name = "Ticket"
+		ticket.centered = false
+		ticket.scale = Vector2(ValetArt.N, ValetArt.N)
+		ticket.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		ticket.position = Vector2(-21.0, -96.0 - 48.0)
+		client.add_child(ticket)
+		var fill: ColorRect = ColorRect.new()
+		fill.name = "Fill"
+		fill.position = ticket.position + Vector2(9.0, 33.0)
+		fill.size = Vector2(24.0, 6.0)
+		client.add_child(fill)
+		arena.add_child(client)
+		c.client = client
+	(client.get_node("Ticket") as Sprite2D).texture = ValetArt.client_ticket(c.art_color, wants_car)
+	client.position = Vector2(PORCH_SPOTS[spot], PORCH_Y)
+	client.visible = true
+
+func _release_client(c: Dictionary) -> void:
+	if int(c.get("spot", -1)) >= 0:
+		_spots_taken.erase(int(c.spot))
+	c.spot = -1
+	var client: Node2D = c.get("client") as Node2D
+	if client and is_instance_valid(client):
+		client.visible = false
+
+func _update_clients(t: float) -> void:
+	var elapsed: float = DURATION - _time_left
+	for c in _cars:
+		var client: Node2D = c.get("client") as Node2D
+		if client == null or not is_instance_valid(client) or not client.visible:
+			continue
+		var ratio: float = 1.0
+		if c.requested_pending:
+			ratio = 1.0 - (elapsed - float(c.requested_at)) / RESPONSE_WINDOW
+		elif c.status == CarStatus.ARRIVING:
+			ratio = 1.0 - (elapsed - float(c.arrived_at)) / HONK_AFTER
+		ratio = clampf(ratio, 0.0, 1.0)
+		var fill: ColorRect = client.get_node("Fill") as ColorRect
+		fill.size.x = snappedf(24.0 * ratio, 3.0)
+		var col: Color = Color(0.36, 0.86, 0.36)
+		if ratio < 0.35:
+			col = Color(0.95, 0.24, 0.20) if fmod(t, 0.4) < 0.2 else Color(0.70, 0.12, 0.12)
+		elif ratio < 0.65:
+			col = Color(0.98, 0.78, 0.20)
+		fill.color = col
+		# Impatient : il tape du pied.
+		var body: Sprite2D = client.get_node("Body") as Sprite2D
+		var frame: int = 0
+		if ratio < 0.35 and fmod(t, 0.3) < 0.15:
+			frame = 1
+		body.region_rect = Rect2(frame * CharacterSpriteFactory.CELL_W, CharacterSpriteFactory.DIR_DOWN * CharacterSpriteFactory.CELL_H,
+			CharacterSpriteFactory.CELL_W, CharacterSpriteFactory.CELL_H)
+
+func _animate_valet(dir: Vector2, delta: float) -> void:
+	if _valet_sprite == null:
+		return
+	# Au volant : le voiturier est dans la voiture.
+	_valet_sprite.visible = _carried_idx < 0
+	var row: int = CharacterSpriteFactory.DIR_DOWN
+	var col: int = 0
+	if dir.length() > 0.1:
+		_walk_t += delta
+		col = 1 + int(_walk_t / 0.14) % 2
+		if absf(dir.x) > absf(dir.y):
+			row = CharacterSpriteFactory.DIR_RIGHT
+			_facing_left = dir.x < 0.0
+		elif dir.y < 0.0:
+			row = CharacterSpriteFactory.DIR_UP
+	else:
+		_walk_t = 0.0
+		var prev_row: int = int(_valet_sprite.region_rect.position.y / CharacterSpriteFactory.CELL_H)
+		row = prev_row
+	_valet_sprite.flip_h = row == CharacterSpriteFactory.DIR_RIGHT and _facing_left
+	_valet_sprite.region_rect = Rect2(col * CharacterSpriteFactory.CELL_W, row * CharacterSpriteFactory.CELL_H,
+		CharacterSpriteFactory.CELL_W, CharacterSpriteFactory.CELL_H)
+
+# Panneau tutoriel : vignette « voiturier · voiture · cliente » sous le titre.
+func _dress_tutorial() -> void:
+	var layout: VBoxContainer = get_node_or_null("UI/Tutorial/Panel/Margin/Layout") as VBoxContainer
+	if layout == null:
+		return
+	var row: HBoxContainer = HBoxContainer.new()
+	row.name = "Illustration"
+	row.alignment = BoxContainer.ALIGNMENT_CENTER
+	row.add_theme_constant_override("separation", 36)
+	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var valet_cfg: Dictionary = {
+		"skin": CharacterSpriteFactory.PALETTE_SKIN[2],
+		"hair_color": CharacterSpriteFactory.PALETTE_HAIR_COLOR[0],
+		"hair_style": "short", "shirt_color": Color(0.80, 0.13, 0.15),
+		"shirt_pattern": "pocket", "pants_color": Color(0.14, 0.14, 0.18),
+		"hat_style": "none", "hat_color": Color(0.14, 0.14, 0.18),
+	}
+	var cell: Rect2 = Rect2(0, 0, CharacterSpriteFactory.CELL_W, CharacterSpriteFactory.CELL_H)
+	var valet: AtlasTexture = AtlasTexture.new()
+	valet.atlas = CharacterSpriteFactory.build_sheet(valet_cfg)
+	valet.region = cell
+	var guest: AtlasTexture = AtlasTexture.new()
+	guest.atlas = CharacterSpriteFactory.build_sheet(_elegant_config(7919 * 4))
+	guest.region = cell
+	var pics: Array = [
+		[valet, Vector2(64, 96)],
+		[ValetArt.car(ValetArt.LUX_COLORS[0], 2), Vector2(64, 96)],
+		[ValetArt.car(ValetArt.LUX_COLORS[3], 1), Vector2(64, 96)],
+		[guest, Vector2(64, 96)],
+	]
+	for p in pics:
+		var tr: TextureRect = TextureRect.new()
+		tr.texture = p[0]
+		tr.custom_minimum_size = p[1]
+		tr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		tr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		tr.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		row.add_child(tr)
+	layout.add_child(row)
+	layout.move_child(row, 1)
+
+# Mise en scène pour les captures (preview == "busy").
+func _stage_preview() -> void:
+	for k in [0, 2, 3]:
+		_spawn_arriving_car()
+		var c: Dictionary = _cars[_cars.size() - 1]
+		_player_pos = (c.node as ColorRect).position + Vector2(CAR_W * 0.5, CAR_H * 0.5)
+		_action_pickup()
+		_player_pos = SLOTS[k]
+		_action_drop()
+	_cars[1].parked_at = -100.0
+	_update_cars()
+	_spawn_arriving_car()
+	_cars[_cars.size() - 1].arrived_at = -100.0
+	_update_cars()
+	_player_pos = Vector2(1180.0, 520.0)
+	_spawn_cooldown = 60.0

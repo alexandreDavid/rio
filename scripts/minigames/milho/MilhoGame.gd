@@ -41,6 +41,7 @@ const TIP_DE_SEMPRE: int = 8
 const KNOWN_AFTER: int = 2
 const TOPPINGS: Array[String] = ["manteiga", "sal", "queijo"]
 const TOPPING_ICONS: Dictionary = {"manteiga": "🧈", "sal": "🧂", "queijo": "🧀"}
+const ART_SCRIPT: Script = preload("res://scripts/minigames/milho/MilhoArt.gd")
 
 # Les fregueses de la carrocinha : ids d'affinité réels (jeitinho).
 const REGULARS: Array = [
@@ -77,9 +78,11 @@ var _status: Label
 var _hand_label: Label
 var _pot_buttons: Array[Button] = []
 var _queue_buttons: Array[Button] = []
-var _queue_bars: Array[ProgressBar] = []
 var _queue_sprites: Array[Sprite2D] = []
 var _topping_buttons: Dictionary = {}
+var _art: Node2D
+# Outil de capture : « 1 » remplit panela, file et main au lancement ; « 2 » sert en plus Jorge à 1 s.
+var vitrine: String = ""
 
 # --- Règles pures (testées sans scène) ---
 
@@ -131,52 +134,54 @@ func _ready() -> void:
 	for i in QUEUE_SLOTS:
 		_queue.append({})
 	_build_ui()
+	if vitrine != "":
+		_fill_vitrine()
 	add_to_group("gamepad_menu")
 	GamepadBridge.focus_first.call_deferred(self)
 	_set_status("Hora do rush ! Plonge les épis, sers NO PONTO, et retiens tes fregueses.")
 	_refresh_all()
 
 func _build_ui() -> void:
-	_hud = _label(Vector2(-900, -520), Vector2(1800, 50), 30, HORIZONTAL_ALIGNMENT_CENTER)
-	_status = _label(Vector2(-900, 460), Vector2(1800, 50), 26, HORIZONTAL_ALIGNMENT_CENTER)
-	# Sur le calçadão clair : texte sombre, sans contour.
-	_status.add_theme_color_override("font_color", Color(0.22, 0.14, 0.08, 1))
-	_status.add_theme_constant_override("outline_size", 0)
+	_art = ART_SCRIPT.new()
+	add_child(_art)
+	move_child(_art, 0)
+	_art.call("build")
+	_hud = _label(Vector2(-470, -532), Vector2(940, 60), 26, HORIZONTAL_ALIGNMENT_CENTER)
+	_hud.theme_type_variation = &"Pastille"
+	_status = _label(Vector2(-720, 448), Vector2(1440, 72), 24, HORIZONTAL_ALIGNMENT_CENTER)
+	_status.theme_type_variation = &"Pastille"
+	_queue_sprites = _art.get("client_sprites")
 	var x_slots: Array = [-560.0, 0.0, 560.0]
 	for i in QUEUE_SLOTS:
-		var spr: Sprite2D = Sprite2D.new()
-		spr.position = Vector2(x_slots[i], -330)
-		spr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-		spr.scale = Vector2(1.6, 1.6)
-		spr.region_enabled = true
-		spr.visible = false
-		add_child(spr)
-		_queue_sprites.append(spr)
-		var b: Button = _button(Vector2(x_slots[i] - 210, -250), Vector2(420, 170), 22)
+		# Toute la silhouette et sa bulle : toucher le client le sert.
+		var b: Button = _button(Vector2(x_slots[i] - 210, -450), Vector2(420, 372), 22)
+		b.flat = true
 		b.pressed.connect(_on_client_pressed.bind(i))
 		_queue_buttons.append(b)
-		var bar: ProgressBar = ProgressBar.new()
-		bar.position = Vector2(x_slots[i] - 210, -72)
-		bar.size = Vector2(420, 16)
-		bar.max_value = PATIENCE
-		bar.show_percentage = false
-		bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		add_child(bar)
-		_queue_bars.append(bar)
 	for i in POT_SLOTS:
-		var p: Button = _button(Vector2(-390 + i * 270, -10), Vector2(240, 170), 24)
+		var p: Button = _button(Vector2(-390 + i * 270, -60), Vector2(240, 240), 24)
+		p.flat = true
 		p.pressed.connect(_on_pot_pressed.bind(i))
 		_pot_buttons.append(p)
-	_hand_label = _label(Vector2(-900, 220), Vector2(560, 160), 24, HORIZONTAL_ALIGNMENT_CENTER)
+	_hand_label = _label(Vector2(-650, 336), Vector2(330, 64), 22, HORIZONTAL_ALIGNMENT_CENTER)
 	var tx: float = -300.0
 	for t in TOPPINGS:
-		var tb: Button = _button(Vector2(tx, 220), Vector2(190, 150), 30)
+		var tb: Button = _button(Vector2(tx, 222), Vector2(190, 150), 22)
+		_dress_button(tb, t)
 		tb.pressed.connect(_on_topping_pressed.bind(t))
 		_topping_buttons[t] = tb
 		tx += 215.0
-	var trash: Button = _button(Vector2(370, 220), Vector2(190, 150), 30)
-	trash.text = "🗑\nJeter"
+	var trash: Button = _button(Vector2(370, 222), Vector2(190, 150), 22)
+	_dress_button(trash, "lixo")
+	trash.text = "Jeter"
 	trash.pressed.connect(_on_trash_pressed)
+
+# Icône pixel de l'ingrédient au-dessus de son nom, cadre du thème.
+func _dress_button(b: Button, id: String) -> void:
+	b.icon = _art.call("button_icon", id, 64)
+	b.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	b.vertical_icon_alignment = VERTICAL_ALIGNMENT_TOP
+	b.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 
 func _label(pos: Vector2, size: Vector2, font: int, align: int) -> Label:
 	var l: Label = Label.new()
@@ -189,6 +194,8 @@ func _label(pos: Vector2, size: Vector2, font: int, align: int) -> Label:
 	l.add_theme_color_override("font_color", Color(0.98, 0.95, 0.88, 1))
 	l.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.7))
 	l.add_theme_constant_override("outline_size", 4)
+	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	l.z_index = 10
 	add_child(l)
 	return l
 
@@ -201,6 +208,7 @@ func _button(pos: Vector2, size: Vector2, font: int) -> Button:
 	# Focusable : à la manette, la croix navigue entre panela, garnitures et
 	# clients, A sert (GamepadBridge.focus_first + groupe gamepad_menu).
 	b.focus_mode = Control.FOCUS_ALL
+	b.z_index = 10
 	add_child(b)
 	return b
 
@@ -268,9 +276,6 @@ func _spawn_client() -> void:
 			"shows_order": true, "seed": int(p.seed) + _rng.randi_range(0, 50)}
 	c["patience"] = PATIENCE
 	_queue[slot] = c
-	var spr: Sprite2D = _queue_sprites[slot]
-	spr.texture = CharacterSpriteFactory.build_sheet(CharacterSpriteFactory.random_config(int(c.seed)))
-	spr.region_rect = Rect2(0, 0, CharacterSpriteFactory.CELL_W, CharacterSpriteFactory.CELL_H)
 
 func _on_pot_pressed(i: int) -> void:
 	if _ended:
@@ -278,6 +283,8 @@ func _on_pot_pressed(i: int) -> void:
 	if _pot[i].is_empty():
 		_pot[i] = {"t": 0.0}
 		sfx("splash", 1.6)
+		if _art:
+			_art.call("splash", i)
 		return
 	if not _hand.is_empty():
 		_set_status("Tu as déjà un épi en main — sers-le ou jette-le.")
@@ -313,6 +320,8 @@ func _on_client_pressed(i: int) -> void:
 		_set_status("Prends d'abord un épi dans la panela.")
 		return
 	var g: int = grade(c.order, _hand.toppings, int(_hand.cook))
+	if _art:
+		_art.call("serve", i, g, c.get("regular", false) and not c.get("shows_order", true))
 	_hand = {}
 	_queue[i] = {}
 	var is_kid: bool = c.get("kind", "") == "gamin"
@@ -364,63 +373,35 @@ func _remember_regular(c: Dictionary) -> void:
 
 func _refresh_all() -> void:
 	if _hud:
-		_hud.text = "🌽 Hora do rush · %ds · %d pts · R$ %d" % [int(ceil(_time_left)), _score, _cash]
-	for i in POT_SLOTS:
-		var b: Button = _pot_buttons[i]
-		if _pot[i].is_empty():
-			b.text = "+ épi\n(plonger)"
-			b.modulate = Color(0.75, 0.75, 0.75, 1)
-			continue
-		var t: float = float(_pot[i].t)
-		match cook_state(t):
-			Cook.CRU:
-				b.text = "🌽 cru\n%ds" % int(ceil(COOK_PONTO - t))
-				b.modulate = Color(0.95, 0.95, 0.7, 1)
-			Cook.PONTO:
-				b.text = "🌽 NO PONTO"
-				b.modulate = Color(1.0, 0.85, 0.3, 1)
-			Cook.PASSADO:
-				b.text = "🌽 passado"
-				b.modulate = Color(0.85, 0.6, 0.35, 1)
-			_:
-				b.text = "💧 desmanchou"
-				b.modulate = Color(0.6, 0.5, 0.45, 1)
-	for i in QUEUE_SLOTS:
-		var c: Dictionary = _queue[i]
-		var qb: Button = _queue_buttons[i]
-		_queue_sprites[i].visible = not c.is_empty()
-		_queue_bars[i].visible = not c.is_empty()
-		if c.is_empty():
-			qb.text = "…"
-			qb.modulate = Color(1, 1, 1, 0.35)
-			continue
-		qb.modulate = Color(1, 1, 1, 1)
-		var bubble: String = c.line if c.regular else _order_text(c.order)
-		if not c.shows_order:
-			bubble = "« O de sempre, moço. »"
-		qb.text = "%s\n%s" % [c.name, bubble]
-		_queue_bars[i].value = c.patience
+		_hud.text = "Hora do rush · %ds · %d pts · R$ %d" % [int(ceil(_time_left)), _score, _cash]
+	if _art:
+		_art.call("sync", _pot, _queue, _hand, cook_state)
 	if _hand.is_empty():
-		_hand_label.text = "En main : rien"
+		_hand_label.text = "Mão vazia"
 	else:
 		var cook_names: Dictionary = {Cook.CRU: "cru", Cook.PONTO: "no ponto", Cook.PASSADO: "passado", Cook.DESMANCHOU: "desmanchou"}
-		var icons: PackedStringArray = []
-		for t in _hand.toppings:
-			icons.append(TOPPING_ICONS[t])
-		var tops: String = " ".join(icons) if not icons.is_empty() else "nature"
-		_hand_label.text = "En main : 🌽 %s · %s" % [cook_names.get(int(_hand.cook), "?"), tops]
+		var tops: String = ", ".join(PackedStringArray(_hand.toppings)) if not _hand.toppings.is_empty() else "puro"
+		_hand_label.text = "%s · %s" % [cook_names.get(int(_hand.cook), "?"), tops]
 	for t in TOPPINGS:
 		var tb: Button = _topping_buttons[t]
 		var on: bool = not _hand.is_empty() and _hand.toppings.has(t)
-		tb.text = "%s\n%s" % [TOPPING_ICONS[t], t.capitalize()]
+		tb.text = t.capitalize()
 		tb.modulate = Color(1.0, 0.9, 0.45, 1) if on else Color(1, 1, 1, 1)
 
-func _order_text(order: Array) -> String:
-	var parts: PackedStringArray = []
-	for t in TOPPINGS:
-		if order.has(t):
-			parts.append("%s %s" % [TOPPING_ICONS[t], t])
-	return " + ".join(parts)
+# Capture : un rush déjà lancé (une habituée connue, un habitué, une passante).
+func _fill_vitrine() -> void:
+	_pot[0] = {"t": 2.0}
+	_pot[1] = {"t": 7.0}
+	_pot[2] = {"t": 12.5}
+	_hand = {"cook": Cook.PONTO, "toppings": ["manteiga", "sal"]}
+	var r0: Dictionary = REGULARS[0]
+	var r1: Dictionary = REGULARS[2]
+	_queue[0] = {"regular": true, "id": r0.id, "name": r0.name, "order": r0.order, "line": r0.line, "shows_order": false, "patience": 18.0, "seed": 1}
+	_queue[1] = {"regular": true, "id": r1.id, "name": r1.name, "order": r1.order, "line": r1.line, "shows_order": true, "patience": 11.0, "seed": 2}
+	_queue[2] = {"regular": false, "kind": "gringo", "name": "Gringa", "order": ["sal", "queijo"], "shows_order": true, "patience": 5.0, "seed": 7101}
+	_spawn_timer = 99.0
+	if vitrine == "2":
+		get_tree().create_timer(1.0).timeout.connect(_on_client_pressed.bind(0))
 
 func _set_status(text: String) -> void:
 	if _status:

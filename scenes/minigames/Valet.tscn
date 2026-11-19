@@ -20,44 +20,22 @@ color = Color(0.34, 0.34, 0.38, 1)
 
 [node name="DropZone" type="ColorRect" parent="Arena"]
 offset_left = 720.0
-offset_top = 60.0
+offset_top = 222.0
 offset_right = 1200.0
 offset_bottom = 300.0
-color = Color(0.85, 0.78, 0.45, 0.5)
-
-[node name="DropArrowLeft" type="ColorRect" parent="Arena"]
-offset_left = 720.0
-offset_top = 60.0
-offset_right = 728.0
-offset_bottom = 300.0
-color = Color(0.95, 0.85, 0.45, 1)
-
-[node name="DropArrowRight" type="ColorRect" parent="Arena"]
-offset_left = 1192.0
-offset_top = 60.0
-offset_right = 1200.0
-offset_bottom = 300.0
-color = Color(0.95, 0.85, 0.45, 1)
+color = Color(0, 0, 0, 0)
 
 [node name="DropZoneLabel" type="Label" parent="Arena"]
 offset_left = 720.0
-offset_top = 78.0
+offset_top = 304.0
 offset_right = 1200.0
-offset_bottom = 124.0
-text = "ENTRÉE — clients arrivent ici"
+offset_bottom = 346.0
+text = "ENTRÉE · VALET"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 28
-theme_override_colors/font_color = Color(0.18, 0.18, 0.22, 1)
-
-[node name="ParkingLineLabel" type="Label" parent="Arena"]
-offset_left = 80.0
-offset_top = 670.0
-offset_right = 1840.0
-offset_bottom = 700.0
-text = "PLACES DE PARKING"
-horizontal_alignment = 1
-theme_override_font_sizes/font_size = 22
-theme_override_colors/font_color = Color(0.85, 0.85, 0.95, 1)
+theme_override_font_sizes/font_size = 33
+theme_override_colors/font_color = Color(1, 0.86, 0.32, 1)
+theme_override_colors/font_outline_color = Color(0.13, 0.1, 0.12, 1)
+theme_override_constants/outline_size = 9
 
 [node name="Slot0" type="ColorRect" parent="Arena"]
 offset_left = 170.0
@@ -66,32 +44,12 @@ offset_right = 310.0
 offset_bottom = 870.0
 color = Color(0.55, 0.55, 0.6, 0.4)
 
-[node name="Slot0Number" type="Label" parent="Arena"]
-offset_left = 170.0
-offset_top = 700.0
-offset_right = 310.0
-offset_bottom = 740.0
-text = "1"
-horizontal_alignment = 1
-theme_override_font_sizes/font_size = 32
-theme_override_colors/font_color = Color(1, 1, 1, 0.6)
-
 [node name="Slot1" type="ColorRect" parent="Arena"]
 offset_left = 490.0
 offset_top = 690.0
 offset_right = 630.0
 offset_bottom = 870.0
 color = Color(0.55, 0.55, 0.6, 0.4)
-
-[node name="Slot1Number" type="Label" parent="Arena"]
-offset_left = 490.0
-offset_top = 700.0
-offset_right = 630.0
-offset_bottom = 740.0
-text = "2"
-horizontal_alignment = 1
-theme_override_font_sizes/font_size = 32
-theme_override_colors/font_color = Color(1, 1, 1, 0.6)
 
 [node name="Slot2" type="ColorRect" parent="Arena"]
 offset_left = 890.0
@@ -100,16 +58,6 @@ offset_right = 1030.0
 offset_bottom = 870.0
 color = Color(0.55, 0.55, 0.6, 0.4)
 
-[node name="Slot2Number" type="Label" parent="Arena"]
-offset_left = 890.0
-offset_top = 700.0
-offset_right = 1030.0
-offset_bottom = 740.0
-text = "3"
-horizontal_alignment = 1
-theme_override_font_sizes/font_size = 32
-theme_override_colors/font_color = Color(1, 1, 1, 0.6)
-
 [node name="Slot3" type="ColorRect" parent="Arena"]
 offset_left = 1290.0
 offset_top = 690.0
@@ -117,32 +65,12 @@ offset_right = 1430.0
 offset_bottom = 870.0
 color = Color(0.55, 0.55, 0.6, 0.4)
 
-[node name="Slot3Number" type="Label" parent="Arena"]
-offset_left = 1290.0
-offset_top = 700.0
-offset_right = 1430.0
-offset_bottom = 740.0
-text = "4"
-horizontal_alignment = 1
-theme_override_font_sizes/font_size = 32
-theme_override_colors/font_color = Color(1, 1, 1, 0.6)
-
 [node name="Slot4" type="ColorRect" parent="Arena"]
 offset_left = 1610.0
 offset_top = 690.0
 offset_right = 1750.0
 offset_bottom = 870.0
 color = Color(0.55, 0.55, 0.6, 0.4)
-
-[node name="Slot4Number" type="Label" parent="Arena"]
-offset_left = 1610.0
-offset_top = 700.0
-offset_right = 1750.0
-offset_bottom = 740.0
-text = "5"
-horizontal_alignment = 1
-theme_override_font_sizes/font_size = 32
-theme_override_colors/font_color = Color(1, 1, 1, 0.6)
 
 [node name="Player" type="ColorRect" parent="Arena"]
 offset_left = 932.0
@@ -152,13 +80,13 @@ offset_bottom = 508.0
 color = Color(0.95, 0.85, 0.35, 1)
 
 [node name="Context" type="Label" parent="Arena/Player"]
-offset_left = -120.0
-offset_top = -42.0
-offset_right = 180.0
-offset_bottom = -16.0
+offset_left = -152.0
+offset_top = -74.0
+offset_right = 208.0
+offset_bottom = -42.0
 text = ""
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 22
 theme_override_colors/font_color = Color(1, 0.95, 0.55, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 4
@@ -168,35 +96,44 @@ theme_override_constants/outline_size = 4
 [node name="Timer" type="Label" parent="UI"]
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -200.0
+offset_left = -600.0
 offset_top = 24.0
-offset_right = -40.0
-offset_bottom = 80.0
+offset_right = -410.0
+offset_bottom = 88.0
+theme_type_variation = &"Pastille"
 text = "120.0s"
-horizontal_alignment = 2
-theme_override_font_sizes/font_size = 42
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 33
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 
 [node name="Tips" type="Label" parent="UI"]
 offset_left = 40.0
 offset_top = 24.0
-offset_right = 460.0
-offset_bottom = 80.0
-text = "💰 R$ 0 (0/4)"
-theme_override_font_sizes/font_size = 36
+offset_right = 360.0
+offset_bottom = 88.0
+theme_type_variation = &"Pastille"
+text = "R$ 0 · 0/8"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 33
 theme_override_colors/font_color = Color(1, 0.95, 0.55, 1)
 
 [node name="Status" type="Label" parent="UI"]
 anchor_left = 0.5
 anchor_right = 0.5
+anchor_top = 1.0
+anchor_bottom = 1.0
 offset_left = -520.0
-offset_top = 24.0
+offset_top = -112.0
 offset_right = 520.0
-offset_bottom = 76.0
+offset_bottom = -72.0
 text = "Bem-vindo ao Copa. Le service ouvre."
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 26
+theme_override_font_sizes/font_size = 22
 theme_override_colors/font_color = Color(1, 0.95, 0.8, 1)
+theme_override_colors/font_outline_color = Color(0.13, 0.1, 0.12, 1)
+theme_override_constants/outline_size = 9
 
 [node name="Prompt" type="Label" parent="UI"]
 anchor_left = 0.5
@@ -210,7 +147,9 @@ offset_bottom = -24.0
 text = "Action : prendre · garer · restituer"
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 22
-theme_override_colors/font_color = Color(0.85, 0.85, 0.95, 1)
+theme_override_colors/font_color = Color(0.95, 0.94, 0.88, 1)
+theme_override_colors/font_outline_color = Color(0.13, 0.1, 0.12, 1)
+theme_override_constants/outline_size = 9
 
 [node name="HelpButton" type="Button" parent="UI"]
 visible = false
@@ -232,17 +171,17 @@ anchor_bottom = 1.0
 [node name="Backdrop" type="ColorRect" parent="UI/Tutorial"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-color = Color(0.05, 0.05, 0.08, 0.9)
+color = Color(0.05, 0.05, 0.08, 0.72)
 
 [node name="Panel" type="PanelContainer" parent="UI/Tutorial"]
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -460.0
-offset_top = -340.0
-offset_right = 460.0
-offset_bottom = 340.0
+offset_left = -480.0
+offset_top = -380.0
+offset_right = 480.0
+offset_bottom = 380.0
 
 [node name="Margin" type="MarginContainer" parent="UI/Tutorial/Panel"]
 theme_override_constants/margin_left = 36
@@ -256,14 +195,14 @@ theme_override_constants/separation = 12
 [node name="Title" type="Label" parent="UI/Tutorial/Panel/Margin/Layout"]
 text = "Valet do Copa Palace — Comment jouer"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 30
+theme_override_font_sizes/font_size = 33
 theme_override_colors/font_color = Color(1, 0.92, 0.55, 1)
 
 [node name="Goal" type="Label" parent="UI/Tutorial/Panel/Margin/Layout"]
 text = "Sers jusqu'à 8 clients en 120 secondes. Qualifié : 4 clients servis, 1 seul parti fâché au plus."
 autowrap_mode = 3
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 22
 theme_override_colors/font_color = Color(0.95, 0.92, 0.85, 1)
 
 [node name="Sep1" type="HSeparator" parent="UI/Tutorial/Panel/Margin/Layout"]
@@ -298,7 +237,7 @@ theme_override_colors/font_color = Color(0.95, 0.92, 0.85, 1)
 text = "Les voitures arrivent de plus en plus vite. Une voiture oubliée à l'entrée klaxonne."
 autowrap_mode = 3
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 22
 theme_override_colors/font_color = Color(0.75, 0.85, 0.95, 1)
 
 [node name="StartButton" type="Button" parent="UI/Tutorial/Panel/Margin/Layout"]
