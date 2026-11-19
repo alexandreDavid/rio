@@ -22,6 +22,7 @@ extends Node2D
 const _IntroSeuJoaoBumpScript: Script = preload("res://scripts/cutscenes/IntroSeuJoaoBump.gd")
 
 func _ready() -> void:
+	add_to_group("building_door")
 	if interactable == null:
 		interactable = get_node_or_null("Interactable") as Interactable
 	if interactable:
@@ -107,7 +108,13 @@ func _on_interacted(by: Node) -> void:
 	if is_exit:
 		target = BuildingManager.last_exit_position
 		if target == Vector2.ZERO:
-			target = destination  # fallback si on a spawné directement dans l'intérieur
+			# Spawn direct dans l'intérieur (nouvelle partie chez tio Zé) : on
+			# ressort devant la porte d'entrée réelle. `destination` n'est qu'un
+			# dernier recours — une position monde en dur se périme dès qu'un
+			# quartier est déplacé.
+			target = _entry_door_exit()
+			if target == Vector2.ZERO:
+				target = destination
 		BuildingManager.is_inside = false
 	else:
 		BuildingManager.last_exit_position = global_position + return_offset
@@ -120,6 +127,24 @@ func _on_interacted(by: Node) -> void:
 	if cam:
 		cam.reset_smoothing()
 	EventBus.interaction_unavailable.emit()
+
+# Position de sortie déduite de la porte d'entrée qui mène à cet intérieur
+# (celle dont la destination tombe le plus près de cette porte de sortie).
+func _entry_door_exit() -> Vector2:
+	var best: BuildingDoor = null
+	var best_d: float = 400.0
+	for n in get_tree().get_nodes_in_group("building_door"):
+		var door: BuildingDoor = n as BuildingDoor
+		if door == null or door.is_exit:
+			continue
+		var d: float = door.destination.distance_to(global_position)
+		if d < best_d:
+			best_d = d
+			best = door
+	if best == null:
+		return Vector2.ZERO
+	return best.global_position + best.return_offset
+
 
 func _intro_bump_completed() -> bool:
 	# Source de vérité fiable : l'état de la quête heritage est auto-persisté

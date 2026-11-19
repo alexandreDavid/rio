@@ -22,6 +22,13 @@ static func run(mode: String) -> void:
 	if GameManager.player == null:
 		return
 	var player: Node2D = GameManager.player
+	# Le joueur peut rater la zone d'offre devant la maison (en longeant le
+	# mur) et arriver à la sortie sans la quête : la supplique seule le
+	# laisserait bloqué sans objectif. Elle lui confie alors la recherche.
+	if mode == "plea" \
+			and not QuestManager.is_active("prologue_pedrinho") \
+			and not QuestManager.is_completed("prologue_pedrinho"):
+		mode = "offer"
 	var knot: String = "mae_prologue_offer" if mode == "offer" else "mae_prologue_plea"
 	var mae: Node2D = CutsceneRunner.get_tree().get_first_node_in_group("mae_prologue") as Node2D
 	# Garde-fou : si la mère n'est pas dans la scène, on ne bloque pas la

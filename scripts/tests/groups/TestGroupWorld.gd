@@ -40,6 +40,7 @@ func run() -> void:
 	_test_context_tips()
 	await _test_phone_readable()
 	_test_audio_assets()
+	await _test_playtest_mobile_fixes()
 
 
 # Garde-fou : les intérieurs hors-monde (positions y≈-3000 dans Copacabana)
@@ -1440,7 +1441,7 @@ func _test_facade_painter() -> void:
 	var tex2: ImageTexture = FacadePainter.build(Vector2(100, 64), Color(0.88, 0.78, 0.64), {"style": "copa", "seed": 7, "shop": true})
 	_assert(tex2 == tex, "même taille/couleur/options → même texture (cache)")
 	var fav: ImageTexture = FacadePainter.build(Vector2(60, 40), Color(0.88, 0.35, 0.32), {"style": "favela", "seed": 3, "door_left": true})
-	_assert(Vector2i(fav.get_size()) == Vector2i(20, 13), "maison 60×40 → 20×13 natifs")
+	_assert(Vector2i(fav.get_size()) == Vector2i(22, 15), "maison 60×40 → 20×13 natifs + toit (22×15)")
 	var tiny: ImageTexture = FacadePainter.build(Vector2(12, 12), Color(0.5, 0.5, 0.5), {})
 	_assert(Vector2i(tiny.get_size()) == Vector2i(4, 4), "façade minuscule : simple aplat contouré")
 	var igreja: ImageTexture = FacadePainter.build(Vector2(120, 90), Color(0.92, 0.88, 0.78), {"style": "igreja"})
@@ -1545,20 +1546,20 @@ func _test_interior_dresser() -> void:
 	var outer: ColorRect = floor.get_node_or_null("OuterWall") as ColorRect
 	_assert(outer != null and outer.show_behind_parent and outer.offset_left < 0.0, "mur extérieur derrière le sol")
 	var bed: ColorRect = house.get_node("Bed/Frame") as ColorRect
-	_assert(bed.get_node_or_null("OutlineT") != null and bed.get_node_or_null("Shadow") != null and bed.get_node_or_null("Grain") is Sprite2D, "lit : contour, ombre, grain de bois")
+	_assert(bed.get_node_or_null("Furniture") is Sprite2D and bed.get_node_or_null("Shadow") != null and not (house.get_node("Bed/Pillow") as ColorRect).visible, "lit : meuble peint, ombre, aplats masqués")
 	var rug: ColorRect = house.get_node("Rug") as ColorRect
-	_assert(rug.get_node_or_null("OutlineT") != null and rug.get_node_or_null("Shadow") == null, "tapis translucide : contour sans ombre")
+	_assert(rug.get_node_or_null("Furniture") is Sprite2D and rug.get_node_or_null("Shadow") == null, "tapis peint, sans ombre")
 	var memorial: Label = house.get_node("MemorialLabel") as Label
 	_assert(memorial.has_theme_font_override("font"), "étiquette du mémorial en police pixel")
 	# Les ajouts suivent la visibilité du rect (bascules par flag).
 	bed.visible = false
-	_assert(not (bed.get_node("OutlineT") as CanvasItem).is_visible_in_tree(), "relief masqué avec son meuble")
+	_assert(not (bed.get_node("Furniture") as CanvasItem).is_visible_in_tree(), "meuble peint masqué avec son rect")
 	bed.visible = true
 	var count: int = house.find_children("*", "ColorRect", true, false).size()
 	InteriorDresser.dress(house)
 	_assert(house.find_children("*", "ColorRect", true, false).size() == count and count > rects_before, "idempotent (%d rects, %d avant)" % [count, rects_before])
 	# Les collisions n'ont pas bougé : rien de tout ça n'est un corps.
-	_assert(house.find_children("*", "StaticBody2D", true, false).size() == 7, "aucun corps ajouté")
+	_assert(house.find_children("*", "StaticBody2D", true, false).size() == 10, "aucun corps ajouté")
 	house.queue_free()
 
 
@@ -1756,3 +1757,71 @@ func _test_audio_assets() -> void:
 	am._set_duck("test", false)
 	_assert(is_equal_approx(am._music_target_db(), am.music_volume_db), "fin : la musique remonte")
 	am._duck_sources = saved_duck
+
+
+# Playtest mobile 2026-11-18 : quatre défauts qui bloquaient un joueur neuf ou
+# une voie, invisibles des e2e (qui téléportent sur les spots).
+func _test_playtest_mobile_fixes() -> void:
+	_section("Playtest mobile — sortie de la maison, ancres de guidage")
+	var packed: PackedScene = load("res://scenes/world/Copacabana.tscn") as PackedScene
+	if packed == null:
+		_assert(false, "Copacabana.tscn charge")
+		return
+	var root: Node = packed.instantiate()
+	add_child(root)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	# 1. Nouvelle partie : on naît DANS la maison, donc sans position de retour.
+	# La porte de sortie doit retrouver la porte d'entrée réelle (la favela a
+	# déménagé ; l'ancienne destination en dur envoyait dans le vide).
+	var house: Node = root.get_node_or_null("TioZeHouseInterior")
+	var exit_door: BuildingDoor = house.get_node_or_null("ExitDoor") as BuildingDoor if house else null
+	var entry: Node2D = null
+	for n in _all_descendants(root):
+		if n is BuildingDoor and n.name == "TioZeDoor":
+			entry = n as Node2D
+	_assert(exit_door != null and entry != null, "porte de sortie de la maison + TioZeDoor trouvées")
+	if exit_door != null and entry != null:
+		var out: Vector2 = exit_door._entry_door_exit()
+		_assert(out.distance_to(entry.global_position) < 80.0,
+				"sortie de la maison → devant TioZeDoor (%s, porte %s)" % [out, entry.global_position])
+		_assert(out.distance_to(exit_door.destination) > 1000.0 or exit_door.destination.distance_to(entry.global_position) < 80.0,
+				"la destination en dur n'est plus la référence (elle est périmée)")
+	# Toute porte de sortie d'intérieur doit avoir une porte d'entrée résoluble.
+	var orphans: Array = []
+	for n in _all_descendants(root):
+		if n is BuildingDoor and (n as BuildingDoor).is_exit and (n as BuildingDoor)._entry_door_exit() == Vector2.ZERO:
+			orphans.append(String(n.get_parent().name))
+	_assert(orphans.is_empty(), "chaque porte de sortie retrouve une porte d'entrée (orphelines : %s)" % str(orphans))
+	root.queue_free()
+	await get_tree().process_frame
+	# 2. Ancres de guidage : la sacoche du Palace et la tournée de Barra.
+	var nd: Node = get_node_or_null("/root/NavigationDirector")
+	var a2: Dictionary = nd.STEP.get("trafico_a2_pickup/pickup_palace", {})
+	_assert(String(a2.get("anchor", "")) == "node:PalaceSacoche", "A2 : la flèche pointe la sacoche du Palace, pas le contact")
+	var c2: Dictionary = nd.STEP.get("consortium_c2_loyers/collect_condos", {})
+	_assert(String(c2.get("dist", "")) == "barra_tijuca" and String(c2.get("anchor", "")) == "spot:consortium_barra",
+			"C2 : la tournée des loyers est guidée vers Barra (Riserva Uno)")
+	# 3. Aucune étape chronométrée sans ancre résoluble : on vérifie dans les
+	# scènes qu'un spot agissant porte l'objectif de chaque étape sans ancre.
+	var pending_spots: Dictionary = {}
+	for scene_path in _list_scenes_under("res://scenes/districts/") + ["res://scenes/world/Copacabana.tscn"]:
+		var txt: String = FileAccess.get_file_as_string(scene_path)
+		var re: RegEx = RegEx.new()
+		re.compile("\"objective_pending\": \\[\"([a-z0-9_]+)\", \"([a-z0-9_]+)\"\\]")
+		for m in re.search_all(txt):
+			pending_spots["%s/%s" % [m.get_string(1), m.get_string(2)]] = true
+	var chrono_missing: Array = []
+	for key in nd.STEP:
+		var step: Dictionary = nd.STEP[key]
+		if String(step.get("anchor", "")) != "":
+			continue
+		var parts: PackedStringArray = String(key).split("/")
+		var q: Quest = QuestManager.get_quest(parts[0])
+		if q == null:
+			continue
+		for obj in q.objectives:
+			if obj.id == parts[1] and obj.kind == QuestObjective.Kind.CHRONO and not pending_spots.has(key):
+				chrono_missing.append(key)
+	_assert(chrono_missing.is_empty(), "toute étape chronométrée sans ancre a un spot porteur (manquants : %s)" % str(chrono_missing))
+

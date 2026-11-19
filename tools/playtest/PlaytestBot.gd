@@ -58,6 +58,18 @@ var _money_prev: int = 0
 var _taxi_spent: int = 0
 var _counters: Dictionary = {}
 var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
+var _last_interact_id: int = 0
+var _mg_retries: Dictionary = {}
+var _choice_cursor: Dictionary = {}   # knot -> prochain index à essayer
+var _choice_tries: Dictionary = {}    # knot -> relances déjà accordées
+var _choice_knot: String = ""
+var _choice_left: int = 0
+var _choice_progress_t: float = 0.0
+# Voie imposée (3e argument : trafico | policia | consortium | prefeito) pour
+# couvrir les quatre fins : le bot refuse les autres pactes et va voir le bon patron.
+var _want_voie: String = ""
+var _voie_try_t: float = -1000.0
+const PATRONS: Dictionary = {"trafico": "tito", "policia": "ramos", "consortium": "magalhaes", "prefeito": "padre"}
 
 
 func _ready() -> void:
@@ -68,6 +80,10 @@ func _ready() -> void:
 		budget_sec = float(args[0])
 	if args.size() >= 2:
 		out_path = args[1]
+	if args.size() >= 3:
+		_want_voie = args[2]
+	if args.size() >= 4:
+		Engine.time_scale = float(args[3])
 	_wall0 = Time.get_ticks_msec()
 	await _run()
 
@@ -118,6 +134,7 @@ func _progress() -> void:
 
 
 func _progress_quest() -> void:
+	_mg_retries.clear()
 	_last_progress_t = _t
 	_tried_by_text.clear()
 	_tried = {}
@@ -134,8 +151,11 @@ func _money() -> int:
 
 func _run() -> void:
 	await get_tree().process_frame
-	# Protège les vraies sauvegardes : aucune écriture pendant la session.
+	# Protège les vraies sauvegardes : aucune écriture différée pendant la
+	# session, et les sauvegardes directes (bump d'intro, MainBoot…) partent
+	# dans un slot fantôme qui n'appartient qu'au bot.
 	SaveSystem._loading = true
+	Settings.current_slot = 9
 	_connect_signals()
 	_main = (load("res://scenes/main/Main.tscn") as PackedScene).instantiate()
 	# Le jeu résout « World », les mini-jeux et les marqueurs via current_scene :
@@ -182,6 +202,7 @@ func _finish(reason: String) -> void:
 
 
 func _connect_signals() -> void:
+	EventBus.dialogue_ended.connect(_on_dialogue_ended_retry)
 	EventBus.quest_accepted.connect(_on_quest_accepted)
 	EventBus.quest_updated.connect(_on_quest_updated)
 	EventBus.quest_completed.connect(_on_quest_completed)
@@ -268,7 +289,34 @@ func _on_chase_ended(c: String, e: bool) -> void:
 
 
 func _on_minigame_ended(id: String, r: Dictionary) -> void:
-	_ev("minigame_ended", {"id": id, "ok": bool(r.get("qualifies", r.get("won", false)))})
+	var ok: bool = bool(r.get("qualifies", r.get("won", false)))
+	_ev("minigame_ended", {"id": id, "ok": ok})
+	# Raté : un joueur retente. On oublie qu'on vient de parler au lanceur.
+	# Deux relances au plus par mini-jeu tant que rien n'a avancé (sinon on
+	# boucle sur une activité libre comme le rush du milho).
+	if ok:
+		_mg_retries.erase(id)
+	elif _last_interact_id != 0 and int(_mg_retries.get(id, 0)) < 2:
+		_mg_retries[id] = int(_mg_retries.get(id, 0)) + 1
+		_interacted_at.erase(_last_interact_id)
+		_tried.erase(_last_interact_id)
+
+
+func _on_dialogue_ended_retry(_npc: String) -> void:
+	if _choice_knot == "":
+		return
+	var knot: String = _choice_knot
+	_choice_knot = ""
+	await get_tree().process_frame
+	await get_tree().process_frame
+	if _last_progress_t > _choice_progress_t or _choice_left <= 0 or _last_interact_id == 0:
+		return
+	if not (knot.contains("_d3_") or knot.contains("_c") or knot.contains("nego") or knot.contains("capanga") \
+			or QuestManager.get_active_ids().size() > 0):
+		return
+	_choice_tries[knot] = int(_choice_tries.get(knot, 0)) + 1
+	_interacted_at.erase(_last_interact_id)
+	_tried.erase(_last_interact_id)
 
 
 func _on_line_shown(sp: String, tx: String) -> void:
@@ -404,6 +452,19 @@ func _handle_dialogue() -> void:
 		if h[1] == knot and _t - h[0] < 90.0:
 			repeats += 1
 	var idx: int = _pick_choice(choices, repeats)
+	# Négociations à tell : si ce knot à choix revient sans que rien n'ait
+	# avancé, un joueur essaie la réponse suivante.
+	var multi: bool = choices.size() >= 2
+	if multi and _choice_cursor.has(knot):
+		idx = int(_choice_cursor[knot]) % choices.size()
+	if multi:
+		_choice_cursor[knot] = idx + 1
+		_choice_knot = knot
+		_choice_left = choices.size() - 1 - int(_choice_tries.get(knot, 0))
+		_choice_progress_t = _last_progress_t
+	if _want_voie != "" and knot.contains("_pacto_") and knot.ends_with("_offer") \
+			and not knot.contains("pacto_" + _want_voie):
+		idx = choices.size() - 1  # ce n'est pas la voie voulue : on décline
 	_ev("dialogue", {"knot": knot, "speaker": speaker, "chars": text.length(), "read": snappedf(read, 0.1),
 			"choices": choices.size(), "choice": idx,
 			"choice_text": String(choices[idx]) if idx < choices.size() else "", "repeat": repeats})
@@ -476,8 +537,12 @@ func _simulate_minigame(mg: Node) -> void:
 		dur = float(mg.get("DURATION"))
 	_ev("minigame_sim", {"id": id, "try": tries + 1, "ok": ok, "dur": dur})
 	_mg_attempts[id] = tries + 1
-	await _wait(dur)
-	if not is_instance_valid(mg):
+	# On attend la durée nominale, mais pas au-delà de la partie réelle.
+	var waited: float = 0.0
+	while waited < dur and is_instance_valid(mg) and mg.is_inside_tree():
+		await _wait(1.0)
+		waited += 1.0
+	if not is_instance_valid(mg) or not mg.is_inside_tree():
 		return
 	var args: Array = []
 	for sig in mg.get_signal_list():
@@ -588,6 +653,27 @@ func _navigate() -> void:
 			_interior_chat_count = 0
 			await _goto_node(door, "sortie", text)
 			return
+	# Voie imposée : dès l'acte 3, tant qu'aucun pacte n'est scellé, on va voir
+	# le patron voulu (un essai toutes les 4 min, le reste du temps on suit le HUD).
+	if _want_voie != "" and CampaignManager.current_act >= 3 and not _in_interior() \
+			and not CampaignManager.has_flag("voie_" + _want_voie) and _t - _voie_try_t > 240.0:
+		var pid: String = String(PATRONS.get(_want_voie, ""))
+		var patron: Node = NPCScheduler.get_npc(pid)
+		if patron == null:
+			patron = NavigationDirector._find_world_node("spot:" + pid)
+		if patron is Node2D:
+			_voie_try_t = _t
+			var pdist: String = NavigationDirector._district_of_node(patron)
+			if pdist != "" and pdist != DistrictManager.current():
+				_voie_try_t = _t - 200.0  # on réessaie vite une fois arrivé
+				await _travel(pdist)
+				return
+			var goal: Node = NavigationDirector._entrance_or_self(patron)
+			if goal is Node2D:
+				_ev("voie_seek", {"voie": _want_voie, "node": goal.name})
+				_interacted_at.erase(goal.get_instance_id())
+				await _goto_node(goal as Node2D, "voie", "pacte " + _want_voie)
+				return
 	if text == "":
 		await _earn_or_explore("libre")
 		return
@@ -758,6 +844,7 @@ func _interact(node: Node2D, mode: String, label: String) -> void:
 		return
 	_interacted_at[node.get_instance_id()] = _t
 	_tried[node.get_instance_id()] = true
+	_last_interact_id = node.get_instance_id()
 	_ev("interact", {"node": node.name, "mode": mode, "label": label,
 			"prompt": String(inter.get("prompt")) if "prompt" in inter else ""})
 	inter.call("interact", _player)

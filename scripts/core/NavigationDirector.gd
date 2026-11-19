@@ -61,7 +61,7 @@ const STEP: Dictionary = {
 	"prologue_pedrinho/bring_home": {"text": "🎯 Ramène Pedrinho à sa mère", "dist": "favela_morro", "anchor": "spot:vizinha", "short": "La mère"},
 	# --- VOIE TRÁFICO (A1 → A9) ---
 	"trafico_a1_livraison/drop_calcadao": {"text": "🎯 → Copa (calçadão, face mer) : déposer le paquet au contact", "dist": "copacabana", "anchor": "spot:trafico_contact", "short": "Calçadão"},
-	"trafico_a2_pickup/pickup_palace": {"text": "🎯 → Copa Palace : récupérer la sacoche chez le groom", "dist": "copacabana", "anchor": "spot:trafico_contact", "short": "Copa Palace"},
+	"trafico_a2_pickup/pickup_palace": {"text": "🎯 → Copa Palace : récupérer la sacoche chez le groom", "dist": "copacabana", "anchor": "node:PalaceSacoche", "short": "Copa Palace"},
 	"trafico_a2_pickup/despistar_pm": {"text": "🎯 Copa : sème la PM dans les transversales !", "dist": "copacabana", "anchor": "", "short": "Copa"},
 	"trafico_a3_chauffeur/drive_botafogo": {"text": "🎯 → Botafogo (Bondinho) : livrer le coffre AVANT la relève de la PM !", "dist": "botafogo_flamengo", "anchor": "", "short": "Botafogo ⏱"},
 	"trafico_a4_ipanema/deal_ipanema": {"text": "🎯 → Zona Sul (Ipanema, posto 9) : refourguer la marchandise", "dist": "zona_sul", "anchor": "", "short": "Ipanema"},
@@ -103,7 +103,7 @@ const STEP: Dictionary = {
 	"act2_contessa_gala/secured_trio": {"text": "🎯 → Zona Sul (Garota de Ipanema) : engager le trio bossa", "dist": "zona_sul", "anchor": "", "short": "Ipanema"},
 	# --- VOIE CONSORTIUM (C1 → C9) ---
 	"consortium_c1_recouvrement/collect_calcadao": {"text": "🎯 → Copa (calçadão) : recouvrer auprès des vendeurs", "dist": "copacabana", "anchor": "spot:consortium_contact", "short": "Calçadão"},
-	"consortium_c2_loyers/collect_condos": {"text": "🎯 → Copa (av. Atlântica) : encaisser chez les commerçants", "dist": "copacabana", "anchor": "atlantica", "short": "Av. Atlântica"},
+	"consortium_c2_loyers/collect_condos": {"text": "🎯 → Barra (Riserva Uno) : faire la tournée des loyers", "dist": "barra_tijuca", "anchor": "spot:consortium_barra", "short": "Riserva Uno"},
 	"consortium_c3_partenariat/force_signature": {"text": "🎯 → Zona Sul (Ipanema) : faire signer le restaurateur — lis-le avant de choisir", "dist": "zona_sul", "anchor": "", "short": "Ipanema"},
 	"consortium_c4_vip/drive_vip": {"text": "🎯 → Santos Dumont : réceptionner le VIP — il n'attend pas !", "dist": "santos_dumont", "anchor": "", "short": "Santos Dumont ⏱"},
 	"consortium_c5_mac/launder_mac": {"text": "🎯 → Niterói (MAC) : négocier la donation — lis l'attachée avant de choisir", "dist": "niteroi", "anchor": "", "short": "MAC Niterói"},
@@ -346,7 +346,7 @@ func _compute_selection() -> Dictionary:
 				return _S("🎯 Sors de la maison — Tito veut te parler")
 		if debt_paid < CampaignManager.ACT2_THRESHOLD:
 			# Si une mission intro de patron est en cours → guider vers SON étape.
-			var st2: Dictionary = _active_step()
+			var st2: Dictionary = _active_step(true)
 			if not st2.is_empty():
 				return st2
 			# Voie déjà scellée → continuer CETTE voie (ne pas renvoyer vers un
@@ -362,7 +362,10 @@ func _compute_selection() -> Dictionary:
 			# Tous goûtés → reste à réunir l'argent (milho, missions) ; si on l'a
 			# déjà en poche, on le dit (playtest 2026-10-07 : 13 000 R$ en poche et
 			# un bandeau qui disait encore « Réunis »).
+			var side2: Dictionary = _active_step(false, true)
 			var still: int = CampaignManager.ACT2_THRESHOLD - debt_paid
+			if money < still and not side2.is_empty():
+				return side2
 			if money >= still:
 				return _S("🎯 Tu as de quoi : va verser %s R$ à Dom Nilton (Av. Atlântica) pour ouvrir l'acte 3" % still, "copacabana", "consortium", "Consortium")
 			return _S("🎯 Réunis %s R$ (milho au calçadão, missions) pour ouvrir l'acte 3" % still, "", "calcadao", "Calçadão")
@@ -374,13 +377,16 @@ func _compute_selection() -> Dictionary:
 			if not ptp.is_empty():
 				return ptp
 			return _S("🎯 Le vrai choix : scelle un pacte — Tito (morro), Ramos (Academia), Magalhães (Barra) ou le Padre (église)")
-		var st3: Dictionary = _active_step()
+		var st3: Dictionary = _active_step(true)
 		if not st3.is_empty():
 			return st3
 		# Pas de mission active mais voie scellée → renvoyer vers le patron de la voie.
 		var vc3: Dictionary = _voie_continue()
 		if not vc3.is_empty():
 			return vc3
+		var side3: Dictionary = _active_step(false, true)
+		if not side3.is_empty():
+			return side3
 		if debt_paid < CampaignManager.ACT3_THRESHOLD:
 			var still3: int = CampaignManager.ACT3_THRESHOLD - debt_paid
 			if money >= still3:
@@ -394,9 +400,18 @@ func _compute_selection() -> Dictionary:
 		# (playtest 2026-10-08 : 22 min au point de ralliement sans signal).
 		if QuestManager.is_active("policia_b9_madrugada") and not CampaignManager.has_flag("madrugada_lancee"):
 			return _S("🎯 → Copa (Academia) : Ramos donne le signal de la Madrugada", "copacabana", "npc:ramos", "Ramos · Academia")
-		var st4: Dictionary = _active_step()
+		var st4: Dictionary = _active_step(true)
 		if not st4.is_empty():
 			return st4
+		# Entre deux missions, on pointe le donneur de la suivante (comme en
+		# acte 3) : « retrouve ton parrain » sans flèche laissait le joueur en
+		# plan après C7 (playtest 2026-11-18).
+		var vc4: Dictionary = _voie_continue()
+		if not vc4.is_empty():
+			return vc4
+		var side4: Dictionary = _active_step(false, true)
+		if not side4.is_empty():
+			return side4
 		return _S("🎯 Os Grandes Lances — retrouve ton parrain : le gros coup, puis le couronnement")
 
 	# --- Acte 5 : reinado — les quêtes de règne d'abord, le desfile en climax ---
@@ -425,7 +440,12 @@ func _compute_selection() -> Dictionary:
 	return {}
 
 # Première étape non close d'une quête active (MAIN prioritaire) présente dans STEP.
-func _active_step() -> Dictionary:
+# `main_only` : n'accepte que la trame. À partir de l'acte 2, une activité
+# libre en cours ne doit pas confisquer le bandeau à la trame (playtest
+# 2026-11-18 : « prévenir Ronaldo » affiché 287 min pendant que l'acte 2
+# attendait ses patrons) ; elle ne reprend la main que s'il ne reste que de
+# l'argent à réunir.
+func _active_step(main_only: bool = false, side_only: bool = false) -> Dictionary:
 	var ids: Array[String] = QuestManager.get_active_ids()
 	var mains: Array[String] = []
 	var sides: Array[String] = []
@@ -436,6 +456,10 @@ func _active_step() -> Dictionary:
 		else:
 			sides.append(id)
 	var ordered: Array[String] = mains + sides
+	if main_only:
+		ordered = mains
+	elif side_only:
+		ordered = sides
 	for qid in ordered:
 		var state: Dictionary = QuestManager.get_objectives_state(qid)
 		for obj_id in state:
@@ -443,8 +467,62 @@ func _active_step() -> Dictionary:
 				continue  # objectif déjà clos
 			var key: String = "%s/%s" % [qid, obj_id]
 			if STEP.has(key):
-				return STEP[key]
+				return _with_auto_anchor(STEP[key], qid, obj_id)
 	return {}
+
+# Une étape sans ancre pointe le spot qui PORTE
+# son objectif : le ReactiveDialogueSpot dont une variante agissante attend
+# cet objectif. Sans ça, 67 étapes n'affichaient qu'un nom de quartier, sans
+# flèche — dont des missions chronométrées (playtest 2026-11-18, A3 ratée 66
+# fois faute de savoir où est « le garage sous le Bondinho »).
+# (Les ancres génériques de Copa — calcadao, atlantica, palace — restent
+# telles quelles : elles désignent un endroit voulu, souvent un PNJ mobile.)
+const _GENERIC_ANCHORS: Array = [""]
+var _spot_list: Array = []   # ReactiveDialogueSpot du monde (les districts sont instanciés une fois)
+
+func _with_auto_anchor(step: Dictionary, qid: String, obj_id: String) -> Dictionary:
+	if not _GENERIC_ANCHORS.has(String(step.get("anchor", ""))):
+		return step
+	var anchor: String = _spot_anchor_for(qid, obj_id)
+	if anchor == "":
+		return step
+	var out: Dictionary = step.duplicate()
+	out["anchor"] = anchor
+	return out
+
+# Le spot dont la variante ACTUELLEMENT servie attend cet objectif (l'état des
+# flags compte : la procession D4 part d'un spot et se clôt à un autre). On
+# préfère une variante qui agit ; à défaut, l'unique spot qui en parle.
+func _spot_anchor_for(qid: String, obj_id: String) -> String:
+	var root: Node = get_tree().current_scene
+	if root == null:
+		return ""
+	if _spot_list.is_empty() or not is_instance_valid(_spot_list[0]):
+		_spot_list.clear()
+		for n in root.find_children("*", "Node2D", true, false):
+			if n is ReactiveDialogueSpot:
+				_spot_list.append(n)
+	var acting: Array = []
+	var talking: Array = []
+	for n in _spot_list:
+		if not is_instance_valid(n):
+			continue
+		var v: Dictionary = n._pick_variant()
+		var pending: Variant = v.get("objective_pending")
+		if not (pending is Array) or pending.size() < 2 \
+				or String(pending[0]) != qid or String(pending[1]) != obj_id:
+			continue
+		var npc_id: String = String(n.get("npc_id"))
+		if v.has("actions") or v.has("choice_actions") or v.has("set_flag_after"):
+			if not acting.has(npc_id):
+				acting.append(npc_id)
+		elif not talking.has(npc_id):
+			talking.append(npc_id)
+	if acting.size() == 1:
+		return "spot:" + String(acting[0])
+	if acting.is_empty() and talking.size() == 1:
+		return "spot:" + String(talking[0])
+	return ""
 
 # --- Résolution spatiale ---
 
@@ -628,8 +706,11 @@ func _next_voie_quest_target(prefix: String, voie_label: String) -> Dictionary:
 	var ids: Array = []
 	for id in QuestManager._quests.keys():
 		var q: Quest = QuestManager.get_quest(id)
+		# Une mission de voie ÉCHOUÉE (chrono dépassé) se relance chez son
+		# donneur : sans ça le guide renvoyait au patron, qui n'a rien à dire
+		# (playtest 2026-11-18, A3 ratée → 10 min à tourner autour de Tito).
 		if q != null and q.quest_type == Quest.QuestType.MAIN and String(id).begins_with(prefix) \
-				and QuestManager.is_available(id):
+				and (QuestManager.is_available(id) or QuestManager.is_failed(id)):
 			ids.append(id)
 	if ids.is_empty():
 		return {}
