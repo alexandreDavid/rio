@@ -77,6 +77,24 @@ spot porteur. Suite complète : 4 656 assertions, 0 échec, audit OK.
   le PM repart entamé (`mercy_after`, `CobradorChase.mercy_config`). Même
   ainsi le bot ne la sème qu'au 7ᵉ essai : **à jouer à la main, au tactile**,
   pour juger si le réglage de base est juste.
+- **Voies Consórcio et Prefeito bouclées le 2026-11-19** (bureau accéléré,
+  deux runs chacune) : aucune ne bloquait, mais le bandeau égarait le joueur
+  cinq fois. (1) L'ancre « palace » pointait la porte du Palace alors que les
+  témoins de C6/D7 sont sur le trottoir (13 min perdues) — les ancres fixes de
+  Copa cèdent désormais au spot qui attend l'objectif. (2) « Prévenir
+  Ronaldo » visait l'av. Atlântica, à 950 px de lui : jamais trouvé en 3 h 30,
+  sur les deux voies — ancre `npc:musicien`. (3) En acte 5, cette quête annexe
+  masquait l'offre du règne (58 min sans R1) — la trame prime, et le bandeau
+  pointe le recruteur de la voie sur le sable (`REINADO_SPOTS`). (4) D9
+  « remporter l'élection » visait l'avenue au lieu du Padre. (5) Règne mené,
+  le bandeau envoyait au Sambódromo alors que le défilé ne compte qu'une fois
+  la quête prise chez Seu João (trois défilés joués pour rien) — il renvoie
+  d'abord à la maison, puis à la scène. Après corrections : Consórcio
+  couronnée à 56 min avec ses deux quêtes de règne ; Prefeito jusqu'au défilé
+  (59 min), Cendres et feijoada. **À regarder** : la durée d'une partie varie
+  de 56 à 158 min selon ce que l'acte 2 rapporte (une annexe généreuse comme
+  « Cristo en couverture » franchit le seuil de 2 000 R$ d'un coup) ; et la
+  borne du Sambódromo laisse toujours jouer le défilé sans la quête.
 - **Écran large (20:9)** : dans la maison, l'intérieur voisin est visible au
   bord gauche ; dans la favela, le bord du quartier (bande d'herbe, vide brun).
 - **Petits textes sur téléphone** : consignes et bulles de plusieurs mini-jeux

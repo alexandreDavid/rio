@@ -1847,4 +1847,43 @@ func _test_playtest_mobile_fixes() -> void:
 			if String((act as Dictionary).get("next", "")) == "consortium_pay":
 				pays = true
 		_assert(pays, "%s : un choix mène au versement de la dette" % remind)
+	# 5. Run Consórcio du 2026-11-19 : le bandeau suivait la porte du Palace
+	# (les témoins de C6 sont sur le trottoir), cherchait Ronaldo à 950 px de
+	# lui, et masquait l'offre du règne derrière une quête annexe de l'acte 1.
+	_assert(nd._GENERIC_ANCHORS.has("palace"), "l'ancre « palace » cède au spot qui attend l'objectif")
+	_assert(String(nd.STEP.get("ze_invitation/tell_ronaldo", {}).get("anchor", "")) == "npc:musicien",
+			"« prévenir Ronaldo » pointe Ronaldo lui-même, pas l'av. Atlântica")
+	_assert(String(nd.STEP.get("prefeito_d9_eleicao/win_election", {}).get("anchor", "")) == "npc:padre",
+			"D9 : l'élection se joue auprès du Padre, pas sur l'av. Atlântica")
+	var copa_txt: String = FileAccess.get_file_as_string("res://scenes/world/Copacabana.tscn")
+	for rid in nd.REINADO_SPOTS:
+		var spot_at: int = copa_txt.find("npc_id = \"%s\"" % nd.REINADO_SPOTS[rid])
+		var offer_at: int = copa_txt.find("\"accept_quest\": \"%s\"" % rid)
+		var next_spot: int = copa_txt.find("\n[node ", spot_at) if spot_at != -1 else -1
+		_assert(spot_at != -1 and offer_at > spot_at and (next_spot == -1 or offer_at < next_spot),
+				"%s est bien offerte par le spot %s" % [rid, nd.REINADO_SPOTS[rid]])
+	_reset_campaign_state()
+	CampaignManager.current_act = 5
+	CampaignManager.set_flag("act1_started")
+	CampaignManager.set_flag("voie_consortium")
+	QuestManager._state["consortium_c9_pacto"] = QuestManager.State.COMPLETED  # fixture : chaîne C1–C8 non rejouée
+	QuestManager.accept("ze_invitation")
+	var r5: Dictionary = nd._compute_selection()
+	if QuestManager.is_available("reinado_c_vitrine"):
+		_assert(String(r5.get("anchor", "")) == "spot:reinado_consortium",
+				"acte 5 : le règne prime sur une quête annexe en cours (%s)" % r5.get("text", ""))
+	else:
+		_assert(false, "fixture : reinado_c_vitrine disponible après C9")
+	_complete_quest_all_objectives("reinado_c_vitrine")
+	_complete_quest_all_objectives("reinado_c_camarote")
+	r5 = nd._compute_selection()
+	_assert(String(r5.get("anchor", "")) == "npc:seu_joao",
+			"règne mené : le bandeau renvoie chez Seu João prendre le défilé (%s)" % r5.get("text", ""))
+	QuestManager.accept("act4_carnaval_desfile")
+	r5 = nd._compute_selection()
+	_assert(String(r5.get("dist", "")) == "sambodromo" and String(r5.get("anchor", "")) == "node:SambaStage",
+			"défilé accepté : le bandeau pointe la scène du Sambódromo (%s)" % r5.get("text", ""))
+	_assert(FileAccess.get_file_as_string("res://scenes/districts/Sambodromo.tscn").find("[node name=\"SambaStage\"") != -1,
+			"la scène du défilé s'appelle bien SambaStage")
+	_reset_campaign_state()
 

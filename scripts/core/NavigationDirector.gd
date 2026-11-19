@@ -144,7 +144,7 @@ const STEP: Dictionary = {
 	"prefeito_d8_campagne/buscar_padre": {"text": "🎯 → Copa (parvis de l'église) : convaincre le Padre de descendre en campagne", "dist": "copacabana", "anchor": "", "short": "L'église"},
 	"prefeito_d8_campagne/cortejo_calcadao": {"text": "🎯 → Copa (calçadão) : traverser en cortège avec le Padre jusqu'à la tribune", "dist": "copacabana", "anchor": "calcadao", "short": "Calçadão"},
 	"prefeito_d8_campagne/flip_calcadao": {"text": "🎯 → Copa (calçadão) : retourner les commerçants", "dist": "copacabana", "anchor": "calcadao", "short": "Calçadão"},
-	"prefeito_d9_eleicao/win_election": {"text": "🎯 → Copa : remporter l'élection", "dist": "copacabana", "anchor": "atlantica", "short": "Copa"},
+	"prefeito_d9_eleicao/win_election": {"text": "🎯 → Copa (église) : remporter l'élection aux côtés du Padre", "dist": "copacabana", "anchor": "npc:padre", "short": "L'église"},
 	# --- SIDE inter-districts ---
 	"feijoada_bondinho/deliver_summit": {"text": "🎯 → Pão de Açúcar : livrer la feijoada (bondinho de Botafogo)", "dist": "pao_acucar", "anchor": "", "short": "Pão de Açúcar"},
 	"ipanema_yoga/fetch_mat": {"text": "🎯 → Zona Sul (Ipanema/Leblon) : récup' du tapis chez le resto", "dist": "zona_sul", "anchor": "", "short": "Zona Sul"},
@@ -160,7 +160,7 @@ const STEP: Dictionary = {
 	"beto_lost/tell_vizinha": {"text": "🎯 → Favela : rapporter à Seu Jorge", "dist": "favela_morro", "anchor": "", "short": "Favela"},
 	"sofia_bondinho_tour/guide_to_summit": {"text": "🎯 → Pão de Açúcar : guide Sofia au sommet (bondinho)", "dist": "pao_acucar", "anchor": "", "short": "Pão de Açúcar"},
 	"ronaldo_dj_paoacucar/play_set": {"text": "🎯 → Pão de Açúcar : jouer le set DJ", "dist": "pao_acucar", "anchor": "", "short": "Pão de Açúcar"},
-	"ze_invitation/tell_ronaldo": {"text": "🎯 → Copacabana (av. Atlântica) : prévenir Ronaldo", "dist": "copacabana", "anchor": "atlantica", "short": "Av. Atlântica"},
+	"ze_invitation/tell_ronaldo": {"text": "🎯 → Copa (calçadão, à deux pas du quiosque do Zé) : prévenir Ronaldo", "dist": "copacabana", "anchor": "npc:musicien", "short": "Ronaldo"},
 	"consortium_airport_pickup/meet_at_airport": {"text": "🎯 → Santos Dumont : récupérer Don Salvatore", "dist": "santos_dumont", "anchor": "", "short": "Santos Dumont"},
 	"consortium_airport_pickup/deliver_to_consortium": {"text": "🎯 → Copacabana : ramener à Dom Nilton", "dist": "copacabana", "anchor": "consortium", "short": "Consortium"},
 	"escort_contessa/escort_to_bar": {"text": "🎯 → Copacabana : escorter la Contessa jusqu'au bar", "dist": "copacabana", "anchor": "atlantica", "short": "Bar"},
@@ -416,9 +416,26 @@ func _compute_selection() -> Dictionary:
 
 	# --- Acte 5 : reinado — les quêtes de règne d'abord, le desfile en climax ---
 	if act == 5:
-		var st5: Dictionary = _active_step()
+		# La trame d'abord : une activité libre qui traîne depuis l'acte 1 ne
+		# doit pas masquer l'offre du règne (playtest 2026-11-19 : « prévenir
+		# Ronaldo » affiché 58 min après le couronnement, R1 jamais proposé).
+		var st5: Dictionary = _active_step(true)
 		if not st5.is_empty():
 			return st5
+		if not CampaignManager.has_flag("pos_carnaval"):
+			for rid in REINADO_SPOTS:
+				if QuestManager.is_available(rid):
+					return _S("🎯 Ton règne t'attend — les tiens te cherchent sur le sable de Copa", "copacabana", "spot:" + String(REINADO_SPOTS[rid]), "Copacabana")
+			# Le défilé ne compte qu'une fois la quête prise chez Seu João : le
+			# bandeau envoyait droit à la Sapucaí, où l'on menait le bloc pour
+			# rien (playtest 2026-11-19 : trois défilés joués, aucun validé).
+			if QuestManager.is_active(CarnavalCalendar.DESFILE_QUEST):
+				return _S("🎯 → Sambódromo : mène le défilé — c'est ton couronnement", "sambodromo", "node:SambaStage", "Sapucaí")
+			if QuestManager.is_available(CarnavalCalendar.DESFILE_QUEST):
+				return _S("🎯 Rentre au morro : Seu João a un mot pour toi avant le défilé", "favela_morro", "npc:seu_joao", "Seu João (maison)")
+		var side5: Dictionary = _active_step(false, true)
+		if not side5.is_empty():
+			return side5
 		# Depois do Carnaval : plus de cap narratif, juste le rythme du bairro.
 		if CampaignManager.has_flag("pos_carnaval"):
 			if CarnavalCalendar.is_cinzas():
@@ -426,11 +443,6 @@ func _compute_selection() -> Dictionary:
 			if CarnavalCalendar.is_sabado() and int(CampaignManager.flags.get("feijoada_day", 0)) != TimeOfDay.day_count:
 				return _S("🎯 Sábado — feijoada à la maison, avec les tiens", "favela_morro", "", "Feijoada (maison)")
 			return _S("✦ Copa est à toi — rodas, altinha, et la feijoada du samedi")
-		for rid in ["reinado_a_pedagio", "reinado_a_carga", "reinado_b_ronda",
-				"reinado_b_camarote", "reinado_c_vitrine", "reinado_c_camarote",
-				"reinado_d_bloco", "reinado_d_alas"]:
-			if QuestManager.is_available(rid):
-				return _S("🎯 Ton règne t'attend — les tiens te cherchent sur le calçadão de Copa", "copacabana", "calcadao", "Copacabana")
 		return _S("🎯 Mène ton règne — défilé du Carnaval au Sambódromo", "sambodromo", "", "Sambódromo")
 
 	# Fallback : prochaine étape d'une quête active connue.
@@ -475,9 +487,12 @@ func _active_step(main_only: bool = false, side_only: bool = false) -> Dictionar
 # cet objectif. Sans ça, 67 étapes n'affichaient qu'un nom de quartier, sans
 # flèche — dont des missions chronométrées (playtest 2026-11-18, A3 ratée 66
 # fois faute de savoir où est « le garage sous le Bondinho »).
-# (Les ancres génériques de Copa — calcadao, atlantica, palace — restent
-# telles quelles : elles désignent un endroit voulu, souvent un PNJ mobile.)
-const _GENERIC_ANCHORS: Array = [""]
+# Les ancres fixes de Copa (calcadao, atlantica, palace) cèdent aussi au spot
+# quand il y en a un seul : « palace » pointait la PORTE alors que les témoins
+# des pivots tio Zé sont postés sur le trottoir — on entrait dans le hall pour
+# rien (C6 : 13 min perdues, D7 idem, playtest du 2026-11-19). Elles restent
+# le repli quand aucun spot n'attend l'objectif (PNJ mobile, lieu voulu).
+const _GENERIC_ANCHORS: Array = ["", "palace", "calcadao", "atlantica"]
 var _spot_list: Array = []   # ReactiveDialogueSpot du monde (les districts sont instanciés une fois)
 
 func _with_auto_anchor(step: Dictionary, qid: String, obj_id: String) -> Dictionary:
@@ -580,6 +595,15 @@ func _patron_target(pacto: bool) -> Dictionary:
 		chosen = pool[0]
 	var verb: String = "sceller un pacte avec" if pacto else "voir"
 	return _S("🎯 Va %s %s" % [verb, chosen.short], chosen.dist, chosen.anchor, chosen.short)
+
+# Quête de règne → spot qui l'offre (les quatre recruteurs attendent sur le
+# sable de Copa, y = 268 — pas sur le calçadão comme le disait le bandeau).
+const REINADO_SPOTS: Dictionary = {
+	"reinado_a_pedagio": "reinado_trafico", "reinado_a_carga": "reinado_trafico",
+	"reinado_b_ronda": "reinado_policia", "reinado_b_camarote": "reinado_policia",
+	"reinado_c_vitrine": "reinado_consortium", "reinado_c_camarote": "reinado_consortium",
+	"reinado_d_bloco": "reinado_prefeito", "reinado_d_alas": "reinado_prefeito",
+}
 
 # Cache des ancres `spot:`/`node:` (les districts sont instanciés une fois).
 var _anchor_cache: Dictionary = {}
