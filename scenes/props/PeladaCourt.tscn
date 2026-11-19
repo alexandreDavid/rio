@@ -1,0 +1,20 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/minigames/pelada/PeladaLauncher.gd" id="1_launcher"]
+[ext_resource type="Script" path="res://scripts/world/Interactable.gd" id="2_inter"]
+[ext_resource type="PackedScene" path="res://scenes/minigames/Pelada.tscn" id="3_match"]
+
+[sub_resource type="RectangleShape2D" id="InteractShape"]
+size = Vector2(90, 70)
+
+[node name="PeladaCourt" type="Node2D"]
+script = ExtResource("1_launcher")
+interactable = NodePath("Interactable")
+match_scene = ExtResource("3_match")
+
+[node name="Interactable" type="Area2D" parent="."]
+script = ExtResource("2_inter")
+prompt = "Jouer la pelada"
+
+[node name="InteractShape" type="CollisionShape2D" parent="Interactable"]
+shape = SubResource("InteractShape")

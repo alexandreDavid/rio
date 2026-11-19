@@ -1,0 +1,105 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/minigames/pelada/PeladaGame.gd" id="1_game"]
+[ext_resource type="PackedScene" path="res://scenes/ui/MinigameTouchControls.tscn" id="2_touch"]
+
+[node name="PeladaGame" type="Node2D"]
+script = ExtResource("1_game")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(1100, 360)
+
+[node name="UI" type="CanvasLayer" parent="."]
+layer = 20
+
+[node name="Score" type="Label" parent="UI"]
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -520.0
+offset_top = 20.0
+offset_right = 520.0
+offset_bottom = 76.0
+text = "FLAMENGO  0 × 0  COLETES"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 44
+theme_override_colors/font_color = Color(1, 0.97, 0.88, 1)
+theme_override_colors/font_outline_color = Color(0.13, 0.1, 0.12, 1)
+theme_override_constants/outline_size = 10
+
+[node name="Clock" type="Label" parent="UI"]
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -200.0
+offset_top = 76.0
+offset_right = 200.0
+offset_bottom = 120.0
+text = "2:30"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 33
+theme_override_colors/font_color = Color(1, 0.88, 0.35, 1)
+theme_override_colors/font_outline_color = Color(0.13, 0.1, 0.12, 1)
+theme_override_constants/outline_size = 9
+
+[node name="Banner" type="Label" parent="UI"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -700.0
+offset_top = -150.0
+offset_right = 700.0
+offset_bottom = -60.0
+text = "BOLA ROLANDO"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 66
+theme_override_colors/font_color = Color(1, 0.86, 0.3, 1)
+theme_override_colors/font_outline_color = Color(0.13, 0.1, 0.12, 1)
+theme_override_constants/outline_size = 14
+
+[node name="Help" type="Label" parent="UI"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -560.0
+offset_top = -120.0
+offset_right = 560.0
+offset_bottom = -40.0
+text = "Joystick pour courir · PASSE · tiens CHUTE pour charger, vise avec le joystick"
+horizontal_alignment = 1
+autowrap_mode = 3
+theme_override_font_sizes/font_size = 28
+theme_override_colors/font_color = Color(1, 0.97, 0.88, 1)
+theme_override_colors/font_outline_color = Color(0.13, 0.1, 0.12, 1)
+theme_override_constants/outline_size = 8
+
+[node name="BtnA" type="Button" parent="UI"]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -500.0
+offset_top = -250.0
+offset_right = -290.0
+offset_bottom = -110.0
+focus_mode = 0
+theme_type_variation = &"TouchButton"
+theme_override_font_sizes/font_size = 33
+text = "PASSE"
+
+[node name="BtnB" type="Button" parent="UI"]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -270.0
+offset_top = -330.0
+offset_right = -40.0
+offset_bottom = -110.0
+focus_mode = 0
+theme_type_variation = &"TouchButton"
+theme_override_font_sizes/font_size = 33
+text = "CHUTE"
+
+[node name="MinigameTouchControls" parent="." instance=ExtResource("2_touch")]
+show_interact = false
