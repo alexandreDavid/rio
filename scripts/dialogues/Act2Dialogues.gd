@@ -21,7 +21,8 @@ const KNOTS: Dictionary = {
 	"consortium_barra_remind": {
 		"speaker": "Dom Nilton (consortium)",
 		"text": "Le condomínio Riserva Uno, à la Barra. Sr. Magalhães. *fait un signe vers l'ouest* T'as quelque chose à lui expliquer.",
-		"choices": ["J'y vais"],
+		"choices": ["J'y vais", "J'ai de l'argent pour la dette"],
+		"on_choose": {"1": {"next": "consortium_pay"}},
 	},
 	"consortium_barra_after_intimidate": {
 		"speaker": "Dom Nilton (consortium)",
@@ -151,7 +152,8 @@ const KNOTS: Dictionary = {
 	"consortium_le_parc_remind": {
 		"speaker": "Dom Nilton (consortium)",
 		"text": "Le Parc Residences, sobrinho. Carrasco. *fait un signe vers la Barra* Il sait que tu arrives. Plus tu attends, plus il prépare une parade.",
-		"choices": ["J'y vais"],
+		"choices": ["J'y vais", "J'ai de l'argent pour la dette"],
+		"on_choose": {"1": {"next": "consortium_pay"}},
 	},
 	"consortium_le_parc_after_intimidate": {
 		"speaker": "Dom Nilton (consortium)",
@@ -205,7 +207,8 @@ const KNOTS: Dictionary = {
 	"consortium_peninsula_remind": {
 		"speaker": "Dom Nilton (consortium)",
 		"text": "Mendonça. Península Privé. *fait un signe vers l'ouest* Cousin commissaire en avance. Vas-y avant qu'il ait posé toutes ses caméras.",
-		"choices": ["J'y vais"],
+		"choices": ["J'y vais", "J'ai de l'argent pour la dette"],
+		"on_choose": {"1": {"next": "consortium_pay"}},
 	},
 	"consortium_peninsula_after_intimidate": {
 		"speaker": "Dom Nilton (consortium)",

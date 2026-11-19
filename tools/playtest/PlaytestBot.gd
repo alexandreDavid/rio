@@ -60,6 +60,7 @@ var _counters: Dictionary = {}
 var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
 var _last_interact_id: int = 0
 var _mg_retries: Dictionary = {}
+var _mg_started_id: String = ""         # dernier id annoncé par EventBus.minigame_started
 var _choice_cursor: Dictionary = {}   # knot -> prochain index à essayer
 var _choice_tries: Dictionary = {}    # knot -> relances déjà accordées
 var _choice_knot: String = ""
@@ -218,7 +219,9 @@ func _connect_signals() -> void:
 	EventBus.chrono_cleared.connect(_on_chrono_cleared)
 	EventBus.chase_started.connect(func(c: String) -> void: _ev("chase_started", {"chaser": c}))
 	EventBus.chase_ended.connect(_on_chase_ended)
-	EventBus.minigame_started.connect(func(id: String) -> void: _ev("minigame_started", {"id": id}))
+	EventBus.minigame_started.connect(func(id: String) -> void:
+		_mg_started_id = id
+		_ev("minigame_started", {"id": id}))
 	EventBus.minigame_ended.connect(_on_minigame_ended)
 	EventBus.time_of_day_changed.connect(func(p: int) -> void: _ev("phase", {"phase": p}))
 	EventBus.day_elapsed.connect(func(d: int) -> void: _ev("day", {"day": d}))
@@ -565,8 +568,13 @@ func _simulate_minigame(mg: Node) -> void:
 				_:
 					args.append(null)
 	# Le jeu réel émet lui-même minigame_ended ; on le fait à sa place.
+	# Sans propriété `minigame_id` (SupGame, SurfGame… l'id est un littéral dans
+	# le jeu), on reprend celui annoncé par minigame_started : sinon un objectif
+	# MINIJEU (A6, traversée des Cagarras) ne se complète jamais pour le bot.
 	if "minigame_id" in mg:
 		EventBus.minigame_ended.emit(id, {"qualifies": ok, "won": ok})
+	elif _mg_started_id != "":
+		EventBus.minigame_ended.emit(_mg_started_id, {"qualifies": ok, "won": ok})
 	mg.callv("emit_signal", ["match_ended"] + args)
 	await _frame()
 	await _frame()

@@ -19,7 +19,8 @@ const KNOTS: Dictionary = {
 	"consortium_airport_remind": {
 		"speaker": "Dom Nilton (consortium)",
 		"text": "Don Salvatore t'attend à Santos Dumont. Ramène-le ici en un seul morceau. Le taxi connaît le chemin.",
-		"choices": ["J'y vais"],
+		"choices": ["J'y vais", "J'ai de l'argent pour la dette"],
+		"on_choose": {"1": {"next": "consortium_pay"}},
 	},
 	"consortium_airport_done": {
 		"speaker": "Dom Nilton (consortium)",

@@ -64,10 +64,20 @@ spot porteur. Suite complète : 4 656 assertions, 0 échec, audit OK.
 
 ## Constats non corrigés
 
-- **Voie Tráfico non validée de bout en bout.** Avant les correctifs le bot
-  butait sur A2 puis A3 ; après, il se retrouve enfermé à l'extrémité ouest de
-  Copa (x ≈ -400, y 0..125, couture de l'Arpoador) où sa grille ne trouve plus
-  de chemin. À vérifier à la main : limite du bot ou vraie poche de collision.
+- **Voie Tráfico validée jusqu'à A7, pas A8** (suite du 2026-11-19, quatre
+  runs bureau). La « poche » de l'ouest de Copa était réelle : le mur ouest
+  coupait le sentier de l'Arpoador (corrigé, audit des coutures ajouté). Deux
+  autres causes trouvées ensuite : Dom Nilton ne laissait plus verser la dette
+  dès qu'une de ses quêtes annexes était active (14 800 R$ en poche, acte 2
+  sans issue — corrigé : ses quatre rappels proposent le versement) ; et le
+  bot ne complétait pas l'objectif MINIJEU d'A6 (limite du bot, corrigée).
+  Résultat : acte 3 à 19 min, acte 4 à 51 min, A1–A7 bouclées. **Reste A8** :
+  la poursuite `pm_baia` de Niterói (la plus dure du jeu : 132 px/s, fatigue à
+  26 s, abandon à 45 s) est perdue ~130 fois de suite par le bot, qui fuit en
+  ligne droite et se fait prendre en 6 à 17 s. En ligne droite elle demande
+  ~3 400 px de champ avant la fatigue du PM ; le quai en offre 1 900 à l'ouest
+  du spot. Elle n'est gagnable qu'en mettant un obstacle entre soi et le PM :
+  à jouer à la main, au tactile, avant de conclure.
 - **Écran large (20:9)** : dans la maison, l'intérieur voisin est visible au
   bord gauche ; dans la favela, le bord du quartier (bande d'herbe, vide brun).
 - **Petits textes sur téléphone** : consignes et bulles de plusieurs mini-jeux

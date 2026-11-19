@@ -1824,4 +1824,14 @@ func _test_playtest_mobile_fixes() -> void:
 			if obj.id == parts[1] and obj.kind == QuestObjective.Kind.CHRONO and not pending_spots.has(key):
 				chrono_missing.append(key)
 	_assert(chrono_missing.is_empty(), "toute étape chronométrée sans ancre a un spot porteur (manquants : %s)" % str(chrono_missing))
+	# 4. Dom Nilton encaisse même quand une de ses quêtes annexes est active
+	# (run Tráfico du 2026-11-19 : 14 800 R$ en poche, bandeau « va verser »,
+	# et il ne répondait que « Don Salvatore t'attend » — acte 2 sans issue).
+	for remind in ["consortium_airport_remind", "consortium_barra_remind", "consortium_le_parc_remind", "consortium_peninsula_remind"]:
+		var k: Dictionary = DialogueBridge.all_dialogues().get(remind, {})
+		var pays: bool = false
+		for act in (k.get("on_choose", {}) as Dictionary).values():
+			if String((act as Dictionary).get("next", "")) == "consortium_pay":
+				pays = true
+		_assert(pays, "%s : un choix mène au versement de la dette" % remind)
 
