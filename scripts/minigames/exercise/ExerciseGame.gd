@@ -26,6 +26,7 @@ const GAS_PERFEITO: float = 4.0
 const GAS_BOA: float = 7.0
 const GAS_FALHA: float = 12.0
 const BAR_FALL: float = 220.0          # relâché : la charge redescend vite
+const ART_SCRIPT: Script = preload("res://scripts/minigames/exercise/ExerciseArt.gd")
 
 @onready var bar: ProgressBar = $UI/Bar
 @onready var rep_label: Label = $UI/RepLabel
@@ -42,11 +43,11 @@ var _gas: float = GAS_MAX
 var _value: float = 0.0
 var _holding: bool = false
 var _zone_center: float = 0.0
-var _zone_overlay: ColorRect = null
 var _barbell_base_y: float = 0.0
 var _ended: bool = false
 var _resting: bool = false
 var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
+var _art: Node2D = null
 
 func _ready() -> void:
 	EventBus.minigame_started.emit("exercise")
@@ -65,22 +66,12 @@ func _ready() -> void:
 	_next_rep()
 	_set_status("La forme avant la force : TIENS pour soulever, LÂCHE dans la zone verte.")
 
-# Zone de forme dessinée par-dessus la ProgressBar (position en % de barre).
+# La jauge (verticale) est peinte par ExerciseArt à partir de l'état du jeu.
 func _build_zone_overlay() -> void:
-	_zone_overlay = ColorRect.new()
-	_zone_overlay.name = "FormZone"
-	_zone_overlay.color = Color(0.3, 0.85, 0.4, 0.55)
-	_zone_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	bar.add_child(_zone_overlay)
+	pass
 
 func _layout_zone() -> void:
-	var zone_w: float = float(SETS[_set_index].zone_w)
-	var left_pct: float = (_zone_center - zone_w * 0.5) / 100.0
-	var right_pct: float = (_zone_center + zone_w * 0.5) / 100.0
-	_zone_overlay.offset_left = bar.size.x * left_pct
-	_zone_overlay.offset_right = bar.size.x * right_pct
-	_zone_overlay.offset_top = 0.0
-	_zone_overlay.offset_bottom = bar.size.y
+	_push_art(0.0)
 
 func _next_rep() -> void:
 	_value = 0.0
@@ -100,6 +91,7 @@ func _refresh_labels() -> void:
 
 func _process(delta: float) -> void:
 	if _ended or _resting:
+		_push_art(delta)
 		return
 	if Input.is_action_just_pressed("interact"):
 		_on_press()
@@ -115,61 +107,40 @@ func _process(delta: float) -> void:
 		_value = maxf(0.0, _value - BAR_FALL * delta)
 	if bar:
 		bar.value = _value
-	if barbell:
-		barbell.position.y = _barbell_base_y - _value * 1.2
-		# Les anilhas suivent la barre.
-		for side in ["BarbellLeft", "BarbellRight"]:
-			var plate: Control = get_node_or_null(side) as Control
-			if plate:
-				plate.position.y = barbell.position.y - 20.0
-		if _athlete:
-			# L'athlète « pousse » : léger écrasement quand la barre est haute.
-			var k: float = 1.0 - 0.04 * (_value / 100.0)
-			_athlete.scale.y = _athlete_scale * k
+	_push_art(delta)
 
-var _athlete: Sprite2D = null
-var _athlete_scale: float = 1.0
-
-# Academia de bairro : parquet, miroir, espaldar — et le joueur en pixel-art
-# sous la barre (remplace le rectangle beige).
+# Academia de bairro peinte par ExerciseArt ; les rects de la scène
+# (corps, barre, anilhas) ne servent plus qu'à l'ancienne mise en page.
 func _dress_gym() -> void:
-	var body: CanvasItem = get_node_or_null("BodyPlaceholder") as CanvasItem
-	if body:
-		body.visible = false
+	for n: String in ["BodyPlaceholder", "Barbell", "BarbellLeft", "BarbellRight"]:
+		var ci: CanvasItem = get_node_or_null(n) as CanvasItem
+		if ci:
+			ci.visible = false
 	var bg: CanvasItem = get_node_or_null("Background") as CanvasItem
 	if bg:
 		bg.z_index = -10
-	_add_rect(Rect2(-960, 120, 1920, 420), Color(0.42, 0.27, 0.16, 1), -5)
-	for i in 12:
-		_add_rect(Rect2(-960 + i * 160, 120, 2, 420), Color(0.33, 0.2, 0.12, 1), -4)
-	_add_rect(Rect2(-520, -420, 1040, 300), Color(0.55, 0.66, 0.72, 0.35), -5)
-	_add_rect(Rect2(-520, -424, 1040, 6), Color(0.85, 0.85, 0.82, 0.6), -4)
-	for i in 8:
-		_add_rect(Rect2(620, -380 + i * 60, 220, 6), Color(0.6, 0.45, 0.3, 1), -4)
-	_add_rect(Rect2(-850, -300, 180, 70), Color(0.95, 0.85, 0.2, 1), -4)
-	var sign: Label = Label.new()
-	sign.text = "ACADEMIA"
-	sign.position = Vector2(-850, -292)
-	sign.size = Vector2(180, 54)
-	sign.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	sign.add_theme_font_size_override("font_size", 33)
-	sign.add_theme_color_override("font_color", Color(0.1, 0.25, 0.15, 1))
-	sign.z_index = -3
-	add_child(sign)
-	_athlete = char_sprite(330.0)
-	_athlete.position = Vector2(0, 150)
-	_athlete.z_index = -1
-	_athlete_scale = _athlete.scale.y
-	add_child(_athlete)
+	_art = ART_SCRIPT.new()
+	add_child(_art)
+	move_child(_art, 1)
+	_art.call("build", self)
 
-func _add_rect(r: Rect2, color: Color, z: int) -> void:
-	var c: ColorRect = ColorRect.new()
-	c.position = r.position
-	c.size = r.size
-	c.color = color
-	c.z_index = z
-	c.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(c)
+# L'état exact du jeu, transmis au rendu (la barre suit _value).
+func _push_art(delta: float) -> void:
+	if _art == null:
+		return
+	var idx: int = mini(_set_index, SETS.size() - 1)
+	var s: Dictionary = SETS[idx]
+	var zone_w: float = float(s.zone_w)
+	_art.call("tick", delta, {
+		"set": idx, "name": String(s.name), "value": _value,
+		"holding": (_holding or Input.is_action_pressed("interact")) and not _resting and not _ended,
+		"lo": _zone_center - zone_w * 0.5, "hi": _zone_center + zone_w * 0.5,
+		"resting": _resting, "gas": _gas, "rep": _rep_in_set, "ended": _ended,
+	})
+
+func _art_feedback(kind: String) -> void:
+	if _art:
+		_art.call("feedback", kind)
 
 func _on_press() -> void:
 	if _ended or _resting:
@@ -192,6 +163,7 @@ func _resolve_rep(value: float) -> void:
 		sfx("mg_miss")
 		pulse(0.6, 0.15)
 		_set_status("💢 Trop lourd — la charge t'écrase ! Contrôle, pas la force.")
+		_art_feedback("esmagado")
 	elif absf(value - _zone_center) <= zone_w * 0.5:
 		if absf(value - _zone_center) <= zone_w * 0.2:
 			_reps += 1
@@ -200,18 +172,21 @@ func _resolve_rep(value: float) -> void:
 			sfx("mg_perfect")
 			pulse(0.35, 0.06)
 			_set_status("✨ PERFEITO — forme impeccable, o professor aprova !")
+			_art_feedback("perfeito")
 		else:
 			_reps += 1
 			_score += 1
 			_gas -= GAS_BOA
 			sfx("mg_good")
 			_set_status("✔ Boa — ça compte, mas capricha na forma.")
+			_art_feedback("boa")
 		_rep_in_set += 1
 	else:
 		_gas -= GAS_FALHA
 		sfx("mg_miss")
 		pulse(0.5, 0.12)
 		_set_status("✖ Falha — lâché hors de la zone. Respira, recommence.")
+		_art_feedback("falha")
 	if _gas <= 0.0:
 		_set_status("😮‍💨 Sem gás ! La séance s'arrête là — hydrate-toi, guerreiro.")
 		_end_game()
@@ -259,6 +234,8 @@ func _end_game() -> void:
 	var qualifies: bool = final_qualifies(_score >= QUALIFY_SCORE)
 	# Le motif de fin (à sec) reste lisible : il préfixe le bilan.
 	var why: String = "Sem gás ! " if _gas <= 0.0 else ""
+	if _art:
+		_art.call("finish", qualifies)
 	if status_label:
 		if qualifies:
 			status_label.text = why + "Fin — %d reps, %d pts. Monstro ! (+1 Charisma)" % [_reps, _score]

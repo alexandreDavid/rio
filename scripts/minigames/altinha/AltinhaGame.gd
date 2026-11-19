@@ -15,6 +15,8 @@ extends MinigameBase
 
 signal match_ended(qualifies: bool, score: int)
 
+const Art := preload("res://scripts/minigames/altinha/AltinhaArt.gd")
+
 enum Phase { TO_PLAYER, TO_PARTNER, PAUSED }
 enum { QUALITY_SOFT, QUALITY_GOOD, QUALITY_PERFECT }
 
@@ -97,8 +99,6 @@ var _combo: int = 0
 var _best_combo: int = 0
 var _drops: int = 0
 
-var _move_left_held: bool = false
-var _move_right_held: bool = false
 var _hit_lock: float = 0.0
 var _no_aim_toggle: bool = false
 
@@ -115,7 +115,7 @@ var _shake_strength: float = 0.0
 var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
 
 var _player: Node2D = null
-var _player_sprite: Sprite2D = null
+var _art: Node2D = null
 var _partner_left: AltinhaPartner = null
 var _partner_right: AltinhaPartner = null
 var _ball: AltinhaBall = null
@@ -126,6 +126,7 @@ var score_label: Label = null
 var sub_label: Label = null
 var status_label: Label = null
 var result_label: Label = null
+var help_label: Label = null
 
 func _ready() -> void:
 	EventBus.minigame_started.emit("altinha")
@@ -139,28 +140,29 @@ func _ready() -> void:
 	_partner_right = get_node_or_null("PartnerRight") as AltinhaPartner
 	_ball = get_node_or_null("Ball") as AltinhaBall
 	_player = get_node_or_null("Player") as Node2D
+	_art = Art.new()
+	_art.name = "Art"
+	add_child(_art)
+	move_child(_art, 0)
+	_art.build(setting)
+	_dress_backdrops()
 	_build_player_visual()
-	if setting == "laje":
-		_dress_laje()
-	else:
-		_build_parasols()
+	if _ball:
+		_ball.contact_height = CONTACT_HEIGHT
 
 	score_label = get_node_or_null("UI/ScoreLabel") as Label
 	sub_label = get_node_or_null("UI/SubLabel") as Label
 	status_label = get_node_or_null("UI/StatusLabel") as Label
 	result_label = get_node_or_null("UI/ResultLabel") as Label
+	help_label = get_node_or_null("UI/Help") as Label
 
-	var left_btn: Button = get_node_or_null("UI/MoveLeftButton") as Button
-	if left_btn:
-		left_btn.button_down.connect(func() -> void: _move_left_held = true)
-		left_btn.button_up.connect(func() -> void: _move_left_held = false)
-	var right_btn: Button = get_node_or_null("UI/MoveRightButton") as Button
-	if right_btn:
-		right_btn.button_down.connect(func() -> void: _move_right_held = true)
-		right_btn.button_up.connect(func() -> void: _move_right_held = false)
 	var hit_btn: Button = get_node_or_null("UI/HitButton") as Button
 	if hit_btn:
 		hit_btn.pressed.connect(_try_hit)
+		# Sur le sable peint, la pastille translucide laissait voir le décor.
+		var box: StyleBoxTexture = UITheme.pastille_box(UITheme.CREAM, Color(0.08, 0.09, 0.12, 0.82))
+		hit_btn.add_theme_stylebox_override("normal", box)
+		hit_btn.add_theme_stylebox_override("hover", box)
 
 	var ui: CanvasLayer = get_node_or_null("UI") as CanvasLayer
 	if ui:
@@ -182,106 +184,32 @@ func _ready() -> void:
 func _build_player_visual() -> void:
 	if _player == null:
 		return
-	var config: Dictionary = CharacterSpriteFactory.config_from_indices(CharacterSpriteFactory.default_indices())
-	var shadow: ColorRect = ColorRect.new()
-	shadow.name = "Shadow"
-	shadow.offset_left = -12.0
-	shadow.offset_top = 2.0
-	shadow.offset_right = 12.0
-	shadow.offset_bottom = 9.0
-	shadow.color = Color(0.0, 0.0, 0.0, 0.3)
-	shadow.z_index = -1
-	shadow.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_player.add_child(shadow)
-	_player_sprite = Sprite2D.new()
-	_player_sprite.name = "CharSprite"
-	_player_sprite.texture = CharacterSpriteFactory.build_sheet(config)
-	_player_sprite.region_enabled = true
-	_player_sprite.region_rect = Rect2(0, 0, CharacterSpriteFactory.CELL_W, CharacterSpriteFactory.CELL_H)
-	_player_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	var display_h: float = 50.0
-	var s: float = display_h / float(CharacterSpriteFactory.CELL_H)
-	_player_sprite.scale = Vector2(s, s)
-	_player_sprite.position = Vector2(0.0, -display_h * 0.5)
-	_player.add_child(_player_sprite)
+	_art.make_player(_player)
 
-# 2 parasols décoratifs (polygones code-only, pas d'asset) pour l'ambiance plage.
-func _dress_laje() -> void:
-	var sky: ColorRect = get_node_or_null("Sea") as ColorRect
-	if sky:
-		sky.color = Color(0.56, 0.76, 0.9)
-	var slab: ColorRect = get_node_or_null("Sand") as ColorRect
-	if slab:
-		slab.color = Color(0.7, 0.64, 0.58)
-	var parapet: ColorRect = get_node_or_null("Horizon") as ColorRect
-	if parapet:
-		parapet.color = Color(0.78, 0.45, 0.32)
-	# Le morro d'en face : un front de maisons colorées sous le ciel.
-	var colors: Array[Color] = [Color(0.86, 0.55, 0.38), Color(0.93, 0.8, 0.45),
-		Color(0.55, 0.7, 0.62), Color(0.82, 0.42, 0.42), Color(0.62, 0.62, 0.78), Color(0.9, 0.9, 0.82)]
-	var x: float = -960.0
-	var i: int = 0
-	while x < 960.0:
-		var w: float = 70.0 + float((i * 37) % 60)
-		var h: float = 60.0 + float((i * 53) % 110)
-		var house: ColorRect = ColorRect.new()
-		house.z_index = -9
-		house.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		house.offset_left = x
-		house.offset_right = x + w - 4.0
-		house.offset_top = -64.0 - h
-		house.offset_bottom = -64.0
-		house.color = colors[i % colors.size()]
-		add_child(house)
-		var win: ColorRect = ColorRect.new()
-		win.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		win.offset_left = 14.0
-		win.offset_right = 30.0
-		win.offset_top = 16.0
-		win.offset_bottom = 34.0
-		win.color = Color(0.2, 0.22, 0.28)
-		house.add_child(win)
-		x += w
-		i += 1
-
-func _build_parasols() -> void:
-	_spawn_parasol(Vector2(-300.0, -30.0), Color(0.85, 0.32, 0.28))
-	_spawn_parasol(Vector2(300.0, -30.0), Color(0.35, 0.55, 0.85))
-
-func _spawn_parasol(pos: Vector2, color: Color) -> void:
-	var root: Node2D = Node2D.new()
-	root.position = pos
-	root.z_index = -2
-	add_child(root)
-	var pole: ColorRect = ColorRect.new()
-	pole.offset_left = -2.0
-	pole.offset_top = -40.0
-	pole.offset_right = 2.0
-	pole.offset_bottom = 30.0
-	pole.color = Color(0.55, 0.42, 0.3)
-	pole.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	root.add_child(pole)
-	var canopy: Polygon2D = Polygon2D.new()
-	canopy.polygon = PackedVector2Array([
-		Vector2(-38.0, -40.0), Vector2(38.0, -40.0), Vector2(0.0, -78.0),
-	])
-	canopy.color = color
-	root.add_child(canopy)
-	var trim: Polygon2D = Polygon2D.new()
-	trim.polygon = PackedVector2Array([
-		Vector2(-38.0, -40.0), Vector2(-24.0, -32.0), Vector2(-10.0, -40.0),
-		Vector2(4.0, -32.0), Vector2(18.0, -40.0), Vector2(32.0, -32.0), Vector2(38.0, -40.0),
-	])
-	trim.color = color.darkened(0.25)
-	root.add_child(trim)
+# Les dalles unies de la scène ne servent plus que de filet sous le décor
+# peint (bords d'écran très larges) : on les accorde à ses couleurs.
+func _dress_backdrops() -> void:
+	var laje: bool = setting == "laje"
+	var top: ColorRect = get_node_or_null("Sea") as ColorRect
+	if top:
+		top.color = Color(0.31, 0.56, 0.88)
+	var ground: ColorRect = get_node_or_null("Sand") as ColorRect
+	if ground:
+		ground.color = Color(0.70, 0.67, 0.62) if laje else Color(0.95, 0.86, 0.58)
+	var seam: ColorRect = get_node_or_null("Horizon") as ColorRect
+	if seam:
+		seam.visible = false
 
 func _process(delta: float) -> void:
 	if _ended:
 		return
 	_hit_lock = maxf(0.0, _hit_lock - delta)
+	if Input.is_action_just_pressed("interact") or Input.is_action_just_pressed("jump"):
+		_try_hit()
 	_move_player(delta)
 	_update_hot_timer(delta)
 	_shake_process(delta)
+	_update_visuals(delta)
 	if _phase == Phase.TO_PLAYER or _phase == Phase.TO_PARTNER:
 		var grounded_now: bool = _ball.advance(delta)
 		if grounded_now:
@@ -295,15 +223,35 @@ func _move_player(delta: float) -> void:
 		return
 	var axis: float = _movement_axis()
 	_player.position.x = clampf(_player.position.x + axis * PLAYER_SPEED * delta, PLAYER_MIN_X, PLAYER_MAX_X)
-	if _player_sprite and absf(axis) > 0.05:
-		_player_sprite.flip_h = axis < 0.0
 
-# Clavier (bonus dev) sinon boutons tactiles ◀ ▶ — même schéma que VolleyPlayer.
+# Joystick commun (MinigameTouchControls injecte move_left/right), clavier et
+# croix/stick de la manette passent par les mêmes actions.
 func _movement_axis() -> float:
 	var axis: float = Input.get_axis("move_left", "move_right")
-	if absf(axis) >= 0.05:
-		return axis
-	return (-1.0 if _move_left_held else 0.0) + (1.0 if _move_right_held else 0.0)
+	return axis if absf(axis) >= 0.05 else 0.0
+
+# Visuel seulement : poses, regards, couleur du cercle de réception.
+func _update_visuals(delta: float) -> void:
+	if _art:
+		_art.tick(delta)
+		_art.update_player(delta, _movement_axis(), _ball.ground_pos().x if _ball else 0.0)
+	if _ball == null:
+		return
+	var bx: float = _ball.ground_pos().x
+	var to_other: bool = _phase == Phase.TO_PARTNER
+	if _partner_left:
+		_partner_left.look_toward(bx, to_other and _aimed_partner == 2)
+	if _partner_right:
+		_partner_right.look_toward(bx, to_other and _aimed_partner == 1)
+	_ball.hint = AltinhaBall.HINT_NONE
+	if _phase == Phase.TO_PLAYER and _player:
+		var dist: float = Vector2(_player.position.x, PLAYER_Y - CONTACT_HEIGHT).distance_to(_ball.world_pos())
+		if dist <= HIT_PERFECT_DIST:
+			_ball.hint = AltinhaBall.HINT_PERFECT
+		elif dist <= HIT_GOOD_DIST:
+			_ball.hint = AltinhaBall.HINT_GOOD
+		elif dist <= HIT_SOFT_DIST:
+			_ball.hint = AltinhaBall.HINT_SOFT
 
 func _update_hot_timer(delta: float) -> void:
 	_hot_timer -= delta
@@ -384,6 +332,11 @@ func _resolve_player_hit(quality: int) -> void:
 	_best_combo = maxi(_best_combo, _combo)
 
 	_show_quality_label(quality, gain)
+	if _art:
+		_art.player_kick(quality, target_which == 2)
+	if _touches == 3 and help_label:
+		var fade: Tween = create_tween()
+		fade.tween_property(help_label, "modulate:a", 0.0, 0.6)
 	sfx("mg_hit", 1.0 + 0.04 * float(mini(_combo, 10)))
 	if quality == QUALITY_PERFECT:
 		sfx("mg_perfect")
@@ -456,7 +409,8 @@ func _register_drop(msg: String) -> void:
 	_combo = 0
 	if status_label:
 		status_label.text = msg
-	_float_label(_ball.target(), "Caiu...", Color(0.9, 0.4, 0.35), 16)
+	_float_label(_ball.target() + Vector2(0.0, -40.0), "Caiu!", Color(1.0, 0.45, 0.38), 22)
+	_sand_puff(_ball.target())
 	sfx("mg_drop")
 	pulse(0.6, 0.15)
 	_start_shake(3.0, 0.15)
@@ -504,34 +458,84 @@ func _end_game() -> void:
 func _show_quality_label(quality: int, gain: int) -> void:
 	var text: String
 	var color: Color
+	var size: int = 22
+	var sparks: int = 0
 	match quality:
 		QUALITY_PERFECT:
-			text = "Perfeito! +%d" % gain
-			color = Color(1.0, 0.82, 0.2)
+			text = "PERFEITO! +%d" % gain
+			color = Color(1.0, 0.84, 0.18)
+			size = 33
+			sparks = 14
 		QUALITY_GOOD:
 			text = "Boa! +%d" % gain
-			color = Color(0.5, 0.92, 0.55)
+			color = Color(0.5, 0.95, 0.52)
+			sparks = 8
 		_:
 			text = "Mole... +%d" % gain
-			color = Color(0.82, 0.82, 0.82)
-	_float_label(Vector2(_player.position.x if _player else 0.0, PLAYER_Y - 70.0), text, color, 18)
+			color = Color(0.86, 0.86, 0.84)
+	var at: Vector2 = Vector2(_player.position.x if _player else 0.0, PLAYER_Y - 130.0)
+	_float_label(at, text, color, size)
+	_burst(Vector2(at.x, PLAYER_Y - CONTACT_HEIGHT), color, sparks)
 
+# Étiquette qui éclate (pop d'échelle) puis s'envole, police pixel du thème.
 func _float_label(pos: Vector2, text: String, color: Color, size: int) -> void:
 	var label: Label = Label.new()
 	label.text = text
 	label.z_index = 20
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.add_theme_font_size_override("font_size", size)
 	label.add_theme_color_override("font_color", color)
-	label.add_theme_color_override("font_outline_color", Color(0.1, 0.1, 0.15, 0.9))
-	label.add_theme_constant_override("outline_size", 4)
+	label.add_theme_color_override("font_outline_color", Color(0.12, 0.07, 0.05, 1.0))
+	label.add_theme_constant_override("outline_size", 6)
 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	label.size = Vector2(260.0, float(size) + 8.0)
+	label.pivot_offset = label.size * 0.5
 	add_child(label)
-	label.position = pos + Vector2(-34.0, 0.0)
+	label.position = pos - Vector2(130.0, label.size.y * 0.5)
+	label.scale = Vector2(0.3, 0.3)
 	var tw: Tween = create_tween()
-	tw.set_parallel(true)
-	tw.tween_property(label, "position:y", label.position.y - 30.0, 0.75)
-	tw.tween_property(label, "modulate:a", 0.0, 0.75).set_delay(0.15)
-	tw.chain().tween_callback(label.queue_free)
+	tw.tween_property(label, "scale", Vector2(1.25, 1.25), 0.09)
+	tw.tween_property(label, "scale", Vector2.ONE, 0.07)
+	tw.tween_property(label, "position:y", label.position.y - 30.0, 0.6)
+	tw.parallel().tween_property(label, "modulate:a", 0.0, 0.5).set_delay(0.15)
+	tw.tween_callback(label.queue_free)
+
+# Étincelles pixel (carrés de 3 px monde) qui jaillissent du point de touche.
+func _burst(pos: Vector2, color: Color, count: int) -> void:
+	for i in count:
+		var dot: ColorRect = ColorRect.new()
+		dot.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		dot.size = Vector2(6.0, 6.0) if i % 3 == 0 else Vector2(3.0, 3.0)
+		dot.color = color if i % 2 == 0 else Color(1.0, 1.0, 0.95)
+		dot.z_index = 19
+		dot.position = pos
+		add_child(dot)
+		var a: float = TAU * float(i) / float(count) + _rng.randf_range(-0.2, 0.2)
+		var dist: float = _rng.randf_range(30.0, 58.0)
+		var end: Vector2 = (pos + Vector2(cos(a), sin(a) * 0.7) * dist).snapped(Vector2(3.0, 3.0))
+		var tw: Tween = create_tween()
+		tw.tween_property(dot, "position", end, 0.3).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		tw.parallel().tween_property(dot, "modulate:a", 0.0, 0.3).set_delay(0.12)
+		tw.tween_callback(dot.queue_free)
+
+# Gerbe de sable quand la balle tombe.
+func _sand_puff(pos: Vector2) -> void:
+	var sand: Color = Color(0.86, 0.74, 0.48) if setting != "laje" else Color(0.6, 0.57, 0.52)
+	for i in 10:
+		var dot: ColorRect = ColorRect.new()
+		dot.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		dot.size = Vector2(3.0, 3.0) if i % 2 else Vector2(6.0, 3.0)
+		dot.color = sand.darkened(0.1 * float(i % 3))
+		dot.z_index = 4
+		dot.position = pos
+		add_child(dot)
+		var dx: float = _rng.randf_range(-36.0, 36.0)
+		var up: float = _rng.randf_range(12.0, 30.0)
+		var tw: Tween = create_tween()
+		tw.tween_property(dot, "position", (pos + Vector2(dx * 0.5, -up)).snapped(Vector2(3.0, 3.0)), 0.16)
+		tw.tween_property(dot, "position", (pos + Vector2(dx, 3.0)).snapped(Vector2(3.0, 3.0)), 0.2)
+		tw.parallel().tween_property(dot, "modulate:a", 0.0, 0.25).set_delay(0.1)
+		tw.tween_callback(dot.queue_free)
 
 func _start_shake(strength: float, time: float) -> void:
 	_shake_strength = strength
@@ -555,11 +559,18 @@ func _flash_screen() -> void:
 
 func _update_labels() -> void:
 	if score_label:
-		score_label.text = "⚽ %d" % _score
+		score_label.text = "%d pts" % _score
 	if sub_label:
 		sub_label.text = "Combo x%d   Quedas %d/%d" % [_combo, _drops, MAX_DROPS]
 		if touch_goal > 0:
 			sub_label.text = "Toques %d/%d   Quedas %d/%d" % [_touches, touch_goal, _drops, MAX_DROPS]
+		# Le combo qui chauffe se voit : crème → or ; une chute en rouge.
+		var col: Color = Color(1.0, 0.96, 0.86)
+		if _combo >= 5:
+			col = Color(1.0, 0.84, 0.3)
+		if _drops >= MAX_DROPS - 1:
+			col = Color(1.0, 0.6, 0.5)
+		sub_label.add_theme_color_override("font_color", col)
 
 # --- Clavier (bonus dev) ---
 
@@ -570,8 +581,4 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if event.physical_keycode == KEY_Q:
 		_end_game()
-		get_viewport().set_input_as_handled()
-		return
-	if event.physical_keycode == KEY_E:
-		_try_hit()
 		get_viewport().set_input_as_handled()

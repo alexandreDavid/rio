@@ -1,19 +1,7 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/minigames/exercise/ExerciseGame.gd" id="1_game"]
 [ext_resource type="PackedScene" path="res://scenes/ui/MinigameQuitButton.tscn" id="2_quit"]
-
-[sub_resource type="StyleBoxFlat" id="ActionStyle"]
-bg_color = Color(0.85, 0.45, 0.25, 0.92)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.95, 0.92, 0.85, 0.6)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
 
 [node name="Exercise" type="Node2D"]
 script = ExtResource("1_game")
@@ -58,71 +46,79 @@ color = Color(0.22, 0.22, 0.26, 1)
 [node name="UI" type="CanvasLayer" parent="."]
 
 [node name="Bar" type="ProgressBar" parent="UI"]
-anchor_left = 0.5
-anchor_right = 0.5
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = -300.0
-offset_top = -160.0
-offset_right = 300.0
-offset_bottom = -120.0
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -186.0
+offset_top = -336.0
+offset_right = -90.0
+offset_bottom = 252.0
 max_value = 100.0
+fill_mode = 3
+show_percentage = false
 
 [node name="RepLabel" type="Label" parent="UI"]
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -120.0
-offset_top = 30.0
-offset_right = 120.0
-offset_bottom = 70.0
-theme_override_font_sizes/font_size = 36
+offset_left = -480.0
+offset_top = 20.0
+offset_right = 480.0
+offset_bottom = 88.0
+theme_type_variation = &"Pastille"
+theme_override_font_sizes/font_size = 28
 text = "Reps: 0"
 horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="TimerLabel" type="Label" parent="UI"]
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -80.0
-offset_top = 80.0
-offset_right = 80.0
-offset_bottom = 118.0
+offset_left = 24.0
+offset_top = 20.0
+offset_right = 264.0
+offset_bottom = 88.0
+theme_type_variation = &"Pastille"
 theme_override_font_sizes/font_size = 28
 text = "Gás : 100"
 horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Status" type="Label" parent="UI"]
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -320.0
-offset_top = 130.0
-offset_right = 320.0
-offset_bottom = 160.0
-theme_override_font_sizes/font_size = 20
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = -124.0
+offset_right = -500.0
+offset_bottom = -28.0
+theme_type_variation = &"Pastille"
+theme_override_font_sizes/font_size = 24
 horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
 
 [node name="Help" type="Label" parent="UI"]
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 16.0
-offset_top = -60.0
-offset_right = 600.0
-offset_bottom = -32.0
-text = "💪 TIENS pour soulever, LÂCHE dans la zone verte — la forme avant la force"
+offset_left = 24.0
+offset_top = 100.0
+offset_right = 700.0
+offset_bottom = 136.0
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(0.96, 0.92, 0.82, 1)
+theme_override_colors/font_outline_color = Color(0.08, 0.09, 0.12, 1)
+theme_override_constants/outline_size = 6
+text = "💪 TIENS pour soulever, LÂCHE dans le vert"
 
 [node name="ActionButton" type="Button" parent="UI"]
-anchor_left = 0.5
+anchor_left = 1.0
 anchor_top = 1.0
-anchor_right = 0.5
+anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -150.0
-offset_top = -150.0
-offset_right = 150.0
-offset_bottom = -24.0
+offset_left = -470.0
+offset_top = -236.0
+offset_right = -40.0
+offset_bottom = -40.0
+focus_mode = 0
+theme_type_variation = &"TouchButton"
+theme_override_font_sizes/font_size = 33
 text = "💪 SOULEVER"
-theme_override_styles/normal = SubResource("ActionStyle")
-theme_override_styles/hover = SubResource("ActionStyle")
-theme_override_styles/pressed = SubResource("ActionStyle")
-theme_override_font_sizes/font_size = 28
-theme_override_colors/font_color = Color(0.98, 0.98, 0.95, 1)
 
 [node name="MinigameQuitButton" parent="." instance=ExtResource("2_quit")]

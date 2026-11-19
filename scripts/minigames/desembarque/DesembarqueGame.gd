@@ -13,6 +13,8 @@ extends MinigameBase
 
 signal match_ended(qualifies: bool, cash: int)
 
+const Art := preload("res://scripts/minigames/desembarque/DesembarqueArt.gd")
+
 const ROUNDS: int = 6
 const QUALIFY_SCORE: int = 14       # max 18 : au moins 2 Perfeitos sur 6
 # Arrêt devant toi : 2,4 s en 1re manche, −0,2 s par manche (plancher 1,3 s).
@@ -67,8 +69,16 @@ var _status: Label
 var _call_btn: Button
 var _stop_bar: ColorRect
 var _chips: Array[ColorRect] = []
+var _hat_icon: Sprite2D
+var _chip_caps: Array[Label] = []
+var _door_l: Sprite2D
+var _door_r: Sprite2D
+var _door_tween: Tween
+var _player_sign: Sprite2D
 
 enum PState { ARRIVING, PRESENTING, LEAVING }
+
+const BAG_X: float = 14.0
 
 # --- Règles pures (testées sans scène) ---
 
@@ -119,17 +129,16 @@ func _ready() -> void:
 	var cam: Camera2D = get_node_or_null("Camera2D")
 	if cam:
 		cam.make_current()
+	_build_hall()
 	_hud = _label(Vector2(-900, -530), Vector2(1800, 46), 28, Color(0.98, 0.97, 0.92, 1))
+	_hud.add_theme_constant_override("outline_size", 8)
+	_hud.add_theme_color_override("font_outline_color", Color(0.08, 0.1, 0.18, 1))
 	_build_card()
-	_status = _label(Vector2(-900, 470), Vector2(1800, 56), 26, Color(0.16, 0.14, 0.12, 1))
-	_status.add_theme_constant_override("outline_size", 0)
-	# Repère au sol : c'est là que chaque passager s'arrête devant toi.
-	var spot: ColorRect = ColorRect.new()
-	spot.position = STOP_POS + Vector2(-90, -14)
-	spot.size = Vector2(180, 28)
-	spot.color = Color(0.95, 0.75, 0.15, 0.55)
-	spot.z_index = -8
-	add_child(spot)
+	# Bilan du coup : blanc contouré, à gauche du bouton « É ELE ! ».
+	_status = _label(Vector2(-390, 436), Vector2(840, 100), 26, Color(1, 1, 1, 1))
+	_status.add_theme_constant_override("outline_size", 8)
+	_status.add_theme_color_override("font_outline_color", Color(0.1, 0.08, 0.1, 1))
+	# Le repère au sol (traces de pas) est peint dans le hall ; reste le temps d'arrêt.
 	_stop_bar = ColorRect.new()
 	_stop_bar.position = STOP_POS + Vector2(-90, 30)
 	_stop_bar.size = Vector2(180, 14)
@@ -140,36 +149,116 @@ func _ready() -> void:
 	_build_call_button()
 	_start_round()
 
-# Plaque du chauffeur : nom + les trois indices en grand, avec pastilles de couleur.
+# Plaque du chauffeur (fiche de la cooperativa) : nom + les trois indices en
+# grandes pastilles de la couleur EXACTE, chacune avec son icône.
 func _build_card() -> void:
-	var bg: ColorRect = ColorRect.new()
-	bg.position = Vector2(-900, -440)
-	bg.size = Vector2(640, 520)
-	bg.color = Color(0.98, 0.95, 0.82, 1)
-	bg.z_index = 99
-	add_child(bg)
-	var edge: ColorRect = ColorRect.new()
-	edge.position = bg.position + Vector2(0, -10)
-	edge.size = Vector2(640, 10)
-	edge.color = Color(0.2, 0.2, 0.24, 1)
-	edge.z_index = 99
-	add_child(edge)
-	_card = _label(Vector2(-880, -420), Vector2(600, 300), 33, Color(0.1, 0.1, 0.12, 1))
+	add_child(Art.layer(Art.card(), Art.CARD_POS, 99))
+	_card = _label(Art.CARD_POS + Vector2(18, 66), Vector2(604, 84), 33, Color(0.1, 0.1, 0.12, 1))
 	_card.add_theme_constant_override("outline_size", 0)
 	_card.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	_card.vertical_alignment = VERTICAL_ALIGNMENT_TOP
-	# Trois pastilles (camisa · cabeça · mala) : on compare des couleurs, pas des mots.
-	var names: Array[String] = ["camisa", "cabeça", "mala"]
+	var icons: Array[String] = ["shirt", "none", "bag"]
 	for i in 3:
+		var r: Rect2 = Art.chip_world_rect(i)
 		var chip: ColorRect = ColorRect.new()
-		chip.position = Vector2(-870 + i * 200, -110)
-		chip.size = Vector2(170, 110)
+		chip.position = r.position
+		chip.size = r.size
 		chip.z_index = 100
+		chip.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		add_child(chip)
 		_chips.append(chip)
-		var cap: Label = _label(chip.position + Vector2(0, 112), Vector2(170, 40), 22, Color(0.1, 0.1, 0.12, 1))
+		var ic: Sprite2D = Art.layer(Art.icon(icons[i]), r.position + Vector2(6, 6), 101)
+		add_child(ic)
+		if i == 1:
+			_hat_icon = ic
+		var cap: Label = _label(r.position + Vector2(-12, r.size.y + 8), Vector2(r.size.x + 24, 60), 22, Color(0.1, 0.1, 0.12, 1))
 		cap.add_theme_constant_override("outline_size", 0)
-		cap.text = names[i]
+		cap.vertical_alignment = VERTICAL_ALIGNMENT_TOP
+		_chip_caps.append(cap)
+
+# Hall d'arrivée du Santos Dumont : dehors, avion, porte, hall, figurants,
+# garde-corps, chariot et le joueur de dos, pancarte en main.
+func _build_hall() -> void:
+	add_child(Art.layer(Art.outside(), Art.ORIGIN, -14))
+	var plane: Sprite2D = Art.layer(Art.plane(), Art.world(-40, 6), -13)
+	add_child(plane)
+	var fly: Tween = create_tween().set_loops()
+	fly.tween_property(plane, "position", Art.world(Art.W + 10, 26), 7.0).from(Art.world(-40, 4))
+	fly.tween_interval(5.0)
+	var half: float = float((Art.OPEN_X1 - Art.OPEN_X0) / 2 * Art.N)
+	_door_l = Art.layer(Art.door_panel(), Art.world(Art.OPEN_X0, Art.OPEN_T), -13)
+	_door_r = Art.layer(Art.door_panel(), Art.world(Art.OPEN_X0, Art.OPEN_T) + Vector2(half, 0), -13)
+	add_child(_door_l)
+	add_child(_door_r)
+	add_child(Art.layer(Art.hall(), Art.ORIGIN, -12))
+	_build_crowd()
+	add_child(Art.layer(Art.rails(), Art.ORIGIN, -9))
+	add_child(Art.layer(Art.trolley(), Vector2(-360, 170), -8))
+	var cart2: Sprite2D = Art.layer(Art.trolley(), Vector2(1000, -190), -11)
+	cart2.flip_h = true
+	add_child(cart2)
+	_build_player()
+
+# Chauffeurs de la cooperativa derrière les garde-corps, pancarte levée.
+func _build_crowd() -> void:
+	var spots: Array = [
+		[Vector2(-170, 90), 2.1, false], [Vector2(-40, 20), 1.9, false], [Vector2(-230, -60), 1.7, false],
+		[Vector2(40, 140), 2.2, false],
+		[Vector2(520, 130), 2.2, true], [Vector2(660, 60), 2.0, true], [Vector2(800, 140), 2.2, true],
+		[Vector2(930, 40), 1.9, true], [Vector2(1080, 120), 2.1, true], [Vector2(590, -60), 1.7, true],
+	]
+	var rng: RandomNumberGenerator = RandomNumberGenerator.new()
+	rng.seed = 2024
+	spots.sort_custom(func(a: Array, b: Array) -> bool: return a[0].y < b[0].y)
+	for i in spots.size():
+		var feet: Vector2 = spots[i][0]
+		var k: float = spots[i][1]
+		var cfg: Dictionary = CharacterSpriteFactory.random_config(rng.randi())
+		var spr: Sprite2D = char_sprite(CharacterSpriteFactory.CELL_H * k, cfg)
+		# De profil vers l'allée, ou de face : ils guettent la porte.
+		var row: int = CharacterSpriteFactory.DIR_RIGHT if i % 3 != 0 else CharacterSpriteFactory.DIR_DOWN
+		spr.region_rect = Rect2(0, row * CharacterSpriteFactory.CELL_H, CharacterSpriteFactory.CELL_W, CharacterSpriteFactory.CELL_H)
+		spr.flip_h = spots[i][2]
+		spr.position = feet
+		spr.z_index = -11
+		add_child(spr)
+		var placa: Sprite2D = Sprite2D.new()
+		placa.texture = Art.driver_sign(i)
+		placa.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		placa.scale = Vector2(3.0 / k, 3.0 / k)
+		placa.position = Vector2(0, -CharacterSpriteFactory.CELL_H * 0.4)
+		spr.add_child(placa)
+		var bob: Tween = create_tween().set_loops()
+		bob.tween_interval(rng.randf_range(0.2, 2.5))
+		bob.tween_property(placa, "position:y", placa.position.y - 4.0, 0.35)
+		bob.tween_property(placa, "position:y", placa.position.y, 0.35)
+
+# Toi, chauffeur, de dos au premier plan : pancarte levée vers la porte.
+func _build_player() -> void:
+	var me: Sprite2D = char_sprite(CharacterSpriteFactory.CELL_H * 4.4)
+	me.region_rect = Rect2(0, CharacterSpriteFactory.DIR_UP * CharacterSpriteFactory.CELL_H, CharacterSpriteFactory.CELL_W, CharacterSpriteFactory.CELL_H)
+	me.position = Vector2(-560, 700)
+	me.z_index = 60
+	add_child(me)
+	var cfg: Dictionary = CharacterSpriteFactory.config_from_indices(CharacterSpriteFactory.default_indices())
+	var skin: Color = cfg.get("skin", Color(0.85, 0.65, 0.48))
+	_player_sign = Art.layer(Art.player_sign_back(skin), Vector2(-680, 200), 61, 6.0)
+	add_child(_player_sign)
+
+# Porte automatique : les vantaux s'écartent à chaque passager puis se referment.
+func _open_door() -> void:
+	if _door_l == null:
+		return
+	var base: Vector2 = Art.world(Art.OPEN_X0, Art.OPEN_T)
+	var half: float = float((Art.OPEN_X1 - Art.OPEN_X0) / 2 * Art.N)
+	if _door_tween:
+		_door_tween.kill()
+	_door_tween = create_tween()
+	_door_tween.set_parallel(true)
+	_door_tween.tween_property(_door_l, "position:x", base.x - half + 9.0, 0.22)
+	_door_tween.tween_property(_door_r, "position:x", base.x + half * 2.0 - 9.0, 0.22)
+	_door_tween.chain().tween_interval(0.55)
+	_door_tween.chain().tween_property(_door_l, "position:x", base.x, 0.3)
+	_door_tween.parallel().tween_property(_door_r, "position:x", base.x + half, 0.3)
 
 func _build_call_button() -> void:
 	var ui: CanvasLayer = CanvasLayer.new()
@@ -180,6 +269,10 @@ func _build_call_button() -> void:
 	_call_btn.theme_type_variation = &"TouchButton"
 	_call_btn.add_theme_font_size_override("font_size", 44)
 	_call_btn.focus_mode = Control.FOCUS_NONE
+	# Fond sombre : la pastille translucide se perdait sur le granito peint.
+	var box: StyleBoxTexture = UITheme.pastille_box(UITheme.CREAM, Color(0.08, 0.09, 0.12, 0.82))
+	_call_btn.add_theme_stylebox_override("normal", box)
+	_call_btn.add_theme_stylebox_override("hover", box)
 	_call_btn.anchor_left = 1.0
 	_call_btn.anchor_right = 1.0
 	_call_btn.anchor_top = 1.0
@@ -221,12 +314,18 @@ func _start_round() -> void:
 	_queue_total = _spawn_queue.size()
 	_stop_time = maxf(STOP_TIME_START - STOP_TIME_STEP * _round, STOP_TIME_MIN)
 	if _card:
-		_card.text = "🪧 %s\n\nCamisa : %s\nCabeça : %s\nMala : %s" % [_client.name, _client.shirt, _client.hat, _client.bag]
+		_card.text = _client.name
 	if _chips.size() == 3:
 		_chips[0].color = SHIRTS[_client.shirt]
 		# Sans chapéu = pastille « vide » (cheveux nus), sinon la couleur du couvre-chef.
 		_chips[1].color = HAT_COLORS.get(_client.hat, Color(0.55, 0.5, 0.45, 0.35))
 		_chips[2].color = BAGS[_client.bag]
+	if _hat_icon:
+		_hat_icon.texture = Art.icon(HATS[_client.hat])
+	if _chip_caps.size() == 3:
+		_chip_caps[0].text = "camisa\n%s" % _client.shirt
+		_chip_caps[1].text = "cabeça\n%s" % _client.hat
+		_chip_caps[2].text = "%s" % _client.bag.replace("mala ", "mala\n")
 	_set_status("Ils sortent un par un. C'est ton client ? « É ELE ! » — sinon laisse passer.")
 	_spawn_next()
 
@@ -257,11 +356,14 @@ func _spawn_next() -> void:
 	spr.position = GATE_POS
 	spr.z_index = 10
 	add_child(spr)
-	var bag: ColorRect = ColorRect.new()
-	bag.color = BAGS[attrs.bag]
-	bag.size = Vector2(20, 26)
-	bag.position = Vector2(18, -34)
+	# Ombre au sol et valise peinte (corps de la couleur exacte de la carte).
+	var shadow: Sprite2D = Art.layer(Art.shadow(), Vector2(-24, -6), -1, 3.0)
+	shadow.z_as_relative = true
+	spr.add_child(shadow)
+	var bag: Sprite2D = Art.layer(Art.suitcase(BAGS[attrs.bag]), Vector2(BAG_X, -40), 0, 3.0)
+	bag.name = "Mala"
 	spr.add_child(bag)
+	_open_door()
 	_passengers.append({"attrs": attrs, "sprite": spr, "state": PState.ARRIVING, "t": 0.0, "called": false})
 
 func _current() -> Dictionary:
@@ -292,6 +394,7 @@ func _process(delta: float) -> void:
 func _advance(p: Dictionary, delta: float) -> void:
 	var spr: Sprite2D = p.sprite
 	p.t += delta
+	_pose(p)
 	match p.state:
 		PState.ARRIVING:
 			var k: float = clampf(p.t / WALK_IN_TIME, 0.0, 1.0)
@@ -318,6 +421,7 @@ func _advance(p: Dictionary, delta: float) -> void:
 					sfx("mg_miss")
 					pulse(0.5, 0.15)
 					_set_status("😤 %s est parti avec un chauffeur de la cooperativa…" % _client.name)
+					_pop_word("PERDEU…", Color(0.8, 0.82, 0.88), STOP_POS + Vector2(0, -380))
 					_next_round()
 
 # Le passager reprend sa route ; le suivant sort de la porte.
@@ -374,6 +478,7 @@ func _call(p: Dictionary) -> void:
 		else:
 			sfx("mg_good")
 			_set_status("✔ Boa — c'est lui, il te suit. (+R$ %d)" % FARE)
+		_cheer(p, fast)
 		_next_round()
 	else:
 		p.called = true
@@ -381,8 +486,103 @@ func _call(p: Dictionary) -> void:
 		sfx("mg_miss")
 		pulse(0.4, 0.1)
 		_set_status("✖ « Não sou eu, moço. » Relis ta plaque.")
+		_frown(p)
 		if p.state != PState.LEAVING:
 			_send_off(p)
+
+# --- Mise en scène (aucune règle) ---
+
+# Pas de marche : vers toi en descendant, de profil en repartant vers la sortie.
+func _pose(p: Dictionary) -> void:
+	var spr: Sprite2D = p.sprite
+	if not is_instance_valid(spr):
+		return
+	var row: int = CharacterSpriteFactory.DIR_DOWN
+	var frame: int = 0
+	if p.state == PState.ARRIVING:
+		frame = 1 + int(p.t / 0.12) % 2
+	elif p.state == PState.LEAVING:
+		row = CharacterSpriteFactory.DIR_RIGHT
+		frame = 1 + int(p.t / 0.1) % 2
+	spr.region_rect = Rect2(frame * CharacterSpriteFactory.CELL_W, row * CharacterSpriteFactory.CELL_H,
+		CharacterSpriteFactory.CELL_W, CharacterSpriteFactory.CELL_H)
+	var bag: Node2D = spr.get_node_or_null("Mala")
+	if bag:
+		bag.position.x = -44.0 if p.state == PState.LEAVING else BAG_X
+
+func _bubble(spr: Sprite2D, kind: String) -> void:
+	var b: Sprite2D = Art.layer(Art.bubble(kind), Vector2(10, -CharacterSpriteFactory.CELL_H - 30), 5, 2.0)
+	spr.add_child(b)
+	var tw: Tween = b.create_tween()
+	tw.tween_property(b, "position:y", b.position.y - 6.0, 0.15)
+	tw.tween_property(b, "position:y", b.position.y, 0.15)
+
+# Mot qui éclate au-dessus de la scène (Perfeito / Boa / raté).
+func _pop_word(text: String, color: Color, at: Vector2) -> void:
+	var l: Label = _label(at - Vector2(400, 40), Vector2(800, 80), 66, color)
+	l.add_theme_constant_override("outline_size", 12)
+	l.add_theme_color_override("font_outline_color", Color(0.1, 0.08, 0.1, 1))
+	l.z_index = 95
+	l.pivot_offset = l.size * 0.5
+	l.text = text
+	l.scale = Vector2(0.4, 0.4)
+	var tw: Tween = l.create_tween()
+	tw.tween_property(l, "scale", Vector2(1.15, 1.15), 0.14).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tw.tween_property(l, "scale", Vector2.ONE, 0.1)
+	tw.tween_interval(0.7)
+	tw.tween_property(l, "modulate:a", 0.0, 0.3)
+	tw.tween_callback(l.queue_free)
+
+# Le bon client te reconnaît : il saute, fait coucou ; ta pancarte s'agite.
+func _cheer(p: Dictionary, fast: bool) -> void:
+	var spr: Sprite2D = p.sprite
+	if not is_instance_valid(spr):
+		return
+	_pose(p)
+	_bubble(spr, "wave")
+	var head: Vector2 = spr.position + Vector2(0, -CharacterSpriteFactory.CELL_H * spr.scale.y)
+	var hop: Tween = spr.create_tween()
+	var base_y: float = spr.offset.y
+	for i in 2:
+		hop.tween_property(spr, "offset:y", base_y - 7.0, 0.11)
+		hop.tween_property(spr, "offset:y", base_y, 0.11)
+	if fast:
+		var star: Sprite2D = Sprite2D.new()
+		star.texture = Art.burst()
+		star.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		star.position = head + Vector2(0, 60)
+		star.z_index = 94
+		star.scale = Vector2(3, 3)
+		add_child(star)
+		var st: Tween = star.create_tween().set_parallel(true)
+		st.tween_property(star, "scale", Vector2(8, 8), 0.45).set_ease(Tween.EASE_OUT)
+		st.tween_property(star, "modulate:a", 0.0, 0.45).set_delay(0.15)
+		st.chain().tween_callback(star.queue_free)
+		_pop_word("PERFEITO !", Color(1.0, 0.85, 0.2), head + Vector2(0, -90))
+	else:
+		_pop_word("BOA !", Color(0.55, 0.95, 0.55), head + Vector2(0, -90))
+	if _player_sign:
+		var ps: Tween = _player_sign.create_tween()
+		ps.tween_property(_player_sign, "position:y", 172.0, 0.1)
+		ps.tween_property(_player_sign, "position:y", 200.0, 0.12)
+		ps.tween_property(_player_sign, "position:y", 172.0, 0.1)
+		ps.tween_property(_player_sign, "position:y", 200.0, 0.12)
+
+# Le mauvais passager fronce les sourcils et secoue la tête.
+func _frown(p: Dictionary) -> void:
+	var spr: Sprite2D = p.sprite
+	if not is_instance_valid(spr):
+		return
+	_bubble(spr, "frown")
+	var tw: Tween = spr.create_tween()
+	for i in 3:
+		tw.tween_property(spr, "offset:x", 4.0, 0.04)
+		tw.tween_property(spr, "offset:x", -4.0, 0.04)
+	tw.tween_property(spr, "offset:x", 0.0, 0.04)
+	var tint: Tween = spr.create_tween()
+	tint.tween_property(spr, "modulate", Color(1.0, 0.7, 0.7), 0.08)
+	tint.tween_property(spr, "modulate", Color.WHITE, 0.3)
+	_pop_word("NÃO É ELE !", Color(1.0, 0.45, 0.4), spr.position + Vector2(0, -CharacterSpriteFactory.CELL_H * spr.scale.y - 90))
 
 func _next_round() -> void:
 	_round += 1
