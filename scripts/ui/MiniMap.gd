@@ -65,9 +65,13 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	var room: Node = InteriorCurtain.current_root(get_tree())
-	if room != _interior:
+	# Le quartier aussi est relu : au chargement d'une sauvegarde il change
+	# sans signal, et la minimap montrait la carte de Copa dans la favela
+	# (vu au simulateur iOS le 2026-11-20).
+	var district: String = DistrictManager.current()
+	if room != _interior or district != _last_district:
 		_interior = room
-		_on_district_changed(_last_district)
+		_on_district_changed(district)
 	if _last_district != "copacabana" or _interior != null:
 		return
 	_refresh_player_dot()

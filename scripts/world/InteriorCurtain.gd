@@ -68,12 +68,26 @@ static func _current(tree: SceneTree) -> InteriorCurtain:
 	if f == _frame:
 		return _inside
 	_frame = f
-	_inside = null
 	var player: Node2D = tree.get_first_node_in_group("player") as Node2D
 	if player == null:
+		if _inside != null:
+			_inside = null
+			_apply_clear_color(false)
 		return null
+	var before: InteriorCurtain = _inside
+	_inside = null
 	for c in _curtains:
 		if c.contains(player.global_position):
 			_inside = c
 			break
+	if (_inside == null) != (before == null):
+		_apply_clear_color(_inside != null)
 	return _inside
+
+
+# Le fond du moteur passe au sombre tant qu'on est dans un intérieur : sur iOS
+# (vu au simulateur le 2026-11-20) la grande dalle sombre perdait par moments
+# un de ses deux triangles et laissait un coin gris en travers de l'écran.
+static func _apply_clear_color(inside: bool) -> void:
+	var normal: Color = ProjectSettings.get_setting("rendering/environment/defaults/default_clear_color", Color(0.3, 0.3, 0.3))
+	RenderingServer.set_default_clear_color(InteriorDresser.VOID_COLOR if inside else normal)

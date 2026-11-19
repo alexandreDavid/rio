@@ -30,9 +30,11 @@ if [[ "$EXPORT" == "1" || ! -d export_ios/Rio.xcodeproj ]]; then
 fi
 # Le projet exporté ne contient que la tranche x86_64 du simulateur : on y met l'arm64.
 cp "$LIB" export_ios/Rio.xcframework/ios-arm64_x86_64-simulator/libgodot.a
+# Un identifiant (UDID) ou un nom : deux simulateurs peuvent porter le même nom.
+if [[ "$DEVICE" =~ ^[0-9A-Fa-f-]{36}$ ]]; then DEST="id=$DEVICE"; else DEST="name=$DEVICE"; fi
 DD="${RIO_SIM_DERIVED:-$HOME/Library/Developer/Xcode/DerivedData/RioSim}"
 xcodebuild -project export_ios/Rio.xcodeproj -scheme Rio -configuration Debug \
-	-sdk iphonesimulator -destination "platform=iOS Simulator,name=$DEVICE" \
+	-sdk iphonesimulator -destination "platform=iOS Simulator,$DEST" \
 	-derivedDataPath "$DD" ARCHS=arm64 ONLY_ACTIVE_ARCH=YES CODE_SIGNING_ALLOWED=NO build \
 	| grep -E "error:|BUILD (SUCCEEDED|FAILED)" || true
 APP="$DD/Build/Products/Debug-iphonesimulator/Rio.app"
