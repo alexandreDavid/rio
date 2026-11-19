@@ -56,6 +56,7 @@ const FLAMENGO_RED: Color = Color(0.80, 0.16, 0.14)
 const SWISH: int = 0
 const RIM: int = 1
 const AIRBALL: int = 2
+const RIM_OUT: int = 3
 
 var _t: float = 0.0
 var _since_shot: float = 99.0
@@ -82,6 +83,7 @@ var _kind: int = -1
 var _flight_t: float = 0.0
 var _side: float = 1.0
 var _short: bool = false
+var _long: bool = false
 var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
 
 
@@ -130,12 +132,16 @@ func tick(delta: float, ready_to_shoot: bool) -> void:
 	_tick_fans(delta)
 
 
-func shoot(kind: int) -> void:
+# side : -1 gauche / +1 droite ; miss : 0 à côté, 1 court, 2 long.
+func shoot(kind: int, side: float = 0.0, miss: int = -1) -> void:
 	_kind = kind
 	_flight_t = 0.0
 	_since_shot = 0.0
-	_side = -1.0 if _rng.randf() < 0.5 else 1.0
-	_short = _rng.randf() < 0.5
+	_side = side if side != 0.0 else (-1.0 if _rng.randf() < 0.5 else 1.0)
+	if miss < 0:
+		miss = _rng.randi_range(0, 1)
+	_short = miss == 1
+	_long = miss == 2
 	_fly.visible = true
 	_fly_shadow.visible = true
 	if kind == SWISH:
@@ -179,13 +185,33 @@ func _tick_flight(delta: float) -> void:
 	var front: bool = true
 	var ground: Vector2 = Vector2(HOOP_X, 498)
 	if _kind == AIRBALL:
-		# Raté court (le ballon meurt sous le cercle) ou large (à côté de la planche).
-		var miss: Vector2 = Vector2(HOOP_X + _side * 36.0, RIM_Y + 48) if _short else Vector2(HOOP_X + _side * 230.0, RIM_Y + 24)
-		ground = Vector2(HOOP_X + _side * (60.0 if _short else 290.0), 510 if _short else 492)
+		# Raté court (le ballon meurt sous le cercle), long (il tape le haut de
+		# la planche) ou large (à côté de la planche).
+		var miss: Vector2 = Vector2(HOOP_X + _side * 230.0, RIM_Y + 24)
+		ground = Vector2(HOOP_X + _side * 290.0, 492)
+		if _short:
+			miss = Vector2(HOOP_X + _side * 36.0, RIM_Y + 48)
+			ground = Vector2(HOOP_X + _side * 60.0, 510)
+		elif _long:
+			miss = Vector2(HOOP_X + _side * 30.0, RIM_Y - 96)
+			ground = Vector2(HOOP_X + _side * 170.0, 488)
 		if t < FLIGHT_UP:
 			pos = _arc(start, miss, t / FLIGHT_UP, 210.0)
 		else:
 			pos = _bounce_fall(miss, ground, (t - FLIGHT_UP) / (FLIGHT_END - FLIGHT_UP))
+	elif _kind == RIM_OUT:
+		# Bate e sai : le ballon tape le cercle et ressort du côté visé.
+		var hit: Vector2 = Vector2(HOOP_X + _side * 51.0, RIM_Y - 12)
+		var out: Vector2 = Vector2(HOOP_X + _side * 120.0, RIM_Y + 6)
+		ground = Vector2(HOOP_X + _side * 170.0, 494)
+		if t < FLIGHT_UP:
+			pos = _arc(start, hit, t / FLIGHT_UP, 210.0)
+		elif t < 0.6:
+			pos = _arc(hit, out, (t - FLIGHT_UP) / (0.6 - FLIGHT_UP), 48.0)
+			if t - delta < FLIGHT_UP:
+				_play_net(PackedInt32Array([1, 0]))
+		else:
+			pos = _bounce_fall(out, ground, (t - 0.6) / (FLIGHT_END - 0.6))
 	else:
 		var entry: Vector2 = rim if _kind == SWISH else Vector2(HOOP_X + _side * 51.0, RIM_Y - 12)
 		var drop_at: float = FLIGHT_UP if _kind == SWISH else 0.6
@@ -910,7 +936,8 @@ func _ellipse(w: int, h: int, c: Color) -> Texture2D:
 
 # Jauge : relief pixel (arête claire, pied sombre) et graduation centrale.
 func _style_meter(game: Node) -> void:
-	for path: String in ["UI/Meter/Bg", "UI/Meter/RimZone", "UI/Meter/SwishZone"]:
+	for path: String in ["UI/Meter/Bg", "UI/Meter/RimZone", "UI/Meter/SwishZone",
+			"UI/PowerMeter/Bg", "UI/PowerMeter/RimZone", "UI/PowerMeter/SwishZone"]:
 		var z: ColorRect = game.get_node_or_null(path) as ColorRect
 		if z == null:
 			continue
@@ -934,3 +961,13 @@ func _style_meter(game: Node) -> void:
 		tick.color = Color(1, 1, 1, 0.6)
 		meter.add_child(tick)
 		meter.move_child(cursor, -1)
+	var power: Control = game.get_node_or_null("UI/PowerMeter") as Control
+	var pcursor: Node = game.get_node_or_null("UI/PowerMeter/Cursor")
+	if power and pcursor:
+		var ptick: ColorRect = ColorRect.new()
+		ptick.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		ptick.position = Vector2(6.0, float(game.get("POWER_CENTER_PX")) - 2.0)
+		ptick.size = Vector2(36, 4)
+		ptick.color = Color(1, 1, 1, 0.6)
+		power.add_child(ptick)
+		power.move_child(pcursor, -1)
