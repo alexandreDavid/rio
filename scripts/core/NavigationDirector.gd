@@ -467,6 +467,13 @@ func _active_step(main_only: bool = false, side_only: bool = false) -> Dictionar
 			mains.append(id)
 		else:
 			sides.append(id)
+	# Entre annexes, la mieux payée d'abord : quand il ne reste que de l'argent
+	# à réunir, le bandeau doit montrer le travail qui rapproche du seuil, pas
+	# la plus vieille course du Diário (playtest 2026-11-19 : la course de
+	# l'aéroport de Dom Nilton, 800 R$ + 500 de dette, restée 90 min derrière
+	# une invitation à 0 R$ — acte 2 en 95 min au lieu de 10).
+	sides.sort_custom(func(x: String, y: String) -> bool:
+		return _side_value(x) > _side_value(y))
 	var ordered: Array[String] = mains + sides
 	if main_only:
 		ordered = mains
@@ -494,6 +501,10 @@ func _active_step(main_only: bool = false, side_only: bool = false) -> Dictionar
 # le repli quand aucun spot n'attend l'objectif (PNJ mobile, lieu voulu).
 const _GENERIC_ANCHORS: Array = ["", "palace", "calcadao", "atlantica"]
 var _spot_list: Array = []   # ReactiveDialogueSpot du monde (les districts sont instanciés une fois)
+
+func _side_value(qid: String) -> int:
+	var q: Quest = QuestManager.get_quest(qid)
+	return q.money_reward if q != null else 0
 
 func _with_auto_anchor(step: Dictionary, qid: String, obj_id: String) -> Dictionary:
 	if not _GENERIC_ANCHORS.has(String(step.get("anchor", ""))):

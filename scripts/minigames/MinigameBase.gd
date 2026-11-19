@@ -21,6 +21,7 @@ func _notification(what: int) -> void:
 		_wire_quit.call_deferred()
 		_fit_backdrops.call_deferred()
 		_silence_buttons.call_deferred()
+		_floor_texts.call_deferred()
 		get_viewport().size_changed.connect(_fit_backdrops)
 
 # À surcharger : termine la partie sur abandon (forfeited est déjà vrai).
@@ -31,6 +32,45 @@ func quit_game() -> void:
 # Un abandon ne qualifie jamais, quel que soit le score au moment de partir.
 func final_qualifies(qualifies: bool) -> bool:
 	return qualifies and not forfeited
+
+# Aucun texte sous le plancher de lisibilité du jeu (UIFit.MIN_SCREEN_FONT, en
+# px de canevas) : consignes, étiquettes et bulles étaient à 22 px, parfois 11
+# (playtest mobile 2026-11-18). Mesuré À L'ÉCRAN : un Label du monde compte
+# avec le zoom de la caméra. Les textes créés en cours de partie y passent aussi.
+func _floor_texts() -> void:
+	if not is_inside_tree():
+		return
+	_floor_text_tree(self)
+	var on_added: Callable = func(n: Node) -> void:
+		if is_ancestor_of(n):
+			var id: int = n.get_instance_id()
+			(func() -> void:
+				var node: Node = instance_from_id(id) as Node
+				if node != null and is_instance_valid(node) and node.is_inside_tree():
+					_floor_text_tree(node)).call_deferred()
+	get_tree().node_added.connect(on_added)
+	tree_exiting.connect(func() -> void:
+		if get_tree().node_added.is_connected(on_added):
+			get_tree().node_added.disconnect(on_added))
+
+func _floor_text_tree(n: Node) -> void:
+	if n is Label or n is Button or n is RichTextLabel:
+		var c: Control = n
+		var key: String = "normal_font_size" if n is RichTextLabel else "font_size"
+		var scale_y: float = absf(c.get_global_transform_with_canvas().get_scale().y)
+		var need: int = int(ceilf(UIFit.MIN_SCREEN_FONT / maxf(scale_y, 0.01)))
+		if c.get_theme_font_size(key) < need:
+			c.add_theme_font_size_override(key, need)
+	for child in n.get_children():
+		_floor_text_tree(child)
+
+# Durée d'affichage du bilan avant de rendre la main. Sur abandon, le joueur
+# veut sortir : on ne lui impose pas 2 à 3 s d'écran figé où ses touchers ne
+# font rien (playtest mobile 2026-11-18).
+const FORFEIT_DELAY: float = 0.35
+
+func bilan_delay(seconds: float) -> float:
+	return minf(seconds, FORFEIT_DELAY) if forfeited else seconds
 
 func sfx(key: String, pitch: float = 1.0) -> void:
 	AudioManager.play(key, pitch)

@@ -681,6 +681,6 @@ func _end_game() -> void:
 			status_label.text = "Tournée ratée — commande détruite"
 		else:
 			status_label.text = "Seulement %d entregas (il en faut %d)" % [_deliveries, DELIVERIES_TO_QUALIFY]
-	await get_tree().create_timer(1.8).timeout
+	await get_tree().create_timer(bilan_delay(1.8)).timeout
 	EventBus.minigame_ended.emit("bike", {"integrity": _integrity, "qualifies": qualifies, "won": qualifies})
 	match_ended.emit(qualifies, _integrity)

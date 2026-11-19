@@ -313,7 +313,7 @@ func _end_match() -> void:
 	# Abandonner en menant reste une défaite (pas de quête validée en partant).
 	var won: bool = final_qualifies(_score_player > _score_opponent)
 	_set_status("Victoire !" if won else ("Fin — %d à %d" % [_score_player, _score_opponent]))
-	await get_tree().create_timer(1.5).timeout
+	await get_tree().create_timer(bilan_delay(1.5)).timeout
 	var result: Dictionary = {
 		"won": won,
 		"score_player": _score_player,

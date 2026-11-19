@@ -315,6 +315,6 @@ func _end_game() -> void:
 	var qualifies: bool = final_qualifies(_score >= QUALIFY_SCORE)
 	if status_label:
 		status_label.text = "Fim do jogo · %d perfects · R$ %d em pourboires" % [_perfects, tips]
-	await get_tree().create_timer(2.4).timeout
+	await get_tree().create_timer(bilan_delay(2.4)).timeout
 	EventBus.minigame_ended.emit("maracana_torcida", {"score": _score, "tips": tips, "qualifies": qualifies})
 	match_ended.emit(qualifies, tips)

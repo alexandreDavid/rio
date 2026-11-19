@@ -423,7 +423,7 @@ func _end_game() -> void:
 		_set_status("Fim do rush — %d servis, %d Perfeitos, R$ %d. A carrocinha do Zé tá viva !" % [_served, _perfeitos, _cash])
 	else:
 		_set_status("Fim do rush — %d pts (min. %d). R$ %d quand même. O freguês volta amanhã." % [_score, QUALIFY_SCORE, _cash])
-	await get_tree().create_timer(2.0).timeout
+	await get_tree().create_timer(bilan_delay(2.0)).timeout
 	EventBus.minigame_ended.emit("milho",
 		{"score": _score, "served": _served, "perfeitos": _perfeitos, "cash": _cash, "qualifies": qualifies})
 	match_ended.emit(qualifies, _cash)

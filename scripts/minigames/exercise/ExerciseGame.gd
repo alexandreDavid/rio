@@ -242,7 +242,7 @@ func _end_game() -> void:
 		else:
 			status_label.text = why + "Fin — %d reps, %d pts (min. %d pts pour +Charisma). A forma vem com o tempo." \
 					% [_reps, _score, QUALIFY_SCORE]
-	await get_tree().create_timer(1.8).timeout
+	await get_tree().create_timer(bilan_delay(1.8)).timeout
 	EventBus.minigame_ended.emit("exercise",
 		{"reps": _reps, "score": _score, "qualifies": qualifies, "won": qualifies})
 	match_ended.emit(qualifies, _reps)

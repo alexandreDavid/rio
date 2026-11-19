@@ -962,7 +962,7 @@ func _end_session() -> void:
 	if hint_label:
 		hint_label.text = "%d vagues, %d take-off parfaits, %d wipeouts" \
 			% [_waves_ridden, _perfect_takeoffs, _wipeouts]
-	await get_tree().create_timer(2.2).timeout
+	await get_tree().create_timer(bilan_delay(2.2)).timeout
 	# Clés historiques conservées (ActivityRewards lit `qualifies`) ; `lives`
 	# est gardée pour compat, dérivée des wipeouts.
 	EventBus.minigame_ended.emit(minigame_id, {

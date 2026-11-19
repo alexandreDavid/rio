@@ -197,6 +197,6 @@ func _end_game() -> void:
 	else:
 		_status("Pas assez (%d/%d) · R$ %d" % [_score, QUALIFY_SCORE, tips])
 	_update_labels()
-	await get_tree().create_timer(2.4).timeout
+	await get_tree().create_timer(bilan_delay(2.4)).timeout
 	EventBus.minigame_ended.emit("aterro_basket", {"score": _score, "tips": tips, "qualifies": qualifies})
 	match_ended.emit(qualifies, tips)

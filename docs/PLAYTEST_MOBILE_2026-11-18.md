@@ -95,14 +95,32 @@ spot porteur. Suite complète : 4 656 assertions, 0 échec, audit OK.
   de 56 à 158 min selon ce que l'acte 2 rapporte (une annexe généreuse comme
   « Cristo en couverture » franchit le seuil de 2 000 R$ d'un coup) ; et la
   borne du Sambódromo laisse toujours jouer le défilé sans la quête.
-- **Écran large (20:9)** : dans la maison, l'intérieur voisin est visible au
-  bord gauche ; dans la favela, le bord du quartier (bande d'herbe, vide brun).
-- **Petits textes sur téléphone** : consignes et bulles de plusieurs mini-jeux
-  (rush du milho, padaria, valet), étiquette de la minimap.
-- **Menu des mini-jeux** : un toucher dans les ~3 s qui suivent le retour au
-  menu est ignoré.
-- **Erreur moteur** « Lambda capture at index 0 was freed » ×7 pendant le run
-  mobile (à la carte d'acte 4), sans effet visible.
+- **Suites du 2026-11-19 (seconde passe)** — durées mesurées sur les quatre
+  voies après corrections : acte 3 entre 20 et 27 min, couronnement entre 53
+  et 76 min, défilé vers 65 min (le bot Tráfico rate trois fois le défilé,
+  hasard de sa simulation). L'acte 2 de 95 min venait du bandeau, pas de
+  l'économie : la course de l'aéroport de Dom Nilton (800 R$ + 500 de dette)
+  restait derrière une invitation à 0 R$ — entre annexes, le bandeau montre
+  maintenant la mieux payée. Dom Nilton encaisse d'abord quand on a de quoi
+  franchir le seuil. Un défilé réussi à la borne du Sambódromo compte même
+  sans être passé chez Seu João (acte 5).
+- **Écran large (20:9)** — corrigé : dans un intérieur, les intérieurs
+  voisins se cachent (`InteriorCurtain`) et un fond sombre remplace le vide
+  gris autour des murs. Les bords de la favela sont fermés par la mata depuis
+  le commit « Morro et maison ». Captures : `RIO_RES=1340x603 tools/capture_main.sh`.
+- **Petits textes sur téléphone** — corrigé pour les mini-jeux : 64 textes
+  sous le plancher (22 px, jusqu'à 11 à la pêche) ; `MinigameBase` impose
+  désormais `UIFit.MIN_SCREEN_FONT` à l'écran, textes créés en cours de partie
+  compris. Outil : `tools/minigame_text_audit.sh <prefix>` (une capture par
+  jeu). À la pêche, le bouton LANCER couvrait le tiers central de la barre de
+  lancer : barre et consigne remontées. Reste l'étiquette de la minimap, et le
+  bandeau du Desembarque qui passe sous l'enseigne.
+- **Menu des mini-jeux** — corrigé : ce n'était pas le menu mais le bilan de
+  fin (2 à 2,6 s) imposé même sur abandon, pendant lequel rien ne répond.
+  `MinigameBase.bilan_delay` l'abrège à 0,35 s quand on quitte (18 jeux).
+- **Erreur moteur** « Lambda capture at index 0 was freed » — corrigée : le
+  plancher de police (`UIFit.keep_floor`) capturait une ligne libérée dans la
+  même trame ; il passe par l'identifiant d'instance.
 - Le bot écrivait dans le slot 1 du joueur par les sauvegardes directes
   (bump d'intro, MainBoot). Il écrit maintenant dans un slot fantôme.
 

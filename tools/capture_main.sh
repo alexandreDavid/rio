@@ -2,6 +2,7 @@
 # Capture le jeu complet (Main + HUD) sur une partie NEUVE, les sauvegardes du
 # joueur mises à l'abri pendant la capture (et remises, même sur Ctrl-C).
 #   tools/capture_main.sh <out_prefix> "x:y:zoom,..." [SHOT_WAIT_MS]
+# RIO_RES=1340x603 pour un autre format d'écran (ici 20:9).
 set -u
 cd "$(dirname "$0")/.."
 GODOT_BIN="${GODOT_BIN:-$HOME/Downloads/Godot.app/Contents/MacOS/Godot}"
@@ -11,4 +12,4 @@ restore() { rm -f "$SAVEDIR"/savegame_slot[123].json; cp -p "$STASH"/* "$SAVEDIR
 trap restore EXIT
 cp -p "$SAVEDIR"/savegame_slot[123].json "$SAVEDIR"/settings.cfg "$STASH"/ 2>/dev/null || true
 rm -f "$SAVEDIR"/savegame_slot[123].json
-SHOT_WAIT_MS="${3:-4000}" "$GODOT_BIN" --path . tools/ScreenshotMain.tscn -- "$1" "$2" 2>&1 | grep -E "saved|SCRIPT ERROR"
+SHOT_WAIT_MS="${3:-4000}" "$GODOT_BIN" --path . ${RIO_RES:+--resolution $RIO_RES} tools/ScreenshotMain.tscn -- "$1" "$2" 2>&1 | grep -E "saved|SCRIPT ERROR"

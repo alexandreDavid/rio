@@ -1885,5 +1885,118 @@ func _test_playtest_mobile_fixes() -> void:
 			"défilé accepté : le bandeau pointe la scène du Sambódromo (%s)" % r5.get("text", ""))
 	_assert(FileAccess.get_file_as_string("res://scenes/districts/Sambodromo.tscn").find("[node name=\"SambaStage\"") != -1,
 			"la scène du défilé s'appelle bien SambaStage")
+	# 6. Suites du 2026-11-19 : défilé mené sans la quête, annexe la mieux
+	# payée au bandeau, Dom Nilton qui encaisse avant de rappeler sa course.
+	var saved_player: Node = GameManager.player
+	var fake_player: Node2D = Node2D.new()
+	var fake_inv: Inventory = Inventory.new()
+	fake_inv.name = "Inventory"
+	fake_player.add_child(fake_inv)
+	add_child(fake_player)
+	GameManager.player = fake_player
+	_reset_campaign_state()
+	CampaignManager.current_act = 5
+	var launcher: CarnavalLauncher = CarnavalLauncher.new()
+	add_child(launcher)
+	launcher._on_match_ended(false, 0)
+	_assert(not QuestManager.is_completed("act4_carnaval_desfile"), "défilé raté sans la quête : rien ne se passe")
+	launcher._on_match_ended(true, 0)
+	_assert(QuestManager.is_completed("act4_carnaval_desfile"), "défilé réussi sans être passé chez Seu João : il compte")
+	_reset_campaign_state()
+	CampaignManager.current_act = 4
+	launcher._on_match_ended(true, 0)
+	_assert(not QuestManager.is_completed("act4_carnaval_desfile"), "avant l'acte 5, la borne ne prend pas la quête d'office")
+	launcher.queue_free()
+	_reset_campaign_state()
+	CampaignManager.current_act = 2
+	CampaignManager.set_flag("act1_started")
+	QuestManager.accept("ze_invitation")
+	QuestManager.accept("consortium_airport_pickup")
+	var best: Dictionary = nd._active_step(false, true)
+	_assert(String(best.get("dist", "")) == "santos_dumont",
+			"entre annexes, le bandeau montre la mieux payée (%s)" % best.get("text", ""))
+	var nilton: Node = (load("res://scripts/npcs/Consortium.gd") as GDScript).new()
+	CampaignManager.debt_paid = 1500
+	fake_inv.money = 499
+	_assert(nilton._remind_or_pay("consortium_airport_remind") == "consortium_airport_remind",
+			"Dom Nilton : pas de quoi franchir le seuil → rappel de la course")
+	fake_inv.money = 500
+	_assert(nilton._remind_or_pay("consortium_airport_remind") == "consortium_pay",
+			"Dom Nilton : de quoi franchir le seuil → il encaisse d'abord")
+	CampaignManager.current_act = 4
+	_assert(nilton._remind_or_pay("consortium_airport_remind") == "consortium_airport_remind",
+			"Dom Nilton : plus de seuil en acte 4 → rappel")
+	nilton.free()
+	GameManager.player = saved_player
+	fake_player.queue_free()
+	# 7. Mini-jeux : abandon sans écran figé, textes au plancher de lisibilité.
+	var mg: MinigameBase = MinigameBase.new()
+	_assert(is_equal_approx(mg.bilan_delay(2.4), 2.4), "partie finie : le bilan garde sa durée")
+	mg.forfeited = true
+	_assert(mg.bilan_delay(2.4) <= 0.4, "abandon : le bilan ne retient pas le joueur (%.2f s)" % mg.bilan_delay(2.4))
+	mg.forfeited = false
+	var unhurried: Array = []
+	for path in _list_gd_under("res://scripts/minigames/"):
+		var src: String = FileAccess.get_file_as_string(path)
+		if src.contains("minigame_ended.emit") and not src.contains("bilan_delay("):
+			unhurried.append(path.get_file())
+	_assert(unhurried.is_empty(), "tout mini-jeu abrège son bilan sur abandon (manquants : %s)" % str(unhurried))
+	var mg_layer: CanvasLayer = CanvasLayer.new()
+	var tiny: Label = Label.new()
+	tiny.text = "PERTO"
+	tiny.add_theme_font_size_override("font_size", 11)
+	mg_layer.add_child(tiny)
+	mg.add_child(mg_layer)
+	add_child(mg)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	_assert(tiny.get_theme_font_size("font_size") >= int(UIFit.MIN_SCREEN_FONT),
+			"mini-jeu : un texte de 11 px remonte au plancher (%d)" % tiny.get_theme_font_size("font_size"))
+	var late: Label = Label.new()
+	late.text = "+ 10"
+	late.add_theme_font_size_override("font_size", 12)
+	mg_layer.add_child(late)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	_assert(late.get_theme_font_size("font_size") >= int(UIFit.MIN_SCREEN_FONT),
+			"mini-jeu : un texte créé en cours de partie aussi (%d)" % late.get_theme_font_size("font_size"))
+	mg.queue_free()
+	# 8. Écran 20:9 : dans un intérieur, les intérieurs voisins se cachent.
+	var others: Array = get_tree().get_nodes_in_group("player")
+	for o in others:
+		o.remove_from_group("player")
+	var rooms: Array = []
+	for i in 2:
+		var room: Node2D = Node2D.new()
+		room.position = Vector2(90000.0 + 700.0 * i, 90000.0)
+		var fl: ColorRect = ColorRect.new()
+		fl.name = "Floor"
+		fl.offset_left = -180.0
+		fl.offset_top = -110.0
+		fl.offset_right = 180.0
+		fl.offset_bottom = 110.0
+		room.add_child(fl)
+		add_child(room)
+		InteriorDresser.dress(room)
+		rooms.append(room)
+	var walker: Node2D = Node2D.new()
+	walker.add_to_group("player")
+	add_child(walker)
+	walker.global_position = rooms[0].global_position
+	await get_tree().process_frame
+	await get_tree().process_frame
+	_assert(rooms[0].visible and not rooms[1].visible, "dans un intérieur : le voisin est caché")
+	var void_bg: CanvasItem = rooms[0].get_node_or_null("InteriorVoid") as CanvasItem
+	_assert(void_bg != null and void_bg.visible, "dans un intérieur : fond sombre autour des murs")
+	walker.global_position = Vector2(0, 0)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	_assert(rooms[0].visible and rooms[1].visible, "dehors : tous les intérieurs restent visibles")
+	_assert(void_bg != null and not void_bg.visible, "dehors : pas de tache sombre près des quartiers")
+	walker.queue_free()
+	for room in rooms:
+		room.queue_free()
+	for o in others:
+		o.add_to_group("player")
 	_reset_campaign_state()
 

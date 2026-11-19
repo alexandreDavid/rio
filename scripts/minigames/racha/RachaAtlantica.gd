@@ -550,7 +550,7 @@ func _end_race(timeout: bool) -> void:
 			status_label.text = "VITORIA ! · %.1fs · R$ %d" % [player.finish_time, tip]
 		else:
 			status_label.text = "Course terminée · Position %d · R$ %d" % [pos, tip]
-	await get_tree().create_timer(2.6).timeout
+	await get_tree().create_timer(bilan_delay(2.6)).timeout
 	EventBus.minigame_ended.emit("racha_atlantica", {
 		"tip": tip,
 		"position": pos,

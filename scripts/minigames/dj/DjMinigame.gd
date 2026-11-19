@@ -302,7 +302,7 @@ func _end_game() -> void:
 	if status_label:
 		status_label.add_theme_color_override("font_color", Color(1, 0.92, 0.5, 1))
 		status_label.text = "Fim do set ! combo max x%d · %d perfects · R$ %d en tips" % [_max_combo, _perfects, tips]
-	await get_tree().create_timer(2.5).timeout
+	await get_tree().create_timer(bilan_delay(2.5)).timeout
 	EventBus.minigame_ended.emit("dj_paoacucar", {"score": _score, "tips": tips, "qualifies": qualifies})
 	match_ended.emit(qualifies, tips)
 

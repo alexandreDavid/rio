@@ -14,6 +14,8 @@ const OUTER_WALL: float = 12.0     # épaisseur du mur extérieur autour du sol
 const SIDE_WALL: float = 6.0       # bande sombre intérieure gauche/droite/bas
 const WINDOW_SPACING: float = 150.0
 const MIN_RECT: float = 6.0
+const VOID_MARGIN: Vector2 = Vector2(900.0, 600.0)   # plus que la vue d'un écran 21:9
+const VOID_COLOR: Color = Color(0.07, 0.06, 0.08, 1.0)
 
 # Genre de sol par nom de scène (sous-chaîne) ; planches par défaut.
 const FLOOR_KINDS: Dictionary = {
@@ -54,6 +56,14 @@ static func dress(root: Node) -> void:
 	_collect(root, rects)
 	if floor != null:
 		_dress_floor(floor, kind, root)
+		# Hors des murs : du noir de salle obscure, pas le vide gris du moteur
+		# ni le ciel de Copa (la maison « flottait », playtest 2026-10-12).
+		var void_rect: ColorRect = _rect(root, "InteriorVoid", floor.position - VOID_MARGIN,
+				floor.size + VOID_MARGIN * 2.0, VOID_COLOR)
+		void_rect.z_index = -9
+		void_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		root.move_child(void_rect, 0)
+		InteriorCurtain.attach(root, floor, void_rect)
 	for cr in rects:
 		if cr == floor or cr.has_meta("dressing"):
 			continue

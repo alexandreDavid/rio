@@ -143,6 +143,19 @@ func _section(name: String) -> void:
 	print("")
 	print("— %s —" % name)
 
+# Tous les scripts .gd sous un dossier (récursif).
+func _list_gd_under(root: String) -> Array:
+	var out: Array = []
+	var dir: DirAccess = DirAccess.open(root)
+	if dir == null:
+		return out
+	for f in dir.get_files():
+		if f.ends_with(".gd"):
+			out.append(root.path_join(f))
+	for d in dir.get_directories():
+		out.append_array(_list_gd_under(root.path_join(d)))
+	return out
+
 func _list_scenes_under(root: String) -> Array:
 	var out: Array = []
 	var dir: DirAccess = DirAccess.open(root)

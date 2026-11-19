@@ -47,6 +47,11 @@ func _on_match_ended(qualifies: bool, tips: int) -> void:
 		if inv:
 			inv.add_money(tips)
 	if qualifies:
+		# Venu de soi-même au Sambódromo sans passer par Seu João : un défilé
+		# réussi compte quand même (playtest 2026-11-19 : trois défilés menés
+		# pour rien). La quête reste gated par son acte et ses prérequis.
+		if CampaignManager.current_act >= 5 and QuestManager.is_available(QUEST_ID):
+			QuestManager.accept(QUEST_ID)
 		if QuestManager.is_active(QUEST_ID):
 			QuestManager.complete_objective(QUEST_ID, OBJECTIVE_ID)
 	if _active_match:

@@ -602,7 +602,7 @@ func _end_game() -> void:
 		_set_status("Fin du service — %d pts, R$ %d. A cooperativa já sabe teu nome." % [_score, _cash])
 	else:
 		_set_status("Fin du service — %d pts (min. %d), R$ %d. Le hall d'arrivée, ça s'apprend." % [_score, QUALIFY_SCORE, _cash])
-	await get_tree().create_timer(2.0).timeout
+	await get_tree().create_timer(bilan_delay(2.0)).timeout
 	EventBus.minigame_ended.emit("desembarque",
 		{"score": _score, "cash": _cash, "fast": _found_fast, "qualifies": qualifies})
 	match_ended.emit(qualifies, _cash)

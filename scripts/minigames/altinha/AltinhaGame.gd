@@ -439,7 +439,7 @@ func _end_game() -> void:
 			headline = "Desafio cumprido !" if _touches >= touch_goal else "Faltou pouco..."
 		result_label.text = "%s\nScore : %d — Melhor combo : x%d\nToques : %d (Perfeitos : %d)" \
 			% [headline, _score, _best_combo, _touches, _perfeitos]
-	await get_tree().create_timer(2.0).timeout
+	await get_tree().create_timer(bilan_delay(2.0)).timeout
 	var result: Dictionary = {
 		"touches": _touches,
 		"perfeitos": _perfeitos,

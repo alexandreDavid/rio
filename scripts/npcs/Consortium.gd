@@ -15,6 +15,18 @@ const QUEST_PENINSULA: String = "consortium_peninsula"
 const OBJ_INTIMIDATE_PN: String = "intimidate_mendonca"
 const OBJ_CLOSE_PN: String = "close_deal_mendonca"
 
+# Le joueur a de quoi franchir le seuil de l'acte : Dom Nilton encaisse
+# d'abord, le rappel de sa course attendra (le bandeau dit « va verser », et
+# le premier choix du rappel était « J'y vais » — 14 min perdues au playtest
+# du 2026-11-19). Le rappel garde son choix « J'ai de l'argent » pour le reste.
+func _remind_or_pay(remind: String) -> String:
+	var threshold: int = CampaignManager.next_act_threshold()
+	var missing: int = threshold - CampaignManager.debt_paid
+	if threshold <= 0 or missing <= 0 or GameManager.player == null:
+		return remind
+	var inv: Inventory = GameManager.player.get_node_or_null("Inventory") as Inventory
+	return "consortium_pay" if inv != null and inv.money >= missing else remind
+
 func _on_interacted(_by: Node) -> void:
 	if data == null:
 		return
@@ -27,7 +39,7 @@ func _on_interacted(_by: Node) -> void:
 		if objs.get(OBJ_MEET, false) and not objs.get(OBJ_DELIVER, false):
 			knot = "consortium_airport_done"
 		else:
-			knot = "consortium_airport_remind"
+			knot = _remind_or_pay("consortium_airport_remind")
 		DialogueBridge.start_dialogue(data.id, knot)
 		return
 	# Side quest Península : prend la priorité — c'est la plus tardive.
@@ -37,7 +49,7 @@ func _on_interacted(_by: Node) -> void:
 		elif QuestManager.is_objective_done(QUEST_PENINSULA, OBJ_INTIMIDATE_PN):
 			knot = "consortium_peninsula_after_intimidate"
 		else:
-			knot = "consortium_peninsula_remind"
+			knot = _remind_or_pay("consortium_peninsula_remind")
 		DialogueBridge.start_dialogue(data.id, knot)
 		return
 	# Side quest Le Parc : si active, rappel ou closing.
@@ -47,7 +59,7 @@ func _on_interacted(_by: Node) -> void:
 		elif QuestManager.is_objective_done(QUEST_LE_PARC, OBJ_INTIMIDATE_LP):
 			knot = "consortium_le_parc_after_intimidate"
 		else:
-			knot = "consortium_le_parc_remind"
+			knot = _remind_or_pay("consortium_le_parc_remind")
 		DialogueBridge.start_dialogue(data.id, knot)
 		return
 	# Side quest Barra : si active, rappel ou closing selon où on en est.
@@ -57,7 +69,7 @@ func _on_interacted(_by: Node) -> void:
 		elif QuestManager.is_objective_done(QUEST_BARRA, OBJ_INTIMIDATE):
 			knot = "consortium_barra_after_intimidate"
 		else:
-			knot = "consortium_barra_remind"
+			knot = _remind_or_pay("consortium_barra_remind")
 		DialogueBridge.start_dialogue(data.id, knot)
 		return
 	# Offre Le Parc : prereq = Barra terminée + dette restante.

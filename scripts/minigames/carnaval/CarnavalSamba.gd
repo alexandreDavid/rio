@@ -297,6 +297,6 @@ func _end_game() -> void:
 			status_label.text = "REINADO ! %d pts · R$ %d" % [_score, tips]
 		else:
 			status_label.text = "Bloco em queda (%d/%d) · R$ %d" % [_score, QUALIFY_SCORE, tips]
-	await get_tree().create_timer(2.6).timeout
+	await get_tree().create_timer(bilan_delay(2.6)).timeout
 	EventBus.minigame_ended.emit("carnaval_samba", {"score": _score, "tips": tips, "qualifies": qualifies})
 	match_ended.emit(qualifies, tips)

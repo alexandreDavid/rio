@@ -116,6 +116,11 @@ static func keep_floor(root: Control, min_size: int) -> void:
 	floor_fonts(root, min_size)
 	root.get_tree().node_added.connect(func(n: Node) -> void:
 		if is_instance_valid(root) and root.is_ancestor_of(n):
+			# Par identifiant : une ligne ajoutée puis libérée dans la même
+			# trame (liste rafraîchie deux fois à une bascule d'acte) faisait
+			# crier le moteur — « Lambda capture at index 0 was freed ».
+			var id: int = n.get_instance_id()
 			(func() -> void:
-				if is_instance_valid(n):
-					floor_fonts(n, min_size)).call_deferred())
+				var node: Node = instance_from_id(id) as Node
+				if node != null and is_instance_valid(node):
+					floor_fonts(node, min_size)).call_deferred())

@@ -796,7 +796,7 @@ func _end_game() -> void:
 		_set_status("✔ Arrivée en %ds — Bia était devant, mas você leu o vento." % int(_finished_at))
 	elif _time < TIME_LIMIT:
 		_set_status("Abandon — le vent sera encore là demain.")
-	await get_tree().create_timer(2.0).timeout
+	await get_tree().create_timer(bilan_delay(2.0)).timeout
 	EventBus.minigame_ended.emit("regata",
 		{"qualifies": qualifies, "won": beat_rival, "time": _finished_at, "marks": _next_mark})
 	match_ended.emit(qualifies, beat_rival)

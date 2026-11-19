@@ -233,7 +233,7 @@ func _end_game(qualifies: bool) -> void:
 			status_label.text = "Volta complète en %.1fs · R$ %d" % [_completion_time, tip]
 		else:
 			status_label.text = "Marée tournée · R$ %d" % tip
-	await get_tree().create_timer(2.4).timeout
+	await get_tree().create_timer(bilan_delay(2.4)).timeout
 	EventBus.minigame_ended.emit("cagarras_sup", {"tip": tip, "time": _completion_time, "qualifies": qualifies})
 	match_ended.emit(qualifies, tip)
 

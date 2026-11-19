@@ -424,7 +424,7 @@ func _end_game() -> void:
 					% [_catches, _score, payout]
 		else:
 			status_label.text = "Bredouille. La mer ne doit rien à personne — reviens à la marée."
-	await get_tree().create_timer(2.0).timeout
+	await get_tree().create_timer(bilan_delay(2.0)).timeout
 	EventBus.minigame_ended.emit("fishing",
 		{"catches": _catches, "payout": payout, "score": _score,
 			"qualifies": qualifies, "won": _catches > 0})

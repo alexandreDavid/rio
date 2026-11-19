@@ -531,7 +531,7 @@ func _end_game() -> void:
 	_ended = true
 	var qualifies: bool = final_qualifies(_customers_served >= QUALIFY_SERVED and _lost <= MAX_LOST_TO_QUALIFY)
 	_set_status("Service terminé · %d clients · %d partis fâchés · R$ %d en tips" % [_customers_served, _lost, _total_tips])
-	await get_tree().create_timer(2.4).timeout
+	await get_tree().create_timer(bilan_delay(2.4)).timeout
 	EventBus.minigame_ended.emit("valet", {"tips": _total_tips, "served": _customers_served, "qualifies": qualifies})
 	match_ended.emit(qualifies, _total_tips)
 

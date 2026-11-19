@@ -84,8 +84,8 @@ func _launch(path: String, kite_id: String) -> void:
 
 func _on_minigame_ended(id: String, result: Dictionary) -> void:
 	_last.text = "Dernier : %s — %s" % [id, "qualifié ✓" if result.get("qualifies", false) else "non qualifié"]
-	# Le jeu affiche son bilan avant d'émettre ; on laisse une seconde puis retour.
-	await get_tree().create_timer(1.0).timeout
+	# Le jeu a déjà affiché son bilan avant d'émettre : retour quasi immédiat.
+	await get_tree().create_timer(0.3).timeout
 	if is_instance_valid(_current):
 		_current.queue_free()
 	_current = null

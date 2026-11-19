@@ -667,6 +667,6 @@ func _end_game() -> void:
 			and _fila_lost <= MAX_FILA_LOST)
 	_set_status("Service terminé · %d fournées (%d parfaites) · fila perdue %d× · R$ %d" \
 			% [_batches_sold, _perfect_batches, _fila_lost, _total_tips])
-	await get_tree().create_timer(2.4).timeout
+	await get_tree().create_timer(bilan_delay(2.4)).timeout
 	EventBus.minigame_ended.emit("padaria", {"tips": _total_tips, "batches": _batches_sold, "qualifies": qualifies})
 	match_ended.emit(qualifies, _total_tips)

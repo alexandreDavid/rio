@@ -665,7 +665,7 @@ func _end_game(qualifies: bool) -> void:
 			_show_banner("FIM DO TEMPO", "R$ %d" % tip, 99.0)
 	if status_label:
 		status_label.text = "Volta da Lagoa bouclée !" if qualifies else "Le loueur te fait signe de rentrer."
-	await get_tree().create_timer(0.4 if forfeited else 2.4).timeout
+	await get_tree().create_timer(bilan_delay(2.4)).timeout
 	EventBus.minigame_ended.emit("lagoa_circuit", {"tip": tip, "time": _completion_time, "qualifies": qualifies})
 	match_ended.emit(qualifies, tip)
 
