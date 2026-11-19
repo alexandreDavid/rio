@@ -6,6 +6,10 @@ extends VolleyPlayer
 # arrive. Battable : réflexes, vitesse et précision montent avec les points.
 
 const HOME_X: float = 240.0
+# Décalage blob/balle au service : à droite de la balle (elle part vers le
+# filet) et assez près pour que la tête la touche (rayons 19 + 12).
+const SERVE_OFFSET_MIN: float = 4.0
+const SERVE_OFFSET_MAX: float = 18.0
 
 # Géométrie du terrain, posée par VolleyMatch (évite une dépendance croisée).
 var court_half: float = 440.0
@@ -63,7 +67,9 @@ func think(delta: float, ball: VolleyBall, serving: bool) -> void:
 
 func _choose_target(ball: VolleyBall, serving: bool) -> float:
 	if serving:
-		return clampf(ball.position.x + _plan_offset, min_x, max_x)
+		# Au service, pas de bourde de placement : au-delà de ~30 px la tête
+		# ne touche plus la balle et il sautait à côté sans fin (match bloqué).
+		return clampf(ball.position.x + clampf(_plan_offset, SERVE_OFFSET_MIN, SERVE_OFFSET_MAX), min_x, max_x)
 	if ball.frozen:
 		return HOME_X
 	# Hauteur où la balle touche le haut d'un blob debout.
@@ -77,6 +83,12 @@ func _want_jump(delta: float, ball: VolleyBall, serving: bool) -> bool:
 	if not on_ground:
 		# Garder l'appui en montée = saut complet.
 		return vel.y < 0.0
+	if serving and _serve_wait > 0.5:
+		# Retombé sans toucher : on se recale avant de ressauter.
+		_serve_wait = 0.0
+		_plan_offset *= 0.5
+		_think_timer = 0.0
+		return false
 	if serving:
 		if absf(_target_x - position.x) < 6.0:
 			_serve_wait += delta
