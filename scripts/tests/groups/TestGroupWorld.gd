@@ -2009,6 +2009,55 @@ func _test_playtest_mobile_fixes() -> void:
 	named.name = "TioZeHouseInterior"
 	_assert(minimap_script.interior_label(named) == "Casa do tio Zé", "minimap : la maison de Zé porte son nom")
 	named.free()
+	# 10. iPhone : aucun emoji ne dépend d'une police système (iOS n'en fournit
+	# pas à Godot — tout s'affichait vide). Chaque symbole utilisé dans le jeu
+	# est dessiné, alias d'un dessin, ou muet ; et la police les contient.
+	for dict_h in [[PixelIcons.ICONS, 9], [PixelIcons.SYMBOLS, 7]]:
+		var bad_shape: Array = []
+		for ch in dict_h[0]:
+			var rows: Array = dict_h[0][ch]
+			var ok_shape: bool = rows.size() == int(dict_h[1])
+			for r in rows:
+				ok_shape = ok_shape and String(r).length() == String(rows[0]).length()
+			if not ok_shape:
+				bad_shape.append(ch)
+		_assert(bad_shape.is_empty(), "icônes pixel : grilles régulières de %d rangées (fautives : %s)" % [dict_h[1], str(bad_shape)])
+	var dangling: Array = []
+	for ch in PixelIcons.ALIASES:
+		if PixelFont._rows(PixelIcons.ALIASES[ch]).is_empty():
+			dangling.append(ch)
+	_assert(dangling.is_empty(), "icônes pixel : chaque alias pointe un dessin (orphelins : %s)" % str(dangling))
+	var ui_font: FontFile = PixelFont.ui_font()
+	_assert(ui_font != null and not ui_font.allow_system_fallback, "la police de l'interface ne compte pas sur les polices du système")
+	var undrawn: Dictionary = {}
+	var texts: Array = _list_gd_under("res://scripts/") + _list_scenes_under("res://scenes/")
+	for path in texts:
+		if String(path).contains("/tests/") or String(path).ends_with("PixelIcons.gd"):
+			continue
+		var body: String = FileAccess.get_file_as_string(path)
+		for i in body.length():
+			var code: int = body.unicode_at(i)
+			if code < 0x2190 or (code >= 0x2500 and code <= 0x257F) or (code >= 0x3000 and code <= 0x9FFF):
+				continue
+			var sym: String = String.chr(code)
+			if PixelFont._rows(sym).is_empty() and not PixelIcons.SILENT.contains(sym):
+				undrawn[sym] = String(path).get_file()
+	_assert(undrawn.is_empty(), "chaque emoji du jeu est dessiné, alias ou muet (à traiter : %s)" % str(undrawn))
+	var absent: Array = []
+	for ch in PixelIcons.ICONS.keys() + PixelIcons.SYMBOLS.keys() + PixelIcons.ALIASES.keys():
+		if ui_font != null and not ui_font.has_char(String(ch).unicode_at(0)):
+			absent.append(ch)
+	_assert(absent.is_empty(), "RioPixel.ttf contient toutes les icônes (absentes : %s — relancer build_pixel_ttf.py)" % str(absent))
+	# 11. La boussole d'objectif dessine dans SON repère : le HUD est rentré de
+	# l'encoche, et tout était décalé d'autant sur l'appareil.
+	var compass: Control = (load("res://scripts/ui/Compass.gd") as GDScript).new()
+	compass.position = Vector2(167, 0)
+	compass.size = Vector2(1000, 600)
+	add_child(compass)
+	_assert(compass._view() == Rect2(0, 0, 1000, 600), "boussole : zone de dessin = son propre cadre, pas l'écran")
+	_assert(FileAccess.get_file_as_string("res://scripts/ui/Compass.gd").find("get_viewport_rect()") == -1,
+			"boussole : plus aucune coordonnée d'écran brute")
+	compass.queue_free()
 	walker.queue_free()
 	for room in rooms:
 		room.queue_free()

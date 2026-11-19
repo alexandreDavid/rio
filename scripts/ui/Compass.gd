@@ -12,6 +12,9 @@ extends Control
 # couleur reflète la voie scellée (cf. NavigationDirector.voie_color).
 
 const FRAME_MARGIN: float = 84.0
+# En haut, la barre d'état et le bandeau d'objectif occupent ~140 px : une
+# cible au nord posait flèche et pastille dessous.
+const TOP_MARGIN: float = 170.0
 const ARROW_SIZE: float = 26.0
 const RING_RADIUS: float = 26.0
 const LABEL_FONT_SIZE: int = 16
@@ -63,13 +66,17 @@ func _draw() -> void:
 		if label != "":
 			label = "🚕 " + label
 
-	var xform: Transform2D = get_viewport().get_canvas_transform()
+	# Monde → écran → repère de la boussole. Le HUD est rentré de la zone sûre
+	# (encoche) : dessiner en coordonnées d'écran décalait anneau, flèche et
+	# pastille de la largeur de l'encoche — sur l'appareil seulement.
+	var xform: Transform2D = get_global_transform_with_canvas().affine_inverse() \
+			* get_viewport().get_canvas_transform()
 	var t_screen: Vector2 = xform * target_world
 	var p_screen: Vector2 = xform * GameManager.player.global_position
-	var view: Rect2 = get_viewport_rect()
+	var view: Rect2 = _view()
 	var inner: Rect2 = Rect2(
-		view.position + Vector2(FRAME_MARGIN, FRAME_MARGIN),
-		view.size - Vector2(FRAME_MARGIN * 2.0, FRAME_MARGIN * 2.0))
+		view.position + Vector2(FRAME_MARGIN, TOP_MARGIN),
+		view.size - Vector2(FRAME_MARGIN * 2.0, FRAME_MARGIN + TOP_MARGIN))
 
 	var world_dist: float = GameManager.player.global_position.distance_to(target_world)
 
@@ -97,6 +104,10 @@ func _draw() -> void:
 		full_label = "%s  ·  %dm" % [label, meters] if label != "" else "%dm" % meters
 	if full_label != "":
 		_draw_label(tip - dir * (ARROW_SIZE + 18.0), full_label, color)
+
+# La zone où dessiner, dans le repère de la boussole (= la zone sûre).
+func _view() -> Rect2:
+	return Rect2(Vector2.ZERO, size)
 
 # --- Résolution du taxi (mode voyage) ---
 
@@ -147,7 +158,7 @@ func _draw_label(center: Vector2, text: String, color: Color) -> void:
 	var text_size: Vector2 = _font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, LABEL_FONT_SIZE)
 	var pad: Vector2 = Vector2(8.0, 4.0)
 	var box: Rect2 = Rect2(center - text_size / 2.0 - pad, text_size + pad * 2.0)
-	var view: Rect2 = get_viewport_rect()
+	var view: Rect2 = _view()
 	box.position.x = clampf(box.position.x, view.position.x + 4.0, view.end.x - box.size.x - 4.0)
 	box.position.y = clampf(box.position.y, view.position.y + 4.0, view.end.y - box.size.y - 4.0)
 	draw_rect(box, _a(Color(0.05, 0.05, 0.08, 0.78)), true)
@@ -156,7 +167,7 @@ func _draw_label(center: Vector2, text: String, color: Color) -> void:
 	draw_string(_font, baseline, text, HORIZONTAL_ALIGNMENT_LEFT, -1, LABEL_FONT_SIZE, _a(Color(0.97, 0.97, 0.93, 1.0)))
 
 func _draw_travel_banner(text: String, color: Color) -> void:
-	var view: Rect2 = get_viewport_rect()
+	var view: Rect2 = _view()
 	_draw_label(Vector2(view.get_center().x, view.position.y + FRAME_MARGIN * 0.6), text, color)
 
 func _edge_point(origin: Vector2, dir: Vector2, rect: Rect2) -> Vector2:

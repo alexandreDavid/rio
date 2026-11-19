@@ -194,7 +194,7 @@ static func ui_font() -> FontFile:
 	f.antialiasing = TextServer.FONT_ANTIALIASING_GRAY
 	f.hinting = TextServer.HINTING_NONE
 	f.subpixel_positioning = TextServer.SUBPIXEL_POSITIONING_DISABLED
-	f.allow_system_fallback = true
+	f.allow_system_fallback = false
 	var fallback: Font = ThemeDB.fallback_font
 	if fallback != null and fallback != f:
 		var arr: Array[Font] = [fallback]
@@ -258,7 +258,20 @@ static func _rows(ch: String) -> Array:
 	for i in SIZE:
 		cell.append("")
 	var w: int = 0
-	if CAPS.has(ch):
+	if PixelIcons.ALIASES.has(ch):
+		return _rows(PixelIcons.ALIASES[ch])
+	if PixelIcons.ICONS.has(ch):
+		# Icône : 9 rangées, une au-dessus des capitales et une sous la ligne.
+		var ic: Array = PixelIcons.ICONS[ch]
+		w = (ic[0] as String).length()
+		for r in ic.size():
+			cell[1 + r] = ic[r]
+	elif PixelIcons.SYMBOLS.has(ch):
+		var sy: Array = PixelIcons.SYMBOLS[ch]
+		w = (sy[0] as String).length()
+		for r in sy.size():
+			cell[2 + r] = sy[r]
+	elif CAPS.has(ch):
 		var g: Array = CAPS[ch]
 		w = (g[0] as String).length()
 		for r in g.size():
@@ -327,6 +340,12 @@ static func _all_chars() -> Array:
 		chars.append(k)
 	for k in COMPOSED.keys():
 		chars.append(k)
+	for k in PixelIcons.ICONS.keys():
+		chars.append(k)
+	for k in PixelIcons.SYMBOLS.keys():
+		chars.append(k)
+	for k in PixelIcons.ALIASES.keys():
+		chars.append(k)
 	return chars
 
 
@@ -379,7 +398,7 @@ static func _build(scale: int, outlined: bool) -> FontFile:
 	f.generate_mipmaps = false
 	f.subpixel_positioning = TextServer.SUBPIXEL_POSITIONING_DISABLED
 	f.hinting = TextServer.HINTING_NONE
-	f.allow_system_fallback = true
+	f.allow_system_fallback = false
 	var size_key: Vector2i = Vector2i(px, 0)
 	var k: float = float(scale)
 	f.set_texture_image(0, size_key, 0, img)
