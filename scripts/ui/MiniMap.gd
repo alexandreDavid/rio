@@ -34,6 +34,21 @@ const POIS: Dictionary = {
 @onready var pois_layer: Control = $PoisLayer
 @onready var player_dot: ColorRect = $PoisLayer/PlayerDot
 
+# Dans un intérieur, la carte de Copa n'a pas de sens (le point du joueur se
+# collait au bord) : on nomme le lieu. Clé = fragment du nom de la scène, le
+# premier qui correspond gagne (« Shopping » avant « Bar » : BarraShopping).
+const INTERIOR_LABELS: Dictionary = {
+	"TioZeHouse": "Casa do tio Zé", "House": "Casa", "PalaceLobby": "Copa Palace",
+	"Church": "Igreja", "Police": "Delegacia", "Padaria": "Padaria",
+	"Pharmacy": "Farmácia", "Mercadinho": "Mercadinho", "Restaurant": "Restaurante",
+	"Shopping": "Shopping", "ArpoadorBar": "Bar do Arpoador", "Bar": "Bar", "Shop": "Boutique",
+	"Academia": "Academia", "MAC": "MAC", "ForteMuseu": "Museu do Forte",
+	"Colombo": "Confeitaria Colombo", "Confeitaria": "Confeitaria",
+	"LeParc": "Le Parc", "Peninsula": "Península",
+	"Penthouse": "Cobertura", "Office": "Escritório",
+}
+
+var _interior: Node = null
 var _poi_dots: Dictionary = {}
 var _world_node: Node = null
 var _last_district: String = "copacabana"
@@ -49,7 +64,11 @@ func _ready() -> void:
 	_on_district_changed(DistrictManager.current() if DistrictManager else "copacabana")
 
 func _process(_delta: float) -> void:
-	if _last_district != "copacabana":
+	var room: Node = InteriorCurtain.current_root(get_tree())
+	if room != _interior:
+		_interior = room
+		_on_district_changed(_last_district)
+	if _last_district != "copacabana" or _interior != null:
 		return
 	_refresh_player_dot()
 
@@ -115,7 +134,7 @@ func _y_to_view(world_y: float) -> float:
 
 func _on_district_changed(district_id: String) -> void:
 	_last_district = district_id
-	var in_copa: bool = district_id == "copacabana"
+	var in_copa: bool = district_id == "copacabana" and _interior == null
 	# Strips et dots visibles uniquement sur Copacabana.
 	if sand_strip:
 		sand_strip.visible = in_copa
@@ -127,4 +146,14 @@ func _on_district_changed(district_id: String) -> void:
 		pois_layer.visible = in_copa
 	if label_district:
 		label_district.visible = not in_copa
-		label_district.text = DistrictManager.get_label(district_id)
+		label_district.text = interior_label(_interior) if _interior != null else DistrictManager.get_label(district_id)
+
+
+static func interior_label(room: Node) -> String:
+	var key: String = room.scene_file_path.get_file() if room.scene_file_path != "" else String(room.name)
+	if String(room.name).contains("TioZe"):
+		key = "TioZeHouse"
+	for frag in INTERIOR_LABELS:
+		if key.contains(frag):
+			return INTERIOR_LABELS[frag]
+	return "Intérieur"

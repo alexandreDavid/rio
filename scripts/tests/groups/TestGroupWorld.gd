@@ -1993,6 +1993,22 @@ func _test_playtest_mobile_fixes() -> void:
 	await get_tree().process_frame
 	_assert(rooms[0].visible and rooms[1].visible, "dehors : tous les intérieurs restent visibles")
 	_assert(void_bg != null and not void_bg.visible, "dehors : pas de tache sombre près des quartiers")
+	# 9. Minimap : dans un intérieur elle nomme le lieu (chaque scène a son nom).
+	var minimap_script: GDScript = load("res://scripts/ui/MiniMap.gd") as GDScript
+	var unnamed: Array = []
+	for scene_path in _list_scenes_under("res://scenes/interiors/"):
+		var probe: Node = Node.new()
+		probe.name = String(scene_path).get_file().get_basename()
+		if minimap_script.interior_label(probe) == "Intérieur":
+			unnamed.append(probe.name)
+		probe.free()
+	_assert(unnamed.is_empty(), "minimap : chaque intérieur a un nom (sans nom : %s)" % str(unnamed))
+	var named: Node = Node.new()
+	named.name = "BarraShoppingInterior"
+	_assert(minimap_script.interior_label(named) == "Shopping", "minimap : BarraShopping n'est pas pris pour un bar")
+	named.name = "TioZeHouseInterior"
+	_assert(minimap_script.interior_label(named) == "Casa do tio Zé", "minimap : la maison de Zé porte son nom")
+	named.free()
 	walker.queue_free()
 	for room in rooms:
 		room.queue_free()

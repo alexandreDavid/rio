@@ -114,8 +114,12 @@ static func floor_fonts(root: Node, min_size: int) -> void:
 # Les lignes construites plus tard (listes rafraîchies) passent aussi au plancher.
 static func keep_floor(root: Control, min_size: int) -> void:
 	floor_fonts(root, min_size)
+	var root_id: int = root.get_instance_id()
 	root.get_tree().node_added.connect(func(n: Node) -> void:
-		if is_instance_valid(root) and root.is_ancestor_of(n):
+		# La racine aussi par identifiant : un panneau libéré (tests, retour au
+		# titre) laissait un écouteur qui criait à chaque nœud ajouté.
+		var live_root: Node = instance_from_id(root_id) as Node
+		if live_root != null and is_instance_valid(live_root) and live_root.is_ancestor_of(n):
 			# Par identifiant : une ligne ajoutée puis libérée dans la même
 			# trame (liste rafraîchie deux fois à une bascule d'acte) faisait
 			# crier le moteur — « Lambda capture at index 0 was freed ».

@@ -113,8 +113,9 @@ spot porteur. Suite complète : 4 656 assertions, 0 échec, audit OK.
   désormais `UIFit.MIN_SCREEN_FONT` à l'écran, textes créés en cours de partie
   compris. Outil : `tools/minigame_text_audit.sh <prefix>` (une capture par
   jeu). À la pêche, le bouton LANCER couvrait le tiers central de la barre de
-  lancer : barre et consigne remontées. Reste l'étiquette de la minimap, et le
-  bandeau du Desembarque qui passe sous l'enseigne.
+  lancer : barre et consigne remontées. L'étiquette de la minimap passe de 12 à 22 px et nomme le
+  lieu dans un intérieur. Reste le bandeau du Desembarque qui passe sous
+  l'enseigne.
 - **Menu des mini-jeux** — corrigé : ce n'était pas le menu mais le bilan de
   fin (2 à 2,6 s) imposé même sur abandon, pendant lequel rien ne répond.
   `MinigameBase.bilan_delay` l'abrège à 0,35 s quand on quitte (18 jeux).

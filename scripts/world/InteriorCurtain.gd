@@ -54,6 +54,12 @@ func contains(point: Vector2) -> bool:
 	return is_instance_valid(floor_rect) and floor_rect.get_global_rect().grow(MARGIN).has_point(point)
 
 
+# Racine de l'intérieur où se trouve le joueur (null dehors) — pour la minimap.
+static func current_root(tree: SceneTree) -> Node:
+	var c: InteriorCurtain = _current(tree)
+	return c.get_parent() if c != null else null
+
+
 # L'intérieur où se trouve le joueur, calculé une fois par trame.
 # (Par le groupe « player », pas par l'autoload : l'habilleur tourne aussi dans
 # les outils de capture sans autoloads.)
