@@ -2009,6 +2009,38 @@ func _test_playtest_mobile_fixes() -> void:
 	named.name = "TioZeHouseInterior"
 	_assert(minimap_script.interior_label(named) == "Casa do tio Zé", "minimap : la maison de Zé porte son nom")
 	named.free()
+	# 12. « Prendre le médicament chez Dona Carmen » restait ouvert une fois
+	# Tito livré : l'offre validait l'objectif avant d'accepter la quête.
+	_reset_campaign_state()
+	DialogueBridge._apply_placeholder_action({"accept_quest": "pharmacy_tito",
+			"finish_quest": {"quest": "pharmacy_tito", "objective": "receive_medicine", "payout": 0}})
+	var farma: Dictionary = QuestManager.get_objectives_state("pharmacy_tito")
+	_assert(QuestManager.is_active("pharmacy_tito") and farma.get("receive_medicine", false),
+			"pharmacie : accepter l'offre coche « prendre le médicament »")
+	QuestManager.complete_objective("pharmacy_tito", "deliver_medicine", true)
+	_assert(QuestManager.is_active("pharmacy_tito"), "pharmacie : livré chez Tito, il reste à encaisser")
+	QuestManager.complete_objective("pharmacy_tito", "collect_reward", false)
+	_assert(QuestManager.is_completed("pharmacy_tito"), "pharmacie : encaissée chez Dona Carmen, la quête se clôt")
+	# Partie d'avant le correctif : objectif reçu jamais coché, nouvel objectif absent.
+	_reset_campaign_state()
+	QuestManager.accept("pharmacy_tito")
+	var saved_q: Dictionary = QuestManager.serialize()
+	saved_q["objectives"]["pharmacy_tito"] = {"receive_medicine": false, "deliver_medicine": true}
+	QuestManager.deserialize(saved_q)
+	_assert(QuestManager.get_objectives_state("pharmacy_tito").has("collect_reward"),
+			"chargement : un objectif ajouté depuis la sauvegarde est repris, ouvert")
+	var carmen: Node = (load("res://scripts/npcs/Farmaceutico.gd") as GDScript).new()
+	carmen.data = load("res://resources/npcs/farmaceutico.tres")
+	carmen._on_interacted(null)
+	_assert(QuestManager.get_objectives_state("pharmacy_tito").get("receive_medicine", false),
+			"ancienne partie : revoir Dona Carmen coche « prendre le médicament »")
+	_assert(DialogueBridge.is_active(), "ancienne partie : elle propose d'encaisser")
+	DialogueBridge.choose(0)
+	_assert(QuestManager.is_completed("pharmacy_tito"), "ancienne partie : la quête se clôt en encaissant")
+	if DialogueBridge.is_active():
+		DialogueBridge.end_dialogue()
+	carmen.free()
+	_reset_campaign_state()
 	# 10. iPhone : aucun emoji ne dépend d'une police système (iOS n'en fournit
 	# pas à Godot — tout s'affichait vide). Chaque symbole utilisé dans le jeu
 	# est dessiné, alias d'un dessin, ou muet ; et la police les contient.

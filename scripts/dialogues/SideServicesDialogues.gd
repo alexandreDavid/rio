@@ -98,7 +98,7 @@ const KNOTS: Dictionary = {
 		"text": "Tu as livré ? Valeu, mon grand ! Voilà tes 60 reais. Passe quand tu veux, j'ai toujours du travail.",
 		"choices": ["Merci"],
 		"on_choose": {
-			"0": {"finish_quest": {"quest": "pharmacy_tito", "objective": "deliver_medicine", "payout": 60}, "rep": {0: 2}},
+			"0": {"finish_quest": {"quest": "pharmacy_tito", "objective": "collect_reward", "payout": 60}},
 		},
 	},
 	"farma_thanks": {

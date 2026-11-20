@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="Quest" load_steps=5 format=3]
+[gd_resource type="Resource" script_class="Quest" load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scripts/quests/Quest.gd" id="1_quest"]
 [ext_resource type="Script" path="res://scripts/quests/QuestObjective.gd" id="2_obj"]
@@ -15,6 +15,12 @@ id = "deliver_medicine"
 description = "Livrer le médicament à Tito (Morro)"
 optional = false
 
+[sub_resource type="Resource" id="obj_collect"]
+script = ExtResource("2_obj")
+id = "collect_reward"
+description = "Retourner encaisser chez Dona Carmen"
+optional = false
+
 [resource]
 script = ExtResource("1_quest")
 id = "pharmacy_tito"
@@ -23,7 +29,7 @@ description = "Dona Carmen a un médicament pour son neveu Tito, malade dans la 
 journal_text = "Livrer le médicament à Tito (favela), puis revenir à la pharmacie."
 giver_npc_id = "farmaceutico"
 ink_knot = "farma_intro"
-objectives = Array[Resource]([SubResource("obj_pickup"), SubResource("obj_deliver")])
+objectives = Array[Resource]([SubResource("obj_pickup"), SubResource("obj_deliver"), SubResource("obj_collect")])
 money_reward = 60
 reputation_rewards = {0: 2}
 required_reputation = {}

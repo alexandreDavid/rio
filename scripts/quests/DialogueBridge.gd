@@ -291,6 +291,15 @@ func _apply_placeholder_action(action: Dictionary) -> void:
 		# finish_quest avant pay_bribe : les bribe-pour-finir-une-quête
 		# (ex. tito_favor_ask) doivent dépenser l'argent ET compléter la quête.
 		var info: Dictionary = action.finish_quest
+		# Même quête acceptée ET validée d'un coup (« prends le médicament » :
+		# l'offre remet l'objet) : il faut l'accepter AVANT, sinon l'objectif
+		# visé n'existe pas encore et reste ouvert pour toujours.
+		var accept_first: bool = action.has("accept_quest") and action.accept_quest is String \
+				and String(action.accept_quest) == String(info.get("quest", ""))
+		if accept_first and not QuestManager.is_active(String(info.quest)):
+			if not _try_accept_any(action.accept_quest):
+				_show_locked_message(action.accept_quest)
+				return
 		if action.has("pay_bribe"):
 			if inv == null or not inv.spend_money(int(action.pay_bribe)):
 				push_warning("[DialogueBridge] pay_bribe %d failed — quest not completed" % int(action.pay_bribe))
@@ -314,7 +323,7 @@ func _apply_placeholder_action(action: Dictionary) -> void:
 		# accept_quest en bonus : chaîne close+next dans le même dialogue (évite
 		# au joueur de devoir réinteragir avec le même NPC pour la suite —
 		# motif des voies A/B/C/D, ex. trafico a1→a2 sur le même contact).
-		if action.has("accept_quest"):
+		if action.has("accept_quest") and not accept_first:
 			_try_accept_any(action.accept_quest)
 		return
 	if action.has("pay_bribe"):

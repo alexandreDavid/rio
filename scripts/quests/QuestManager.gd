@@ -232,6 +232,16 @@ func deserialize(data: Dictionary) -> void:
 	_state = _keep_known(data.get("state", {}))
 	_objectives = _keep_known(data.get("objectives", {}))
 	_chronos = _keep_known(data.get("chronos", {}))
+	# Un objectif ajouté à une quête après la sauvegarde (ex. « retourner
+	# encaisser » de pharmacy_tito) : la partie en cours le reçoit, ouvert —
+	# sinon complete_objective le refuserait et la quête ne se clôrait jamais.
+	for quest_id in _objectives:
+		var quest: Quest = _quests.get(quest_id)
+		if quest == null or not (_objectives[quest_id] is Dictionary):
+			continue
+		for obj in quest.objectives:
+			if not _objectives[quest_id].has(obj.id):
+				_objectives[quest_id][obj.id] = false
 
 func _keep_known(saved: Dictionary) -> Dictionary:
 	var kept: Dictionary = {}
