@@ -2041,6 +2041,38 @@ func _test_playtest_mobile_fixes() -> void:
 		DialogueBridge.end_dialogue()
 	carmen.free()
 	_reset_campaign_state()
+	# 13. Joystick flottant : poser le pouce ne déplace pas, la direction est
+	# libre, la base suit le pouce, le relâcher coupe tout.
+	_assert(VirtualJoystick.axis_for(Vector2(0.08, 0.06), 0.14) == Vector2.ZERO, "joystick : un tremblement ne commande rien")
+	var diag: Vector2 = VirtualJoystick.axis_for(Vector2(0.2, 0.2), 0.14)
+	_assert(diag.x > 0.1 and is_equal_approx(diag.x, diag.y), "joystick : un petit geste en diagonale part en diagonale (%s)" % diag)
+	var free_dir: Vector2 = VirtualJoystick.axis_for(Vector2.from_angle(deg_to_rad(20.0)), 0.14)
+	_assert(absf(rad_to_deg(free_dir.angle()) - 20.0) < 0.5, "joystick : direction libre, pas huit caps (%.1f°)" % rad_to_deg(free_dir.angle()))
+	var straight: Vector2 = VirtualJoystick.axis_for(Vector2.from_angle(deg_to_rad(4.0)), 0.14)
+	_assert(straight.y == 0.0 and straight.x > 0.9, "joystick : à 4° de l'axe on marche droit")
+	var stick: VirtualJoystick = VirtualJoystick.new()
+	stick.floating = true
+	add_child(stick)
+	stick.size = Vector2(280, 280)
+	await get_tree().process_frame
+	stick._on_touch(Vector2(900, -300), true, 3)
+	_assert(Input.get_axis("move_left", "move_right") == 0.0 and Input.get_axis("move_forward", "move_back") == 0.0,
+			"joystick : poser le pouce (même loin du disque) ne fait pas partir le personnage")
+	_assert(stick._base == Vector2(900, -300), "joystick : la base vient sous le pouce")
+	stick._update_knob(Vector2(960, -300))
+	_assert(Input.get_axis("move_left", "move_right") > 0.5 and not Input.is_action_pressed("run"),
+			"joystick : 60 px à droite → on marche à droite, sans sprinter")
+	stick._update_knob(Vector2(1100, -300))
+	_assert(is_equal_approx(stick._base.x, 1100.0 - stick.radius), "joystick : au-delà du bord, la base suit le pouce")
+	_assert(Input.is_action_pressed("run"), "joystick : pouce au bord → sprint")
+	stick._update_knob(Vector2(1050, -300))
+	_assert(Input.get_axis("move_left", "move_right") > 0.0, "joystick : revenir de 50 px ne retourne pas encore")
+	stick._update_knob(Vector2(1000, -300))
+	_assert(Input.get_axis("move_left", "move_right") < 0.0, "joystick : rebrousser chemin = un petit geste, grâce à la base suiveuse")
+	stick._on_touch(Vector2(1000, -300), false, 3)
+	_assert(Input.get_axis("move_left", "move_right") == 0.0 and not Input.is_action_pressed("run")
+			and stick._base == stick.size * 0.5, "joystick : relâcher coupe tout et la base rentre au repos")
+	stick.queue_free()
 	# 10. iPhone : aucun emoji ne dépend d'une police système (iOS n'en fournit
 	# pas à Godot — tout s'affichait vide). Chaque symbole utilisé dans le jeu
 	# est dessiné, alias d'un dessin, ou muet ; et la police les contient.
