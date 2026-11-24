@@ -24,6 +24,7 @@ const SIGNATURES: Dictionary = {
 	"exercise":         {"axis": 4, "amount": 1, "npc": "ramos", "label": "treino da academia"},
 	"carnaval_samba":   {"axis": 4, "amount": 3, "npc": "", "label": "samba da Sapucaí"},
 	"racha_atlantica":  {"axis": 2, "amount": 2, "npc": "", "label": "racha da Atlântica"},
+	"racha_porto":      {"axis": 2, "amount": 2, "npc": "", "label": "racha do Porto"},
 	"altinha":          {"axis": 2, "amount": 1, "npc": "", "label": "altinha da praia"},
 	"kitesurf":         {"axis": 2, "amount": 1, "npc": "", "label": "kite da Barra"},
 	"milho":            {"axis": 0, "amount": 1, "npc": "seu_joao", "label": "hora do rush do milho"},

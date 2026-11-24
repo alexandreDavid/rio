@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/minigames/racha_porto/RachaPortoGame.gd" id="1_game"]
+[ext_resource type="PackedScene" path="res://scenes/ui/MinigameTouchControls.tscn" id="2_touch"]
+
+[node name="RachaPorto" type="Node2D"]
+script = ExtResource("1_game")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(960, 540)
+
+[node name="TouchControls" parent="." instance=ExtResource("2_touch")]
+show_interact = false

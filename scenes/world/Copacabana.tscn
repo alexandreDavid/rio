@@ -1,4 +1,4 @@
-[gd_scene load_steps=73 format=3]
+[gd_scene load_steps=74 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/npcs/DonaIrene.tscn" id="37_irene"]
 [ext_resource type="PackedScene" path="res://scenes/npcs/BarPatrao.tscn" id="38_patrao"]
@@ -34,6 +34,7 @@
 [ext_resource type="PackedScene" path="res://scenes/interiors/HouseInterior.tscn" id="61_house_int"]
 [ext_resource type="PackedScene" path="res://scenes/props/ReactiveDialogueSpot.tscn" id="62_reactive"]
 [ext_resource type="PackedScene" path="res://scenes/props/RachaLauncher.tscn" id="63_racha"]
+[ext_resource type="PackedScene" path="res://scenes/props/RachaPortoLauncher.tscn" id="64_racha_porto"]
 [ext_resource type="PackedScene" path="res://scenes/districts/BarraDaTijuca.tscn" id="64_barra"]
 [ext_resource type="PackedScene" path="res://scenes/districts/Niteroi.tscn" id="65_niteroi"]
 [ext_resource type="PackedScene" path="res://scenes/npcs/MadameDubois.tscn" id="66_dubois"]
@@ -308,6 +309,9 @@ position = Vector2(1335, -100)
 
 [node name="RachaLauncher" parent="." instance=ExtResource("63_racha")]
 position = Vector2(400, 40)
+
+[node name="RachaPortoLauncher" parent="." instance=ExtResource("64_racha_porto")]
+position = Vector2(2110, 40)
 
 [node name="Traffic" type="Node" parent="."]
 script = ExtResource("25_traffic")

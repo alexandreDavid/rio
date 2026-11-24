@@ -1,13 +1,16 @@
 class_name RachaLauncher
 extends Node2D
 
-# Borne pari/inscription Racha da Atlântica. Le joueur paye 50 R$ d'inscription
-# puis dispute la course (3 tours, 3 IA). Position finale → payout.
+# Borne pari/inscription d'un racha (Atlântica : 3 tours, 3 IA ; Porto : du
+# Porto Maravilha à Copacabana). Le joueur paye l'inscription puis dispute la
+# course. Position finale → payout.
 # Casse l'inscription si pas assez d'argent.
 
 @export var interactable: Interactable
 @export var match_scene: PackedScene
 @export var entry_fee: int = 50
+## Nom affiché sur la borne (la même borne sert le racha du Porto).
+@export var race_name: String = "Racha da Atlântica"
 
 var _active_match: Node = null
 var _world_cache: Node = null
@@ -17,7 +20,7 @@ func _ready() -> void:
 	if interactable == null:
 		interactable = get_node_or_null("Interactable") as Interactable
 	if interactable:
-		interactable.prompt = "Racha da Atlântica (%d R$)" % entry_fee
+		interactable.prompt = "%s (%d R$)" % [race_name, entry_fee]
 		interactable.interacted.connect(_on_interact)
 
 func _on_interact(by: Node) -> void:
