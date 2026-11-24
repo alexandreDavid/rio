@@ -1,672 +1,963 @@
 class_name PadariaGame
 extends MinigameBase
 
-# Mini-jeu fournil de la Padaria São Sebastião.
-# Cycle :
-#   1) ramasser farine / eau / queijo, les déposer sur la plaque (3 ingrédients)
-#   2) prendre la plaque crue, l'enfourner
-#   3) cuisson : 0-4 s = cru ; 4-8 s = parfait ; 8-11 s = trop cuit ; > 11 s = brûlé
-#   4) sortie du four → la plaque arrive directement en main
-#   5) déposer dans le panier (vente) ou dans la poubelle (jeter)
-# Affordances : labels contextuels au-dessus du joueur, stations highlights selon
-# l'action possible, plaque qui change de teinte avec le temps de cuisson.
+# Rush du matin à la Padaria São Sebastião : cuisine en grille, comptoirs qui
+# bloquent, commandes chronométrées au balcão. Un objet en main ; on pose et
+# reprend sur n'importe quel comptoir, deux ingrédients compatibles s'y
+# assemblent. Recettes :
+#   pão de queijo : polvilho + queijo → sovar (bancada) → forno
+#   pão francês   : farinha + água    → sovar (bancada) → forno
+#   misto quente  : pão francês + queijo → chapa
+# PEGAR/LARGAR = prendre, poser, assembler, servir ; SOVAR (tenu) = pétrir.
 
 signal match_ended(qualifies: bool, tips: int)
 
-const ART := preload("res://scripts/minigames/padaria/PadariaArt.gd")
+const KitchenArt := preload("res://scripts/minigames/padaria/PadariaKitchenArt.gd")
 
-const DURATION: float = 100.0
-const MAX_BATCHES: int = 5
+const DURATION: float = 150.0
+const CELL: float = 96.0
+const ORIGIN: Vector2 = Vector2(48, 240)
+# . sol · # comptoir · P polvilho · F farinha · Q queijo · A água · K bancada
+# O forno · G chapa · T lixo · S balcão (service)
+const GRID: Array[String] = [
+	"#PFQA#KK#OO##",
+	"#...........S",
+	"#...........S",
+	"T...##G#....S",
+	"#...........S",
+	"#...........S",
+	"#############",
+]
+const CRATES: Dictionary = {"P": "polvilho", "F": "farinha", "Q": "queijo", "A": "agua"}
 
-const ARENA_W: float = 1920.0
-const ARENA_H: float = 1080.0
+const PLAYER_RADIUS: float = 26.0
+const PLAYER_SPEED: float = 420.0
+const REACH: float = 110.0
 
-const PLAYER_RADIUS: float = 24.0
-const PLAYER_SPEED: float = 540.0
-const INTERACT_RANGE: float = 120.0
+const KNEAD_TIME: float = 2.2
+const OVEN_BAKE: float = 7.0
+const OVEN_BURN: float = 16.0
+const CHAPA_COOK: float = 4.0
+const CHAPA_BURN: float = 11.0
 
-const COOK_PERFECT_MIN: float = 4.0
-const COOK_PERFECT_MAX: float = 8.0
-const COOK_BURN: float = 11.0
+# Deux objets posés l'un sur l'autre (ordre indifférent) → résultat.
+const MERGE: Dictionary = {
+	"polvilho+queijo": "mix_pq",
+	"agua+farinha": "mix_pf",
+	"pf+queijo": "misto_cru",
+}
+const KNEAD: Dictionary = {"mix_pq": "pq_cru", "mix_pf": "pf_cru"}
+const OVEN_IN: Dictionary = {"pq_cru": "pq", "pf_cru": "pf"}
+const CHAPA_IN: Dictionary = {"misto_cru": "misto"}
 
-# La fila : les fregueses attendent leur pão de queijo. Sans fournée vendue
-# dans ce délai, une freguesa abandonne (et le délai repart, plus court).
-const FILA_PATIENCE: float = 32.0
-const FILA_PATIENCE_MIN: float = 20.0
-const FILA_SHRINK: float = 3.0
-# Qualifié : 3 fournées vendues dont 1 parfaite, et la fila jamais vidée 2 fois.
-const QUALIFY_BATCHES: int = 3
-const MAX_FILA_LOST: int = 1
-const TIP_RAW: int = 6
-const TIP_PERFECT: int = 22
-const TIP_OVERCOOK: int = 10
-const PENALTY_BURNT: int = 0
-const PENALTY_RAW_DUMP: int = 0
+const ORDER_KINDS: Array[String] = ["pq", "pf", "misto"]
+# Guidage : produit fini ← cuisson ← sova (bancada) ← assemblage de deux parts.
+const GUIDE: Dictionary = {
+	"pq": {"raw": "pq_cru", "station": "O", "mix": "mix_pq", "parts": ["polvilho", "queijo"]},
+	"pf": {"raw": "pf_cru", "station": "O", "mix": "mix_pf", "parts": ["farinha", "agua"]},
+	"misto": {"raw": "misto_cru", "station": "G", "mix": "", "parts": ["pf", "queijo"]},
+}
+const CRATE_OF: Dictionary = {"polvilho": "P", "farinha": "F", "queijo": "Q", "agua": "A"}
+const PATIENCE: Dictionary = {"pq": 60.0, "pf": 60.0, "misto": 85.0}
+const TIP: Dictionary = {"pq": 9, "pf": 7, "misto": 14}
+const TIP_SPEED_BONUS: int = 6
+const MAX_ORDERS: int = 4
+# Écart entre deux fregueses : assez serré pour obliger à mener deux recettes
+# de front (un bot qui enchaîne une commande à la fois en perd).
+const ORDER_GAP_MIN: float = 11.0
+const ORDER_GAP_MAX: float = 15.0
+# Étoiles au bilan (R$ gagnés) ; 2 étoiles = service réussi.
+const STARS: Array[int] = [25, 55, 100]
+const QUALIFY_STARS: int = 2
 
-const PLATE_HOME: Vector2 = Vector2(700, 540)
-const OVEN_INSIDE: Vector2 = Vector2(700, 820)
-
-const STATIONS: Dictionary = {
-	"flour":  Vector2(260, 280),
-	"water":  Vector2(660, 280),
-	"queijo": Vector2(1060, 280),
-	"plate":  Vector2(700, 540),
-	"oven":   Vector2(700, 820),
-	"basket": Vector2(1500, 820),
-	"trash":  Vector2(1740, 820),
+const NAMES: Dictionary = {
+	"polvilho": "polvilho", "farinha": "farinha", "queijo": "queijo", "agua": "água",
+	"mix_pq": "massa de pão de queijo", "mix_pf": "massa de pão", "pq_cru": "pão de queijo cru",
+	"pf_cru": "pão cru", "pq": "pão de queijo", "pf": "pão francês", "misto_cru": "misto cru",
+	"misto": "misto quente", "queimado": "queimado",
 }
 
-const RECIPE: Array[String] = ["flour", "water", "queijo"]
+var cells: Dictionary = {}       # Vector2i → objet posé ("" = vide)
+var progress: Dictionary = {}    # Vector2i → sova (0..1) ou cuisson (s)
+var hand: String = ""
+var player_pos: Vector2 = Vector2.ZERO
+var facing: Vector2 = Vector2.DOWN
+var target: Vector2i = Vector2i(-1, -1)
+var orders: Array = []           # {id, kind, left, max}
+var tips: int = 0
+var served: int = 0
+var lost: int = 0
+var kneading: bool = false
+var time_left: float = DURATION
+var started: bool = false
+# Prochaine action conseillée (texte + poste fléché).
+var hint_text: String = ""
+var hint_cell: Vector2i = Vector2i(-1, -1)
+var _hint_wait: bool = false
 
-const INGREDIENT_COLORS: Dictionary = {
-	"flour":  Color(0.95, 0.92, 0.85, 1),
-	"water":  Color(0.4, 0.65, 0.95, 1),
-	"queijo": Color(0.95, 0.85, 0.45, 1),
-}
+## Captures hors jeu : "play" saute la carte des recettes ; "busy" pose une
+## cuisine en plein rush (four, chapa, bancada, commandes).
+@export var preview: String = ""
 
-const INGREDIENT_LABELS: Dictionary = {
-	"flour":  "Farine",
-	"water":  "Eau",
-	"queijo": "Queijo",
-}
-
-var _time_left: float = DURATION
 var _ended: bool = false
-var _batches_sold: int = 0
-var _total_tips: int = 0
+var _next_order: float = 1.0
+var _order_seq: int = 0
+var _elapsed: float = 0.0
+var _art: Node2D = null
+var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
+var _fingers: Dictionary = {}
+var _btn_a_held: bool = false
+var _btn_b_held: bool = false
+var _key_a_held: bool = false
+var _key_b_held: bool = false
+var _a_was: bool = false
+var _status_t: float = 0.0
 
-var _player_pos: Vector2 = Vector2(960.0, 540.0)
-var _carry: String = ""  # "" / "flour" / "water" / "queijo" / "plate_raw" / "plate_baked" / "plate_burnt"
+var _ui: CanvasLayer = null
+var _btn_a: Button = null
+var _btn_b: Button = null
+var _clock: Label = null
+var _money: Label = null
+var _status: Label = null
+var _tickets: HBoxContainer = null
+var _intro: Control = null
+var _hint_label: Label = null
 
-var _plate_ingredients: Dictionary = {"flour": false, "water": false, "queijo": false}
-var _plate_status: String = "ASSEMBLY"  # ASSEMBLY / BAKING (in oven) / BAKED (on counter) / CARRIED
-var _plate_in_oven: bool = false
-var _plate_cook_time: float = 0.0
-
-@onready var arena: Node2D = $Arena
-@onready var player_node: ColorRect = $Arena/Player
-@onready var carry_dot: ColorRect = $Arena/Player/CarryDot
-@onready var context_label: Label = $Arena/Player/Context
-@onready var plate_root: Node2D = $Arena/Plate
-@onready var plate_base: ColorRect = $Arena/Plate/Base
-@onready var plate_flour: ColorRect = $Arena/Plate/Flour
-@onready var plate_water: ColorRect = $Arena/Plate/Water
-@onready var plate_queijo: ColorRect = $Arena/Plate/Queijo
-@onready var oven_glow: ColorRect = $Arena/Oven/Glow
-@onready var oven_smoke: ColorRect = $Arena/Oven/Smoke
-@onready var flour_bin: ColorRect = $Arena/FlourBin
-@onready var water_tap: ColorRect = $Arena/WaterTap
-@onready var queijo_box: ColorRect = $Arena/QueijoBox
-@onready var counter_highlight: ColorRect = $Arena/CounterHighlight
-@onready var basket: ColorRect = $Arena/Basket
-@onready var trash: ColorRect = $Arena/Trash
-@onready var status_label: Label = $UI/Status
-@onready var timer_label: Label = $UI/Timer
-@onready var tip_label: Label = $UI/Tips
-@onready var prompt_label: Label = $UI/Prompt
-@onready var cook_label: Label = $UI/CookLabel
-@onready var cook_bar_fill: ColorRect = $UI/CookBar/Fill
-@onready var cook_bar_root: Control = $UI/CookBar
-@onready var cook_perfect_marker_a: ColorRect = $UI/CookBar/PerfectStart
-@onready var cook_perfect_marker_b: ColorRect = $UI/CookBar/PerfectEnd
-@onready var tutorial_root: Control = $UI/Tutorial
-@onready var tutorial_button: Button = $UI/Tutorial/Panel/Margin/Layout/StartButton
-@onready var help_button: Button = $UI/HelpButton
-@onready var touch_controls: CanvasLayer = get_node_or_null("TouchControls")
-
-const COOK_BAR_WIDTH: float = 360.0
-
-var _tutorial_visible: bool = true
-var _art: ART = null
-# Captures hors jeu uniquement (outil de capture) : "play" saute le tutoriel ;
-# "carry" / "oven" / "burn" posent en plus une situation à photographier.
-var preview: String = ""
 
 func _ready() -> void:
 	EventBus.minigame_started.emit("padaria")
-	var cam: Camera2D = get_node_or_null("Camera2D")
+	_rng.randomize()
+	var cam: Camera2D = get_node_or_null("Camera2D") as Camera2D
 	if cam:
 		cam.make_current()
-	_set_status("Bom dia ! Trois ingrédients sur la plaque, puis four, puis panier.")
-	if prompt_label:
-		prompt_label.text = "Joystick : bouger · Bouton Action : prendre / déposer / vendre"
-	_position_perfect_markers()
-	_build_art()
-	_refresh_plate_visuals()
-	_refresh_oven_smoke()
-	if tutorial_button:
-		tutorial_button.pressed.connect(_close_tutorial)
-	if help_button:
-		help_button.pressed.connect(_open_tutorial)
-		# Fond sombre : la pastille translucide se perdait sur le décor peint.
-		var help_box: StyleBoxTexture = UITheme.pastille_box(UITheme.CREAM, Color(0.08, 0.09, 0.12, 0.82))
-		help_button.add_theme_stylebox_override("normal", help_box)
-		help_button.add_theme_stylebox_override("hover", help_box)
-	if tutorial_root:
-		tutorial_root.add_to_group("gamepad_menu")
-		tutorial_root.visible = true
-		GamepadBridge.focus_first.call_deferred(tutorial_root)
-	if help_button:
-		help_button.visible = false  # caché tant que le tuto est ouvert
-	if touch_controls:
-		touch_controls.visible = false
+		# Cadré sur la cuisine et la fila : personnages lisibles au téléphone.
+		cam.zoom = Vector2(1.25, 1.25)
+		cam.position = Vector2(760, 566)
+	for r in GRID.size():
+		for c in GRID[r].length():
+			var ch: String = GRID[r][c]
+			if ch != "." and not CRATES.has(ch):
+				cells[Vector2i(c, r)] = ""
+	player_pos = cell_center(Vector2i(6, 2))
+	_art = KitchenArt.new()
+	add_child(_art)
+	_art.call("build", self)
+	_build_ui()
 	if preview != "":
 		_apply_preview.call_deferred()
 
-func _build_art() -> void:
-	_art = ART.new()
-	arena.add_child(_art)
-	_art.build({
-		"player": player_node, "plate": plate_root, "counter_hl": counter_highlight,
-		"stations": {"flour": flour_bin, "water": water_tap, "queijo": queijo_box, "basket": basket, "trash": trash},
-	})
-	for n in ["FlourLabel", "WaterLabel", "QueijoLabel", "CounterLabel", "OvenLabel", "BasketLabel", "TrashLabel"]:
-		var l: Label = arena.get_node_or_null(n) as Label
-		if l:
-			PixelFont.style_world_label(l)
-	if context_label:
-		PixelFont.style_world_label(context_label)
-	_illustrate_tutorial()
 
-# Rangée d'icônes peintes en tête du tutoriel : la recette en images.
-func _illustrate_tutorial() -> void:
-	var layout: Node = get_node_or_null("UI/Tutorial/Panel/Margin/Layout")
-	if layout == null:
-		return
-	var row: HBoxContainer = HBoxContainer.new()
-	row.alignment = BoxContainer.ALIGNMENT_CENTER
-	row.add_theme_constant_override("separation", 10)
-	var imgs: Array[Image] = [ART.paint_flour(), ART.paint_water(), ART.paint_queijo(),
-		ART.paint_tray(7, 0), ART.paint_oven(), ART.paint_tray(7, 2), ART.paint_basket()]
-	for i in imgs.size():
-		if i == 3 or i == 4 or i == 5 or i == 6:
-			var arrow: Label = Label.new()
-			arrow.text = "→"
-			arrow.add_theme_font_size_override("font_size", 33)
-			arrow.add_theme_color_override("font_color", Color(1, 0.86, 0.4))
-			row.add_child(arrow)
-		var tr: TextureRect = TextureRect.new()
-		tr.texture = ImageTexture.create_from_image(imgs[i])
-		tr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-		tr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		tr.custom_minimum_size = Vector2(150, 120)
-		row.add_child(tr)
-	layout.add_child(row)
-	layout.move_child(row, 2)
+# --- Grille ---
 
-func _apply_preview() -> void:
-	_close_tutorial()
-	match preview:
-		"carry":
-			_plate_ingredients = {"flour": true, "water": true, "queijo": false}
-			_carry = "queijo"
-			_player_pos = Vector2(900, 420)
-		"oven", "burn":
-			_plate_ingredients = {"flour": true, "water": true, "queijo": true}
-			_plate_in_oven = true
-			_plate_status = "BAKING"
-			_plate_cook_time = 5.0 if preview == "oven" else 9.0
-			if plate_root:
-				plate_root.position = OVEN_INSIDE
-			_player_pos = Vector2(820, 640)
-			_fila_left = 6.0
-		"sell":
-			_plate_ingredients = {"flour": true, "water": true, "queijo": true}
-			_plate_status = "CARRIED"
-			_plate_cook_time = 6.0
-			_carry = "plate_baked"
-			_player_pos = Vector2(1500, 920)
-			_fila_left = 5.0
-			get_tree().create_timer(1.0).timeout.connect(_act_at_basket)
-	_refresh_plate_visuals()
+func cell_center(c: Vector2i) -> Vector2:
+	return ORIGIN + (Vector2(c) + Vector2(0.5, 0.5)) * CELL
 
-func _position_perfect_markers() -> void:
-	if cook_perfect_marker_a:
-		cook_perfect_marker_a.position.x = COOK_BAR_WIDTH * (COOK_PERFECT_MIN / COOK_BURN)
-	if cook_perfect_marker_b:
-		cook_perfect_marker_b.position.x = COOK_BAR_WIDTH * (COOK_PERFECT_MAX / COOK_BURN) - 4.0
 
-var _fila_left: float = FILA_PATIENCE
-var _fila_patience: float = FILA_PATIENCE
-var _fila_lost: int = 0
-var _perfect_batches: int = 0
+func cell_at(p: Vector2) -> Vector2i:
+	var q: Vector2 = (p - ORIGIN) / CELL
+	return Vector2i(int(floor(q.x)), int(floor(q.y)))
+
+
+func kind_at(c: Vector2i) -> String:
+	if c.y < 0 or c.y >= GRID.size() or c.x < 0 or c.x >= GRID[c.y].length():
+		return "X"
+	return GRID[c.y][c.x]
+
+
+func _solid(c: Vector2i) -> bool:
+	return kind_at(c) != "."
+
+
+# --- Boucle ---
 
 func _process(delta: float) -> void:
+	delta = minf(delta, 0.05)
 	if _art:
-		_art.tick(delta, _art_state())
-	if _ended:
+		_art.call("tick", self, delta)
+	if _ended or not started:
+		_update_hud()
 		return
-	# Tutoriel ouvert : la session est gelée, le timer ne défile pas, le joueur ne bouge pas.
-	if _tutorial_visible:
-		return
-	_time_left -= delta
-	if _time_left <= 0.0 or _batches_sold >= MAX_BATCHES:
+	_elapsed += delta
+	time_left -= delta
+	if time_left <= 0.0:
+		time_left = 0.0
 		_end_game()
 		return
-	_update_player(delta)
-	_update_oven(delta)
-	_update_fila(delta)
-	_update_visuals()
-	_update_labels()
+	_move(delta)
+	_find_target()
+	_read_buttons(delta)
+	_cook(delta)
+	_tick_orders(delta)
+	_compute_hint()
+	_update_hud()
 
-func _update_fila(delta: float) -> void:
-	var before: float = _fila_left
-	_fila_left -= delta
-	if before > 8.0 and _fila_left <= 8.0:
-		sfx("prompt_chime", 0.8)
-		_set_status("A fila resmunga… vite, une fournée !")
-	if _fila_left <= 0.0:
-		_fila_lost += 1
-		_fila_patience = maxf(_fila_patience - FILA_SHRINK, FILA_PATIENCE_MIN)
-		_fila_left = _fila_patience
-		sfx("mg_miss")
-		pulse(0.5, 0.15)
-		_set_status("😤 Une freguesa a abandonné la fila (%d)." % _fila_lost)
 
-func _art_state() -> Dictionary:
-	return {
-		"pos": _player_pos, "carry": _carry, "ingredients": _plate_ingredients,
-		"in_oven": _plate_in_oven, "cook": _plate_cook_time,
-		"perfect_min": COOK_PERFECT_MIN, "perfect_max": COOK_PERFECT_MAX, "burn": COOK_BURN,
-		"fila_left": _fila_left, "fila_patience": _fila_patience,
-		"tips": _total_tips, "lost": _fila_lost,
-	}
+func _move(delta: float) -> void:
+	var dir: Vector2 = Input.get_vector("move_left", "move_right", "move_forward", "move_back")
+	if dir.length() > 0.2:
+		facing = dir.normalized()
+	var step: Vector2 = dir.limit_length(1.0) * PLAYER_SPEED * delta
+	# Axe par axe : on glisse le long des comptoirs au lieu de s'y coller.
+	player_pos.x += step.x
+	_resolve(true)
+	player_pos.y += step.y
+	_resolve(false)
 
-func _close_tutorial() -> void:
-	_tutorial_visible = false
-	if tutorial_root:
-		tutorial_root.visible = false
-	if help_button:
-		help_button.visible = true
-	if touch_controls:
-		touch_controls.visible = true
 
-func _open_tutorial() -> void:
-	_tutorial_visible = true
-	if tutorial_root:
-		tutorial_root.visible = true
-		GamepadBridge.focus_first.call_deferred(tutorial_root)
-	if help_button:
-		help_button.visible = false
-	if touch_controls:
-		touch_controls.visible = false
+func _resolve(x_axis: bool) -> void:
+	var c0: Vector2i = cell_at(player_pos)
+	for dy in range(-1, 2):
+		for dx in range(-1, 2):
+			var c: Vector2i = c0 + Vector2i(dx, dy)
+			if not _solid(c):
+				continue
+			var r: Rect2 = Rect2(ORIGIN + Vector2(c) * CELL, Vector2(CELL, CELL))
+			var nearest: Vector2 = Vector2(clampf(player_pos.x, r.position.x, r.end.x), clampf(player_pos.y, r.position.y, r.end.y))
+			var d: Vector2 = player_pos - nearest
+			if d.length() >= PLAYER_RADIUS:
+				continue
+			if x_axis:
+				player_pos.x = (r.position.x - PLAYER_RADIUS) if player_pos.x < r.get_center().x else (r.end.x + PLAYER_RADIUS)
+			else:
+				player_pos.y = (r.position.y - PLAYER_RADIUS) if player_pos.y < r.get_center().y else (r.end.y + PLAYER_RADIUS)
 
-func _update_player(delta: float) -> void:
-	var dir: Vector2 = Vector2(
-		Input.get_axis("move_left", "move_right"),
-		Input.get_axis("move_forward", "move_back"),
-	)
-	if dir.length() > 1.0:
-		dir = dir.normalized()
-	_player_pos += dir * PLAYER_SPEED * delta
-	_player_pos.x = clamp(_player_pos.x, PLAYER_RADIUS, ARENA_W - PLAYER_RADIUS)
-	_player_pos.y = clamp(_player_pos.y, PLAYER_RADIUS, ARENA_H - PLAYER_RADIUS)
-	if player_node:
-		player_node.position = _player_pos - Vector2(PLAYER_RADIUS, PLAYER_RADIUS)
-	# Si la plaque est portée, elle suit le joueur.
-	if _carry.begins_with("plate_") and plate_root:
-		plate_root.position = _player_pos
-	if Input.is_action_just_pressed("interact"):
-		_handle_interact()
 
-# --- Interaction contextuelle ---
+# Poste visé : le plus proche dans la direction du regard (tolérant au doigt).
+func _find_target() -> void:
+	var best: Vector2i = Vector2i(-1, -1)
+	var best_s: float = -INF
+	var c0: Vector2i = cell_at(player_pos)
+	for dy in range(-1, 2):
+		for dx in range(-1, 2):
+			var c: Vector2i = c0 + Vector2i(dx, dy)
+			var k: String = kind_at(c)
+			if k == "." or k == "X":
+				continue
+			var r: Rect2 = Rect2(ORIGIN + Vector2(c) * CELL, Vector2(CELL, CELL))
+			var nearest: Vector2 = Vector2(clampf(player_pos.x, r.position.x, r.end.x), clampf(player_pos.y, r.position.y, r.end.y))
+			var dist: float = player_pos.distance_to(nearest)
+			if dist > REACH - PLAYER_RADIUS:
+				continue
+			var to: Vector2 = (cell_center(c) - player_pos).normalized()
+			var s: float = facing.dot(to) * 2.0 - dist / 60.0
+			if s > best_s:
+				best_s = s
+				best = c
+	target = best
 
-func _handle_interact() -> void:
-	var station: String = _nearest_station()
-	if station == "":
+
+# --- Commandes du joueur ---
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventScreenTouch:
+		var st: InputEventScreenTouch = event as InputEventScreenTouch
+		if st.pressed:
+			_fingers[st.index] = st.position
+		else:
+			_fingers.erase(st.index)
+	elif event is InputEventScreenDrag:
+		var sd: InputEventScreenDrag = event as InputEventScreenDrag
+		if _fingers.has(sd.index):
+			_fingers[sd.index] = sd.position
+	elif event is InputEventMouseButton and event.device != InputEvent.DEVICE_ID_EMULATION:
+		var mb: InputEventMouseButton = event as InputEventMouseButton
+		if mb.button_index == MOUSE_BUTTON_LEFT:
+			if mb.pressed:
+				_fingers[-1] = mb.position
+			else:
+				_fingers.erase(-1)
+	elif event is InputEventMouseMotion and event.device != InputEvent.DEVICE_ID_EMULATION:
+		if _fingers.has(-1):
+			_fingers[-1] = (event as InputEventMouseMotion).position
+	elif event.is_action("interact") and not event.is_echo():
+		_key_a_held = event.is_pressed()
+	elif event.is_action("jump") and not event.is_echo():
+		_key_b_held = event.is_pressed()
+	_btn_a_held = _held(_btn_a)
+	_btn_b_held = _held(_btn_b)
+
+
+func _held(btn: Button) -> bool:
+	if btn == null or not btn.is_visible_in_tree():
+		return false
+	var rect: Rect2 = btn.get_global_rect()
+	var on: bool = false
+	for f in _fingers.values():
+		if rect.has_point(f as Vector2):
+			on = true
+	btn.button_pressed = on
+	return on
+
+
+func _read_buttons(delta: float) -> void:
+	var a: bool = _btn_a_held or _key_a_held
+	if a and not _a_was:
+		interact()
+	_a_was = a
+	kneading = false
+	if _btn_b_held or _key_b_held:
+		work(delta)
+
+
+# PEGAR / LARGAR sur le poste visé.
+func interact() -> void:
+	var t: Vector2i = target
+	var k: String = kind_at(t)
+	if k == "." or k == "X":
 		return
-	match station:
-		"flour", "water", "queijo":
-			_act_at_ingredient_bin(station)
-		"plate":
-			_act_at_plate_counter()
-		"oven":
-			_act_at_oven()
-		"basket":
-			_act_at_basket()
-		"trash":
-			_act_at_trash()
+	if CRATES.has(k):
+		if hand == "":
+			hand = CRATES[k]
+			sfx("item_pickup")
+		elif hand == CRATES[k]:
+			hand = ""
+			sfx("cart_drop", 1.2)
+		else:
+			_say("Mãos ocupadas : pose d'abord.")
+		return
+	match k:
+		"T":
+			if hand != "":
+				_say("Jogou fora : " + String(NAMES.get(hand, hand)))
+				hand = ""
+				sfx("mg_drop", 0.8)
+		"S":
+			_serve()
+		"O", "G":
+			_station_swap(t, OVEN_IN if k == "O" else CHAPA_IN)
+		_:
+			_counter_swap(t)
 
-func _nearest_station() -> String:
-	var best: String = ""
-	var best_dist: float = INTERACT_RANGE
-	for k in STATIONS:
-		var d: float = _player_pos.distance_to(STATIONS[k])
-		if d < best_dist:
-			best_dist = d
-			best = k
+
+func _counter_swap(t: Vector2i) -> void:
+	var on: String = cells.get(t, "")
+	if hand == "" and on != "":
+		hand = on
+		cells[t] = ""
+		progress.erase(t)
+		sfx("item_pickup")
+	elif hand != "" and on == "":
+		cells[t] = hand
+		hand = ""
+		progress.erase(t)
+		sfx("cart_drop")
+	elif hand != "" and on != "":
+		var m: String = merge(hand, on)
+		if m == "":
+			_say("Isso não combina.")
+			sfx("mg_miss", 1.3)
+			return
+		cells[t] = m
+		hand = ""
+		progress.erase(t)
+		sfx("mg_good")
+		_say(_cap(NAMES[m]) + (" — sova na bancada !" if KNEAD.has(m) else ""))
+
+
+func _station_swap(t: Vector2i, accepts: Dictionary) -> void:
+	var on: String = cells.get(t, "")
+	if hand == "" and on != "":
+		hand = on
+		cells[t] = ""
+		progress.erase(t)
+		sfx("item_pickup")
+	elif hand != "" and on == "":
+		if not accepts.has(hand):
+			_say("Isso não vai " + ("no forno." if kind_at(t) == "O" else "na chapa."))
+			sfx("mg_miss", 1.3)
+			return
+		cells[t] = hand
+		progress[t] = 0.0
+		hand = ""
+		sfx("cart_drop", 0.8)
+
+
+static func _cap(s: String) -> String:
+	return s.substr(0, 1).to_upper() + s.substr(1)
+
+
+static func merge(a: String, b: String) -> String:
+	var key: String = (a + "+" + b) if a < b else (b + "+" + a)
+	return MERGE.get(key, "")
+
+
+# SOVAR (tenu) : la massa avance tant qu'on tient face à la bancada.
+func work(delta: float) -> void:
+	var t: Vector2i = target
+	if kind_at(t) != "K":
+		return
+	var on: String = cells.get(t, "")
+	if not KNEAD.has(on):
+		return
+	kneading = true
+	var p: float = float(progress.get(t, 0.0)) + delta / KNEAD_TIME
+	if p >= 1.0:
+		cells[t] = KNEAD[on]
+		progress.erase(t)
+		sfx("mg_perfect")
+		pulse(0.3, 0.05)
+		_say(_cap(NAMES[KNEAD[on]]) + " : au four !")
+	else:
+		progress[t] = p
+
+
+# Four et chapa cuisent tout seuls : prêt → alarme, trop long → queimado.
+func _cook(delta: float) -> void:
+	for t: Vector2i in cells.keys():
+		var k: String = kind_at(t)
+		if k != "O" and k != "G":
+			continue
+		var on: String = cells[t]
+		if on == "" or on == "queimado":
+			continue
+		var ready_at: float = OVEN_BAKE if k == "O" else CHAPA_COOK
+		var burn_at: float = OVEN_BURN if k == "O" else CHAPA_BURN
+		var before: float = float(progress.get(t, 0.0))
+		var now: float = before + delta
+		progress[t] = now
+		var table: Dictionary = OVEN_IN if k == "O" else CHAPA_IN
+		if before < ready_at and now >= ready_at and table.has(on):
+			cells[t] = table[on]
+			sfx("oven_ding")
+			_say(_cap(NAMES[table[on]]) + " prêt !")
+		elif before < burn_at and now >= burn_at:
+			cells[t] = "queimado"
+			sfx("mg_miss")
+			pulse(0.5, 0.1)
+			_say("Queimou ! À la poubelle…")
+
+
+# --- Guidage : la prochaine action pour la commande la plus pressée ---
+
+func _compute_hint() -> void:
+	hint_cell = Vector2i(-1, -1)
+	if orders.is_empty():
+		hint_text = "Attends la prochaine freguesa…" if hand == "" else ""
+		return
+	# Commande la plus pressée d'abord ; si elle ne fait que cuire, on
+	# propose d'avancer la suivante pendant l'attente.
+	var sorted_orders: Array = orders.duplicate()
+	sorted_orders.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return float(a["left"]) < float(b["left"]))
+	var first_text: String = ""
+	var first_cell: Vector2i = Vector2i(-1, -1)
+	var seen: Dictionary = {}
+	for o in sorted_orders:
+		var k: String = o["kind"]
+		if seen.has(k):
+			continue
+		seen[k] = true
+		_hint_wait = false
+		_guide(k)
+		if first_text == "":
+			first_text = hint_text
+			first_cell = hint_cell
+		if not _hint_wait:
+			return
+	hint_text = first_text
+	hint_cell = first_cell
+
+
+func _hint(text: String, cell: Vector2i) -> void:
+	hint_text = text
+	hint_cell = cell
+
+
+func _guide(k: String) -> void:
+	var g: Dictionary = GUIDE[k]
+	# 1. Le produit fini.
+	if hand == k:
+		_hint("Sers le %s au BALCÃO" % NAMES[k], _nearest_kind("S", false))
+		return
+	var done: Vector2i = _find_item(k, "")
+	if done.x >= 0:
+		_take_or_drop(done, "Prends le %s" % NAMES[k])
+		return
+	# 2. La version crue : en cuisson, en main ou posée.
+	var raw: String = g["raw"]
+	var st: String = g["station"]
+	var station_name: String = "FORNO" if st == "O" else "CHAPA"
+	var cooking: Vector2i = _find_item(raw, st)
+	if cooking.x >= 0:
+		_hint_wait = true
+		_hint("Ça cuit… attends le sino du %s" % station_name, cooking)
+		return
+	if hand == raw:
+		_hint("Mets-le dans le %s" % station_name, _nearest_kind(st, true))
+		return
+	var raw_at: Vector2i = _find_item(raw, "")
+	if raw_at.x >= 0:
+		_take_or_drop(raw_at, "Prends le %s" % NAMES[raw])
+		return
+	# 3. La massa à pétrir.
+	var mix: String = g["mix"]
+	if mix != "":
+		var m: Vector2i = _find_item(mix, "K")
+		if m.x >= 0:
+			_hint("Tiens SOVAR face à la BANCADA", m)
+			return
+		if hand == mix:
+			_hint("Pose la massa sur une BANCADA", _nearest_kind("K", true))
+			return
+		var m2: Vector2i = _find_item(mix, "")
+		if m2.x >= 0:
+			_take_or_drop(m2, "Prends la massa")
+			return
+	# 4. L'assemblage des deux parts. Une part qui se fabrique (le pão du
+	# misto) et qui n'existe pas encore : on suit d'abord sa propre recette.
+	var parts: Array = g["parts"]
+	for part: String in parts:
+		if not CRATE_OF.has(part) and hand != part and _find_item(part, "").x < 0:
+			_guide(part)
+			return
+	var where: String = "K" if mix != "" else "#"
+	var base: Vector2i = Vector2i(-1, -1)
+	var other: String = ""
+	for i in 2:
+		var at: Vector2i = _find_item(parts[i], where)
+		if at.x >= 0:
+			base = at
+			other = parts[1 - i]
+			break
+	if base.x >= 0:
+		if hand == other:
+			_hint("Pose le %s sur le %s" % [NAMES[other], NAMES[cells[base]]], base)
+			return
+		if hand != "":
+			_hint("Pose ce que tu tiens sur un comptoir", _nearest_kind("#", true))
+			return
+		_fetch(other)
+		return
+	var place_on: String = "une BANCADA" if where == "K" else "un comptoir"
+	if hand in parts:
+		_hint("Pose le %s sur %s" % [NAMES[hand], place_on], _nearest_kind(where, true))
+		return
+	if hand != "":
+		_hint("Pose ce que tu tiens sur un comptoir", _nearest_kind("#", true))
+		return
+	_fetch(parts[0])
+
+
+# Va chercher une part : à la caisse, ou en la fabriquant (le pão du misto).
+func _fetch(part: String) -> void:
+	if CRATE_OF.has(part):
+		_hint("Prends du %s à la caisse" % NAMES[part], _crate_cell(part))
+		return
+	var at: Vector2i = _find_item(part, "")
+	if at.x >= 0:
+		_hint("Prends le %s" % NAMES[part], at)
+		return
+	_guide(part)
+
+
+func _take_or_drop(cell: Vector2i, take_text: String) -> void:
+	if hand == "":
+		_hint(take_text, cell)
+	else:
+		_hint("Pose ce que tu tiens sur un comptoir", _nearest_kind("#", true))
+
+
+func _find_item(item: String, kind: String) -> Vector2i:
+	var best: Vector2i = Vector2i(-1, -1)
+	var bd: float = INF
+	for c: Vector2i in cells.keys():
+		if cells[c] != item or (kind != "" and kind_at(c) != kind):
+			continue
+		var d: float = cell_center(c).distance_to(player_pos)
+		if d < bd:
+			bd = d
+			best = c
 	return best
 
-func _act_at_ingredient_bin(ingredient: String) -> void:
-	# Sans rien : on prend l'ingrédient.
-	if _carry == "":
-		_carry = ingredient
-		_set_status("Tu portes : %s. Direction la plaque." % INGREDIENT_LABELS[ingredient])
-		return
-	# Avec le même ingrédient en main : on le repose (mains libres).
-	if _carry == ingredient:
-		_carry = ""
-		_set_status("Ingrédient reposé.")
-		return
-	# Avec un autre ingrédient en main : on échange.
-	if _carry in RECIPE:
-		_carry = ingredient
-		_set_status("Tu portes : %s." % INGREDIENT_LABELS[ingredient])
 
-func _act_at_plate_counter() -> void:
-	# Plaque dans le four : pas d'action ici.
-	if _plate_in_oven:
-		_set_status("La plaque est dans le four — sors-la avant.")
+func _nearest_kind(kind: String, empty_only: bool) -> Vector2i:
+	var best: Vector2i = Vector2i(-1, -1)
+	var bd: float = INF
+	for c: Vector2i in cells.keys():
+		if kind_at(c) != kind or (empty_only and cells[c] != "") or not _reachable(c):
+			continue
+		var d: float = cell_center(c).distance_to(player_pos)
+		if d < bd:
+			bd = d
+			best = c
+	return best
+
+
+# Un poste d'angle sans case de sol voisine ne se touche pas.
+func _reachable(c: Vector2i) -> bool:
+	for d: Vector2i in [Vector2i(0, 1), Vector2i(0, -1), Vector2i(1, 0), Vector2i(-1, 0)]:
+		if kind_at(c + d) == ".":
+			return true
+	return false
+
+
+func _crate_cell(part: String) -> Vector2i:
+	var ch: String = CRATE_OF[part]
+	for r in GRID.size():
+		var i: int = GRID[r].find(ch)
+		if i >= 0:
+			return Vector2i(i, r)
+	return Vector2i(-1, -1)
+
+
+# --- Commandes des fregueses ---
+
+func _tick_orders(delta: float) -> void:
+	_next_order -= delta
+	if orders.is_empty() and _next_order > 3.0:
+		_next_order = 3.0
+	# Début doux : la 2e freguesa attend que la 1re soit servie (ou 40 s).
+	var warming: bool = served == 0 and not orders.is_empty() and _elapsed < 40.0
+	if _next_order <= 0.0 and not warming and orders.size() < MAX_ORDERS and time_left > 20.0:
+		_add_order(_pick_kind())
+		_next_order = _rng.randf_range(ORDER_GAP_MIN, ORDER_GAP_MAX)
+	for o in orders.duplicate():
+		o["left"] = float(o["left"]) - delta
+		if float(o["left"]) <= 0.0:
+			orders.erase(o)
+			lost += 1
+			sfx("mg_miss")
+			pulse(0.5, 0.15)
+			_say("Uma freguesa desistiu…")
+
+
+func _pick_kind() -> String:
+	if _order_seq == 0:
+		return "pq"
+	if _order_seq == 1:
+		return "pf"
+	if _elapsed > 30.0 and _rng.randf() < 0.4:
+		return "misto"
+	return "pq" if _rng.randf() < 0.55 else "pf"
+
+
+func _add_order(kind: String) -> void:
+	_order_seq += 1
+	var p: float = PATIENCE[kind] * (1.8 if _order_seq == 1 else 1.0)
+	orders.append({"id": _order_seq, "kind": kind, "left": p, "max": p})
+	sfx("customer_cling")
+
+
+func _serve() -> void:
+	if hand == "":
 		return
-	# Plaque cuite posée sur le plan, mains libres : on la prend.
-	if _plate_status == "BAKED" and _carry == "":
-		_carry = _carry_kind_for_baked()
-		_set_status("Plaque cuite en main. Vente au panier, ou poubelle si brûlée.")
-		return
-	# Plaque en assemblage : dépose un ingrédient.
-	if _plate_status == "ASSEMBLY":
-		if _carry in RECIPE:
-			if _plate_ingredients.get(_carry, false):
-				_set_status("Cet ingrédient est déjà sur la plaque.")
-				return
-			_plate_ingredients[_carry] = true
-			_carry = ""
-			_refresh_plate_visuals()
-			if _all_ingredients_in():
-				_set_status("Plaque prête. Prends-la (E) puis enfourne.")
-			else:
-				_set_status("Continue à assembler la plaque.")
+	for o in orders:
+		if o["kind"] == hand:
+			var ratio: float = clampf(float(o["left"]) / float(o["max"]), 0.0, 1.0)
+			var gain: int = int(TIP[hand]) + int(round(TIP_SPEED_BONUS * ratio))
+			tips += gain
+			served += 1
+			orders.erase(o)
+			hand = ""
+			sfx("coin")
+			sfx("mg_perfect")
+			pulse(0.4, 0.06)
+			_say(("Rapidinho ! " if ratio > 0.5 else "") + "+R$ %d" % gain)
 			return
-		# Plaque pleine + mains libres : on la prend.
-		if _carry == "" and _all_ingredients_in():
-			_carry = "plate_raw"
-			_plate_status = "CARRIED"
-			_set_status("Plaque crue en main. Direction le four.")
+	_say("Ninguém pediu " + String(NAMES.get(hand, hand)) + ".")
+	sfx("mg_miss", 1.3)
 
-func _act_at_oven() -> void:
-	# Enfourner.
-	if _carry == "plate_raw" and not _plate_in_oven:
-		_plate_in_oven = true
-		_plate_status = "BAKING"
-		_plate_cook_time = 0.0
-		_carry = ""
-		if plate_root:
-			plate_root.position = OVEN_INSIDE
-		if oven_glow:
-			oven_glow.modulate = Color(1.0, 0.55, 0.15, 0.95)
-		_set_status("Cuisson lancée. Sors la plaque entre 4 s et 8 s.")
-		return
-	# Sortir du four → directement en main, sans étape intermédiaire.
-	if _carry == "" and _plate_in_oven and _plate_status == "BAKING":
-		_plate_in_oven = false
-		_plate_status = "CARRIED"
-		_carry = _carry_kind_for_baked()
-		if oven_glow:
-			oven_glow.modulate = Color(0.4, 0.4, 0.4, 0.4)
-		_refresh_oven_smoke()
-		_set_status(_label_for_baked() + " Direction le panier de vente.")
 
-func _act_at_basket() -> void:
-	if not _carry.begins_with("plate_"):
-		return
-	var tip: int = 0
-	match _carry:
-		"plate_baked":
-			var t: float = _plate_cook_time
-			if t < COOK_PERFECT_MIN:
-				tip = TIP_RAW
-			elif t <= COOK_PERFECT_MAX:
-				tip = TIP_PERFECT
-			elif t < COOK_BURN:
-				tip = TIP_OVERCOOK
+func stars() -> int:
+	var s: int = 0
+	for th in STARS:
+		if tips >= th:
+			s += 1
+	return s
+
+
+# --- Interface ---
+
+func _build_ui() -> void:
+	_ui = CanvasLayer.new()
+	_ui.layer = 10
+	add_child(_ui)
+	_tickets = HBoxContainer.new()
+	_tickets.position = Vector2(24, 16)
+	_tickets.add_theme_constant_override("separation", 12)
+	_ui.add_child(_tickets)
+	SafeArea.apply(_tickets)
+	# Chrono et caisse dans une pastille sombre (l'ardoise peinte est derrière).
+	var pill: PanelContainer = PanelContainer.new()
+	pill.add_theme_stylebox_override("panel", UITheme.pastille_box(UITheme.CREAM, Color(0.08, 0.09, 0.12, 0.85)))
+	pill.anchor_left = 1.0
+	pill.anchor_right = 1.0
+	pill.offset_left = -640.0
+	pill.offset_right = -340.0
+	pill.offset_top = 16.0
+	pill.offset_bottom = 140.0
+	_ui.add_child(pill)
+	SafeArea.apply(pill)
+	var col: VBoxContainer = VBoxContainer.new()
+	col.alignment = BoxContainer.ALIGNMENT_CENTER
+	pill.add_child(col)
+	_clock = _label(44, Color(1, 0.97, 0.88))
+	_clock.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	col.add_child(_clock)
+	_money = _label(33, Color(1, 0.88, 0.35))
+	_money.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	col.add_child(_money)
+	_status = _label(30, Color(1, 0.95, 0.7))
+	_status.anchor_left = 0.5
+	_status.anchor_right = 0.5
+	_status.anchor_top = 1.0
+	_status.anchor_bottom = 1.0
+	_status.offset_left = -560.0
+	_status.offset_right = 560.0
+	_status.offset_top = -190.0
+	_status.offset_bottom = -140.0
+	_status.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_ui.add_child(_status)
+	# Consigne permanente, dans une pastille au bas de l'écran.
+	var pill2: PanelContainer = PanelContainer.new()
+	pill2.add_theme_stylebox_override("panel", UITheme.pastille_box(UITheme.CREAM, Color(0.08, 0.09, 0.12, 0.85)))
+	pill2.anchor_left = 0.5
+	pill2.anchor_right = 0.5
+	pill2.anchor_top = 1.0
+	pill2.anchor_bottom = 1.0
+	pill2.offset_left = -470.0
+	pill2.offset_right = 470.0
+	pill2.offset_top = -120.0
+	pill2.offset_bottom = -30.0
+	pill2.name = "HintPill"
+	_ui.add_child(pill2)
+	SafeArea.apply(pill2)
+	_hint_label = _label(36, Color(1, 0.88, 0.35))
+	_hint_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_hint_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	pill2.add_child(_hint_label)
+	pill2.visible = false
+	_btn_a = _button("PEGAR", Vector2(-480, -250), Vector2(-280, -90))
+	_btn_b = _button("SOVAR", Vector2(-260, -330), Vector2(-40, -110))
+	_build_intro()
+
+
+func _label(size: int, col: Color) -> Label:
+	var l: Label = Label.new()
+	l.add_theme_font_size_override("font_size", size)
+	l.add_theme_color_override("font_color", col)
+	l.add_theme_color_override("font_outline_color", Color(0.13, 0.1, 0.12))
+	l.add_theme_constant_override("outline_size", 9)
+	return l
+
+
+func _button(text: String, tl: Vector2, br: Vector2) -> Button:
+	var b: Button = Button.new()
+	b.text = text
+	b.theme_type_variation = &"TouchButton"
+	b.focus_mode = Control.FOCUS_NONE
+	b.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	b.add_theme_font_size_override("font_size", 33)
+	b.anchor_left = 1.0
+	b.anchor_right = 1.0
+	b.anchor_top = 1.0
+	b.anchor_bottom = 1.0
+	b.offset_left = tl.x
+	b.offset_top = tl.y
+	b.offset_right = br.x
+	b.offset_bottom = br.y
+	var box: StyleBoxTexture = UITheme.pastille_box(UITheme.CREAM, Color(0.08, 0.09, 0.12, 0.8))
+	b.add_theme_stylebox_override("normal", box)
+	b.add_theme_stylebox_override("hover", box)
+	b.add_theme_stylebox_override("pressed", UITheme.pastille_box(UITheme.CREAM, Color(0.3, 0.55, 0.25, 0.9)))
+	b.visible = false
+	_ui.add_child(b)
+	SafeArea.apply(b)
+	return b
+
+
+# Carte des recettes, en images : ouvrir la padaria lance le chrono.
+func _build_intro() -> void:
+	_intro = Control.new()
+	_intro.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_intro.add_to_group("gamepad_menu")
+	_ui.add_child(_intro)
+	var dim: ColorRect = ColorRect.new()
+	dim.color = Color(0, 0, 0, 0.55)
+	dim.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_intro.add_child(dim)
+	var panel: PanelContainer = PanelContainer.new()
+	panel.anchor_left = 0.5
+	panel.anchor_right = 0.5
+	panel.anchor_top = 0.5
+	panel.anchor_bottom = 0.5
+	panel.offset_left = -560.0
+	panel.offset_right = 560.0
+	panel.offset_top = -380.0
+	panel.offset_bottom = 380.0
+	_intro.add_child(panel)
+	var box: VBoxContainer = VBoxContainer.new()
+	box.add_theme_constant_override("separation", 14)
+	box.alignment = BoxContainer.ALIGNMENT_CENTER
+	panel.add_child(box)
+	var title: Label = _label(44, Color(1, 0.86, 0.38))
+	title.text = "Padaria São Sebastião — rush da manhã"
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	box.add_child(title)
+	for row: Array in [["polvilho", "+", "queijo", "→ SOVAR →", "pq_cru", "→ forno →", "pq"],
+			["farinha", "+", "agua", "→ SOVAR →", "pf_cru", "→ forno →", "pf"],
+			["pf", "+", "queijo", "→", "misto_cru", "→ chapa →", "misto"]]:
+		var h: HBoxContainer = HBoxContainer.new()
+		h.alignment = BoxContainer.ALIGNMENT_CENTER
+		h.add_theme_constant_override("separation", 10)
+		for part: String in row:
+			if NAMES.has(part):
+				var tr: TextureRect = TextureRect.new()
+				tr.texture = KitchenArt.item_texture(part)
+				tr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+				tr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+				tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+				tr.custom_minimum_size = Vector2(84, 84)
+				h.add_child(tr)
 			else:
-				tip = PENALTY_BURNT
-		"plate_burnt":
-			tip = PENALTY_BURNT
-		"plate_raw":
-			tip = PENALTY_RAW_DUMP
-	_total_tips += tip
-	_batches_sold += 1
-	if tip >= TIP_PERFECT:
-		_perfect_batches += 1
-	# Une vente (même ratée) calme la fila : elle repart, de plus en plus pressée.
-	if tip > 0:
-		_fila_patience = maxf(_fila_patience - FILA_SHRINK, FILA_PATIENCE_MIN)
-		_fila_left = _fila_patience
-	_carry = ""
-	_reset_plate()
-	if tip >= TIP_PERFECT:
-		sfx("mg_perfect")
-	sfx("coin" if tip > 0 else "mg_miss")
-	if tip > 0:
-		_set_status("+R$ %d ! Fournée %d/%d." % [tip, _batches_sold, MAX_BATCHES])
-	else:
-		_set_status("Vendue 0 — recommence (%d/%d)." % [_batches_sold, MAX_BATCHES])
+				var l: Label = _label(28, Color(1, 0.97, 0.88))
+				l.text = part
+				h.add_child(l)
+		box.add_child(h)
+	var tip: Label = _label(28, Color(1, 0.97, 0.88))
+	tip.text = "PEGAR : prendre, poser, assembler, servir au balcão · tiens SOVAR à la bancada.\nTout comptoir sert de plan de travail. Sers vite : la fila n'attend pas !"
+	tip.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	tip.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	tip.custom_minimum_size = Vector2(1000, 0)
+	box.add_child(tip)
+	var go: Button = Button.new()
+	go.text = "Abrir a padaria !"
+	go.add_theme_font_size_override("font_size", 36)
+	go.custom_minimum_size = Vector2(520, 120)
+	go.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	go.pressed.connect(_start)
+	box.add_child(go)
+	GamepadBridge.focus_first.call_deferred(_intro)
 
-func _act_at_trash() -> void:
-	# Jeter une plaque ratée sans pénaliser le compteur de fournées (on perd juste le temps).
-	if _carry.begins_with("plate_"):
-		_carry = ""
-		_reset_plate()
-		_set_status("Plaque jetée. Recommence quand tu veux.")
+
+func _start() -> void:
+	if started:
 		return
-	# Permet aussi de jeter un ingrédient (utile si tu t'es trompé pendant que le four tourne).
-	if _carry in RECIPE:
-		_carry = ""
-		_set_status("Ingrédient jeté.")
+	started = true
+	if _intro:
+		_intro.queue_free()
+		_intro = null
+	_btn_a.visible = true
+	_btn_b.visible = true
+	if _hint_label:
+		_hint_label.get_parent().visible = true
+	_say("Bom dia ! Primeira freguesa chegando…")
+	sfx("prompt_chime")
 
-# --- État interne / cuisson ---
 
-func _update_oven(delta: float) -> void:
-	if not _plate_in_oven:
+func _say(text: String) -> void:
+	if _status:
+		_status.text = text
+	_status_t = 2.6
+
+
+func _update_hud() -> void:
+	if _clock:
+		var c: int = int(ceilf(time_left))
+		_clock.text = "%d:%02d" % [c / 60, c % 60]
+	if _money:
+		var s: int = stars()
+		_money.text = "R$ %d  %s" % [tips, "★".repeat(s) + "·".repeat(3 - s)]
+	_status_t -= get_process_delta_time()
+	if _status and _status_t <= 0.0 and started and not _ended:
+		_status.text = ""
+	if _hint_label:
+		_hint_label.text = "→ " + hint_text if hint_text != "" else ""
+		_hint_label.get_parent().visible = started and not _ended and hint_text != ""
+	_refresh_buttons()
+	_refresh_tickets()
+
+
+func _refresh_buttons() -> void:
+	if _btn_a == null:
 		return
-	var before: float = _plate_cook_time
-	_plate_cook_time += delta
-	# Le four parle : ding à « no ponto », grésillement à la brûlure.
-	if before < COOK_PERFECT_MIN and _plate_cook_time >= COOK_PERFECT_MIN:
-		sfx("oven_ding")
-		pulse(0.3, 0.06)
-	elif before < COOK_BURN and _plate_cook_time >= COOK_BURN:
-		sfx("mg_miss")
+	var k: String = kind_at(target)
+	var on: String = cells.get(target, "")
+	var a: String = "PEGAR"
+	if k == "S" and hand != "":
+		a = "SERVIR"
+	elif k == "T" and hand != "":
+		a = "JOGAR"
+	elif hand != "" and on != "" and merge(hand, on) != "":
+		a = "JUNTAR"
+	elif hand != "":
+		a = "LARGAR"
+	_btn_a.text = a
+	_btn_b.modulate.a = 1.0 if (k == "K" and KNEAD.has(on)) else 0.55
 
-func _carry_kind_for_baked() -> String:
-	return "plate_burnt" if _plate_cook_time >= COOK_BURN else "plate_baked"
 
-func _label_for_baked() -> String:
-	var t: float = _plate_cook_time
-	if t < COOK_PERFECT_MIN:
-		return "Trop crue."
-	if t <= COOK_PERFECT_MAX:
-		return "Parfaite !"
-	if t < COOK_BURN:
-		return "Trop cuite."
-	return "Brûlée."
-
-func _all_ingredients_in() -> bool:
-	for k in RECIPE:
-		if not _plate_ingredients.get(k, false):
-			return false
-	return true
-
-func _reset_plate() -> void:
-	_plate_ingredients = {"flour": false, "water": false, "queijo": false}
-	_plate_status = "ASSEMBLY"
-	_plate_in_oven = false
-	_plate_cook_time = 0.0
-	if plate_root:
-		plate_root.position = PLATE_HOME
-	_refresh_plate_visuals()
-	_refresh_oven_smoke()
-
-# --- Affordances visuelles ---
-
-func _update_visuals() -> void:
-	# Carry-dot au-dessus du joueur.
-	if carry_dot:
-		if _carry in RECIPE:
-			carry_dot.visible = true
-			carry_dot.color = INGREDIENT_COLORS[_carry]
-		else:
-			carry_dot.visible = false
-	# Highlights des stations selon ce que le joueur peut faire.
-	_highlight_station(flour_bin, _carry == "" and not _plate_ingredients.flour, Color(0.95, 0.92, 0.85, 1))
-	_highlight_station(water_tap, _carry == "" and not _plate_ingredients.water, Color(0.4, 0.65, 0.95, 1))
-	_highlight_station(queijo_box, _carry == "" and not _plate_ingredients.queijo, Color(0.95, 0.85, 0.45, 1))
-	# Plan de travail : highlight si on porte un ingrédient utile, ou si la plaque est cuite et on n'a rien.
-	var counter_active: bool = false
-	if _carry in RECIPE and not _plate_ingredients[_carry] and _plate_status == "ASSEMBLY":
-		counter_active = true
-	elif _carry == "" and _plate_status == "ASSEMBLY" and _all_ingredients_in():
-		counter_active = true
-	elif _carry == "" and _plate_status == "BAKED":
-		counter_active = true
-	if counter_highlight:
-		counter_highlight.visible = counter_active
-	# Panier : actif quand on porte une plaque cuite/brûlée/crue.
-	_highlight_station(basket, _carry.begins_with("plate_"), Color(0.85, 0.55, 0.3, 1))
-	# Poubelle : accepte une plaque ratée OU un ingrédient mal pris.
-	_highlight_station(trash, _carry.begins_with("plate_") or (_carry in RECIPE), Color(0.45, 0.45, 0.5, 1))
-	# Plaque : tinte la base + ingrédients selon la cuisson.
-	_tint_plate_for_cooking()
-	_refresh_oven_smoke()
-
-func _highlight_station(node: ColorRect, active: bool, base: Color) -> void:
-	if node == null:
+func _refresh_tickets() -> void:
+	if _tickets == null:
 		return
-	# Pulsation douce : les sprites peints saturent au-delà (la flèche fait le reste).
-	if active:
-		var glow: float = 1.04 + 0.08 * sin(Time.get_ticks_msec() / 150.0)
-		node.modulate = Color(glow, glow, glow, 1)
-	else:
-		node.modulate = Color(0.8, 0.8, 0.8, 1)
+	while _tickets.get_child_count() < orders.size():
+		var t: VBoxContainer = VBoxContainer.new()
+		t.custom_minimum_size = Vector2(150, 0)
+		var icon: TextureRect = TextureRect.new()
+		icon.custom_minimum_size = Vector2(150, 96)
+		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		icon.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		t.add_child(icon)
+		var bar: ProgressBar = ProgressBar.new()
+		bar.show_percentage = false
+		bar.custom_minimum_size = Vector2(150, 18)
+		bar.max_value = 1.0
+		t.add_child(bar)
+		_tickets.add_child(t)
+	for i in _tickets.get_child_count():
+		var t: Control = _tickets.get_child(i) as Control
+		t.visible = i < orders.size()
+		if i >= orders.size():
+			continue
+		var o: Dictionary = orders[i]
+		var icon: TextureRect = t.get_child(0) as TextureRect
+		icon.texture = KitchenArt.item_texture(o["kind"])
+		var bar: ProgressBar = t.get_child(1) as ProgressBar
+		var ratio: float = float(o["left"]) / float(o["max"])
+		bar.value = ratio
+		bar.modulate = Color(0.5, 0.95, 0.5) if ratio > 0.5 else (Color(1, 0.85, 0.3) if ratio > 0.25 else Color(1, 0.35, 0.3))
 
-func _tint_plate_for_cooking() -> void:
-	# Calcule un facteur de cuisson 0..1.5 selon le temps passé au four (ou final).
-	var t: float = _plate_cook_time
-	var tint: Color = Color(1, 1, 1, 1)
-	if t > 0.0:
-		if t < COOK_PERFECT_MIN:
-			tint = Color(1, 1, 1, 1)
-		elif t <= COOK_PERFECT_MAX:
-			# Doré : ingrédients prennent une teinte chaude.
-			var k: float = (t - COOK_PERFECT_MIN) / (COOK_PERFECT_MAX - COOK_PERFECT_MIN)
-			tint = Color(1.0, 0.92 - 0.15 * k, 0.7 - 0.3 * k, 1)
-		elif t < COOK_BURN:
-			tint = Color(0.85, 0.55, 0.35, 1)
-		else:
-			tint = Color(0.25, 0.18, 0.15, 1)
-	for n in [plate_flour, plate_water, plate_queijo]:
-		if n:
-			n.modulate = tint
 
-func _refresh_oven_smoke() -> void:
-	if oven_smoke == null:
-		return
-	if not _plate_in_oven:
-		oven_smoke.visible = false
-		return
-	# Fumée visible quand on dépasse la zone parfaite, intensifie au-delà.
-	if _plate_cook_time < COOK_PERFECT_MAX:
-		oven_smoke.visible = false
-		return
-	oven_smoke.visible = true
-	var k: float = clamp((_plate_cook_time - COOK_PERFECT_MAX) / (COOK_BURN - COOK_PERFECT_MAX), 0.0, 1.0)
-	oven_smoke.color = Color(0.35 + 0.3 * k, 0.35 + 0.1 * k, 0.35, 0.5 + 0.4 * k)
+# --- Aperçu (captures) ---
 
-func _refresh_plate_visuals() -> void:
-	if plate_flour:
-		plate_flour.visible = _plate_ingredients.get("flour", false)
-	if plate_water:
-		plate_water.visible = _plate_ingredients.get("water", false)
-	if plate_queijo:
-		plate_queijo.visible = _plate_ingredients.get("queijo", false)
-	if not _carry.begins_with("plate_") and not _plate_in_oven and plate_root:
-		plate_root.position = PLATE_HOME
+func _apply_preview() -> void:
+	_start()
+	if preview == "busy":
+		cells[Vector2i(9, 0)] = "pq_cru"
+		progress[Vector2i(9, 0)] = 4.5
+		cells[Vector2i(10, 0)] = "pf"
+		progress[Vector2i(10, 0)] = 10.5
+		cells[Vector2i(6, 3)] = "misto_cru"
+		progress[Vector2i(6, 3)] = 2.0
+		cells[Vector2i(6, 0)] = "mix_pq"
+		progress[Vector2i(6, 0)] = 0.55
+		cells[Vector2i(4, 3)] = "queijo"
+		hand = "farinha"
+		player_pos = cell_center(Vector2i(7, 1))
+		facing = Vector2.LEFT
+		_add_order("pq")
+		_add_order("misto")
+		_add_order("pf")
+		orders[0]["left"] = 14.0
 
-# Label contextuel au-dessus du joueur — "[E] Prendre la farine", "[E] Enfourner", etc.
 
-func _update_labels() -> void:
-	if timer_label:
-		timer_label.text = "%.1fs" % max(_time_left, 0.0)
-	if tip_label:
-		tip_label.text = "💰 R$ %d (%d/%d) · fila %ds" % [_total_tips, _batches_sold, MAX_BATCHES, int(ceil(maxf(_fila_left, 0.0)))]
-	# Cook bar visible uniquement quand four allumé.
-	if cook_bar_root:
-		cook_bar_root.visible = _plate_in_oven
-	if cook_bar_fill and _plate_in_oven:
-		var ratio: float = clamp(_plate_cook_time / COOK_BURN, 0.0, 1.0)
-		cook_bar_fill.size.x = COOK_BAR_WIDTH * ratio
-		var c: Color = Color(0.55, 0.85, 0.95, 1)
-		if _plate_cook_time < COOK_PERFECT_MIN:
-			c = Color(0.55, 0.85, 0.95, 1)
-		elif _plate_cook_time <= COOK_PERFECT_MAX:
-			c = Color(0.55, 0.95, 0.55, 1)
-		elif _plate_cook_time < COOK_BURN:
-			c = Color(0.95, 0.85, 0.45, 1)
-		else:
-			c = Color(0.95, 0.4, 0.4, 1)
-		cook_bar_fill.color = c
-	if cook_label:
-		cook_label.visible = _plate_in_oven
-		if _plate_in_oven:
-			cook_label.text = "Four : %.1fs · %s" % [_plate_cook_time, _label_for_baked()]
-	if context_label:
-		context_label.text = _context_text()
-
-func _context_text() -> String:
-	var station: String = _nearest_station()
-	if station == "":
-		return ""
-	match station:
-		"flour", "water", "queijo":
-			if _carry == "":
-				if _plate_ingredients[station]:
-					return ""
-				return InputHints.act() + " Prendre %s" % INGREDIENT_LABELS[station]
-			if _carry == station:
-				return InputHints.act() + " Reposer %s" % INGREDIENT_LABELS[station]
-			if _carry in RECIPE:
-				return InputHints.act() + " Échanger pour %s" % INGREDIENT_LABELS[station]
-		"plate":
-			if _plate_in_oven:
-				return ""
-			if _carry in RECIPE:
-				if _plate_ingredients[_carry]:
-					return "Déjà ajouté"
-				return InputHints.act() + " Déposer %s" % INGREDIENT_LABELS[_carry]
-			if _carry == "":
-				if _plate_status == "BAKED":
-					return InputHints.act() + " Prendre la plaque cuite"
-				if _plate_status == "ASSEMBLY" and _all_ingredients_in():
-					return InputHints.act() + " Prendre la plaque crue"
-		"oven":
-			if _carry == "plate_raw":
-				return InputHints.act() + " Enfourner"
-			if _carry == "" and _plate_in_oven:
-				return InputHints.act() + " Sortir du four"
-		"basket":
-			if _carry.begins_with("plate_"):
-				return InputHints.act() + " Vendre"
-		"trash":
-			if _carry.begins_with("plate_"):
-				return InputHints.act() + " Jeter la plaque"
-			if _carry in RECIPE:
-				return InputHints.act() + " Jeter l'ingrédient"
-	return ""
-
-func _set_status(text: String) -> void:
-	if status_label:
-		status_label.text = text
+# --- Fin ---
 
 func _end_game() -> void:
 	if _ended:
 		return
 	_ended = true
-	var qualifies: bool = final_qualifies(_batches_sold >= QUALIFY_BATCHES and _perfect_batches >= 1 \
-			and _fila_lost <= MAX_FILA_LOST)
-	_set_status("Service terminé · %d fournées (%d parfaites) · fila perdue %d× · R$ %d" \
-			% [_batches_sold, _perfect_batches, _fila_lost, _total_tips])
-	await get_tree().create_timer(bilan_delay(2.4)).timeout
-	EventBus.minigame_ended.emit("padaria", {"tips": _total_tips, "batches": _batches_sold, "qualifies": qualifies})
-	match_ended.emit(qualifies, _total_tips)
+	kneading = false
+	var s: int = stars()
+	var qualifies: bool = final_qualifies(s >= QUALIFY_STARS)
+	if _btn_a:
+		_btn_a.visible = false
+		_btn_b.visible = false
+	if forfeited:
+		_say("Padaria fechada.")
+	else:
+		_say("Fim do rush · %d servidos · %d perdidos · R$ %d  %s" % [served, lost, tips, "★".repeat(s) + "·".repeat(3 - s)])
+		_status_t = 99.0
+		sfx("minigame_win" if qualifies else "minigame_lose")
+	await get_tree().create_timer(bilan_delay(2.8)).timeout
+	EventBus.minigame_ended.emit("padaria", {"tips": tips, "batches": served, "qualifies": qualifies})
+	match_ended.emit(qualifies, 0 if forfeited else tips)
